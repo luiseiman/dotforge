@@ -1,5 +1,5 @@
 # Registro de proyectos gestionados por claude-kit
-# Actualizado por /forge audit
+# Actualizado por /forge audit y /forge sync
 # Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, notes
 
 projects:
@@ -7,70 +7,70 @@ projects:
     path: /Users/luiseiman/SOMA
     stacks: [python-fastapi, docker-deploy, redis]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: null
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Obligatorios 10/10, recomendados 5/6. 6 rules con globs, 2 hooks (chmod+x), 5 commands, CLAUDE_ERRORS.md. Falta: _common.md, agentes. ⚠️ PAT en settings.local.json."
+    notes: "Synced v1.2.0. 8 rules (6 custom + _common + agents), 2 hooks, 9 commands (5 custom + 4 template), deny completa, manifest 20 archivos."
 
   - name: SOMA2
     path: /Users/luiseiman/Documents/SOMA2
     stacks: [python-fastapi, react-vite-ts, docker-deploy]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: 0.3.0
-    score: 8.5
-    notes: "Bootstrapped. CLAUDE.md 126L, hooks (2), rules (7 con globs corregidos), CLAUDE_ERRORS.md, .gitignore secrets. Sin commands custom."
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
+    score: 9.5
+    notes: "Synced v1.2.0. 9 rules (7 custom + _common + agents), 3 hooks, 4 commands, deny ampliada, manifest 10 archivos."
 
   - name: InviSight-iOS
     path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
     stacks: [swift-swiftui, supabase]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: null
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Obligatorios 10/10, recomendados 3/6. 8 rules con globs, 1 hook (chmod+x), 6 commands, CLAUDE_ERRORS.md (3 errors). Falta: lint hook (swiftlint), _common.md, agentes."
+    notes: "Synced v1.2.0. 10 rules (8 custom + _common + agents), 2 hooks (+lint-on-save nuevo), 9 commands (6 custom + 3 template), deny completa."
 
   - name: cotiza-api-cloud
     path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
     stacks: [python-fastapi, gcp-cloud-run]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: null
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Obligatorios 10/10. 6 rules con globs, 2 hooks (chmod+x), 12 commands, CLAUDE_ERRORS.md (7 errors). Falta: *credentials* en deny/.gitignore, agentes."
+    notes: "Synced v1.2.0. 8 rules (6 custom + _common + agents), 2 hooks, 15 commands (12 custom + 3 template), deny completa, manifest 27 archivos."
 
   - name: derup
     path: /Users/luiseiman/Documents/Claude/derup
     stacks: [react-vite-ts]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: null
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Obligatorios 8/10 (CLAUDE.md mínimo 10L, _common.md reducida). 2 hooks (chmod+x), 2 rules, 0 commands. Falta: expandir CLAUDE.md, commands, agentes."
+    notes: "Synced v1.2.0. 3 rules (frontend + _common + agents), 2 hooks, 4 commands, deny ampliada, manifest 11 archivos."
 
   - name: gestion-de-mora
     path: /Users/luiseiman/gestion de mora
     stacks: [data-analysis]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: 0.3.0
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Bootstrapped v0.3.0. CLAUDE.md, settings.json, hooks, rules, agents, git, CLAUDE_ERRORS.md. mora.db protegida."
+    notes: "Synced v1.2.0. 3 rules (data + _common + agents actualizado), 2 hooks custom (mora.db), 4 commands, 6 agents, deny completa."
 
   - name: TradingBot
     path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
     stacks: [python-fastapi, supabase]
     last_audit: 2026-03-19
-    last_sync: null
-    claude_kit_version: null
+    last_sync: 2026-03-19
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "Obligatorios 10/10. 5 rules con globs, 3 hooks (chmod+x), 3 commands, CLAUDE_ERRORS.md (2 errors). Tiene agents.md rule. Falta: memory, agentes dir."
+    notes: "Synced v1.2.0. 6 rules (5 custom + _common), 3 hooks, 4 commands (3 custom + audit), deny alineada, manifest 14 archivos."
 
   - name: claude-kit
     path: /Users/luiseiman/Documents/GitHub/claude-kit
     stacks: [markdown-shell]
     last_audit: 2026-03-19
     last_sync: 2026-03-19
-    claude_kit_version: 1.0.0
+    claude_kit_version: 1.2.0
     score: 9.5
-    notes: "v1.0.0. CLAUDE.md con Build&Dev, settings.json (deny ampliada+hooks), rules (common con globs+agents), commands (4), CLAUDE_ERRORS.md, .gitignore. 8 stacks, 6 agents, 5 skills."
+    notes: "v1.2.0. 8 stacks, 7 skills, 6 agents, tests 10/10, global/ gestionado."
