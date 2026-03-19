@@ -9,7 +9,7 @@ Inicializar `.claude/` completo en el proyecto actual usando la plantilla claude
 
 ## Paso 1: Detectar stack
 
-Use detection rules from `~/Documents/GitHub/claude-kit/stacks/detect.md`.
+Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
 ## Paso 2: Confirmar con usuario
 
@@ -29,7 +29,7 @@ Se creará:
 
 ## Paso 3: Generar CLAUDE.md
 
-Usar `~/Documents/GitHub/claude-kit/template/CLAUDE.md.tmpl` como base.
+Usar `$CLAUDE_KIT_DIR/template/CLAUDE.md.tmpl` como base.
 Reemplazar marcadores:
 - `{{PROJECT_NAME}}` → nombre del directorio actual
 - `<!-- forge:stack -->` → tecnologías detectadas
@@ -37,8 +37,8 @@ Reemplazar marcadores:
 
 ## Paso 4: Generar settings.json
 
-1. Cargar `~/Documents/GitHub/claude-kit/template/settings.json.tmpl` como base
-2. Para **cada** stack detectado, leer `~/Documents/GitHub/claude-kit/stacks/{stack}/settings.json.partial`
+1. Cargar `$CLAUDE_KIT_DIR/template/settings.json.tmpl` como base
+2. Para **cada** stack detectado, leer `$CLAUDE_KIT_DIR/stacks/{stack}/settings.json.partial`
 3. Merge: combinar los arrays `allow` de **todos** los partials con la base (unión de sets, sin duplicados)
 4. Merge: combinar los arrays `deny` igualmente
 5. Escribir en `.claude/settings.json`
@@ -62,23 +62,23 @@ Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corre
 
 ## Paso 5: Copiar hooks
 
-1. Copiar `~/Documents/GitHub/claude-kit/template/hooks/block-destructive.sh` → `.claude/hooks/`
-2. Copiar siempre el hook genérico `~/Documents/GitHub/claude-kit/template/hooks/lint-on-save.sh` (soporta Python + TS + Swift). Los hooks de lint por stack (`lint-python.sh`, `lint-ts.sh`, `lint-swift.sh`) son referencia, no se copian.
+1. Copiar `$CLAUDE_KIT_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/`
+2. Copiar siempre el hook genérico `$CLAUDE_KIT_DIR/template/hooks/lint-on-save.sh` (soporta Python + TS + Swift). Los hooks de lint por stack (`lint-python.sh`, `lint-ts.sh`, `lint-swift.sh`) son referencia, no se copian.
 3. `chmod +x` en ambos
 
 ## Paso 6: Copiar rules
 
-1. Copiar `~/Documents/GitHub/claude-kit/template/rules/_common.md` → `.claude/rules/`
-2. Para cada stack detectado, copiar rules de `~/Documents/GitHub/claude-kit/stacks/{stack}/rules/` → `.claude/rules/`
+1. Copiar `$CLAUDE_KIT_DIR/template/rules/_common.md` → `.claude/rules/`
+2. Para cada stack detectado, copiar rules de `$CLAUDE_KIT_DIR/stacks/{stack}/rules/` → `.claude/rules/`
 
 ## Paso 7: Copiar comandos
 
-Copiar `~/Documents/GitHub/claude-kit/template/commands/` → `.claude/commands/`
+Copiar `$CLAUDE_KIT_DIR/template/commands/` → `.claude/commands/`
 
 ## Paso 8: Copiar agentes y regla de orquestación
 
-1. Copiar `~/Documents/GitHub/claude-kit/agents/*.md` → `.claude/agents/`
-2. Copiar `~/Documents/GitHub/claude-kit/template/rules/agents.md` → `.claude/rules/agents.md`
+1. Copiar `$CLAUDE_KIT_DIR/agents/*.md` → `.claude/agents/`
+2. Copiar `$CLAUDE_KIT_DIR/template/rules/agents.md` → `.claude/rules/agents.md`
 
 Esto da al proyecto acceso a los 6 subagentes especializados (researcher, architect, implementer, code-reviewer, security-auditor, test-runner) y la regla de orquestación que define cuándo delegar.
 
@@ -135,7 +135,7 @@ shasum -a 256 <file> | cut -d' ' -f1
 Formato:
 ```json
 {
-  "claude_kit_version": "<version de ~/Documents/GitHub/claude-kit/VERSION>",
+  "claude_kit_version": "<version de $CLAUDE_KIT_DIR/VERSION>",
   "synced_at": "<fecha actual YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},

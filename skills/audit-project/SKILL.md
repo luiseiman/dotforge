@@ -9,12 +9,12 @@ Ejecutá una auditoría completa de la configuración de Claude Code del proyect
 
 ## Paso 1: Detectar stack
 
-Use detection rules from `~/Documents/GitHub/claude-kit/stacks/detect.md`.
+Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
 ## Paso 2: Cargar checklist
 
-Leer `~/Documents/GitHub/claude-kit/audit/checklist.md` para los criterios de evaluación.
-Leer `~/Documents/GitHub/claude-kit/audit/scoring.md` para los pesos y caps.
+Leer `$CLAUDE_KIT_DIR/audit/checklist.md` para los criterios de evaluación.
+Leer `$CLAUDE_KIT_DIR/audit/scoring.md` para los pesos y caps.
 
 ## Paso 3: Evaluar
 
@@ -44,7 +44,7 @@ Para cada item del checklist, verificar existencia **y calidad**:
 
 ## Paso 4: Calcular score
 
-Usar los pesos de `~/Documents/GitHub/claude-kit/audit/scoring.md`:
+Usar los pesos de `$CLAUDE_KIT_DIR/audit/scoring.md`:
 1. `score_obligatorio = sum(items 1-5)` — máximo 10
 2. `score_recomendado = sum(items 6-11)` — máximo 6
 3. `score_total = score_obligatorio * 0.7 + score_recomendado * 0.5` — max 7.0 + 3.0 = 10.0
@@ -90,7 +90,7 @@ Ejecutar `/forge sync` para aplicar la plantilla claude-kit y cerrar los gaps.
 If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
 1. Read `CLAUDE_ERRORS.md` and group errors by Area column
 2. If any Area has 3+ entries with similar root causes, it's a candidate for promotion
-3. Check `~/Documents/GitHub/claude-kit/practices/inbox/` and `active/` for existing practices covering that pattern
+3. Check `$CLAUDE_KIT_DIR/practices/inbox/` and `active/` for existing practices covering that pattern
 4. If no existing practice covers it, create a new practice in `practices/inbox/` using the capture format:
    - `source_type: cross-project`
    - `tags: [error-promotion, <area>]`
@@ -114,7 +114,7 @@ This closes the Auditoría → Aprendizaje synergy: detected gaps feed back into
 
 ## Paso 8: Actualizar registry
 
-Si `~/Documents/GitHub/claude-kit/registry/projects.yml` existe, actualizar el entry del proyecto:
+Si `$CLAUDE_KIT_DIR/registry/projects.yml` existe, actualizar el entry del proyecto:
 - `score:` con el score calculado
 - `last_audit:` con la fecha actual
 - `claude_kit_version:` con la versión de VERSION si el proyecto fue bootstrapped

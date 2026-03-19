@@ -1,22 +1,22 @@
 Sos el operador de claude-kit, la fábrica de configuración para Claude Code.
-El proyecto claude-kit vive en `~/Documents/GitHub/claude-kit/`.
+El proyecto claude-kit vive en `$CLAUDE_KIT_DIR/`.
 
 ## Acción según $ARGUMENTS
 
 ### `audit`
 Ejecutar el skill `/audit-project` en el proyecto actual.
-Leer `~/Documents/GitHub/claude-kit/audit/checklist.md` y `scoring.md` como referencia.
+Leer `$CLAUDE_KIT_DIR/audit/checklist.md` y `scoring.md` como referencia.
 
 ### `sync`
 Ejecutar el skill `/sync-template` en el proyecto actual.
-Comparar contra `~/Documents/GitHub/claude-kit/template/` + stacks detectados.
+Comparar contra `$CLAUDE_KIT_DIR/template/` + stacks detectados.
 
 ### `bootstrap`
 Ejecutar el skill `/bootstrap-project` en el proyecto actual.
-Usar `~/Documents/GitHub/claude-kit/template/` como base.
+Usar `$CLAUDE_KIT_DIR/template/` como base.
 
 ### `global sync`
-Sincronizar `~/.claude/` contra `~/Documents/GitHub/claude-kit/global/`:
+Sincronizar `~/.claude/` contra `$CLAUDE_KIT_DIR/global/`:
 
 1. **CLAUDE.md**: comparar `~/.claude/CLAUDE.md` contra `global/CLAUDE.md.tmpl`.
    - Secciones ANTES de `<!-- forge:custom -->` se actualizan desde la plantilla.
@@ -27,7 +27,7 @@ Sincronizar `~/.claude/` contra `~/Documents/GitHub/claude-kit/global/`:
    - Deny list: unión de sets (agregar faltantes, nunca quitar).
    - Allow list: preservar lo que el usuario tiene.
    - Hooks: preservar lo existente, agregar detect-claude-changes si no está.
-   - Resolve `{{CLAUDE_KIT_PATH}}` in the template to the actual claude-kit directory (`~/Documents/GitHub/claude-kit`) before merging.
+   - Resolve `$CLAUDE_KIT_DIR` in the template to the actual claude-kit directory before merging.
    - NUNCA tocar `skipDangerousModePermissionPrompt` — es decisión del usuario.
 
 3. **Symlinks**: ejecutar `global/sync.sh` para skills, agents, commands.
@@ -55,12 +55,12 @@ Ejecutar el skill `/reset-project` en el proyecto actual.
 Restaura `.claude/` completo desde la plantilla claude-kit, con backup obligatorio y opción de rollback.
 
 ### `status`
-Leer `~/Documents/GitHub/claude-kit/registry/projects.yml` y mostrar:
+Leer `$CLAUDE_KIT_DIR/registry/projects.yml` y mostrar:
 ```
 ═══ REGISTRO claude-kit ═══
 Proyecto         Stack                    Score   Última auditoría
 ─────────────────────────────────────────────────────────────────
-SOMA             python-fastapi, docker   9.5     2026-03-19
+my-api           python-fastapi, docker   9.5     2026-03-19
 ...
 ```
 
@@ -81,12 +81,12 @@ NO auto-incorporar — solo informar.
 
 ### `scout`
 Ejecutar el skill `/scout-repos`.
-Leer repos de `~/Documents/GitHub/claude-kit/practices/sources.yml`.
+Leer repos de `$CLAUDE_KIT_DIR/practices/sources.yml`.
 Comparar sus `.claude/` configs contra template.
 Reportar patterns interesantes. NO auto-incorporar.
 
 ### `inbox`
-Listar prácticas pendientes en `~/Documents/GitHub/claude-kit/practices/inbox/`.
+Listar prácticas pendientes en `$CLAUDE_KIT_DIR/practices/inbox/`.
 Mostrar título, fecha, source_type y tags de cada una.
 
 ### `pipeline`
@@ -102,7 +102,7 @@ Deprecadas: {{N}} retiradas
 Leer de practices/inbox/, evaluating/, active/, deprecated/.
 
 ### `version`
-Leer `~/Documents/GitHub/claude-kit/VERSION` y mostrar.
+Leer `$CLAUDE_KIT_DIR/VERSION` y mostrar.
 
 ### Sin argumentos
 Mostrar ayuda:

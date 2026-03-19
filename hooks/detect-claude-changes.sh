@@ -3,10 +3,10 @@
 # Si hay archivos .claude/ modificados en la sesión, genera una nota
 # en practices/inbox/ para que /forge update la procese.
 #
-# === INSTALACIÓN ===
-# 1. Copiar este script a un lugar accesible (ya está en claude-kit/hooks/)
-# 2. Hacerlo ejecutable: chmod +x hooks/detect-claude-changes.sh
-# 3. Agregar a ~/.claude/settings.json:
+# === INSTALLATION ===
+# 1. Set CLAUDE_KIT_DIR to your clone location (global/sync.sh does this)
+# 2. Make executable: chmod +x hooks/detect-claude-changes.sh
+# 3. Add to ~/.claude/settings.json:
 #    {
 #      "hooks": {
 #        "Stop": [
@@ -15,17 +15,17 @@
 #            "hooks": [
 #              {
 #                "type": "command",
-#                "command": "/Users/TU_USUARIO/Documents/GitHub/claude-kit/hooks/detect-claude-changes.sh"
+#                "command": "$CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh"
 #              }
 #            ]
 #          }
 #        ]
 #      }
 #    }
-# 4. Reemplazar TU_USUARIO con tu username
 # ========================
 
-CLAUDE_KIT_DIR="$HOME/Documents/GitHub/claude-kit"
+# Resolve CLAUDE_KIT_DIR: use env var if set, otherwise default to script's parent
+CLAUDE_KIT_DIR="${CLAUDE_KIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 INBOX_DIR="$CLAUDE_KIT_DIR/practices/inbox"
 PROJECT_DIR="$(pwd)"
 PROJECT_NAME="$(basename "$PROJECT_DIR")"

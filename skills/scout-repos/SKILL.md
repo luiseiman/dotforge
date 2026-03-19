@@ -9,7 +9,7 @@ Review curated repos for Claude Code configuration patterns worth adopting.
 
 ## Paso 1: Load sources
 
-Read `~/Documents/GitHub/claude-kit/practices/sources.yml`.
+Read `$CLAUDE_KIT_DIR/practices/sources.yml`.
 For each source, note the `focus` areas to prioritize during review.
 
 ## Paso 2: Fetch and analyze each repo

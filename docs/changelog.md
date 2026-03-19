@@ -60,7 +60,7 @@
 ### Higiene interna
 - Fix: frontmatter `globs:` agregado a `template/rules/_common.md` (inconsistencia con versión deployada)
 - Fix: command `audit.md` actualizado a 8 stacks (faltaban gcp-cloud-run y redis)
-- Fix: scores inflados corregidos en registry (SOMA 10→9.5, InviSight 10→9.5)
+- Fix: inflated scores corrected in registry (recalculated with v1.0 formula)
 - Fix: bootstrap siempre copia `lint-on-save.sh` genérico (resuelve ambigüedad hooks de stack vs genérico)
 - Fix: researcher constraint relajada de 5 a 15 file reads
 - Eliminado: `docs/x-references.md` (contenido efímero)
@@ -142,8 +142,8 @@
 - settings.json.partial para supabase (supabase CLI)
 - Hook lint-swift.sh para swift-swiftui (swiftlint + swift build fallback)
 - Pipeline de prácticas: directorios evaluating/, active/, deprecated/ creados
-- Práctica TRADINGBOT movida a active/ con incorporated_in completo
-- Práctica gestion-de-mora descartada (solo config local)
+- Example practice moved to active/ with incorporated_in complete
+- Domain-specific practice discarded (local config only)
 - Bootstrap skill: soporte multi-stack explícito + sugerencia de hook global
 - 6/6 stacks ahora tienen settings.json.partial
 

@@ -23,13 +23,13 @@ Extraer:
 ## Paso 2: Validar duplicados
 
 Antes de crear, verificar que no exista una práctica similar:
-1. Buscar en `~/Documents/GitHub/claude-kit/practices/active/` por título o tags similares
-2. Buscar en `~/Documents/GitHub/claude-kit/practices/inbox/` por título similar
+1. Buscar en `$CLAUDE_KIT_DIR/practices/active/` por título o tags similares
+2. Buscar en `$CLAUDE_KIT_DIR/practices/inbox/` por título similar
 3. Si hay duplicado → informar al usuario y preguntar si quiere actualizar la existente o crear nueva
 
 ## Paso 3: Generar archivo
 
-Crear archivo en `~/Documents/GitHub/claude-kit/practices/inbox/` con formato:
+Crear archivo en `$CLAUDE_KIT_DIR/practices/inbox/` con formato:
 
 ```yaml
 ---

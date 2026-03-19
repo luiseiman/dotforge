@@ -60,5 +60,4 @@ Only record decisions with lasting impact. Skip trivial or one-off choices.
 - Check existing patterns before proposing new ones — consistency > novelty
 - If the project has a `docs/adr/` or similar, follow the existing ADR format
 - Flag any proposal that requires infrastructure changes (new deps, services, config)
-- For SOMA: respect the pipeline (Classifier→Intent→Planner→StateMachine→Policy→Agents)
 - Never propose a technology switch without cost/effort analysis

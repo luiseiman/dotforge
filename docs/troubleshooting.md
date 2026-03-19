@@ -50,7 +50,7 @@ chmod +x .claude/hooks/*.sh
 1. ¿El hook está instalado globalmente?
    - Verificar `~/.claude/settings.json` tiene referencia a `detect-claude-changes.sh` bajo `hooks.Stop`
 2. ¿El script es ejecutable?
-   - `chmod +x ~/Documents/GitHub/claude-kit/hooks/detect-claude-changes.sh`
+   - `chmod +x $CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh`
 3. ¿Los archivos se modificaron hace <2 horas?
    - El hook busca cambios en las últimas 2 horas
 4. ¿Ya existe una nota de hoy para ese proyecto?

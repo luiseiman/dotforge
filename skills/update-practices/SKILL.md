@@ -16,7 +16,7 @@ Pipeline de 3 fases para mantener claude-kit actualizado con prácticas descubie
 
 ## Fase 1: EVALUAR — Procesar inbox
 
-Leer todos los archivos en `~/Documents/GitHub/claude-kit/practices/inbox/`.
+Leer todos los archivos en `$CLAUDE_KIT_DIR/practices/inbox/`.
 
 Para cada práctica:
 
@@ -76,16 +76,16 @@ Para cada práctica aceptada en `evaluating/`:
 
 ## Fase 3: PROPAGAR — Sugerir actualización de proyectos
 
-1. Leer `~/Documents/GitHub/claude-kit/registry/projects.yml`
+1. Leer `$CLAUDE_KIT_DIR/registry/projects.yml`
 2. Para cada proyecto, mostrar qué cambió desde su última sincronización:
 
 ```
 ═══ PROPAGACIÓN SUGERIDA ═══
 
-SOMA (último sync: {{fecha o "nunca"}})
+project-a (último sync: {{fecha o "nunca"}})
   → {{N}} rules actualizadas
 
-derup (último sync: {{fecha o "nunca"}})
+project-b (último sync: {{fecha o "nunca"}})
   → {{N}} rules actualizadas
 
 Para propagar: ejecutar /forge sync en cada proyecto.

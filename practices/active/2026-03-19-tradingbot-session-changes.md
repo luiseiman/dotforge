@@ -1,20 +1,20 @@
 ---
-id: practice-2026-03-19-tradingbot-session-changes
-title: "Cambios en .claude/ detectados en TRADINGBOT"
-source: "hook post-sesión — TRADINGBOT"
+id: practice-2026-03-19-session-changes-example
+title: "Session changes detected via post-session hook"
+source: "post-session hook — real project"
 source_type: experience
 discovered: 2026-03-19
 status: active
-tags: [auto-detected, TRADINGBOT, settings, hooks, rules]
-tested_in: TRADINGBOT
+tags: [auto-detected, settings, hooks, rules]
+tested_in: example-project
 incorporated_in: [template/settings.json.tmpl, stacks/react-vite-ts/hooks/lint-ts.sh, stacks/python-fastapi/rules/backend.md, stacks/python-fastapi/rules/tests.md, stacks/react-vite-ts/rules/frontend.md, template/hooks/lint-on-save.sh]
 replaced_by: null
 ---
 
-## Descripción
-Se detectaron 10 archivo(s) modificados en .claude/ del proyecto TRADINGBOT durante la sesión.
+## Description
+10 modified files detected in `.claude/` of a real project during a session. This practice demonstrates the full pipeline: hook detection → inbox → evaluation → incorporation.
 
-## Archivos modificados
+## Modified files
 .claude/hooks/block-destructive.sh
 .claude/hooks/lint-python.sh
 .claude/hooks/lint-ts.sh
@@ -26,20 +26,17 @@ Se detectaron 10 archivo(s) modificados en .claude/ del proyecto TRADINGBOT dura
 .claude/settings.json
 .claude/settings.local.json
 
-## Evaluación necesaria
-Revisar si estos cambios contienen patrones, reglas, o configuraciones que deberían generalizarse a claude-kit.
+## Evaluation
+Reviewed 2026-03-19. Extracted 6 generalizable practices:
+1. Granular git permissions in settings.json (no wildcards)
+2. Recursive globs in deny list (**/.env vs .env)
+3. Defense-in-depth deny entries
+4. tsc --noEmit as complementary hook to eslint
+5. Factory pattern + dedicated tests.md for Python
+6. WebSocket/proxy patterns in frontend rules
 
-## Decisión
-Evaluado 2026-03-19. Se extrajeron 6 prácticas generalizables:
-1. Permisos git granulares en settings.json (no wildcard)
-2. Globs recursivos en deny (**/.env vs .env)
-3. Deny adicionales de defensa en profundidad
-4. tsc --noEmit como hook complementario a eslint
-5. Factory pattern + tests.md dedicado para Python
-6. WebSocket/proxy patterns en frontend rules
-
-Incorporados en: template/settings.json.tmpl, stacks/react-vite-ts/hooks/lint-ts.sh,
-stacks/python-fastapi/rules/backend.md, stacks/python-fastapi/rules/tests.md (nuevo),
+Incorporated in: template/settings.json.tmpl, stacks/react-vite-ts/hooks/lint-ts.sh,
+stacks/python-fastapi/rules/backend.md, stacks/python-fastapi/rules/tests.md (new),
 stacks/react-vite-ts/rules/frontend.md, template/hooks/lint-on-save.sh
 
-Descartados: rules/strategies.md (100% dominio trading), agents.md simplificado (subset sin valor nuevo)
+Discarded: rules/strategies.md (100% domain-specific), agents.md simplified (subset with no new value)

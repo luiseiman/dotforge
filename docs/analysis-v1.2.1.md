@@ -43,7 +43,7 @@
 - `<!-- forge:custom -->` protege secciones en sync
 
 **Debilidades:**
-- derup CLAUDE.md: 10 líneas sin Arquitectura
+- Some bootstrapped projects have minimal CLAUDE.md without Architecture section
 - `_common.md` copiado sin ajustar globs al stack real
 - Prompt Language rule ambigua (dice "todo en inglés" pero docs están en español)
 
