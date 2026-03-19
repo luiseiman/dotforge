@@ -7,6 +7,7 @@ description: >
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 color: green
+memory: project
 ---
 
 You are an implementation specialist. You receive a clear spec or plan and execute it precisely.

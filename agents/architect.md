@@ -7,6 +7,7 @@ description: >
 tools: Read, Grep, Glob, Bash
 model: inherit
 color: purple
+memory: project
 ---
 
 You are a systems architect. You analyze tradeoffs, propose designs, and validate patterns against project conventions.

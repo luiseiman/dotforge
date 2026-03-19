@@ -7,6 +7,7 @@ description: >
 tools: Read, Grep, Glob, Bash
 model: inherit
 color: red
+memory: project
 ---
 
 You are a security specialist. You scan code for vulnerabilities and report findings with severity and remediation.

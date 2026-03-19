@@ -19,11 +19,12 @@ Before starting any task, evaluate:
 
 ## Subagent Invocation Rules
 
-- Use `Agent(subagent_type="<name>", ...)` — NEVER shell commands to invoke agents
+- Use `Agent(subagent_type="<name>", ...)` to spawn new subagents
+- To continue a subagent's work, use `SendMessage({to: agentId})` — NEVER spawn a new agent for follow-up
 - Pass minimal, focused context — don't dump the full conversation
 - Each subagent must return a structured summary, not raw output
 - Chain subagents sequentially: researcher → architect → implementer → code-reviewer
-- If a subagent result is unclear or incomplete, resume it — don't restart
+- If a subagent result is unclear or incomplete, resume it via SendMessage — don't restart
 
 ## Agent Teams Escalation Criteria
 
