@@ -2,7 +2,7 @@
 
 # Contributing to claude-kit
 
-Thanks for your interest in contributing! claude-kit is a configuration factory for Claude Code — everything is markdown + shell scripts, no application code.
+Thanks for your interest in contributing! claude-kit is the only end-to-end configuration management system for Claude Code — not a one-shot bootstrap or a static collection. It uniquely combines additive stack layering, intelligent template sync, normalized audit scoring (0-10), a practices pipeline for continuous improvement, and cross-project registry tracking. Everything is markdown + shell scripts, no application code.
 
 ## How to contribute
 
@@ -81,7 +81,7 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 # Contribuir a claude-kit
 
-Gracias por tu interés en contribuir. claude-kit es una fábrica de configuración para Claude Code — todo es markdown + shell scripts, sin código de aplicación.
+Gracias por tu interés en contribuir. claude-kit es el único sistema de gestión de configuración end-to-end para Claude Code — no un bootstrap one-shot ni una colección estática. Combina de forma única stack layering aditivo, sync inteligente de plantillas, audit scoring normalizado (0-10), un pipeline de prácticas para mejora continua y registry cross-proyecto con tracking. Todo es markdown + shell scripts, sin código de aplicación.
 
 ## Cómo contribuir
 

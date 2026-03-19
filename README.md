@@ -23,6 +23,28 @@ export CLAUDE_KIT_DIR="$(pwd)"
 /forge sync         # Update against current template
 ```
 
+## Why claude-kit
+
+There are many Claude Code starter kits, skills collections, and CLAUDE.md generators. claude-kit is different because it's the only **end-to-end configuration management system** — not a one-shot bootstrap or a static collection.
+
+### What makes it unique
+
+| Feature | What it means | Who else does this |
+|---------|---------------|-------------------|
+| **Additive stack layering** | Auto-detects your tech (8 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
+| **Template sync with markers** | `<!-- forge:section -->` separates managed sections from your customizations. `/forge sync` updates the managed parts without touching yours. | No one |
+| **Audit scoring (0-10)** | 11-item checklist (5 obligatory scored 0-2, 6 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. | tw93/claude-health has tiers but no numeric normalization or security cap |
+| **Practices pipeline** | Continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Practices arrive from capture, web watch, repo scouting, audit gaps, or post-session hooks. | No one |
+| **Cross-project registry** | `registry/projects.yml` tracks audit scores with history across all managed projects. Spot regressions, compare configurations. | No one |
+| **Global config via symlinks** | `global/sync.sh` installs skills, agents, and commands as symlinks into `~/.claude/`. One source of truth, instant propagation. | No one with this symlink-based approach |
+
+### How it compares
+
+- **Skills collections** (superpowers, claude-skills) give you components — claude-kit gives you the system that manages them
+- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrap once — claude-kit bootstraps, syncs, audits, and evolves
+- **CLAUDE.md generators** generate one file — claude-kit generates and maintains the entire `.claude/` directory
+- **Audit tools** (claude-health) check once — claude-kit checks, scores, tracks over time, and feeds gaps back into the practices pipeline
+
 ## What it does
 
 `/forge bootstrap` detects your project's tech stack and generates:
@@ -186,6 +208,28 @@ export CLAUDE_KIT_DIR="$(pwd)"
 /forge audit        # Auditar la configuración y obtener un puntaje (0-10)
 /forge sync         # Actualizar contra la plantilla actual
 ```
+
+## Por qué claude-kit
+
+Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para Claude Code. claude-kit es diferente porque es el único **sistema de gestión de configuración end-to-end** — no un bootstrap one-shot ni una colección estática.
+
+### Qué lo hace único
+
+| Feature | Qué significa | Quién más lo hace |
+|---------|---------------|-------------------|
+| **Stack layering aditivo** | Auto-detecta tu tech (8 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
+| **Template sync con markers** | `<!-- forge:section -->` separa secciones gestionadas de tus customizaciones. `/forge sync` actualiza lo gestionado sin tocar lo tuyo. | Nadie |
+| **Audit scoring (0-10)** | Checklist de 11 ítems (5 obligatorios 0-2, 6 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
+| **Pipeline de prácticas** | Ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Las prácticas llegan desde capture, web watch, repo scouting, audit gaps, o hooks post-sesión. | Nadie |
+| **Registry cross-proyecto** | `registry/projects.yml` trackea audit scores con historial en todos los proyectos gestionados. Detectá regresiones, compará configuraciones. | Nadie |
+| **Config global via symlinks** | `global/sync.sh` instala skills, agentes y commands como symlinks en `~/.claude/`. Una sola fuente de verdad, propagación instantánea. | Nadie con este enfoque basado en symlinks |
+
+### Cómo se compara
+
+- **Colecciones de skills** (superpowers, claude-skills) te dan componentes — claude-kit te da el sistema que los gestiona
+- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrapean una vez — claude-kit bootstrapea, sincroniza, audita y evoluciona
+- **Generadores de CLAUDE.md** generan un archivo — claude-kit genera y mantiene todo el directorio `.claude/`
+- **Herramientas de auditoría** (claude-health) revisan una vez — claude-kit revisa, puntúa, trackea en el tiempo y alimenta los gaps al pipeline de prácticas
 
 ## Qué hace
 

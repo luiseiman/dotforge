@@ -4,6 +4,12 @@
 >
 > Hoja de ruta de desarrollo. Las entradas usan español/inglés mixto. Ver [changelog.md](changelog.md) para items completados.
 
+## Vision / Visión
+
+claude-kit is the only end-to-end configuration management system for Claude Code. While other tools offer one-shot bootstraps, skills collections, or CLAUDE.md generators, claude-kit uniquely combines **additive stack layering**, **intelligent template sync**, **normalized audit scoring**, **a practices pipeline for continuous improvement**, and **cross-project registry tracking** — all in markdown + shell scripts. The roadmap deepens each of these differentiators.
+
+claude-kit es el único sistema de gestión de configuración end-to-end para Claude Code. Mientras otras herramientas ofrecen bootstraps one-shot, colecciones de skills o generadores de CLAUDE.md, claude-kit combina de forma única **stack layering aditivo**, **sync inteligente de plantillas**, **audit scoring normalizado**, **un pipeline de prácticas para mejora continua** y **registry cross-proyecto con tracking** — todo en markdown + shell scripts. El roadmap profundiza cada uno de estos diferenciadores.
+
 ## v1.0.1 — Higiene interna
 Corregir inconsistencias sin agregar features.
 
