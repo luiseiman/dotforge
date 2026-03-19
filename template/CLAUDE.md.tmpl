@@ -1,0 +1,33 @@
+# CLAUDE.md — {{PROJECT_NAME}}
+
+## Build & Development
+<!-- forge:commands — Reemplazar con comandos reales del proyecto -->
+```
+# build
+# test
+# lint
+# run
+```
+
+## Stack
+<!-- forge:stack — Completar con tecnologías del proyecto -->
+
+## Arquitectura
+<!-- forge:architecture — Estructura de carpetas + flujo de datos -->
+
+## Convenciones
+- Funciones: snake_case (Python) | camelCase (TS/Swift)
+- Clases/Types: PascalCase
+- Archivos: kebab-case (TS) | snake_case (Python) | PascalCase (Swift)
+- Tests obligatorios para funcionalidad nueva
+- Manejo de errores: nunca catch vacío, siempre log o re-raise
+- Type hints en funciones públicas (Python) | strict mode (TS) | Codable (Swift)
+
+## Reglas de trabajo
+- No refactorizar código que no se pidió modificar
+- Plan Mode para tareas >3 archivos o cambio arquitectónico
+- Tests deben pasar antes de reportar "listo"
+- Si un test falla, corregirlo antes de reportar
+
+## Errores conocidos
+Ver CLAUDE_ERRORS.md para lecciones aprendidas y patrones a evitar.

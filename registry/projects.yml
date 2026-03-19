@@ -1,0 +1,52 @@
+# Registro de proyectos gestionados por claude-kit
+# Actualizado por /forge audit
+
+projects:
+  - name: SOMA
+    path: /Users/luiseiman/SOMA
+    stacks: [python-fastapi, docker-deploy]
+    last_audit: null
+    score: null
+    notes: "Agent OS v1. Config completa (rules, commands, hooks)."
+
+  - name: SOMA2
+    path: /Users/luiseiman/Documents/SOMA2
+    stacks: [python-fastapi, react-vite-ts, docker-deploy]
+    last_audit: null
+    score: null
+    notes: "Agent OS rewrite. Rules + specs. 200+ tests."
+
+  - name: InviSight-iOS
+    path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
+    stacks: [swift-swiftui, supabase]
+    last_audit: null
+    score: null
+    notes: "Trading iOS app."
+
+  - name: cotiza-api-cloud
+    path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
+    stacks: [python-fastapi]
+    last_audit: null
+    score: null
+    notes: "Python WebSocket API, GCP Cloud Run. Config mínima."
+
+  - name: derup
+    path: /Users/luiseiman/Documents/Claude/derup
+    stacks: [react-vite-ts]
+    last_audit: null
+    score: null
+    notes: "TypeScript Vite ER modeler. Solo settings."
+
+  - name: gestion-de-mora
+    path: /Users/luiseiman/gestion de mora
+    stacks: [data-analysis]
+    last_audit: null
+    score: null
+    notes: "Análisis de mora bancaria. Solo settings.local. Sin git."
+
+  - name: TradingBot
+    path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
+    stacks: [python-fastapi, supabase]
+    last_audit: null
+    score: null
+    notes: "Bot de trading. Supabase + estrategias."

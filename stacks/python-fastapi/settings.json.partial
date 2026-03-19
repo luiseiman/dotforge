@@ -1,0 +1,15 @@
+{
+  "_comment": "Merge con template/settings.json.tmpl",
+  "permissions": {
+    "allow": [
+      "Bash(pytest *)",
+      "Bash(PYTHONPATH=* pytest *)",
+      "Bash(python3 *)",
+      "Bash(ruff *)",
+      "Bash(uvicorn *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(make *)"
+    ]
+  }
+}

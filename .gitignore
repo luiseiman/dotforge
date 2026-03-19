@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local (no versionar)
+.claude/settings.local.json
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*~
