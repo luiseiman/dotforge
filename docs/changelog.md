@@ -13,6 +13,9 @@
 - Nuevo: git tags v0.1.0 a v1.2.1 (habilita `/forge diff` con comparación por tags)
 - Cambio: `/forge watch` y `/forge scout` marcados como stubs en forge.md
 - Cambio: registry scores recalculados con nueva fórmula
+- Nuevo: audit cross-project error promotion — errores recurrentes (3+) en CLAUDE_ERRORS.md se promueven a practices/inbox
+- Nuevo: audit gap capture — gaps de auditoría (obligatorios 0-1, recomendados 0) se capturan como prácticas
+- Nuevo: update-practices genera rules automáticamente cuando la práctica lo amerita
 
 ---
 

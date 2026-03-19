@@ -85,7 +85,34 @@ Score: {{X.X}}/10 {{nivel}}
 Ejecutar `/forge sync` para aplicar la plantilla claude-kit y cerrar los gaps.
 ```
 
-## Paso 6: Actualizar registry
+## Paso 6: Cross-project error promotion
+
+If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
+1. Read `CLAUDE_ERRORS.md` and group errors by Area column
+2. If any Area has 3+ entries with similar root causes, it's a candidate for promotion
+3. Check `~/Documents/GitHub/claude-kit/practices/inbox/` and `active/` for existing practices covering that pattern
+4. If no existing practice covers it, create a new practice in `practices/inbox/` using the capture format:
+   - `source_type: cross-project`
+   - `tags: [error-promotion, <area>]`
+   - Description: the recurring pattern and derived rule
+5. Report promotions in the audit output under `── ERROR PATTERNS ──`
+
+This closes the Memoria → Aprendizaje synergy: recurring project errors feed the practices pipeline.
+
+## Paso 7: Audit gaps as practices
+
+For each obligatory item scored 0 or 1, and each recommended item scored 0:
+1. Check if a practice already exists in `practices/inbox/` or `active/` for that gap
+2. If not, create a practice in `practices/inbox/`:
+   - `source_type: audit-gap`
+   - `tags: [audit-gap, <item-name>]`
+   - Description: what's missing and recommended fix
+3. Only create practices for gaps that reflect a template/stack issue (not project-specific misconfigurations)
+4. Report in audit output under `── GAPS CAPTURADOS ──`
+
+This closes the Auditoría → Aprendizaje synergy: detected gaps feed back into the practices pipeline.
+
+## Paso 8: Actualizar registry
 
 Si `~/Documents/GitHub/claude-kit/registry/projects.yml` existe, actualizar el entry del proyecto:
 - `score:` con el score calculado
