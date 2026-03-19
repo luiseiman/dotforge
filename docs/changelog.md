@@ -1,5 +1,17 @@
 # Changelog — claude-kit
 
+## v0.2.0 (2026-03-19)
+
+### Pipeline de prácticas
+- practices/ con ciclo de vida: inbox → evaluating → active → deprecated
+- Skill capture-practice para registrar insights manuales
+- Skill update-practices reescrito con pipeline de 5 fases
+- Comando /forge capture, /forge inbox, /forge pipeline
+- Hook Stop global: detecta cambios en .claude/ y los registra en inbox
+- Scheduled task forge-weekly-update (lunes 9:15 AM)
+
+---
+
 ## v0.1.0 (2026-03-19)
 
 ### Inicial
