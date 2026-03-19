@@ -1,5 +1,9 @@
 # Roadmap claude-kit v1.0.0 → v2.0.0
 
+> Development roadmap. Entries use mixed Spanish/English. See [changelog.md](changelog.md) for completed items.
+>
+> Hoja de ruta de desarrollo. Las entradas usan español/inglés mixto. Ver [changelog.md](changelog.md) para items completados.
+
 ## v1.0.1 — Higiene interna
 Corregir inconsistencias sin agregar features.
 

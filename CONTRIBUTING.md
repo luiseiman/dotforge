@@ -1,3 +1,5 @@
+> **[English](#contributing-to-claude-kit)** | **[Español](#contribuir-a-claude-kit)**
+
 # Contributing to claude-kit
 
 Thanks for your interest in contributing! claude-kit is a configuration factory for Claude Code — everything is markdown + shell scripts, no application code.
@@ -74,3 +76,82 @@ Be respectful. Be constructive. Focus on the work.
 ## License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
+
+---
+
+# Contribuir a claude-kit
+
+Gracias por tu interés en contribuir. claude-kit es una fábrica de configuración para Claude Code — todo es markdown + shell scripts, sin código de aplicación.
+
+## Cómo contribuir
+
+### Reportar problemas
+
+Abrí un issue con:
+- Qué esperabas
+- Qué pasó en su lugar
+- Tu versión de Claude Code (`claude --version`)
+
+### Proponer un nuevo stack
+
+1. Creá `stacks/<nombre>/` con:
+   - `rules/*.md` — reglas contextuales con frontmatter `globs:`
+   - `settings.json.partial` — permisos y hooks para mergear
+   - Opcional `hooks/*.sh` — validación específica del stack
+2. Agregá reglas de detección en `stacks/detect.md`
+3. Probá con `/forge bootstrap` en un proyecto real
+4. Enviá un PR
+
+Consultá `docs/creating-stacks.md` para la guía completa.
+
+### Mejorar reglas o prompts
+
+- Todo el contenido consumido por Claude (reglas, prompts de agentes, pasos de skills) debe estar en **inglés**
+- El contenido para usuarios (docs, descripciones, changelog) puede estar en español o inglés
+- Los prompts deben ser compactos: modo imperativo, sin relleno, una instrucción por línea
+- Probá tus cambios ejecutando `/forge audit` en un proyecto bootstrapeado
+
+### Enviar una práctica
+
+Usá `/forge capture "descripción"` para crear una práctica en `practices/inbox/`. Las prácticas pasan por un ciclo de vida: `inbox/` → `evaluating/` → `active/` → `deprecated/`.
+
+## Configuración de desarrollo
+
+```bash
+# Clonar
+git clone https://github.com/luiseiman/claude-kit.git
+cd claude-kit
+
+# Configurar CLAUDE_KIT_DIR (usado por skills y hooks)
+export CLAUDE_KIT_DIR="$(pwd)"
+
+# Instalar globalmente (symlinks de skills, agents, commands en ~/.claude/)
+./global/sync.sh
+
+# Validar
+bash -n .claude/hooks/*.sh
+shellcheck .claude/hooks/*.sh 2>/dev/null || true
+python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
+```
+
+## Convenciones
+
+- **Commits**: atómicos, modo imperativo, primera línea <72 chars, con prefijo `feat:`, `fix:`, `chore:`, `docs:`
+- **Hooks**: scripts bash, `exit 0` (ok) o `exit 2` (bloquear), deben tener `chmod +x`
+- **Skills**: directorio con `SKILL.md` que contenga frontmatter `name`/`description`
+- **Rules**: markdown con frontmatter `globs:` para carga automática
+- **Templates**: extensión `.tmpl` con marcadores `<!-- forge:section -->`
+
+## Qué NO contribuir
+
+- Código de aplicación — claude-kit solo genera configuración para Claude Code
+- Reglas que no provengan de experiencia en proyectos reales
+- Features que agreguen complejidad sin valor claro
+
+## Código de conducta
+
+Sé respetuoso. Sé constructivo. Enfocate en el trabajo.
+
+## Licencia
+
+Al contribuir, aceptás que tus contribuciones serán licenciadas bajo la Licencia MIT.

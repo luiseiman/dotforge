@@ -1,3 +1,93 @@
+> **[English](#anatomy-of-a-good-claudemd)** | **[Español](#anatomía-de-un-buen-claudemd)**
+
+# Anatomy of a good CLAUDE.md
+
+## Principles
+
+1. **Concise**: <100 lines. If it grows, modularize with rules/.
+2. **Actionable**: every line must change Claude's behavior.
+3. **Specific**: exact commands, real paths, concrete versions.
+4. **Up to date**: reflect current state, not the past.
+
+---
+
+## Recommended structure
+
+### 1. Build & Development (required)
+```markdown
+## Build & Development
+- Build: `npm run build`
+- Test: `npm run test`
+- Lint: `npm run lint`
+- Dev: `npm run dev`
+```
+Why first? It's what Claude needs most frequently.
+
+### 2. Stack (required)
+```markdown
+## Stack
+Python 3.12, FastAPI, Redis 7 Streams, React 19, TypeScript strict, Tailwind CSS
+```
+One line. No unnecessary explanations.
+
+### 3. Architecture (recommended)
+```markdown
+## Architecture
+/api → REST endpoints (thin, logic in /services)
+/services → business logic
+/models → types and validation
+/tests → pytest (unit + integration)
+```
+Folder map + responsibility of each one.
+
+### 4. Conventions (recommended)
+```markdown
+## Conventions
+- snake_case for functions, PascalCase for classes
+- Type hints on public functions
+- Tests required for new functionality
+- Error handling: never empty catch
+```
+Only what's not obvious from the language/framework.
+
+### 5. Working rules (optional but useful)
+```markdown
+## Working rules
+- Plan Mode for >3 files
+- Don't refactor what wasn't asked
+- Tests must pass before reporting "done"
+```
+
+### 6. Error reference (optional)
+```markdown
+## Known errors
+See CLAUDE_ERRORS.md
+```
+
+---
+
+## Anti-patterns
+
+| Do | Don't |
+|----|-------|
+| Exact commands | "Run tests" without command |
+| Specific versions | "Modern Python" |
+| Rules in .claude/rules/ | Everything in CLAUDE.md (200+ lines) |
+| Update post-session | Leave outdated |
+| One rule per concept | Paragraphs of explanation |
+
+---
+
+## Quality test
+
+Before finalizing a CLAUDE.md:
+1. Can a fresh Claude build the project reading only this file?
+2. Would each line change Claude's behavior if removed?
+3. Is anything duplicated with rules/ or README?
+4. Do the commands work if I copy-paste them?
+
+---
+
 # Anatomía de un buen CLAUDE.md
 
 ## Principios

@@ -1,5 +1,10 @@
-# Análisis Integral — claude-kit v1.2.1
-**Fecha:** 2026-03-19
+# Análisis Integral / Comprehensive Analysis — claude-kit v1.2.1
+
+> Internal analysis of 7 dimensions across 83 files and 49 rules. Mixed Spanish/English.
+>
+> Análisis interno de 7 dimensiones sobre 83 archivos y 49 reglas.
+
+**Fecha / Date:** 2026-03-19
 
 ## Inventario
 

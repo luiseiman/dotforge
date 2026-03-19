@@ -1,3 +1,58 @@
+> **[English](#security-checklist--pre-deploy)** | **[Español](#checklist-de-seguridad--pre-deploy)**
+
+# Security Checklist — Pre-deploy
+
+Verify BEFORE deploying any project.
+
+## Inputs and validation
+- [ ] User inputs sanitized (HTML, SQL, shell)
+- [ ] Type and range validation on API endpoints
+- [ ] File uploads: verify MIME type, max size, safe filename
+- [ ] URLs: validate scheme (no javascript:, data:)
+
+## Secrets and credentials
+- [ ] No hardcoded credentials in code
+- [ ] .env in .gitignore
+- [ ] API keys in environment variables or secrets manager
+- [ ] Tokens with minimum necessary permissions (least privilege)
+- [ ] Secrets rotated if ever exposed
+
+## Database
+- [ ] Parameterized queries (never string interpolation)
+- [ ] RLS enabled on tables with user data (Supabase)
+- [ ] Backups configured
+- [ ] Connections with TLS
+
+## Authentication and authorization
+- [ ] Auth on all endpoints that require it
+- [ ] Tokens with expiration
+- [ ] Rate limiting on login and public endpoints
+- [ ] CORS configured (no wildcard * in production)
+
+## API and network
+- [ ] HTTPS in production
+- [ ] Security headers (HSTS, X-Content-Type-Options, etc.)
+- [ ] Errors don't expose stack traces or internal info to user
+- [ ] Timeouts configured on external requests
+
+## Logs and monitoring
+- [ ] Logs don't contain passwords, tokens, or PII
+- [ ] Critical errors alert (not just log)
+- [ ] Health checks on critical services
+
+## Dependencies
+- [ ] No known vulnerabilities (`npm audit`, `pip audit`)
+- [ ] Pinned versions (no latest/*)
+- [ ] Lock files (package-lock.json, poetry.lock) committed
+
+## Docker (if applicable)
+- [ ] Don't run as root inside the container
+- [ ] .dockerignore includes .env, .git, node_modules
+- [ ] Base images with specific version (not :latest)
+- [ ] Secrets NOT in build args or layers
+
+---
+
 # Checklist de Seguridad — Pre-deploy
 
 Verificar ANTES de deployar cualquier proyecto.

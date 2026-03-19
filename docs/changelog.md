@@ -1,5 +1,9 @@
 # Changelog — claude-kit
 
+> Version history. Entries use mixed Spanish/English as the project evolved. Technical terms are universal.
+>
+> Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
+
 ## v1.2.2 (2026-03-19)
 
 ### Correcciones del análisis v1.2.1

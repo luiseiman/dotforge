@@ -1,3 +1,65 @@
+> **[English](#practices-lifecycle)** | **[Español](#ciclo-de-vida-de-prácticas)**
+
+# Practices Lifecycle
+
+```
+INBOX → EVALUATING → ACTIVE → (DEPRECATED)
+```
+
+## Directories
+
+### inbox/
+Discovered but unevaluated practices. They arrive here from:
+- `/forge capture` (manual user insight)
+- `/forge update` (web search with specific queries)
+- `/forge watch` (deltas in official Anthropic docs)
+- `/forge scout` (patterns from curated repos in `sources.yml`)
+- Post-session hook (changes detected in .claude/ of projects)
+- Audit gap capture (gaps detected by `/forge audit`)
+
+### evaluating/
+Practices under evaluation. Tested in 1 project before generalizing.
+They have a `tested_in:` field with the project where they were tested.
+
+### active/
+Validated and active practices. Incorporated into template/, stacks/, or docs/.
+They have an `incorporated_in:` field with the files they modified.
+
+### deprecated/
+Practices that were replaced or no longer apply.
+They have a `replaced_by:` or `reason:` field.
+
+## File Format
+
+```yaml
+---
+id: practice-YYYY-MM-DD-slug
+title: Short title
+source: url or "own experience"
+source_type: web | changelog | community | experience
+discovered: YYYY-MM-DD
+status: inbox | evaluating | active | deprecated
+tags: [hooks, security, prompting, ...]
+tested_in: null | project-name
+incorporated_in: [] | [template/rules/_common.md, ...]
+replaced_by: null | practice-id
+---
+
+## Description
+What the practice states.
+
+## Evidence
+Why it works / source.
+
+## Impact on claude-kit
+Which files would need to be modified.
+
+## Decision
+Accept / Reject / Pending + reason.
+```
+
+---
+
 # Ciclo de vida de prácticas
 
 ```

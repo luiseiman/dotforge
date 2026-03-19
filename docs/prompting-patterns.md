@@ -1,3 +1,174 @@
+> **[English](#prompting-patterns-for-claude-code)** | **[Español](#patrones-de-prompting-para-claude-code)**
+
+# Prompting Patterns for Claude Code
+
+## 1. Universal base formula
+
+```
+## ROLE
+You are a [role] with [X years] experience in [domain].
+
+## CONTEXT
+[Current project/problem situation]
+
+## TASK
+[What you need exactly]
+
+## CONSTRAINTS
+- Don't [constraint 1]
+- Don't [constraint 2]
+
+## OUTPUT FORMAT
+[How you want the response]
+
+## EXAMPLE
+[1-2 examples of expected format]
+```
+
+---
+
+## 2. Ultrathink (by @DataChaz)
+
+Prepend for complex problems:
+
+```
+Think step by step. Before answering:
+1. ANALYZE: List all explicit and implicit requirements
+2. EXPLORE: Consider at least 3 different approaches
+3. EVALUATE: Compare trade-offs of each
+4. DECIDE: Choose the best and explain WHY
+5. IMPLEMENT: Only then provide the solution
+```
+
+Use for: architectural design, decisions with trade-offs, complex debugging.
+
+---
+
+## 3. Forced Chain of Thought
+
+```
+Before answering, explicitly complete:
+STEP 1: All requirements (explicit and implicit)
+STEP 2: At least 2 alternatives
+STEP 3: Trade-offs of each
+STEP 4: Your decision and why
+STEP 5: Only then the solution
+```
+
+---
+
+## 4. Negative prompts (constraints)
+
+```
+CONSTRAINTS:
+- DON'T use external libraries without justification
+- DON'T refactor code I didn't ask about
+- DON'T add unsolicited features
+- DON'T make assumptions — ask first
+- DON'T change existing file/function names
+```
+
+---
+
+## 5. Few-shot (show format)
+
+Give 1-2 examples of expected output BEFORE requesting the result. Claude will replicate structure and level of detail.
+
+---
+
+## 6. Critical self-review
+
+After a response:
+```
+Review your previous response:
+1. What's incorrect about it?
+2. What edge cases didn't you consider?
+3. What would you improve?
+Give me the improved version.
+```
+
+---
+
+## 7. Roleplay for tough feedback
+
+```
+Act as a senior engineer with 15 years of experience who gives very direct feedback.
+Review this code and tell me exactly what's wrong and how you'd do it.
+```
+
+---
+
+## 8. Structured refactoring
+
+```
+Refactor in this priority order:
+1. Correctness (all cases)
+2. Readability (no unnecessary comments)
+3. Performance (only if there's a real problem)
+4. Elegance (idiomatic in [language])
+Show BEFORE and AFTER with explanation of each change.
+```
+
+---
+
+## 9. Initial context for vibe coding
+
+```
+- Stack: [exact technologies]
+- Audience: [who uses it]
+- Goal: [what you're building in 2 sentences]
+- Constraints: [real limitations]
+- Time: [to prioritize scope]
+```
+
+---
+
+## 10. Skeleton first
+
+```
+First create only the folder structure + empty files + CLAUDE.md.
+No implementation. Wait for my OK before implementing.
+```
+
+---
+
+## Ready templates
+
+### New project
+```
+Stack: [technologies]
+The project does: [2 sentences]
+Before writing code:
+1. Suggest folder structure
+2. List main dependencies
+3. Explain architectural decisions
+Wait for my OK before creating files.
+```
+
+### Debug
+```
+Error in [language/framework]:
+ERROR: [full stack trace]
+CODE: [relevant code]
+CONTEXT: Happens when [situation]. Already tried: [what I tested]
+Analyze step by step and give me the solution.
+```
+
+### Code review
+```
+Code review as senior for production:
+1. Bugs and edge cases
+2. Security issues
+3. Performance
+4. Readability
+5. Best practices for [language]
+For each problem: issue + impact + fix.
+At the end, complete corrected code.
+CODE: [your code]
+```
+
+---
+
 # Patrones de Prompting para Claude Code
 
 ## 1. Fórmula base universal
