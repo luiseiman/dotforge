@@ -4,50 +4,54 @@
 
 ### 1. CLAUDE.md (0-2)
 - 0: No existe
-- 1: Existe pero <20 líneas o solo boilerplate
-- 2: Completo — incluye stack, arquitectura, comandos build/test, convenciones
+- 1: Existe pero <20 líneas útiles O falta alguna sección clave
+- 2: Completo — incluye **todas** estas secciones: stack/tecnologías, arquitectura/estructura, comandos build/test exactos, convenciones
+
+**Verificación:** No contar líneas vacías ni comentarios. Buscar presencia explícita de: nombre del stack, al menos 1 comando build/test, estructura de directorios o descripción de arquitectura.
 
 ### 2. .claude/settings.json (0-2)
 - 0: No existe
-- 1: Existe pero sin deny list o con permisos excesivos
-- 2: Permisos explícitos + deny list de seguridad (.env, *.key, *.pem)
+- 1: Existe pero sin deny list o con permisos excesivos (Bash(*) o allow vacío)
+- 2: Permisos explícitos por herramienta + deny list de seguridad (.env, *.key, *.pem, *credentials*)
 
 ### 3. Rules contextuales (0-2)
 - 0: No existen (.claude/rules/ vacío o ausente)
-- 1: Existen pero sin frontmatter globs (se aplican siempre)
+- 1: Existen pero sin frontmatter globs (se aplican siempre a todo)
 - 2: Rules con globs específicos por área del proyecto
 
 ### 4. Hook block-destructive (0-2)
 - 0: No existe
-- 1: Existe pero no está configurado en settings.json hooks
-- 2: Existe, es ejecutable, y está wired en settings.json PreToolUse
+- 1: Existe pero falla alguno: no es ejecutable (`chmod +x`), no está wired en settings.json hooks, o no cubre los 3 patrones básicos (rm -rf, DROP, force push)
+- 2: Existe, es ejecutable (`-x`), está wired en settings.json PreToolUse, y cubre patrones básicos
+
+**Verificación:** Correr `test -x .claude/hooks/block-destructive.sh` y verificar que settings.json tiene referencia en hooks.
 
 ### 5. Comandos build/test documentados (0-2)
 - 0: No hay forma de saber cómo buildear/testear
-- 1: Están en README pero no en CLAUDE.md
-- 2: Documentados en CLAUDE.md con comandos exactos y funcionan
+- 1: Están en README pero no en CLAUDE.md, o están en CLAUDE.md pero son incorrectos
+- 2: Documentados en CLAUDE.md con comandos exactos que corresponden al stack detectado
 
-## Recomendado (cada item: 0-1 punto, total máximo: 5)
+## Recomendado (cada item: 0-1 punto, total máximo: 6)
 
 ### 6. CLAUDE_ERRORS.md
 - 0: No existe
-- 1: Existe con formato para registrar errores
+- 1: Existe con formato para registrar errores (tabla o estructura)
 
 ### 7. Hook de lint automático
 - 0: No hay lint post-write
-- 1: Hook de lint configurado para el stack del proyecto
+- 1: Hook de lint configurado para el stack del proyecto Y es ejecutable (`chmod +x`)
 
 ### 8. Comandos custom (.claude/commands/)
 - 0: No hay comandos custom
-- 1: Al menos 1 comando custom relevante
+- 1: Al menos 1 comando custom relevante al proyecto
 
 ### 9. Memory del proyecto
-- 0: No hay archivos en .claude/projects/*/memory/
+- 0: No hay archivos de memoria
 - 1: Existe memoria con contexto útil del proyecto
 
 ### 10. Agentes de orquestación
 - 0: No hay .claude/agents/ ni regla agents.md
-- 1: Agentes instalados + regla de orquestación activa
+- 1: Agentes instalados + regla de orquestación activa en .claude/rules/
 
 ### 11. .gitignore protege secrets
 - 0: No hay .gitignore o no protege .env/secrets

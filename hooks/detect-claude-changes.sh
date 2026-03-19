@@ -1,9 +1,29 @@
 #!/bin/bash
 # Stop hook: detecta cambios en .claude/ al final de una sesión
-# Instalar en ~/.claude/settings.json bajo hooks.Stop
-#
 # Si hay archivos .claude/ modificados en la sesión, genera una nota
 # en practices/inbox/ para que /forge update la procese.
+#
+# === INSTALACIÓN ===
+# 1. Copiar este script a un lugar accesible (ya está en claude-kit/hooks/)
+# 2. Hacerlo ejecutable: chmod +x hooks/detect-claude-changes.sh
+# 3. Agregar a ~/.claude/settings.json:
+#    {
+#      "hooks": {
+#        "Stop": [
+#          {
+#            "matcher": "",
+#            "hooks": [
+#              {
+#                "type": "command",
+#                "command": "/Users/TU_USUARIO/Documents/GitHub/claude-kit/hooks/detect-claude-changes.sh"
+#              }
+#            ]
+#          }
+#        ]
+#      }
+#    }
+# 4. Reemplazar TU_USUARIO con tu username
+# ========================
 
 CLAUDE_KIT_DIR="$HOME/Documents/GitHub/claude-kit"
 INBOX_DIR="$CLAUDE_KIT_DIR/practices/inbox"

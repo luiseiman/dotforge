@@ -4,10 +4,10 @@ title: "Cambios en .claude/ detectados en TRADINGBOT"
 source: "hook post-sesión — TRADINGBOT"
 source_type: experience
 discovered: 2026-03-19
-status: evaluated
-tags: [auto-detected, TRADINGBOT]
+status: active
+tags: [auto-detected, TRADINGBOT, settings, hooks, rules]
 tested_in: TRADINGBOT
-incorporated_in: []
+incorporated_in: [template/settings.json.tmpl, stacks/react-vite-ts/hooks/lint-ts.sh, stacks/python-fastapi/rules/backend.md, stacks/python-fastapi/rules/tests.md, stacks/react-vite-ts/rules/frontend.md, template/hooks/lint-on-save.sh]
 replaced_by: null
 ---
 

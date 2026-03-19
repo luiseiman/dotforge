@@ -20,7 +20,14 @@ Extraer:
 - **Impacto**: qué archivos de claude-kit podrían cambiar
 - **Tags**: categorización (hooks, rules, prompting, security, stack-specific, etc.)
 
-## Paso 2: Generar archivo
+## Paso 2: Validar duplicados
+
+Antes de crear, verificar que no exista una práctica similar:
+1. Buscar en `~/Documents/GitHub/claude-kit/practices/active/` por título o tags similares
+2. Buscar en `~/Documents/GitHub/claude-kit/practices/inbox/` por título similar
+3. Si hay duplicado → informar al usuario y preguntar si quiere actualizar la existente o crear nueva
+
+## Paso 3: Generar archivo
 
 Crear archivo en `~/Documents/GitHub/claude-kit/practices/inbox/` con formato:
 
@@ -53,7 +60,7 @@ Pendiente
 
 Nombre del archivo: `{{YYYY-MM-DD}}-{{slug}}.md`
 
-## Paso 3: Confirmar
+## Paso 4: Confirmar
 
 Mostrar:
 ```

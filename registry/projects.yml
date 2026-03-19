@@ -1,11 +1,14 @@
 # Registro de proyectos gestionados por claude-kit
 # Actualizado por /forge audit
+# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, notes
 
 projects:
   - name: SOMA
     path: /Users/luiseiman/SOMA
     stacks: [python-fastapi, docker-deploy]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: null
     score: 9.5
     notes: "CLAUDE.md 66L, settings.json (deny+hooks), 6 rules con globs, 2 hooks, 5 commands, CLAUDE_ERRORS.md. .gitignore actualizado."
 
@@ -13,6 +16,8 @@ projects:
     path: /Users/luiseiman/Documents/SOMA2
     stacks: [python-fastapi, react-vite-ts, docker-deploy]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: 0.3.0
     score: 8.5
     notes: "Bootstrapped. CLAUDE.md 126L, hooks (2), rules (7 con globs corregidos), CLAUDE_ERRORS.md, .gitignore secrets. Sin commands custom."
 
@@ -20,6 +25,8 @@ projects:
     path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
     stacks: [swift-swiftui, supabase]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: null
     score: 9.5
     notes: "CLAUDE.md 98L, settings.json (deny+hooks), 8 rules, 1 hook, 6 commands, CLAUDE_ERRORS.md (3 errors). .gitignore actualizado."
 
@@ -27,6 +34,8 @@ projects:
     path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
     stacks: [python-fastapi]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: null
     score: 9.5
     notes: "CLAUDE.md 96L, settings.json (deny+hooks+MCP), 6 rules, 2 hooks, 12 commands, CLAUDE_ERRORS.md (7 errors), memory activa."
 
@@ -34,6 +43,8 @@ projects:
     path: /Users/luiseiman/Documents/Claude/derup
     stacks: [react-vite-ts]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: null
     score: 8.0
     notes: "Bootstrapped. settings.json (deny+hooks), 2 hooks, 2 rules (common+frontend), CLAUDE_ERRORS.md. CLAUDE.md 10L (mínimo)."
 
@@ -41,6 +52,8 @@ projects:
     path: /Users/luiseiman/gestion de mora
     stacks: [data-analysis]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: 0.3.0
     score: 9.5
     notes: "Bootstrapped v0.3.0. CLAUDE.md, settings.json, hooks, rules, agents, git, CLAUDE_ERRORS.md. mora.db protegida."
 
@@ -48,6 +61,8 @@ projects:
     path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
     stacks: [python-fastapi, supabase]
     last_audit: 2026-03-19
+    last_sync: null
+    claude_kit_version: null
     score: 9.0
     notes: "CLAUDE.md 110L, settings.json (deny+hooks), 5 rules, 3 hooks, 3 commands, CLAUDE_ERRORS.md. .gitignore corregido (.claude/ → settings.local)."
 
@@ -55,5 +70,7 @@ projects:
     path: /Users/luiseiman/Documents/GitHub/claude-kit
     stacks: [markdown-shell]
     last_audit: 2026-03-19
+    last_sync: 2026-03-19
+    claude_kit_version: 1.0.0
     score: 9.5
-    notes: "Bootstrapped. CLAUDE.md, settings.json (deny+hooks), rules (common+agents), commands (4), CLAUDE_ERRORS.md, .gitignore secrets."
+    notes: "v1.0.0. CLAUDE.md, settings.json (deny+hooks), rules (common+agents), commands (4), CLAUDE_ERRORS.md, .gitignore secrets. 8 stacks, 6 agents, 5 skills."

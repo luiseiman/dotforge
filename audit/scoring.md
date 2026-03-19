@@ -4,10 +4,18 @@
 
 ```
 score_obligatorio = sum(items 1-5)  # máximo 10
-score_recomendado = sum(items 6-10) # máximo 5
+score_recomendado = sum(items 6-11) # máximo 6
 score_total = score_obligatorio + (score_recomendado * 0.5)  # bonus pesa 50%
 score_normalizado = min(score_total / 10 * 10, 10)  # normalizado a 10
 ```
+
+## Cap por seguridad crítica
+
+Si alguno de estos items es **0**, el score total tiene un cap máximo de **6.0**:
+- Item 2 (settings.json) — sin permisos configurados
+- Item 4 (hook block-destructive) — sin protección contra comandos destructivos
+
+**Razón:** Un proyecto sin seguridad básica no puede ser "Excelente" independientemente de cuántos recomendados tenga.
 
 ## Interpretación
 
@@ -22,8 +30,8 @@ score_normalizado = min(score_total / 10 * 10, 10)  # normalizado a 10
 ## Prioridad de corrección
 
 1. Hook block-destructive (seguridad)
-2. CLAUDE.md (contexto para Claude)
-3. settings.json con deny list (seguridad)
+2. settings.json con deny list (seguridad)
+3. CLAUDE.md (contexto para Claude)
 4. Rules con globs (calidad de output)
 5. Lint hook (calidad de código)
 6. El resto

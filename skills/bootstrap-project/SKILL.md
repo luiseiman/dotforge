@@ -9,8 +9,17 @@ Inicializar `.claude/` completo en el proyecto actual usando la plantilla claude
 
 ## Paso 1: Detectar stack
 
-Analizar el directorio actual para detectar stacks (misma lógica que audit-project).
-Si no se puede detectar automáticamente, preguntar al usuario.
+Analizar el directorio actual para detectar stacks:
+- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
+- `package.json` con react/vite/next → **react-vite-ts**
+- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
+- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
+- `*.db`, `*.sqlite`, `*.ipynb` prominentes → **data-analysis**
+- `docker-compose*`, `Dockerfile*` → **docker-deploy**
+- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
+- `redis` en requirements.txt/pyproject.toml → **redis**
+
+Un proyecto puede tener múltiples stacks. Si no se puede detectar, preguntar al usuario.
 
 ## Paso 2: Confirmar con usuario
 
@@ -39,9 +48,12 @@ Reemplazar marcadores:
 ## Paso 4: Generar settings.json
 
 1. Cargar `~/Documents/GitHub/claude-kit/template/settings.json.tmpl` como base
-2. Para cada stack detectado, leer `~/Documents/GitHub/claude-kit/stacks/{stack}/settings.json.partial`
-3. Merge: combinar los arrays `allow` de todos los partials con la base
-4. Escribir en `.claude/settings.json`
+2. Para **cada** stack detectado, leer `~/Documents/GitHub/claude-kit/stacks/{stack}/settings.json.partial`
+3. Merge: combinar los arrays `allow` de **todos** los partials con la base (unión de sets, sin duplicados)
+4. Merge: combinar los arrays `deny` igualmente
+5. Escribir en `.claude/settings.json`
+
+**Multi-stack:** Si se detectan múltiples stacks (ej: python-fastapi + react-vite-ts + docker-deploy), mergear TODOS los partials. Orden no importa — es unión de sets.
 
 ## Paso 5: Copiar hooks
 
@@ -79,6 +91,17 @@ Jerarquía de verdad: código fuente > CLAUDE.md > CLAUDE_ERRORS.md > auto-memor
 |-------|------|-------|------------|-----|---------------|
 ```
 
-## Paso 9: Reportar
+## Paso 10: Sugerir hook global
+
+Si el usuario no tiene `detect-claude-changes.sh` instalado en `~/.claude/settings.json`, mostrar:
+
+```
+💡 Tip: Para captura automática de prácticas, instalar el hook global:
+Copiar hooks/detect-claude-changes.sh a ~/.claude/hooks/
+Agregar en ~/.claude/settings.json bajo hooks → Stop
+Ver docs para detalles.
+```
+
+## Paso 11: Reportar
 
 Mostrar resumen de archivos creados y sugerir ejecutar `/audit-project` para verificar.

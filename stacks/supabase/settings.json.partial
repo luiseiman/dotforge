@@ -1,0 +1,9 @@
+{
+  "_comment": "Merge con template/settings.json.tmpl",
+  "permissions": {
+    "allow": [
+      "Bash(supabase *)",
+      "Bash(npx supabase *)"
+    ]
+  }
+}
