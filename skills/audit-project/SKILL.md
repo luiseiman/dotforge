@@ -120,3 +120,4 @@ Si `~/Documents/GitHub/claude-kit/registry/projects.yml` existe, actualizar el e
 - `claude_kit_version:` con la versión de VERSION si el proyecto fue bootstrapped
 - `last_sync:` preservar el valor existente (no modificar aquí)
 - `notes:` resumen breve de la auditoría
+- `history:` append a new entry `{date: YYYY-MM-DD, score: X.X, version: <claude_kit_version>}`. Never overwrite previous entries — this enables score trending over time.

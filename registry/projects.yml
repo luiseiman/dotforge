@@ -1,7 +1,8 @@
 # Registro de proyectos gestionados por claude-kit
 # Actualizado por /forge audit y /forge sync
-# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, notes
+# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, notes
 # Scoring v1.2.2: score = obligatorio*0.7 + recomendado*0.5 (max 10.0)
+# history: array of {date, score, version} entries — appended by /forge audit, never overwritten
 
 projects:
   - name: SOMA

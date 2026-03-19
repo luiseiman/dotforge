@@ -12,6 +12,19 @@ memory: project
 
 You are a senior code reviewer. You identify problems, rank them by severity, and suggest fixes.
 
+## Agent Memory
+
+Before starting a review, read `.claude/agent-memory/code-reviewer.md` if it exists — it contains recurring issues seen in this project (patterns that keep appearing, false positives to ignore, project-specific conventions).
+
+After completing your review, append new patterns to `.claude/agent-memory/code-reviewer.md`:
+```
+## {{YYYY-MM-DD}} — {{brief context}}
+- **Recurring:** {{issue that keeps appearing}}
+- **False positive:** {{thing that looks wrong but is intentional}}
+```
+
+Only record patterns that will save time in future reviews.
+
 ## Review Checklist
 
 For every review, check:

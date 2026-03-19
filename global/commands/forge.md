@@ -27,6 +27,7 @@ Sincronizar `~/.claude/` contra `~/Documents/GitHub/claude-kit/global/`:
    - Deny list: unión de sets (agregar faltantes, nunca quitar).
    - Allow list: preservar lo que el usuario tiene.
    - Hooks: preservar lo existente, agregar detect-claude-changes si no está.
+   - Resolve `{{CLAUDE_KIT_PATH}}` in the template to the actual claude-kit directory (`~/Documents/GitHub/claude-kit`) before merging.
    - NUNCA tocar `skipDangerousModePermissionPrompt` — es decisión del usuario.
 
 3. **Symlinks**: ejecutar `global/sync.sh` para skills, agents, commands.
@@ -72,13 +73,15 @@ Ejemplo: `/forge capture "hooks deberían ignorar archivos en migrations/"`
 Ejecutar el skill `/update-practices`.
 Pipeline: procesa inbox → evalúa → incorpora → sugiere propagación.
 
-### `watch` *(stub — no implementado)*
+### `watch`
+Ejecutar el skill `/watch-upstream`.
 Buscar actualizaciones en docs oficiales de Anthropic/Claude Code.
 Comparar contra template y rules actuales. Reportar deltas.
 NO auto-incorporar — solo informar.
 
-### `scout` *(stub — no implementado)*
-Revisar repos de `practices/sources.yml`.
+### `scout`
+Ejecutar el skill `/scout-repos`.
+Leer repos de `~/Documents/GitHub/claude-kit/practices/sources.yml`.
 Comparar sus `.claude/` configs contra template.
 Reportar patterns interesantes. NO auto-incorporar.
 

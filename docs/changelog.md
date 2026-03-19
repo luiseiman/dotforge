@@ -16,6 +16,12 @@
 - Nuevo: audit cross-project error promotion — errores recurrentes (3+) en CLAUDE_ERRORS.md se promueven a practices/inbox
 - Nuevo: audit gap capture — gaps de auditoría (obligatorios 0-1, recomendados 0) se capturan como prácticas
 - Nuevo: update-practices genera rules automáticamente cuando la práctica lo amerita
+- Nuevo: `/forge watch` skill formal (`watch-upstream`) — busca cambios en docs Anthropic
+- Nuevo: `/forge scout` skill formal (`scout-repos`) — revisa repos curados
+- Nuevo: `practices/sources.yml` — repos curados para scout
+- Nuevo: agent memory operativo — 4 agentes (implementer, architect, code-reviewer, security-auditor) leen/escriben `.claude/agent-memory/`
+- Nuevo: score trending — audit appends `history` entries al registry (nunca sobreescribe)
+- Fix: `{{CLAUDE_KIT_PATH}}` placeholder resuelto en instrucciones de global sync
 
 ---
 

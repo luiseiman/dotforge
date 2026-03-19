@@ -1,0 +1,19 @@
+# Repos curados para /forge scout
+# Cada entry es un repo público con configuración .claude/ interesante
+# /forge scout los revisa y reporta patterns útiles
+
+sources:
+  - name: anthropics/claude-code
+    url: https://github.com/anthropics/claude-code
+    focus: [hooks, settings, agents, skills]
+    notes: "Referencia oficial — patterns canónicos"
+
+  - name: anthropics/courses
+    url: https://github.com/anthropics/courses
+    focus: [prompting, rules]
+    notes: "Cursos oficiales — patterns de prompting"
+
+  - name: anthropics/anthropic-cookbook
+    url: https://github.com/anthropics/anthropic-cookbook
+    focus: [rules, commands]
+    notes: "Cookbook oficial — patterns de uso"
