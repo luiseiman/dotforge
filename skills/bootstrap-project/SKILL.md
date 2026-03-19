@@ -55,6 +55,21 @@ Reemplazar marcadores:
 
 **Multi-stack:** Si se detectan múltiples stacks (ej: python-fastapi + react-vite-ts + docker-deploy), mergear TODOS los partials. Orden no importa — es unión de sets.
 
+## Paso 4b: Validar JSON
+
+Antes de escribir `settings.json`, validar que el JSON generado es válido:
+
+```bash
+python3 -c 'import json; json.load(open(".claude/settings.json"))' 2>&1
+```
+
+O si aún no se escribió, validar el contenido en memoria/string:
+```bash
+echo '<json_content>' | python3 -c 'import json,sys; json.load(sys.stdin)'
+```
+
+Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corregir el JSON antes de continuar.
+
 ## Paso 5: Copiar hooks
 
 1. Copiar `~/Documents/GitHub/claude-kit/template/hooks/block-destructive.sh` → `.claude/hooks/`
@@ -102,6 +117,32 @@ Agregar en ~/.claude/settings.json bajo hooks → Stop
 Ver docs para detalles.
 ```
 
-## Paso 11: Reportar
+## Paso 11: Generar manifest
+
+Crear `.claude/.forge-manifest.json` con el hash SHA256 de cada archivo creado durante el bootstrap:
+
+```bash
+shasum -a 256 <file> | cut -d' ' -f1
+```
+
+Formato:
+```json
+{
+  "claude_kit_version": "<version de ~/Documents/GitHub/claude-kit/VERSION>",
+  "synced_at": "<fecha actual YYYY-MM-DD>",
+  "files": {
+    ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
+    ".claude/rules/_common.md": {"hash": "sha256:<hash>", "source": "template"},
+    ".claude/hooks/block-destructive.sh": {"hash": "sha256:<hash>", "source": "template"},
+    ".claude/hooks/lint-on-save.sh": {"hash": "sha256:<hash>", "source": "template"}
+  }
+}
+```
+
+- `source` indica de dónde vino el archivo: `"template"`, `"template+stacks"` (si es merge de base + stacks), o `"stacks/<nombre>"`.
+- Incluir TODOS los archivos creados en `.claude/` (rules, hooks, commands, agents).
+- NO incluir CLAUDE.md ni CLAUDE_ERRORS.md (están en la raíz, no en `.claude/`).
+
+## Paso 12: Reportar
 
 Mostrar resumen de archivos creados y sugerir ejecutar `/audit-project` para verificar.

@@ -20,13 +20,13 @@ claude-kit pasa a gestionar la capa global.
 5. Eliminar duplicación global vs `_common.md`
 6. Bootstrap/sync detectan qué ya está en global y no duplican
 
-## v1.2.0 — Tooling defensivo
+## v1.2.0 — Tooling defensivo ✅
 
-1. `/forge diff` — qué cambió desde último sync
-2. `/forge reset` — restaurar `.claude/` a plantilla
-3. Validación JSON en bootstrap y sync
-4. Hook testing framework (`tests/test-hooks.sh`)
-5. Manifest de archivos deployados (`.claude/.forge-manifest.json`)
+1. ~~`/forge diff` — qué cambió desde último sync~~
+2. ~~`/forge reset` — restaurar `.claude/` a plantilla~~
+3. ~~Validación JSON en bootstrap y sync~~
+4. ~~Hook testing framework (`tests/test-hooks.sh`)~~
+5. ~~Manifest de archivos deployados (`.claude/.forge-manifest.json`)~~
 
 ## v1.3.0 — Stack composition
 

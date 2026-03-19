@@ -92,9 +92,41 @@ Solo aplicar los cambios que el usuario apruebe.
 - `no` → cancelar
 - `seleccionar` → mostrar cada cambio y pedir sí/no individual
 
-Para settings.json: construir el JSON final mergeado y escribir. Verificar que el JSON es válido antes de escribir.
+Para settings.json: construir el JSON final mergeado. Antes de escribir, validar que el JSON es válido:
+
+```bash
+echo '<json_content>' | python3 -c 'import json,sys; json.load(sys.stdin)'
+```
+
+Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corregir el JSON antes de continuar.
 
 Para hooks: copiar + `chmod +x`.
+
+## Paso 4b: Actualizar manifest
+
+Después de aplicar cambios, actualizar (o crear) `.claude/.forge-manifest.json`:
+
+1. Si existe el manifest, leerlo
+2. Para cada archivo creado o modificado durante el sync, recalcular hash:
+   ```bash
+   shasum -a 256 <file> | cut -d' ' -f1
+   ```
+3. Actualizar `claude_kit_version` y `synced_at`
+4. Escribir el manifest actualizado
+
+Formato:
+```json
+{
+  "claude_kit_version": "<version de ~/Documents/GitHub/claude-kit/VERSION>",
+  "synced_at": "<fecha actual YYYY-MM-DD>",
+  "files": {
+    ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
+    ".claude/rules/_common.md": {"hash": "sha256:<hash>", "source": "template"}
+  }
+}
+```
+
+Incluir TODOS los archivos en `.claude/` que son gestionados por claude-kit (no solo los que cambiaron en este sync).
 
 ## Paso 5: Actualizar registry
 

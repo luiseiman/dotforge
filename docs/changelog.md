@@ -1,5 +1,19 @@
 # Changelog — claude-kit
 
+## v1.2.0 (2026-03-19)
+
+### Tooling defensivo
+- Nuevo: `/forge diff` — muestra qué cambió en claude-kit desde el último sync del proyecto
+- Nuevo: `/forge reset` — restaura `.claude/` a la plantilla con backup y rollback
+- Nuevo: Validación JSON obligatoria en bootstrap y sync antes de escribir settings.json
+- Nuevo: Hook testing framework (`tests/test-hooks.sh`) — 10 tests para block-destructive y lint-on-save
+- Nuevo: Manifest de archivos deployados (`.claude/.forge-manifest.json`) con hashes SHA256
+- Bootstrap genera manifest automáticamente al finalizar
+- Sync actualiza manifest después de aplicar cambios
+- Diff usa manifest para comparación rápida si existe
+
+---
+
 ## v1.1.0 (2026-03-19)
 
 ### Gestión global (~/.claude/)

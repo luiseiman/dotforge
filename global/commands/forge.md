@@ -44,6 +44,15 @@ Agents:       N/M instalados
 Commands:     forge.md (symlink/archivo/falta)
 ```
 
+### `diff`
+Ejecutar el skill `/diff-project` en el proyecto actual.
+Compara la configuración del proyecto contra la versión actual de claude-kit.
+Muestra qué cambió desde el último sync y recomienda si conviene sincronizar.
+
+### `reset`
+Ejecutar el skill `/reset-project` en el proyecto actual.
+Restaura `.claude/` completo desde la plantilla claude-kit, con backup obligatorio y opción de rollback.
+
 ### `status`
 Leer `~/Documents/GitHub/claude-kit/registry/projects.yml` y mostrar:
 ```
@@ -101,6 +110,8 @@ Comandos:
   audit         Auditar proyecto actual contra plantilla
   sync          Sincronizar config contra plantilla
   bootstrap     Inicializar .claude/ en proyecto nuevo
+  diff          Qué cambió desde último sync
+  reset         Restaurar .claude/ a plantilla (con backup)
   global sync   Sincronizar ~/.claude/ contra plantilla global
   global status Estado de ~/.claude/ vs plantilla
   status        Ver registro de proyectos y scores
