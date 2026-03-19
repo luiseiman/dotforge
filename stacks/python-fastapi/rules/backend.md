@@ -19,6 +19,7 @@ Python 3.12+, FastAPI, async/await nativo. Type hints en funciones públicas. Ru
 - PYTHONPATH setear si el proyecto tiene subdirectorios
 - Mock solo lo externo (APIs, DB real). Lógica de negocio: test directo
 - async tests: `pytest-asyncio` con `asyncio_mode = "auto"` en pyproject.toml
+- Factory functions en `tests/factories.py` para crear test data — importar directo, no via conftest.py
 
 ## Redis (si aplica)
 - Redis Streams para colas (NO pub/sub para persistencia)

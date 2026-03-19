@@ -33,6 +33,17 @@ React 18+, Vite, TypeScript strict mode, Tailwind CSS, Zustand para state manage
 - Test behavior, no implementación: `screen.getByRole()` > `container.querySelector()`
 - Mock solo APIs externas con MSW o vi.mock
 
+## WebSocket
+- Custom hook con auto-reconnect y backoff exponencial
+- Cleanup en useEffect return (cerrar conexión)
+- Estado de conexión: `connected | connecting | disconnected`
+- Mensajes: JSON.parse con try/catch, nunca asumir formato válido
+
+## Dev Proxy
+- Configurar proxy en `vite.config.ts` para `/api` y `/ws` al backend
+- No hardcodear URLs de backend en desarrollo
+- Pattern: `server.proxy` en vite config
+
 ## Build
 - `npm run dev` → development
 - `npm run build` → production (verificar 0 errores TS)

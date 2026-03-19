@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git branch*)",
+      "Bash(git show*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git checkout*)",
+      "Bash(git stash*)",
+      "Bash(git fetch*)",
+      "Bash(git pull*)",
+      "Bash(git merge*)",
       "Bash(ls *)",
       "Bash(mkdir *)",
       "Bash(cat *)",
@@ -15,10 +26,14 @@
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf *)",
-      "Read(.env)",
-      "Read(*.key)",
-      "Read(*.pem)",
-      "Read(*credentials*)"
+      "Bash(git reset --hard*)",
+      "Bash(git push*--force*)",
+      "Bash(docker system prune*)",
+      "Bash(chmod -R 777*)",
+      "Read(**/.env)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/*credentials*)"
     ]
   },
   "hooks": {

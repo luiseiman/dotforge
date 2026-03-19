@@ -4,7 +4,7 @@ title: "Cambios en .claude/ detectados en gestion de mora"
 source: "hook post-sesión — gestion de mora"
 source_type: experience
 discovered: 2026-03-19
-status: inbox
+status: evaluated
 tags: [auto-detected, gestion de mora]
 tested_in: gestion de mora
 incorporated_in: []
@@ -21,4 +21,4 @@ Se detectaron 1 archivo(s) modificados en .claude/ del proyecto gestion de mora 
 Revisar si estos cambios contienen patrones, reglas, o configuraciones que deberían generalizarse a claude-kit.
 
 ## Decisión
-Pendiente — evaluar en próximo /forge update
+Evaluado 2026-03-19. Solo settings.local.json (configuración local, no generalizable). Sin prácticas a incorporar.
