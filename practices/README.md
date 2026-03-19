@@ -8,9 +8,12 @@ INBOX → EVALUATING → ACTIVE → (DEPRECATED)
 
 ### inbox/
 Prácticas descubiertas pero no evaluadas. Llegan acá desde:
-- `/forge update` (búsqueda automática en web)
 - `/forge capture` (insight manual del usuario)
+- `/forge update` (búsqueda en web con queries específicos)
+- `/forge watch` (deltas en docs oficiales Anthropic)
+- `/forge scout` (patterns de repos curados en `sources.yml`)
 - Hook post-sesión (cambios detectados en .claude/ de proyectos)
+- Audit gap capture (gaps detectados por `/forge audit`)
 
 ### evaluating/
 Prácticas en evaluación. Se prueban en 1 proyecto antes de generalizar.

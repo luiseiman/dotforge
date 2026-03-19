@@ -17,3 +17,24 @@ sources:
     url: https://github.com/anthropics/anthropic-cookbook
     focus: [rules, commands]
     notes: "Cookbook oficial — patterns de uso"
+
+  # Community — repos con configuraciones .claude/ interesantes
+  - name: ChrisWiles/claude-code-showcase
+    url: https://github.com/ChrisWiles/claude-code-showcase
+    focus: [hooks, settings, agents, skills, rules]
+    notes: "Ejemplo completo de configuración — hooks, skills, agents, commands, GH Actions"
+
+  - name: affaan-m/everything-claude-code
+    url: https://github.com/affaan-m/everything-claude-code
+    focus: [security, skills, memory]
+    notes: "AgentShield + harness optimization — hackathon Anthropic Feb 2026"
+
+  - name: hesreallyhim/awesome-claude-code
+    url: https://github.com/hesreallyhim/awesome-claude-code
+    focus: [skills, hooks, commands, agents]
+    notes: "Curated list — índice de recursos y herramientas"
+
+  - name: shanraisshan/claude-code-best-practice
+    url: https://github.com/shanraisshan/claude-code-best-practice
+    focus: [skills, hooks, commands]
+    notes: "Best practices — técnica de !command en SKILL.md para output dinámico"

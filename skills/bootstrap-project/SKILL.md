@@ -104,6 +104,13 @@ Create `.claude/agent-memory/` directory for agents with `memory: project` to pe
 mkdir -p .claude/agent-memory
 ```
 
+Create a seed file for each memory-enabled agent so the directory structure is ready:
+```bash
+for agent in implementer architect code-reviewer security-auditor; do
+  touch ".claude/agent-memory/${agent}.md"
+done
+```
+
 This enables implementer, architect, code-reviewer, and security-auditor to accumulate project-specific knowledge across sessions.
 
 ## Paso 10: Sugerir hook global
