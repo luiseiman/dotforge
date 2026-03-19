@@ -29,5 +29,18 @@
 - Tests deben pasar antes de reportar "listo"
 - Si un test falla, corregirlo antes de reportar
 
+## Agent Orchestration
+
+Subagents en `.claude/agents/`:
+- `researcher` → exploración, lectura, contexto (read-only)
+- `architect` → diseño, tradeoffs, ADRs (read-only)
+- `implementer` → código, tests, verificación (read-write)
+- `code-reviewer` → review por severidad (read-only)
+- `security-auditor` → vulnerabilidades, secrets, deps (read-only)
+- `test-runner` → tests, coverage, diagnóstico (read-write)
+
+Delegación: evaluar complejidad → delegar al agente apropiado → verificar resultado.
+Cadena estándar: researcher → architect → implementer → test-runner → code-reviewer.
+
 ## Errores conocidos
 Ver CLAUDE_ERRORS.md para lecciones aprendidas y patrones a evitar.

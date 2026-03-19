@@ -98,10 +98,37 @@ Auto-discovery: se cargan automáticamente sin restart.
 | Implementer | Write, Edit, Bash | Código + tests |
 | Auditor | Read, Grep, Glob | Solo lectura |
 
+### Agentes disponibles (claude-kit)
+
+| Agente | Rol | Permisos | Color |
+|--------|-----|----------|-------|
+| `researcher` | Exploración, búsquedas, contexto | Read-only | Cyan |
+| `architect` | Diseño, tradeoffs, ADRs | Read-only | Purple |
+| `implementer` | Código, tests, verificación | Read-write | Green |
+| `code-reviewer` | Review por severidad | Read-only | Yellow |
+| `security-auditor` | Vulnerabilidades, secrets, CVEs | Read-only | Red |
+| `test-runner` | Tests, coverage, diagnóstico | Read-write | Blue |
+
+### Cadenas típicas
+- **Feature nueva**: researcher → architect → implementer → test-runner → code-reviewer
+- **Bug fix**: researcher → implementer → code-reviewer
+- **Pre-deploy**: security-auditor → code-reviewer
+- **Refactor cross-component**: Agent Team (lead + 3-4 teammates)
+
 ### Reglas
+- Invocar con `Agent(subagent_type="<name>", ...)` — NUNCA via bash
 - Una tarea por subagente
 - Intermediate tool calls NO vuelven al padre — solo el mensaje final
 - Dar contexto suficiente al spawn (no asumir que hereda)
+- Subagents no pueden invocar otros subagents — encadenar desde el thread principal
+- Agent Teams: solo para refactors ≥3 archivos independientes, requiere plan previo
+
+### Agent Teams (experimental)
+Activar: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Lead coordina, NO implementa
+- Max 3-4 teammates (rendimientos decrecientes)
+- Cada teammate = sesión completa (~5x tokens)
+- Verificar que no editen los mismos archivos
 
 ---
 

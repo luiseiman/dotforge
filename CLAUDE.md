@@ -8,8 +8,10 @@ Markdown puro + shell scripts. No hay código ejecutable — todo lo consume Cla
 ## Estructura
 - `template/` — plantilla base genérica para cualquier proyecto
 - `stacks/` — módulos por stack tecnológico (python-fastapi, react-vite-ts, swift, etc.)
+- `agents/` — definiciones de subagentes especializados (researcher, architect, implementer, etc.)
 - `skills/` — skills globales instalables via symlink en ~/.claude/skills/
 - `audit/` — checklist y scoring para auditar proyectos
+- `practices/` — ciclo de vida de prácticas (inbox → evaluating → active → deprecated)
 - `registry/` — registro de proyectos gestionados
 - `docs/` — mejores prácticas, patrones de prompting, referencias
 

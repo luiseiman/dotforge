@@ -58,7 +58,14 @@ Reemplazar marcadores:
 
 Copiar `~/Documents/GitHub/claude-kit/template/commands/` → `.claude/commands/`
 
-## Paso 8: Crear CLAUDE_ERRORS.md
+## Paso 8: Copiar agentes y regla de orquestación
+
+1. Copiar `~/Documents/GitHub/claude-kit/agents/*.md` → `.claude/agents/`
+2. Copiar `~/Documents/GitHub/claude-kit/template/rules/agents.md` → `.claude/rules/agents.md`
+
+Esto da al proyecto acceso a los 6 subagentes especializados (researcher, architect, implementer, code-reviewer, security-auditor, test-runner) y la regla de orquestación que define cuándo delegar.
+
+## Paso 9: Crear CLAUDE_ERRORS.md
 
 ```markdown
 # Errores conocidos — {{PROJECT_NAME}}

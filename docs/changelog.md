@@ -1,5 +1,18 @@
 # Changelog — claude-kit
 
+## v0.3.0 (2026-03-19)
+
+### Multi-Agent Orchestration
+- 6 agentes especializados: researcher, architect, implementer, code-reviewer, security-auditor, test-runner
+- Regla de orquestación global (agents.md) con decision tree de delegación
+- Agentes instalados globalmente via symlink (~/.claude/agents/)
+- Cadenas de agentes: feature, bug fix, security audit, refactor
+- Soporte para Agent Teams (experimental, requiere Opus)
+- Template y bootstrap actualizados para incluir agentes
+- Checklist de auditoría incluye verificación de agentes
+
+---
+
 ## v0.2.0 (2026-03-19)
 
 ### Pipeline de prácticas

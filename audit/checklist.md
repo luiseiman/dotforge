@@ -45,6 +45,10 @@
 - 0: No hay archivos en .claude/projects/*/memory/
 - 1: Existe memoria con contexto útil del proyecto
 
-### 10. .gitignore protege secrets
+### 10. Agentes de orquestación
+- 0: No hay .claude/agents/ ni regla agents.md
+- 1: Agentes instalados + regla de orquestación activa
+
+### 11. .gitignore protege secrets
 - 0: No hay .gitignore o no protege .env/secrets
 - 1: .gitignore incluye .env, *.key, *.pem, credentials
