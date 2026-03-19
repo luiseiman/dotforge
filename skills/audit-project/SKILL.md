@@ -9,17 +9,7 @@ Ejecutá una auditoría completa de la configuración de Claude Code del proyect
 
 ## Paso 1: Detectar stack
 
-Buscar indicadores de stack en el directorio actual:
-- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
-- `package.json` con react/vite/next → **react-vite-ts**
-- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
-- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
-- `*.db`, `*.sqlite`, `*.ipynb`, `*.csv`, `*.xlsx` prominentes → **data-analysis**
-- `docker-compose*`, `Dockerfile*` → **docker-deploy**
-- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
-- `redis` en requirements.txt/pyproject.toml → **redis**
-
-Un proyecto puede tener múltiples stacks.
+Use detection rules from `~/Documents/GitHub/claude-kit/stacks/detect.md`.
 
 ## Paso 2: Cargar checklist
 
@@ -54,11 +44,11 @@ Para cada item del checklist, verificar existencia **y calidad**:
 
 ## Paso 4: Calcular score
 
-Usar los pesos de `scoring.md`:
+Usar los pesos de `~/Documents/GitHub/claude-kit/audit/scoring.md`:
 1. `score_obligatorio = sum(items 1-5)` — máximo 10
 2. `score_recomendado = sum(items 6-11)` — máximo 6
-3. `score_total = score_obligatorio + (score_recomendado * 0.5)`
-4. `score_normalizado = min(score_total / 10 * 10, 10)`
+3. `score_total = score_obligatorio * 0.7 + score_recomendado * 0.5` — max 7.0 + 3.0 = 10.0
+4. `score_normalizado = min(score_total, 10)`
 
 **Cap de seguridad:** Si item 2 (settings.json) o item 4 (block-destructive) es 0, score máximo = 6.0.
 

@@ -36,17 +36,8 @@ Si el usuario dice "no", cancelar inmediatamente. NO proceder sin confirmación 
 
 ## Paso 2: Detectar stacks
 
-Analizar el directorio actual para detectar stacks (misma lógica que bootstrap):
-- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
-- `package.json` con react/vite/next → **react-vite-ts**
-- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
-- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
-- `*.db`, `*.sqlite`, `*.ipynb` prominentes → **data-analysis**
-- `docker-compose*`, `Dockerfile*` → **docker-deploy**
-- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
-- `redis` en requirements.txt/pyproject.toml → **redis**
-
-Confirmar stacks con el usuario.
+Use detection rules from `~/Documents/GitHub/claude-kit/stacks/detect.md`.
+Confirm detected stacks with the user.
 
 ## Paso 3: Hacer backup
 

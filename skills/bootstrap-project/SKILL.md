@@ -9,17 +9,7 @@ Inicializar `.claude/` completo en el proyecto actual usando la plantilla claude
 
 ## Paso 1: Detectar stack
 
-Analizar el directorio actual para detectar stacks:
-- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
-- `package.json` con react/vite/next → **react-vite-ts**
-- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
-- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
-- `*.db`, `*.sqlite`, `*.ipynb` prominentes → **data-analysis**
-- `docker-compose*`, `Dockerfile*` → **docker-deploy**
-- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
-- `redis` en requirements.txt/pyproject.toml → **redis**
-
-Un proyecto puede tener múltiples stacks. Si no se puede detectar, preguntar al usuario.
+Use detection rules from `~/Documents/GitHub/claude-kit/stacks/detect.md`.
 
 ## Paso 2: Confirmar con usuario
 
@@ -105,6 +95,16 @@ Jerarquía de verdad: código fuente > CLAUDE.md > CLAUDE_ERRORS.md > auto-memor
 | Fecha | Área | Error | Causa raíz | Fix | Regla derivada |
 |-------|------|-------|------------|-----|---------------|
 ```
+
+## Paso 9b: Crear agent-memory/
+
+Create `.claude/agent-memory/` directory for agents with `memory: project` to persist learnings:
+
+```bash
+mkdir -p .claude/agent-memory
+```
+
+This enables implementer, architect, code-reviewer, and security-auditor to accumulate project-specific knowledge across sessions.
 
 ## Paso 10: Sugerir hook global
 

@@ -1,5 +1,21 @@
 # Changelog — claude-kit
 
+## v1.2.2 (2026-03-19)
+
+### Correcciones del análisis v1.2.1
+- Fix: fórmula de scoring — recomendados ahora pesan 50% real (obligatorios perfectos sin recomendados = 7.0, no 10.0)
+- Fix: template lint-on-save.sh usa swiftlint (consistente con stack swift-swiftui), eliminado swiftformat
+- Fix: implementer.md ya no referencia `.claude/specs/in-progress/` inexistente
+- Fix: README.md corregido "51 items" → "31 items" en security checklist
+- Fix: fórmula duplicada en audit-project skill actualizada a nueva fórmula
+- Nuevo: `stacks/detect.md` — lógica de detección de stacks centralizada (antes duplicada en 4 skills)
+- Nuevo: bootstrap crea `.claude/agent-memory/` para agentes con `memory: project`
+- Nuevo: git tags v0.1.0 a v1.2.1 (habilita `/forge diff` con comparación por tags)
+- Cambio: `/forge watch` y `/forge scout` marcados como stubs en forge.md
+- Cambio: registry scores recalculados con nueva fórmula
+
+---
+
 ## v1.2.0 (2026-03-19)
 
 ### Tooling defensivo

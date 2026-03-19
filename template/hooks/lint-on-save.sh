@@ -51,10 +51,10 @@ if [[ "$FILE_PATH" =~ \.(ts|tsx)$ ]] && command -v npx &>/dev/null; then
   fi
 fi
 
-# Swift → swiftformat (check only)
+# Swift → swiftlint
 if [[ "$FILE_PATH" =~ \.swift$ ]]; then
-  if command -v swiftformat &>/dev/null; then
-    OUTPUT=$(swiftformat --lint "$FILE_PATH" 2>&1)
+  if command -v swiftlint &>/dev/null; then
+    OUTPUT=$(swiftlint lint --path "$FILE_PATH" 2>&1)
     if [[ $? -ne 0 ]]; then
       echo "$OUTPUT" >&2
       exit 2

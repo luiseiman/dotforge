@@ -58,7 +58,7 @@ claude-kit/
 ## Docs
 
 - [Best Practices](docs/best-practices.md) — Configuración de Claude Code
-- [Security Checklist](docs/security-checklist.md) — 51 items pre-deploy
+- [Security Checklist](docs/security-checklist.md) — 31 items pre-deploy
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 patrones reproducibles
 - [Creating Stacks](docs/creating-stacks.md) — Cómo agregar un stack nuevo
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes

@@ -23,7 +23,7 @@ Antes de sincronizar el proyecto, verificar que `~/.claude/CLAUDE.md` existe y t
 2. Leer `CLAUDE.md` actual
 3. Leer `.claude/rules/` existentes
 4. Leer `.claude/hooks/` existentes
-5. Detectar stacks del proyecto (misma lógica que bootstrap/audit)
+5. Detect stacks using `~/Documents/GitHub/claude-kit/stacks/detect.md`
 6. Leer `~/.claude/CLAUDE.md` para saber qué reglas ya están cubiertas globalmente
 
 ## Paso 2: Comparar contra template

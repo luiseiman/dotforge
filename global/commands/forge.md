@@ -72,12 +72,12 @@ Ejemplo: `/forge capture "hooks deberían ignorar archivos en migrations/"`
 Ejecutar el skill `/update-practices`.
 Pipeline: procesa inbox → evalúa → incorpora → sugiere propagación.
 
-### `watch`
+### `watch` *(stub — no implementado)*
 Buscar actualizaciones en docs oficiales de Anthropic/Claude Code.
 Comparar contra template y rules actuales. Reportar deltas.
 NO auto-incorporar — solo informar.
 
-### `scout`
+### `scout` *(stub — no implementado)*
 Revisar repos de `practices/sources.yml`.
 Comparar sus `.claude/` configs contra template.
 Reportar patterns interesantes. NO auto-incorporar.
