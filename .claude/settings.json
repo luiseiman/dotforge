@@ -16,6 +16,9 @@
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf *)",
+      "Bash(git reset --hard*)",
+      "Bash(git push*--force*)",
+      "Bash(chmod -R 777*)",
       "Read(.env)",
       "Read(*.key)",
       "Read(*.pem)",

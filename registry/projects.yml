@@ -73,4 +73,4 @@ projects:
     last_sync: 2026-03-19
     claude_kit_version: 1.0.0
     score: 9.5
-    notes: "v1.0.0. CLAUDE.md, settings.json (deny+hooks), rules (common+agents), commands (4), CLAUDE_ERRORS.md, .gitignore secrets. 8 stacks, 6 agents, 5 skills."
+    notes: "v1.0.0. CLAUDE.md con Build&Dev, settings.json (deny ampliada+hooks), rules (common con globs+agents), commands (4), CLAUDE_ERRORS.md, .gitignore. 8 stacks, 6 agents, 5 skills."

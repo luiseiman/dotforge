@@ -21,6 +21,27 @@ Markdown puro + shell scripts. No hay código ejecutable — todo lo consume Cla
 - Skills: SKILL.md con frontmatter name/description
 - Templates: extensión .tmpl con marcadores `<!-- forge:section -->`
 
+## Build & Validación
+```bash
+# Validar hooks (bash syntax)
+bash -n .claude/hooks/*.sh
+
+# Validar hooks (shellcheck si disponible)
+shellcheck .claude/hooks/*.sh
+
+# Verificar permisos de hooks
+ls -la .claude/hooks/*.sh  # todos deben ser -rwxr-xr-x
+
+# Verificar estructura de stacks (cada stack necesita rules/ + settings.json.partial)
+for d in stacks/*/; do ls "$d"rules/ "$d"settings.json.partial 2>/dev/null || echo "INCOMPLETE: $d"; done
+
+# Validar YAML del registry
+python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
+
+# Verificar frontmatter en rules
+grep -rL "^globs:" .claude/rules/ stacks/*/rules/  # archivos sin globs (ok para _common.md)
+```
+
 ## Cómo se usa
 1. `/forge bootstrap` — inicializar .claude/ en proyecto nuevo
 2. `/forge audit` — escanear proyecto y reportar gaps
