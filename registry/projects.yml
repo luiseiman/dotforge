@@ -40,9 +40,9 @@ projects:
   - name: gestion-de-mora
     path: /Users/luiseiman/gestion de mora
     stacks: [data-analysis]
-    last_audit: null
-    score: null
-    notes: "Análisis de mora bancaria. Solo settings.local. Sin git."
+    last_audit: 2026-03-19
+    score: 9.5
+    notes: "Bootstrapped v0.3.0. CLAUDE.md, settings.json, hooks, rules, agents, git, CLAUDE_ERRORS.md. mora.db protegida."
 
   - name: TradingBot
     path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
