@@ -14,7 +14,38 @@
       "Grep"
     ],
     "deny": [
-      "Bash(rm -rf /)"
+      "Bash(rm -rf /)",
+      "Bash(rm -rf *)",
+      "Read(.env)",
+      "Read(*.key)",
+      "Read(*.pem)",
+      "Read(*credentials*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/block-destructive.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/lint-on-save.sh",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

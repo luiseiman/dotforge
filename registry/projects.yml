@@ -5,37 +5,37 @@ projects:
   - name: SOMA
     path: /Users/luiseiman/SOMA
     stacks: [python-fastapi, docker-deploy]
-    last_audit: null
-    score: null
-    notes: "Agent OS v1. Config completa (rules, commands, hooks)."
+    last_audit: 2026-03-19
+    score: 9.5
+    notes: "CLAUDE.md 66L, settings.json (deny+hooks), 6 rules con globs, 2 hooks, 5 commands, CLAUDE_ERRORS.md. .gitignore actualizado."
 
   - name: SOMA2
     path: /Users/luiseiman/Documents/SOMA2
     stacks: [python-fastapi, react-vite-ts, docker-deploy]
-    last_audit: null
-    score: null
-    notes: "Agent OS rewrite. Rules + specs. 200+ tests."
+    last_audit: 2026-03-19
+    score: 8.5
+    notes: "Bootstrapped. CLAUDE.md 126L, hooks (2), rules (7 con globs corregidos), CLAUDE_ERRORS.md, .gitignore secrets. Sin commands custom."
 
   - name: InviSight-iOS
     path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
     stacks: [swift-swiftui, supabase]
-    last_audit: null
-    score: null
-    notes: "Trading iOS app."
+    last_audit: 2026-03-19
+    score: 9.5
+    notes: "CLAUDE.md 98L, settings.json (deny+hooks), 8 rules, 1 hook, 6 commands, CLAUDE_ERRORS.md (3 errors). .gitignore actualizado."
 
   - name: cotiza-api-cloud
     path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
     stacks: [python-fastapi]
-    last_audit: null
-    score: null
-    notes: "Python WebSocket API, GCP Cloud Run. Config mínima."
+    last_audit: 2026-03-19
+    score: 9.5
+    notes: "CLAUDE.md 96L, settings.json (deny+hooks+MCP), 6 rules, 2 hooks, 12 commands, CLAUDE_ERRORS.md (7 errors), memory activa."
 
   - name: derup
     path: /Users/luiseiman/Documents/Claude/derup
     stacks: [react-vite-ts]
-    last_audit: null
-    score: null
-    notes: "TypeScript Vite ER modeler. Solo settings."
+    last_audit: 2026-03-19
+    score: 8.0
+    notes: "Bootstrapped. settings.json (deny+hooks), 2 hooks, 2 rules (common+frontend), CLAUDE_ERRORS.md. CLAUDE.md 10L (mínimo)."
 
   - name: gestion-de-mora
     path: /Users/luiseiman/gestion de mora
@@ -47,6 +47,13 @@ projects:
   - name: TradingBot
     path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
     stacks: [python-fastapi, supabase]
-    last_audit: null
-    score: null
-    notes: "Bot de trading. Supabase + estrategias."
+    last_audit: 2026-03-19
+    score: 9.0
+    notes: "CLAUDE.md 110L, settings.json (deny+hooks), 5 rules, 3 hooks, 3 commands, CLAUDE_ERRORS.md. .gitignore corregido (.claude/ → settings.local)."
+
+  - name: claude-kit
+    path: /Users/luiseiman/Documents/GitHub/claude-kit
+    stacks: [markdown-shell]
+    last_audit: 2026-03-19
+    score: 9.5
+    notes: "Bootstrapped. CLAUDE.md, settings.json (deny+hooks), rules (common+agents), commands (4), CLAUDE_ERRORS.md, .gitignore secrets."

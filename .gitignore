@@ -5,6 +5,14 @@ Thumbs.db
 # Claude Code local (no versionar)
 .claude/settings.local.json
 
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+*credentials*
+*.secret
+
 # Archivos temporales
 *.tmp
 *.bak
