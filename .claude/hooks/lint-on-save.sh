@@ -40,4 +40,15 @@ if [[ "$FILE_PATH" =~ \.swift$ ]]; then
   fi
 fi
 
+# Shell → shellcheck
+if [[ "$FILE_PATH" =~ \.sh$ ]]; then
+  if command -v shellcheck &>/dev/null; then
+    OUTPUT=$(shellcheck "$FILE_PATH" 2>&1)
+    if [[ $? -ne 0 ]]; then
+      echo "$OUTPUT" >&2
+      exit 2
+    fi
+  fi
+fi
+
 exit 0

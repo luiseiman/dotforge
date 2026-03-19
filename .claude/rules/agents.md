@@ -48,6 +48,6 @@ Team structure pattern:
 
 ## Error Handling
 
-- If a subagent fails or produces garbage → log to `tasks/lessons.md`, don't retry blindly
+- If a subagent fails or produces garbage → log to `CLAUDE_ERRORS.md`, don't retry blindly
 - If Agent Team coordination degrades (merge conflicts, stale messages) → dissolve team, fallback to sequential subagents
 - Always verify subagent output (run tests/lint) before declaring done
