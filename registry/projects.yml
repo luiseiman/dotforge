@@ -5,12 +5,12 @@
 projects:
   - name: SOMA
     path: /Users/luiseiman/SOMA
-    stacks: [python-fastapi, docker-deploy]
+    stacks: [python-fastapi, docker-deploy, redis]
     last_audit: 2026-03-19
     last_sync: null
     claude_kit_version: null
-    score: 9.5
-    notes: "CLAUDE.md 66L, settings.json (deny+hooks), 6 rules con globs, 2 hooks, 5 commands, CLAUDE_ERRORS.md. .gitignore actualizado."
+    score: 10.0
+    notes: "Obligatorios 10/10. 6 rules con globs, 2 hooks (chmod+x), 5 commands, CLAUDE_ERRORS.md. Falta: _common.md, agentes. ⚠️ PAT en settings.local.json."
 
   - name: SOMA2
     path: /Users/luiseiman/Documents/SOMA2
@@ -27,17 +27,17 @@ projects:
     last_audit: 2026-03-19
     last_sync: null
     claude_kit_version: null
-    score: 9.5
-    notes: "CLAUDE.md 98L, settings.json (deny+hooks), 8 rules, 1 hook, 6 commands, CLAUDE_ERRORS.md (3 errors). .gitignore actualizado."
+    score: 10.0
+    notes: "Obligatorios 10/10. 8 rules con globs, 1 hook (chmod+x), 6 commands, CLAUDE_ERRORS.md (3 errors). Falta: lint hook (swiftlint), _common.md, agentes."
 
   - name: cotiza-api-cloud
     path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
-    stacks: [python-fastapi]
+    stacks: [python-fastapi, gcp-cloud-run]
     last_audit: 2026-03-19
     last_sync: null
     claude_kit_version: null
     score: 9.5
-    notes: "CLAUDE.md 96L, settings.json (deny+hooks+MCP), 6 rules, 2 hooks, 12 commands, CLAUDE_ERRORS.md (7 errors), memory activa."
+    notes: "Obligatorios 10/10. 6 rules con globs, 2 hooks (chmod+x), 12 commands, CLAUDE_ERRORS.md (7 errors). Falta: *credentials* en deny/.gitignore, agentes."
 
   - name: derup
     path: /Users/luiseiman/Documents/Claude/derup
@@ -45,8 +45,8 @@ projects:
     last_audit: 2026-03-19
     last_sync: null
     claude_kit_version: null
-    score: 8.0
-    notes: "Bootstrapped. settings.json (deny+hooks), 2 hooks, 2 rules (common+frontend), CLAUDE_ERRORS.md. CLAUDE.md 10L (mínimo)."
+    score: 9.5
+    notes: "Obligatorios 8/10 (CLAUDE.md mínimo 10L, _common.md reducida). 2 hooks (chmod+x), 2 rules, 0 commands. Falta: expandir CLAUDE.md, commands, agentes."
 
   - name: gestion-de-mora
     path: /Users/luiseiman/gestion de mora
@@ -63,8 +63,8 @@ projects:
     last_audit: 2026-03-19
     last_sync: null
     claude_kit_version: null
-    score: 9.0
-    notes: "CLAUDE.md 110L, settings.json (deny+hooks), 5 rules, 3 hooks, 3 commands, CLAUDE_ERRORS.md. .gitignore corregido (.claude/ → settings.local)."
+    score: 9.5
+    notes: "Obligatorios 10/10. 5 rules con globs, 3 hooks (chmod+x), 3 commands, CLAUDE_ERRORS.md (2 errors). Tiene agents.md rule. Falta: memory, agentes dir."
 
   - name: claude-kit
     path: /Users/luiseiman/Documents/GitHub/claude-kit
