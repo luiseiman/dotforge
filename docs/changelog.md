@@ -1,5 +1,21 @@
 # Changelog — claude-kit
 
+## v1.1.0 (2026-03-19)
+
+### Gestión global (~/.claude/)
+- Nuevo: `global/CLAUDE.md.tmpl` — plantilla del CLAUDE.md global con marker `<!-- forge:custom -->`
+- Nuevo: `global/settings.json.tmpl` — deny list base para settings.json global
+- Nuevo: `global/sync.sh` — script que instala/actualiza symlinks de skills, agents y commands
+- Nuevo: `global/commands/forge.md` — forge.md versionado (reemplaza archivo suelto por symlink)
+- Nuevo: `/forge global sync` y `/forge global status` en el comando forge
+- Nuevo: `/forge watch` y `/forge scout` (stubs para intake de prácticas externas)
+- Fix: deny list global poblada (estaba vacía, contradiciendo la filosofía de seguridad)
+- Fix: marker `<!-- forge:custom -->` agregado a ~/.claude/CLAUDE.md
+- Cambio: `_common.md` simplificada — elimina duplicación con global CLAUDE.md (reglas de comportamiento van en global, reglas de código van en _common.md)
+- Cambio: sync-template ahora verifica global antes de sincronizar (no duplica reglas)
+
+---
+
 ## v1.0.1 (2026-03-19)
 
 ### Higiene interna

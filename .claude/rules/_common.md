@@ -2,7 +2,9 @@
 globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl"
 ---
 
-# Reglas universales
+# Reglas de código
+
+Reglas técnicas por proyecto. Las reglas de comportamiento (comunicación, planificación, autonomía) están en el CLAUDE.md global y no se repiten acá.
 
 ## Git
 - Commits atómicos: un cambio lógico por commit
@@ -18,14 +20,12 @@ globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl"
 
 ## Testing
 - Funcionalidad nueva → test obligatorio
-- Test falla → corregir antes de reportar
 - Nombres de test descriptivos: test_<qué>_<condición>_<resultado_esperado>
 - No mockear lo que se puede testear de verdad
 
 ## Errores
 - Nunca catch vacío — siempre log o re-raise
 - No exponer stack traces al usuario final
-- Errores en producción → registrar en CLAUDE_ERRORS.md
 
 ## Seguridad
 - Inputs del usuario: sanitizar siempre
@@ -35,6 +35,4 @@ globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl"
 
 ## Scope
 - Solo modificar archivos estrictamente necesarios
-- No refactorizar lo que no se pidió
 - No agregar features no solicitadas
-- Tres líneas repetidas > abstracción prematura

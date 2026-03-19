@@ -13,6 +13,10 @@ NUNCA sobrescribir archivos existentes sin confirmación. Comparar y proponer ca
 NUNCA tocar `settings.local.json` — es configuración personal del usuario.
 NUNCA modificar secciones marcadas con `<!-- forge:custom -->` en CLAUDE.md.
 
+## Paso 0: Verificar global
+
+Antes de sincronizar el proyecto, verificar que `~/.claude/CLAUDE.md` existe y tiene las reglas de comportamiento (comunicación, planificación, autonomía). Si las reglas de global están activas, `_common.md` del proyecto solo necesita reglas técnicas (git, naming, testing, seguridad). No duplicar lo que ya está en global.
+
 ## Paso 1: Detectar estado actual
 
 1. Leer `.claude/settings.json` actual
@@ -20,6 +24,7 @@ NUNCA modificar secciones marcadas con `<!-- forge:custom -->` en CLAUDE.md.
 3. Leer `.claude/rules/` existentes
 4. Leer `.claude/hooks/` existentes
 5. Detectar stacks del proyecto (misma lógica que bootstrap/audit)
+6. Leer `~/.claude/CLAUDE.md` para saber qué reglas ya están cubiertas globalmente
 
 ## Paso 2: Comparar contra template
 

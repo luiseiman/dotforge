@@ -1,0 +1,65 @@
+{
+  "_comment": "Generado por claude-kit /forge global sync. No editar la sección deny manualmente.",
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(python3 *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(swift *)",
+      "Bash(xcodebuild *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(which *)",
+      "Bash(cat *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(curl *)",
+      "Bash(docker *)",
+      "Bash(open *)",
+      "Bash(uvicorn *)",
+      "Bash(pytest *)",
+      "Bash(gh *)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Agent",
+      "NotebookEdit",
+      "WebFetch",
+      "WebSearch",
+      "TodoWrite"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf *)",
+      "Bash(git reset --hard*)",
+      "Bash(git push*--force*)",
+      "Bash(chmod -R 777*)",
+      "Read(.env)",
+      "Read(*.key)",
+      "Read(*.pem)",
+      "Read(*credentials*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{CLAUDE_KIT_PATH}}/hooks/detect-claude-changes.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

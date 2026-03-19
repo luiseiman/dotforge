@@ -13,6 +13,7 @@ Markdown puro + shell scripts. No hay código ejecutable — todo lo consume Cla
 - `audit/` — checklist y scoring para auditar proyectos
 - `practices/` — ciclo de vida de prácticas (inbox → evaluating → active → deprecated)
 - `registry/` — registro de proyectos gestionados
+- `global/` — plantillas y herramientas para gestionar ~/.claude/ (CLAUDE.md, settings.json, symlinks)
 - `docs/` — mejores prácticas, patrones de prompting, referencias
 
 ## Convenciones
@@ -46,7 +47,8 @@ grep -rL "^globs:" .claude/rules/ stacks/*/rules/  # archivos sin globs (ok para
 1. `/forge bootstrap` — inicializar .claude/ en proyecto nuevo
 2. `/forge audit` — escanear proyecto y reportar gaps
 3. `/forge sync` — actualizar config contra plantilla actual
-4. `/forge status` — ver registro de proyectos y scores
+4. `/forge global sync` — sincronizar ~/.claude/ (skills, agents, deny list)
+5. `/forge status` — ver registro de proyectos y scores
 
 ## No hacer
 - No generar código de aplicación — solo configuración de Claude Code
