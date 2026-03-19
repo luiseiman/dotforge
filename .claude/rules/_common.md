@@ -36,3 +36,10 @@ Reglas técnicas por proyecto. Las reglas de comportamiento (comunicación, plan
 ## Scope
 - Solo modificar archivos estrictamente necesarios
 - No agregar features no solicitadas
+
+## Prompt Language
+- All Claude-consumed content (rules, agent prompts, skill steps, system prompts) MUST be in English
+- User-facing content (docs, CLAUDE.md project descriptions, changelog) may be in Spanish
+- Prompts must be compact: high information density, no filler words, no hedging
+- One instruction per line, imperative mood, no "please" or "you should consider"
+- If a rule can be expressed in fewer words without losing meaning, rewrite it shorter
