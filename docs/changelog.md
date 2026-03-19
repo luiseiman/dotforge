@@ -1,5 +1,18 @@
 # Changelog — claude-kit
 
+## v1.0.1 (2026-03-19)
+
+### Higiene interna
+- Fix: frontmatter `globs:` agregado a `template/rules/_common.md` (inconsistencia con versión deployada)
+- Fix: command `audit.md` actualizado a 8 stacks (faltaban gcp-cloud-run y redis)
+- Fix: scores inflados corregidos en registry (SOMA 10→9.5, InviSight 10→9.5)
+- Fix: bootstrap siempre copia `lint-on-save.sh` genérico (resuelve ambigüedad hooks de stack vs genérico)
+- Fix: researcher constraint relajada de 5 a 15 file reads
+- Eliminado: `docs/x-references.md` (contenido efímero)
+- Nuevo: `docs/roadmap.md` con plan v1.0→v2.0
+
+---
+
 ## v1.0.0 (2026-03-19)
 
 ### Estable y completo

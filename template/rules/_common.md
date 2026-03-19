@@ -1,3 +1,7 @@
+---
+globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl,**/*.py,**/*.ts,**/*.tsx,**/*.swift"
+---
+
 # Reglas universales
 
 ## Git

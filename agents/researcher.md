@@ -36,7 +36,7 @@ Always conclude with this structure:
 
 ## Constraints
 
-- Max 5 file reads before synthesizing — don't boil the ocean
+- Max 15 file reads before synthesizing — don't boil the ocean
 - If a search returns >50 results, narrow the query before reading
 - Prefer `grep -rn` with targeted patterns over recursive `find`
 - Include line numbers in all file references

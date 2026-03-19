@@ -58,7 +58,7 @@ Reemplazar marcadores:
 ## Paso 5: Copiar hooks
 
 1. Copiar `~/Documents/GitHub/claude-kit/template/hooks/block-destructive.sh` → `.claude/hooks/`
-2. Copiar hook de lint del stack correspondiente (o el genérico `lint-on-save.sh`)
+2. Copiar siempre el hook genérico `~/Documents/GitHub/claude-kit/template/hooks/lint-on-save.sh` (soporta Python + TS + Swift). Los hooks de lint por stack (`lint-python.sh`, `lint-ts.sh`, `lint-swift.sh`) son referencia, no se copian.
 3. `chmod +x` en ambos
 
 ## Paso 6: Copiar rules
