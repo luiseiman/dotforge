@@ -1,5 +1,5 @@
 ---
-globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl"
+globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl,**/*.py,**/*.ts,**/*.tsx,**/*.swift"
 ---
 
 # Reglas de código

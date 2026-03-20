@@ -29,10 +29,32 @@ if [[ "$FILE_PATH" =~ \.(ts|tsx|js|jsx)$ ]]; then
   fi
 fi
 
-# Swift → swiftformat (check only)
+# TypeScript → tsc type-check (opt-in, set FORGE_TSC_CHECK=true to enable)
+# Disabled by default: runs full project type-check on every save, slow on large projects
+if [[ "${FORGE_TSC_CHECK:-false}" == "true" ]] && [[ "$FILE_PATH" =~ \.(ts|tsx)$ ]] && command -v npx &>/dev/null; then
+  TSCONFIG=""
+  DIR=$(dirname "$FILE_PATH")
+  while [[ "$DIR" != "/" ]]; do
+    if [[ -f "$DIR/tsconfig.json" ]]; then
+      TSCONFIG="$DIR/tsconfig.json"
+      break
+    fi
+    DIR=$(dirname "$DIR")
+  done
+
+  if [[ -n "$TSCONFIG" ]]; then
+    OUTPUT=$(npx tsc --noEmit --project "$TSCONFIG" 2>&1)
+    if [[ $? -ne 0 ]]; then
+      echo "$OUTPUT" >&2
+      exit 2
+    fi
+  fi
+fi
+
+# Swift → swiftlint
 if [[ "$FILE_PATH" =~ \.swift$ ]]; then
-  if command -v swiftformat &>/dev/null; then
-    OUTPUT=$(swiftformat --lint "$FILE_PATH" 2>&1)
+  if command -v swiftlint &>/dev/null; then
+    OUTPUT=$(swiftlint lint --path "$FILE_PATH" 2>&1)
     if [[ $? -ne 0 ]]; then
       echo "$OUTPUT" >&2
       exit 2

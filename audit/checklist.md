@@ -31,7 +31,7 @@
 - 1: Están en README pero no en CLAUDE.md, o están en CLAUDE.md pero son incorrectos
 - 2: Documentados en CLAUDE.md con comandos exactos que corresponden al stack detectado
 
-## Recomendado (cada item: 0-1 punto, total máximo: 6)
+## Recomendado (cada item: 0-1 punto, total máximo: 7)
 
 ### 6. CLAUDE_ERRORS.md
 - 0: No existe

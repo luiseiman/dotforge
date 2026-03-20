@@ -23,6 +23,8 @@ export CLAUDE_KIT_DIR="$(pwd)"
 /forge sync         # Update against current template
 ```
 
+> **New here?** Read the **[Usage Guide](docs/usage-guide.md)** for a complete walkthrough with examples.
+
 ## Why claude-kit
 
 There are many Claude Code starter kits, skills collections, and CLAUDE.md generators. claude-kit is different because it's the only **end-to-end configuration management system** — not a one-shot bootstrap or a static collection.
@@ -158,6 +160,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 
 ## Documentation
 
+- **[Usage Guide](docs/usage-guide.md)** — Complete step-by-step guide: install, bootstrap, sync, audit, practices ([Español](docs/guia-uso.md))
 - [Best Practices](docs/best-practices.md) — Claude Code configuration patterns
 - [Security Checklist](docs/security-checklist.md) — 31 items for pre-deploy review
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 reproducible patterns
@@ -216,6 +219,8 @@ export CLAUDE_KIT_DIR="$(pwd)"
 /forge audit        # Auditar la configuración y obtener un puntaje (0-10)
 /forge sync         # Actualizar contra la plantilla actual
 ```
+
+> **Primera vez?** Leé la **[Guía de Uso](docs/guia-uso.md)** para un walkthrough completo con ejemplos.
 
 ## Por qué claude-kit
 
@@ -352,6 +357,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
 ## Documentación
 
+- **[Guía de Uso](docs/guia-uso.md)** — Guía completa paso a paso: instalación, bootstrap, sync, auditoría, prácticas ([English](docs/usage-guide.md))
 - [Best Practices](docs/best-practices.md) — Patrones de configuración de Claude Code
 - [Security Checklist](docs/security-checklist.md) — 31 ítems para revisión pre-deploy
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 patrones reproducibles

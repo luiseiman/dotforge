@@ -76,10 +76,9 @@ Skills, agents, and practices pipeline require the full repository.
 ### Installation
 
 ```bash
-# When Claude Code plugin system is available:
-claude plugin install claude-kit
-
-# Until then, use git clone + sync.sh (see Full Mode above)
+# Plugin system is not yet available in Claude Code.
+# Use git clone + sync.sh (see Full Mode above) for now.
+# This section will be updated when plugin support ships.
 ```
 
 ## Stack Plugins

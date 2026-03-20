@@ -1,7 +1,7 @@
 #!/bin/bash
-# Stop hook: detecta cambios en .claude/ al final de una sesión
-# Si hay archivos .claude/ modificados en la sesión, genera una nota
-# en practices/inbox/ para que /forge update la procese.
+# Stop hook: detects .claude/ changes at the end of a session.
+# If .claude/ files were modified during the session, generates a practice
+# note in practices/inbox/ for /forge update to process.
 #
 # === INSTALLATION ===
 # 1. Set CLAUDE_KIT_DIR to your clone location (global/sync.sh does this)
@@ -31,12 +31,12 @@ PROJECT_DIR="$(pwd)"
 PROJECT_NAME="$(basename "$PROJECT_DIR")"
 TODAY="$(date +%Y-%m-%d)"
 
-# No ejecutar dentro de claude-kit mismo
+# Skip when running inside claude-kit itself
 if [[ "$PROJECT_DIR" == "$CLAUDE_KIT_DIR"* ]]; then
   exit 0
 fi
 
-# Buscar archivos .claude/ modificados en las últimas 2 horas
+# Find .claude/ files modified in the last 2 hours
 CHANGED_FILES=$(find "$PROJECT_DIR/.claude" -name "*.md" -o -name "*.sh" -o -name "*.json" 2>/dev/null | while read f; do
   if [[ -f "$f" ]] && find "$f" -mmin -120 -print -quit 2>/dev/null | grep -q .; then
     echo "$f"
@@ -47,14 +47,14 @@ if [[ -z "$CHANGED_FILES" ]]; then
   exit 0
 fi
 
-# Verificar que el inbox existe
+# Ensure inbox directory exists
 mkdir -p "$INBOX_DIR"
 
-# Generar nota en inbox
+# Generate inbox practice note
 SLUG="$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')-session-changes"
 OUTFILE="$INBOX_DIR/${TODAY}-${SLUG}.md"
 
-# No duplicar si ya existe una de hoy para este proyecto
+# Don't duplicate if one already exists today for this project
 if [[ -f "$OUTFILE" ]]; then
   exit 0
 fi
@@ -65,8 +65,8 @@ FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l | tr -d ' ')
 cat > "$OUTFILE" << HEREDOC
 ---
 id: practice-${TODAY}-${SLUG}
-title: "Cambios en .claude/ detectados en ${PROJECT_NAME}"
-source: "hook post-sesión — ${PROJECT_NAME}"
+title: "Changes detected in .claude/ of ${PROJECT_NAME}"
+source: "post-session hook — ${PROJECT_NAME}"
 source_type: experience
 discovered: ${TODAY}
 status: inbox
@@ -76,17 +76,17 @@ incorporated_in: []
 replaced_by: null
 ---
 
-## Descripción
-Se detectaron ${FILE_COUNT} archivo(s) modificados en .claude/ del proyecto ${PROJECT_NAME} durante la sesión.
+## Description
+${FILE_COUNT} file(s) modified in .claude/ of project ${PROJECT_NAME} during the session.
 
-## Archivos modificados
+## Modified files
 ${FILE_LIST}
 
-## Evaluación necesaria
-Revisar si estos cambios contienen patrones, reglas, o configuraciones que deberían generalizarse a claude-kit.
+## Evaluation needed
+Review if these changes contain patterns, rules, or configurations that should be generalized to claude-kit.
 
-## Decisión
-Pendiente — evaluar en próximo /forge update
+## Decision
+Pending — evaluate in next /forge update
 HEREDOC
 
 exit 0

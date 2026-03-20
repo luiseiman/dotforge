@@ -67,7 +67,7 @@ Six subagent definitions in `agents/`: researcher (read-only exploration), archi
 
 ### Audit System
 
-`audit/checklist.md` defines 11 items (5 obligatory scored 0-2, 6 recommended scored 0-1). `audit/scoring.md` normalizes to a 10-point scale. Security-critical items (settings.json, block-destructive hook) cap the score at 6.0 if missing. Registry in `registry/projects.yml` tracks scores across managed projects.
+`audit/checklist.md` defines 12 items (5 obligatory scored 0-2, 7 recommended scored 0-1). `audit/scoring.md` normalizes to a 10-point scale. Security-critical items (settings.json, block-destructive hook) cap the score at 6.0 if missing. Registry in `registry/projects.yml` tracks scores across managed projects.
 
 ## Conventions
 

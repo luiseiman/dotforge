@@ -30,8 +30,9 @@ if [[ "$FILE_PATH" =~ \.(ts|tsx|js|jsx)$ ]]; then
   fi
 fi
 
-# TypeScript → tsc type-check (complementary to eslint, .ts/.tsx only)
-if [[ "$FILE_PATH" =~ \.(ts|tsx)$ ]] && command -v npx &>/dev/null; then
+# TypeScript → tsc type-check (opt-in, set FORGE_TSC_CHECK=true to enable)
+# Disabled by default: runs full project type-check on every save, slow on large projects
+if [[ "${FORGE_TSC_CHECK:-false}" == "true" ]] && [[ "$FILE_PATH" =~ \.(ts|tsx)$ ]] && command -v npx &>/dev/null; then
   TSCONFIG=""
   DIR=$(dirname "$FILE_PATH")
   while [[ "$DIR" != "/" ]]; do

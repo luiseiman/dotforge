@@ -19,14 +19,27 @@
       "Bash(rm -rf *)",
       "Bash(git reset --hard*)",
       "Bash(git push*--force*)",
+      "Bash(docker system prune*)",
       "Bash(chmod -R 777*)",
-      "Read(.env)",
-      "Read(*.key)",
-      "Read(*.pem)",
-      "Read(*credentials*)"
+      "Read(**/.env)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/*credentials*)"
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/check-updates.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
