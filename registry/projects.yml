@@ -39,3 +39,105 @@ projects:
       - {date: 2026-03-20, score: 10.0, version: 1.5.0}
       - {date: 2026-03-20, score: 10.0, version: 1.6.0}
     notes: "Self-audit v1.6.0. 3 rules, 5 hooks, 4 commands, 6 agents, 13 skills, memory active, deny complete, config validation active."
+
+  - name: InviSight-iOS
+    path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
+    stacks: [swift-swiftui, supabase]
+    tier: standard
+    last_audit: 2026-03-20
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: 9.6
+    history:
+      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
+    notes: "11 rules, 2 hooks, 9 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
+
+  - name: TRADINGBOT
+    path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
+    stacks: [python-fastapi, supabase, docker-deploy, react-vite-ts]
+    tier: standard
+    last_audit: 2026-03-20
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: 9.6
+    history:
+      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
+    notes: "7 rules, 3 hooks, 4 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
+
+  - name: cotiza-api-cloud
+    path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
+    stacks: [python-fastapi, gcp-cloud-run, docker-deploy]
+    tier: standard
+    last_audit: 2026-03-20
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: 9.6
+    history:
+      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
+    notes: "9 rules, 2 hooks, 15 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
+
+  - name: Soma
+    path: /Users/luiseiman/Documents/GitHub/Soma
+    stacks: [python-fastapi, redis, docker-deploy]
+    tier: standard
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Bootstrapped standard. 4 rules, 2 hooks. Pending first audit."
+
+  - name: openclaw
+    path: /Users/luiseiman/Documents/GitHub/openclaw
+    stacks: [python-fastapi, node-express, docker-deploy]
+    tier: standard
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Bootstrapped standard. Pending first audit."
+
+  - name: Cotiza-Api-Render
+    path: /Users/luiseiman/Documents/GitHub/Cotiza-Api-Render
+    stacks: [python-fastapi]
+    tier: minimal
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Bootstrapped minimal. CLAUDE.md + settings.json only."
+
+  - name: botRatios
+    path: /Users/luiseiman/Documents/GitHub/botRatios
+    stacks: [python-fastapi]
+    tier: minimal
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Bootstrapped minimal. trading stack available but not installed."
+
+  - name: vault-bot
+    path: /Users/luiseiman/Documents/GitHub/vault-bot
+    stacks: [python-fastapi]
+    tier: minimal
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Bootstrapped minimal. CLAUDE.md + settings.json only."
+
+  - name: SOMA2
+    path: /Users/luiseiman/Documents/SOMA2
+    stacks: [python-fastapi, react-vite-ts, docker-deploy, redis]
+    tier: standard
+    last_audit: null
+    last_sync: 2026-03-20
+    claude_kit_version: 2.0.0
+    score: null
+    history: []
+    notes: "Synced from v1.2.0 to v2.0.0. 10 rules, 3 hooks, 6 agents, 4 commands. Pending first audit."
