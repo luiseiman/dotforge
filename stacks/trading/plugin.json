@@ -13,6 +13,7 @@
       "skills/catalyst-calendar/SKILL.md"
     ]
   },
+  "category": "domain",
   "composable": true,
   "note": "Install multiple stack plugins in one project. Permissions merge via set union."
 }
