@@ -1,6 +1,6 @@
 # Roadmap claude-kit
 
-Estado actual: **v1.2.2** (2026-03-19)
+Estado actual: **v1.5.0** (2026-03-20)
 
 ---
 
@@ -139,13 +139,57 @@ Foco: insights de sesiones, reporte automático, mejora continua data-driven.
 
 ---
 
-## Backlog (sin versión asignada)
+## v1.6.0 — Ecosystem & Automation
 
-- **MCP server templates**: templates de configuración MCP para servicios comunes (GitHub, Slack, DB)
-- **Team mode**: multi-user config con herencia (base → team → individual)
-- **CI integration**: GitHub Action que corre `/forge audit` en PRs y comenta el score
-- **Stack auto-update**: detectar cambios en dependencias (package.json, pyproject.toml) y sugerir re-sync
-- **Práctica: model routing rules**: reglas para cuándo usar sonnet vs opus vs haiku (ya test-runner usa sonnet)
+Foco: integración con ecosistema MCP, CI/CD, y detección automática de cambios.
+
+### MCP server templates
+- Nuevo directorio `mcp/` con templates de configuración MCP para servicios comunes
+- Templates: `github.json`, `slack.json`, `postgres.json`, `sqlite.json`, `redis.json`
+- Cada template: connection config + tool permissions + usage rules
+- `/forge bootstrap` detecta MCP servers existentes y sugiere templates
+- Documentación de cómo componer múltiples MCP servers en un proyecto
+
+### CI integration: GitHub Action
+- Nuevo archivo `.github/actions/forge-audit/action.yml`
+- Corre `/forge audit` en PRs y comenta el score como review comment
+- Configurable: threshold mínimo (default 7.0), block PR si score < threshold
+- Badge dinámico para README: `![claude-kit score](badge-url)`
+- Soporte para GitHub Actions + GitLab CI (template `.gitlab-ci.yml`)
+
+### Stack auto-update
+- Nuevo hook PostToolUse que detecta cambios en archivos de dependencias
+- Monitored files: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Gemfile`
+- Si se agrega una dependencia que implica un nuevo stack (ej: `express` en package.json → node-express)
+  sugiere `/forge sync` para incorporar las rules del stack
+- Si se elimina un stack completo (ej: quitar `react` de package.json), sugiere limpiar rules huérfanas
+- Warning only (exit 0), no bloqueo
+
+---
+
+## v1.7.0 — Team & Governance
+
+Foco: soporte multi-usuario, model routing, y gobernanza de configuración.
+
+### Team mode
+- Multi-user config con herencia: `base` → `team` → `individual`
+- Archivo `.claude/team.json` define:
+  - `base`: configuración compartida (rules, hooks, deny list)
+  - `overrides`: por rol (`backend`, `frontend`, `devops`) con rules y permissions adicionales
+- `settings.local.json` sigue siendo individual (no se commitea)
+- `/forge bootstrap --team` genera estructura team-aware
+- Merge: team rules son aditivas sobre base, individual sobre team
+
+### Model routing rules
+- Nuevo archivo de rules `template/rules/model-routing.md`
+- Reglas para cuándo usar cada modelo:
+  - `haiku`: tareas simples, búsquedas, preguntas rápidas, test-runner
+  - `sonnet`: implementación estándar, code review, debugging
+  - `opus`: arquitectura, refactoring complejo, security audit, tareas ambiguas
+- Integración con agent definitions: cada agent sugiere su modelo óptimo
+- Actualizar agents existentes con recomendación de modelo en frontmatter
+
+---
 
 ## Descartado
 
