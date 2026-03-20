@@ -49,6 +49,40 @@ npm audit 2>/dev/null || echo "no package-lock.json"
 # Dangerous patterns
 grep -rn "eval(\|exec(\|subprocess.call(\|os.system(" --include="*.py" .
 grep -rn "innerHTML\|dangerouslySetInnerHTML\|document.write" --include="*.ts" --include="*.tsx" .
+
+# GitHub Actions injection (if .github/ exists)
+grep -rn "github\.event\.\(issue\|pull_request\|comment\|review\|discussion\)\.\(title\|body\|head\.ref\)" --include="*.yml" .github/ 2>/dev/null
+```
+
+## Dangerous Pattern Examples
+
+For each pattern, know the safe alternative:
+
+```
+# Python — command injection
+# Unsafe: subprocess.call(user_input, shell=True)
+# Safe:   subprocess.run([cmd, arg], shell=False, check=True)
+
+# Python — deserialization
+# Unsafe: pickle.loads(untrusted_data)
+# Safe:   json.loads(untrusted_data) or validated schema
+
+# Python — eval
+# Unsafe: eval(user_input)
+# Safe:   ast.literal_eval(user_input) for data, or explicit parsing
+
+# JS/TS — XSS
+# Unsafe: element.innerHTML = userInput
+# Safe:   element.textContent = userInput, or DOMPurify.sanitize()
+
+# JS/TS — prototype pollution
+# Unsafe: Object.assign(target, JSON.parse(untrusted))
+# Safe:   validate schema first, or use structuredClone()
+
+# GitHub Actions — injection
+# Unsafe: run: echo "${{ github.event.issue.title }}"
+# Safe:   env: TITLE: ${{ github.event.issue.title }}
+#          run: echo "$TITLE"
 ```
 
 ## Output Format

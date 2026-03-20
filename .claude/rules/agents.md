@@ -16,6 +16,7 @@ Before starting any task, evaluate:
 5. **Multi-component refactor (>3 files, >2 concerns)** → evaluate Agent Teams
 6. **Code review before merge** → delegate to `code-reviewer`
 7. **Architecture decision or tradeoff analysis** → delegate to `architect`
+8. **Session analysis / pattern detection / /forge insights** → delegate to `session-reviewer`
 
 ## Subagent Invocation Rules
 

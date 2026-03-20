@@ -33,6 +33,9 @@ For every review, check:
 - **Performance**: N+1 queries, unnecessary allocations, missing indexes, blocking I/O in async
 - **Maintainability**: dead code, unclear naming, missing types, tangled dependencies
 - **Tests**: coverage gaps, fragile assertions, missing edge case tests
+- **History**: run `git log --follow -p` on key modified files for regression context
+- **CLAUDE.md compliance**: read project CLAUDE.md and verify changes respect its rules
+- **Code comments**: check TODOs, invariants, @warning annotations in modified files
 
 ## Output Format
 
@@ -54,6 +57,22 @@ For every review, check:
 **Verdict:** APPROVE / REQUEST CHANGES / BLOCK
 **Summary:** <1-2 sentence overall assessment>
 ```
+
+## Confidence Scoring
+
+After identifying each issue, assign a confidence score 0-100.
+Only report issues scoring >= 75. Discard the rest silently.
+
+## False Positive Exclusions
+
+Do NOT report:
+- Pre-existing issues not introduced in the current diff
+- Issues a linter, typechecker, or compiler would catch
+- Pedantic nitpicks a senior engineer would skip in review
+- Code with lint-ignore, noqa, noinspection, or eslint-disable comments
+- General code quality issues unless explicitly required by project CLAUDE.md
+- Intentional functionality changes clearly related to the broader change
+- Issues on lines the author did not modify
 
 ## Constraints
 
