@@ -6,8 +6,52 @@
 set -euo pipefail
 
 CLAUDE_KIT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-CLAUDE_HOME="${HOME}/.claude"
 DRY_RUN=false
+
+# Resolve the correct home directory.
+# If running as root (e.g. via sudo or in containers), $HOME may point to /root
+# instead of the actual user's home. We detect the real owner of the repo.
+if [[ "${CLAUDE_HOME:-}" != "" ]]; then
+  # Explicit override — respect it
+  :
+elif [[ "$(id -u)" == "0" ]]; then
+  # Running as root (sudo, container, etc.) — try to find the real user's home
+  resolved=false
+
+  # Method 1: SUDO_USER (set by sudo)
+  if [[ -n "${SUDO_USER:-}" && "$SUDO_USER" != "root" ]]; then
+    owner_home=$(eval echo "~${SUDO_USER}")
+    CLAUDE_HOME="${owner_home}/.claude"
+    echo "⚠ Running as root (sudo) — targeting ${SUDO_USER}'s home: ${owner_home}"
+    resolved=true
+  fi
+
+  # Method 2: repo owner differs from root
+  if ! $resolved; then
+    repo_owner=$(stat -c '%U' "$CLAUDE_KIT_DIR" 2>/dev/null || stat -f '%Su' "$CLAUDE_KIT_DIR" 2>/dev/null)
+    if [[ -n "$repo_owner" && "$repo_owner" != "root" ]]; then
+      owner_home=$(eval echo "~${repo_owner}")
+      CLAUDE_HOME="${owner_home}/.claude"
+      echo "⚠ Running as root — targeting ${repo_owner}'s home: ${owner_home}"
+      resolved=true
+    fi
+  fi
+
+  # Method 3: repo path is under /home/<user>/ (common in containers)
+  if ! $resolved && [[ "$CLAUDE_KIT_DIR" =~ ^/home/([^/]+)/ ]]; then
+    inferred_user="${BASH_REMATCH[1]}"
+    CLAUDE_HOME="/home/${inferred_user}/.claude"
+    echo "⚠ Running as root — inferred target from repo path: /home/${inferred_user}"
+    resolved=true
+  fi
+
+  # Fallback: use root's home
+  if ! $resolved; then
+    CLAUDE_HOME="${HOME}/.claude"
+  fi
+else
+  CLAUDE_HOME="${HOME}/.claude"
+fi
 
 if [[ "${1:-}" == "--dry-run" ]]; then
   DRY_RUN=true
