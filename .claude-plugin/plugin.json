@@ -1,6 +1,6 @@
 {
   "name": "claude-kit",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Configuration factory for Claude Code — templates, stacks, hooks, rules, and audit tools",
   "author": "luiseiman",
   "license": "MIT",
@@ -25,6 +25,12 @@
         "event": "PostToolUse",
         "matcher": "Write",
         "description": "Warn when creating source files without tests (strict profile)"
+      },
+      {
+        "file": "template/hooks/session-report.sh",
+        "event": "Stop",
+        "matcher": null,
+        "description": "Generate session report on session end (requires FORGE_SESSION_REPORT=true)"
       }
     ],
     "rules": [

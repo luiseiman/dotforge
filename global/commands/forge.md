@@ -63,11 +63,25 @@ Restaura `.claude/` completo desde la plantilla claude-kit, con backup obligator
 Leer `$CLAUDE_KIT_DIR/registry/projects.yml` y mostrar:
 ```
 ═══ REGISTRO claude-kit ═══
-Proyecto         Stack                    Score   Última auditoría
-─────────────────────────────────────────────────────────────────
-my-api           python-fastapi, docker   9.5     2026-03-19
+Proyecto         Stack                    Score   Trend     Última auditoría
+──────────────────────────────────────────────────────────────────────────
+my-api           python-fastapi, docker   9.5     ▁▃▇ ↑    2026-03-19
+my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 ...
 ```
+
+**Trend visualization:**
+- Show ASCII sparkline from last 5 audit scores in `history[]`
+- Arrow: ↑ (improving: last > first), → (stable: delta < 0.5), ↓ (declining: last < first)
+
+**Alerts:**
+- If any project's score dropped >1.5 points between last two audits: show `⚠️ ALERT: {{project}} score dropped {{delta}} points`
+- If any project has score < 7.0 and claude-kit has a newer version than their last sync: show `💡 {{project}}: run /forge sync (current: v{{their_version}}, available: v{{latest}})`
+
+### `insights`
+Ejecutar el skill `/session-insights` en el proyecto actual.
+Analiza patrones de uso, errores frecuentes, archivos más editados y tendencias de score.
+Genera recomendaciones y alimenta el pipeline de prácticas automáticamente.
 
 ### `capture <descripción>`
 Ejecutar el skill `/capture-practice` con la descripción proporcionada.
@@ -123,7 +137,8 @@ Comandos:
   reset         Restaurar .claude/ a plantilla (con backup)
   global sync   Sincronizar ~/.claude/ contra plantilla global
   global status Estado de ~/.claude/ vs plantilla
-  status        Ver registro de proyectos y scores
+  status        Ver registro de proyectos, scores y tendencias
+  insights      Analizar sesiones pasadas y generar recomendaciones
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas
   watch         Buscar actualizaciones en docs Anthropic
