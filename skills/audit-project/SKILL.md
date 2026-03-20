@@ -26,6 +26,20 @@ Detection signals:
 
 Save tier in registry entry.
 
+## Paso 1c: Config coherence check
+
+Before scoring, validate internal coherence. Run `$CLAUDE_KIT_DIR/tests/test-config.sh <project-dir>` or perform equivalent checks inline:
+
+1. Hooks referenced in settings.json exist and are executable
+2. Rules have valid `globs:` frontmatter
+3. Rule globs match at least 1 real file in the project
+4. settings.json is valid JSON with deny list covering .env, *.key, *.pem
+5. CLAUDE.md has minimum required sections (stack, build/test, architecture)
+6. No contradictory allow+deny patterns in settings.json
+7. No prompt injection patterns in rules or CLAUDE.md
+
+If coherence check finds critical failures (missing hooks, invalid JSON), report them in a `── COHERENCE ──` section BEFORE the score. These are configuration bugs, not gaps.
+
 ## Paso 2: Cargar checklist
 
 Leer `$CLAUDE_KIT_DIR/audit/checklist.md` para los criterios de evaluación.
