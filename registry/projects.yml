@@ -80,64 +80,76 @@ projects:
     path: /Users/luiseiman/Documents/GitHub/Soma
     stacks: [python-fastapi, redis, docker-deploy]
     tier: standard
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Bootstrapped standard. 4 rules, 2 hooks. Pending first audit."
+    score: 9.6
+    history:
+      - {date: 2026-03-20, score: 7.6, version: 2.0.0}
+      - {date: 2026-03-20, score: 9.6, version: 2.1.0}
+    notes: "6 rules, 2 hooks, 2 commands, agents.md, agent-memory, CLAUDE_ERRORS.md, .gitignore. Bash(*) granularizado (34 permisos)."
 
   - name: openclaw
     path: /Users/luiseiman/Documents/GitHub/openclaw
     stacks: [python-fastapi, node-express, docker-deploy]
     tier: standard
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Bootstrapped standard. Pending first audit."
+    score: 10.0
+    history:
+      - {date: 2026-03-20, score: 8.7, version: 2.0.0}
+      - {date: 2026-03-20, score: 10.0, version: 2.1.0}
+    notes: "Rules + hooks + CLAUDE_ERRORS.md + commands/review + agent-memory + .gitignore hardened. Score perfecto."
 
   - name: Cotiza-Api-Render
     path: /Users/luiseiman/Documents/GitHub/Cotiza-Api-Render
     stacks: [python-fastapi]
     tier: minimal
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Bootstrapped minimal. CLAUDE.md + settings.json only."
+    score: 8.3
+    history:
+      - {date: 2026-03-20, score: 5.1, version: 2.0.0}
+      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
+    notes: "Rules (_common + backend), hook block-destructive, CLAUDE_ERRORS.md, .gitignore hardened. Security cap levantado."
 
   - name: botRatios
     path: /Users/luiseiman/Documents/GitHub/botRatios
     stacks: [python-fastapi]
     tier: minimal
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Bootstrapped minimal. trading stack available but not installed."
+    score: 8.3
+    history:
+      - {date: 2026-03-20, score: 3.9, version: 2.0.0}
+      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
+    notes: "Rules (_common + backend), hook block-destructive, CLAUDE_ERRORS.md, .gitignore creado. Security cap levantado. Leak risk eliminado."
 
   - name: vault-bot
     path: /Users/luiseiman/Documents/GitHub/vault-bot
     stacks: [python-fastapi]
     tier: minimal
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Bootstrapped minimal. CLAUDE.md + settings.json only."
+    score: 8.3
+    history:
+      - {date: 2026-03-20, score: 4.4, version: 2.0.0}
+      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
+    notes: "Rules (_common + backend), hook block-destructive, allow list granular (31 permisos), CLAUDE_ERRORS.md, .gitignore hardened. Security cap levantado."
 
   - name: SOMA2
     path: /Users/luiseiman/Documents/SOMA2
     stacks: [python-fastapi, react-vite-ts, docker-deploy, redis]
     tier: standard
-    last_audit: null
+    last_audit: 2026-03-20
     last_sync: 2026-03-20
     claude_kit_version: 2.0.0
-    score: null
-    history: []
-    notes: "Synced from v1.2.0 to v2.0.0. 10 rules, 3 hooks, 6 agents, 4 commands. Pending first audit."
+    score: 10.0
+    history:
+      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
+      - {date: 2026-03-20, score: 10.0, version: 2.1.0}
+    notes: "10 rules, 3 hooks, 6 agents, 4 commands, CLAUDE_ERRORS.md, agent-memory, .gitignore con *credentials*. Score perfecto."
