@@ -20,6 +20,8 @@ Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
 | `reset` | `.claude/` directorio existe | "No hay configuración que resetear. Ejecutá `/forge bootstrap` para inicializar." |
 | `export` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para exportar. Ejecutá `/forge bootstrap` primero." |
 | `insights` | `CLAUDE_ERRORS.md` o `.claude/agent-memory/` | "No hay historial para analizar. Usá el proyecto un tiempo y volvé a intentar." |
+| `rule-check` | `.claude/rules/` con al menos 1 rule | "No hay reglas para evaluar. Ejecutá `/forge bootstrap` primero." |
+| `benchmark` | `.claude/settings.json` + `CLAUDE.md` + git repo limpio | "Requiere proyecto con config claude-kit y working tree limpio." |
 | `capture` | — | — |
 | `update` | — | — |
 | `watch` | — | — |
@@ -108,6 +110,17 @@ my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 - If any project's score dropped >1.5 points between last two audits: show `⚠️ ALERT: {{project}} score dropped {{delta}} points`
 - If any project has score < 7.0 and claude-kit has a newer version than their last sync: show `💡 {{project}}: run /forge sync (current: v{{their_version}}, available: v{{latest}})`
 
+### `rule-check`
+Ejecutar el skill `/rule-effectiveness` en el proyecto actual.
+Cruza globs de `.claude/rules/*.md` contra `git log --name-only` para clasificar reglas en activas (>50% match), ocasionales (10-50%), e inertes (<10%).
+Reporta rule coverage y directorios sin cobertura.
+
+### `benchmark`
+Ejecutar el skill `/benchmark` en el proyecto actual.
+Compara config full vs minimal ejecutando la misma tarea estándar en dos worktrees aislados.
+Carga task de `$CLAUDE_KIT_DIR/tests/benchmark-tasks/{stack}.yml` según stack detectado.
+**Requiere confirmación explícita del usuario** (ejecuta Claude Code dos veces).
+
 ### `insights`
 Ejecutar el skill `/session-insights` en el proyecto actual.
 Analiza patrones de uso, errores frecuentes, archivos más editados y tendencias de score.
@@ -168,6 +181,8 @@ Comandos:
   global sync   Sincronizar ~/.claude/ contra plantilla global
   global status Estado de ~/.claude/ vs plantilla
   status        Ver registro de proyectos, scores y tendencias
+  rule-check    Detectar reglas inertes cruzando globs contra git history
+  benchmark     Comparar config full vs minimal en tareas estandarizadas
   insights      Analizar sesiones pasadas y generar recomendaciones
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas
