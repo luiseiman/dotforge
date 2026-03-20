@@ -237,6 +237,8 @@ for agent_file in "${CLAUDE_KIT_DIR}/agents"/*.md; do
 done
 
 # --- Commands (all .md files in global/commands/) ---
+# IMPORTANT: Commands use file copies, NOT symlinks.
+# Claude Code does not follow symlinks for command discovery.
 echo ""
 echo "── Commands ──"
 action "mkdir -p '${CLAUDE_HOME}/commands'"
@@ -244,14 +246,14 @@ for cmd_file in "${CLAUDE_KIT_DIR}/global/commands"/*.md; do
   [[ -f "$cmd_file" ]] || continue
   cmd_name=$(basename "$cmd_file")
   cmd_dst="${CLAUDE_HOME}/commands/${cmd_name}"
-  if is_current_link "$cmd_file" "$cmd_dst" 2>/dev/null; then
+  if [[ -f "$cmd_dst" ]] && diff -q "$cmd_file" "$cmd_dst" > /dev/null 2>&1; then
     echo "  ✓ ${cmd_name} (ok)"
   elif [[ -e "$cmd_dst" ]]; then
     echo "  ↻ ${cmd_name} (update)"
-    action "remove_item '$cmd_dst' && install_item '$cmd_file' '$cmd_dst'"
+    action "rm -f '$cmd_dst' && cp '$cmd_file' '$cmd_dst'"
   else
     echo "  + ${cmd_name} (new)"
-    action "install_item '$cmd_file' '$cmd_dst'"
+    action "cp '$cmd_file' '$cmd_dst'"
   fi
 done
 # Preserve other commands not from claude-kit (vault.md, etc.)
