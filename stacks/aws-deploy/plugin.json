@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-aws-deploy",
+  "version": "1.4.0",
+  "description": "AWS CDK/SAM/CloudFormation infrastructure-as-code rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/aws.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-java-spring",
+  "version": "1.4.0",
+  "description": "Java 21+ with Spring Boot 3.x, Maven/Gradle, records, and virtual threads rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/backend.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}
