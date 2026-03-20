@@ -1,7 +1,7 @@
 # Registry of projects managed by claude-kit
 # Updated by /forge audit and /forge sync
 # Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, metrics_summary, notes
-# Scoring v1.5.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
+# Scoring v1.6.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
 # history: array of {date, score, version} entries — appended by /forge audit, never overwritten
 # metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
 
@@ -33,8 +33,9 @@ projects:
     tier: standard
     last_audit: 2026-03-20
     last_sync: 2026-03-20
-    claude_kit_version: 1.5.0
+    claude_kit_version: 1.6.0
     score: 10.0
     history:
       - {date: 2026-03-20, score: 10.0, version: 1.5.0}
-    notes: "Self-audit. 3 rules, 2 hooks, 4 commands, 6 agents, memory active, deny complete."
+      - {date: 2026-03-20, score: 10.0, version: 1.6.0}
+    notes: "Self-audit v1.6.0. 3 rules, 5 hooks, 4 commands, 6 agents, 13 skills, memory active, deny complete, config validation active."

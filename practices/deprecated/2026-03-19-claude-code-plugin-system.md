@@ -2,7 +2,10 @@
 title: "Claude Code tiene sistema formal de plugins"
 date: 2026-03-19
 source_type: upstream
-status: inbox
+status: deprecated
+reason: "Not applicable — claude-kit is single-user. Revisit if distributing to teams."
+effectiveness: not-applicable
+error_type: null
 tags: [plugins, architecture, distribution]
 ---
 
