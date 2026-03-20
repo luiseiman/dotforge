@@ -11,9 +11,10 @@ Leer `$CLAUDE_KIT_DIR/audit/checklist.md` y `scoring.md` como referencia.
 Ejecutar el skill `/sync-template` en el proyecto actual.
 Comparar contra `$CLAUDE_KIT_DIR/template/` + stacks detectados.
 
-### `bootstrap`
+### `bootstrap` o `bootstrap --profile <minimal|standard|full>`
 Ejecutar el skill `/bootstrap-project` en el proyecto actual.
 Usar `$CLAUDE_KIT_DIR/template/` como base.
+Pasar el profile seleccionado (default: `standard`).
 
 ### `global sync`
 Sincronizar `~/.claude/` contra `$CLAUDE_KIT_DIR/global/`:
@@ -44,6 +45,10 @@ Skills:       N/M instalados
 Agents:       N/M instalados
 Commands:     forge.md (symlink/archivo/falta)
 ```
+
+### `export <cursor|codex|windsurf>`
+Ejecutar el skill `/export-config` con el target especificado.
+Exporta la configuración claude-kit del proyecto actual a formato compatible con otra herramienta.
 
 ### `diff`
 Ejecutar el skill `/diff-project` en el proyecto actual.
@@ -112,7 +117,8 @@ Mostrar ayuda:
 Comandos:
   audit         Auditar proyecto actual contra plantilla
   sync          Sincronizar config contra plantilla
-  bootstrap     Inicializar .claude/ en proyecto nuevo
+  bootstrap     Inicializar .claude/ en proyecto nuevo [--profile minimal|standard|full]
+  export        Exportar config a cursor|codex|windsurf
   diff          Qué cambió desde último sync
   reset         Restaurar .claude/ a plantilla (con backup)
   global sync   Sincronizar ~/.claude/ contra plantilla global

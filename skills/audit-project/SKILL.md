@@ -11,6 +11,21 @@ Ejecutá una auditoría completa de la configuración de Claude Code del proyect
 
 Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
+## Paso 1b: Detect project tier
+
+Auto-detect project tier based on signals:
+- **simple** (<5K LOC, 1 stack, no CI config): recommended items are relaxed (items 8-10 don't penalize)
+- **standard** (5K-50K LOC, 1-2 stacks): default behavior
+- **complex** (>50K LOC, 3+ stacks, monorepo indicators like `packages/` or `apps/`): recommended items 8-10 become semi-obligatory (each worth 0-2 instead of 0-1)
+
+Detection signals:
+1. LOC: count non-empty lines in source files (`find . -name '*.py' -o -name '*.ts' -o -name '*.js' -o -name '*.go' -o -name '*.java' -o -name '*.swift' | xargs wc -l`)
+2. Stack count: number of stacks detected in step 1
+3. CI: presence of `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/`
+4. Monorepo: presence of `packages/`, `apps/`, `lerna.json`, `pnpm-workspace.yaml`, `turbo.json`
+
+Save tier in registry entry.
+
 ## Paso 2: Cargar checklist
 
 Leer `$CLAUDE_KIT_DIR/audit/checklist.md` para los criterios de evaluación.
@@ -34,20 +49,26 @@ Para cada item del checklist, verificar existencia **y calidad**:
    - ¿Está referenciado en `.claude/settings.json` bajo hooks?
 5. **Comandos build/test** — ¿Están en CLAUDE.md? ¿Corresponden al stack detectado?
 
-### Recomendado (0-6 puntos bonus)
-6. **CLAUDE_ERRORS.md** — ¿Existe con formato de tabla/estructura?
+### Recomendado (0-7 puntos bonus)
+6. **CLAUDE_ERRORS.md** — ¿Existe con formato de tabla con columna Type?
 7. **Hook lint** — ¿Existe? ¿Es ejecutable? (verificar `chmod +x`)
 8. **Comandos custom** — ¿Hay archivos en `.claude/commands/`?
 9. **Memory** — ¿Hay archivos de memoria del proyecto?
 10. **Agentes** — ¿Hay `.claude/agents/` + regla `agents.md` en rules?
 11. **.gitignore** — ¿Protege .env, *.key, *.pem, credentials?
+12. **Prompt injection scan** — ¿Rules/CLAUDE.md libres de patrones sospechosos?
+
+**Tier adjustments:**
+- `simple`: items 8-10 score 0 don't penalize (treated as N/A)
+- `complex`: items 8-10 become semi-obligatory (each 0-2 instead of 0-1)
 
 ## Paso 4: Calcular score
 
 Usar los pesos de `$CLAUDE_KIT_DIR/audit/scoring.md`:
 1. `score_obligatorio = sum(items 1-5)` — máximo 10
-2. `score_recomendado = sum(items 6-11)` — máximo 6
-3. `score_total = score_obligatorio * 0.7 + score_recomendado * 0.5` — max 7.0 + 3.0 = 10.0
+2. `score_recomendado = sum(items 6-12)` — máximo 7
+3. `score_total = score_obligatorio * 0.7 + score_recomendado * (3.0 / 7)` — max 7.0 + 3.0 = 10.0
+4. Apply tier adjustments before calculating (see Paso 1b)
 4. `score_normalizado = min(score_total, 10)`
 
 **Cap de seguridad:** Si item 2 (settings.json) o item 4 (block-destructive) es 0, score máximo = 6.0.
@@ -59,6 +80,7 @@ Formato:
 ═══ AUDITORÍA claude-kit: {{proyecto}} ═══
 Fecha: {{YYYY-MM-DD}}
 Stack detectado: {{stacks}}
+Tier: {{simple|standard|complex}}
 claude-kit version: {{version del último bootstrap/sync si detectable}}
 Score: {{X.X}}/10 {{nivel}}
 
@@ -76,6 +98,7 @@ Score: {{X.X}}/10 {{nivel}}
 {{✅|⚠️}} Memory — {{detalle}}
 {{✅|⚠️}} Agentes — {{detalle}}
 {{✅|⚠️}} .gitignore — {{detalle}}
+{{✅|⚠️}} Prompt injection scan — {{detalle}}
 
 ── GAPS CRÍTICOS ──
 1. {{qué falta}} → {{acción recomendada}}
