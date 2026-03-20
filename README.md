@@ -68,7 +68,7 @@ claude-kit/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Technology modules (13 stacks, additive)
 ├── agents/         # 6 subagents (researcher, architect, implementer, ...)
-├── skills/         # 11 skills installed as ~/.claude/skills/ symlinks
+├── skills/         # 13 skills installed as ~/.claude/skills/ symlinks
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
@@ -117,6 +117,8 @@ All skills are invoked through the `/forge` command:
 | `/forge scout` | Review curated repos for useful patterns |
 | `/forge export` | Export config to Cursor, Codex, or Windsurf format |
 | `/forge insights` | Analyze sessions for patterns and recommendations |
+| `/forge rule-check` | Detect inert rules by cross-referencing globs against git history |
+| `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
 | `/forge global sync` | Sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
 
@@ -162,14 +164,14 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 
 - **[Usage Guide](docs/usage-guide.md)** — Complete step-by-step guide: install, bootstrap, sync, audit, practices ([Español](docs/guia-uso.md))
 - [Best Practices](docs/best-practices.md) — Claude Code configuration patterns
-- [Security Checklist](docs/security-checklist.md) — 31 items for pre-deploy review
+- [Security Checklist](docs/security-checklist.md) — 62 items for pre-deploy review
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 reproducible patterns
 - [Creating Stacks](docs/creating-stacks.md) — How to add a new technology stack
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v1.5.0)
-- [Roadmap](ROADMAP.md) — Future plans (v1.6.0+)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.0.0)
+- [Roadmap](ROADMAP.md) — Development history (v1.0.0 → v2.0.0)
 
 ## Requirements
 
@@ -265,7 +267,7 @@ claude-kit/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Módulos tecnológicos (13 stacks, aditivos)
 ├── agents/         # 6 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 11 skills instalados como symlinks en ~/.claude/skills/
+├── skills/         # 13 skills instalados como symlinks en ~/.claude/skills/
 ├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
@@ -314,6 +316,8 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge scout` | Revisar repos curados en busca de patrones útiles |
 | `/forge export` | Exportar config a formato Cursor, Codex o Windsurf |
 | `/forge insights` | Analizar sesiones para patrones y recomendaciones |
+| `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git |
+| `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |
 | `/forge global sync` | Sincronizar configuración global de `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |
 
@@ -365,7 +369,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v1.5.0)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.0.0)
 - [Roadmap](ROADMAP.md) — Planes a futuro (v1.6.0+)
 
 ## Requisitos

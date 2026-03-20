@@ -1,6 +1,6 @@
 # Guía de Uso — claude-kit
 
-**Versión:** 1.5.0
+**Versión:** 2.0.0
 **Fecha:** 2026-03-20
 
 claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene la carpeta `.claude/` de tus proyectos: reglas, hooks, permisos, agentes y comandos. Todo es markdown + shell scripts — no hay código de aplicación.
