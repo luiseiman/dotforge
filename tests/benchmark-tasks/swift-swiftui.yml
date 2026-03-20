@@ -1,0 +1,19 @@
+# Benchmark task for swift-swiftui stack
+# Used by /forge benchmark to compare full vs minimal config
+
+id: swift-swiftui-health-check
+title: "Add HealthCheck view with unit test"
+stack: swift-swiftui
+
+prompt: |
+  Create a HealthCheckView that displays app version, build number, and a connectivity
+  status indicator. Use @Observable for the view model. Include a unit test that verifies
+  the view model initializes with correct default values.
+  Follow existing project patterns for view and test organization.
+
+test_command: "swift test 2>&1 | tail -10"
+lint_command: "swiftlint lint --quiet 2>&1 | tail -10"
+
+expected_files:
+  - "**/HealthCheck*"
+  - "**/*Tests*/*HealthCheck*"

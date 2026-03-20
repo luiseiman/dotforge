@@ -1,0 +1,18 @@
+# Benchmark task for go-api stack
+# Used by /forge benchmark to compare full vs minimal config
+
+id: go-api-health
+title: "Add GET /health endpoint with test"
+stack: go-api
+
+prompt: |
+  Add a GET /health handler that returns {"status": "ok"} as JSON with a 200 status code.
+  Include a table-driven test using httptest that verifies status code and response body.
+  Follow existing project patterns for handler and test organization.
+
+test_command: "go test ./... -v 2>&1 | tail -10"
+lint_command: "go vet ./... 2>&1 | tail -10"
+
+expected_files:
+  - "**/health*"
+  - "**/*_test.go"

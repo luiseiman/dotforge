@@ -1,0 +1,19 @@
+# Benchmark task for node-express stack
+# Used by /forge benchmark to compare full vs minimal config
+
+id: node-express-health
+title: "Add GET /health endpoint with test"
+stack: node-express
+
+prompt: |
+  Add a GET /health endpoint that returns {"status": "ok", "uptime": <seconds>}.
+  Include a test using the project's test framework (jest or vitest) that verifies
+  the endpoint returns 200 and has both fields.
+  Follow existing project patterns for route and test organization.
+
+test_command: "npm test 2>&1 | tail -10"
+lint_command: "npx eslint . --no-error-on-unmatched-pattern 2>&1 | tail -10"
+
+expected_files:
+  - "**/health*"
+  - "**/*.test.*"

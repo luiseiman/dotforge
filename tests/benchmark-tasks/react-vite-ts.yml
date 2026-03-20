@@ -1,0 +1,19 @@
+# Benchmark task for react-vite-ts stack
+# Used by /forge benchmark to compare full vs minimal config
+
+id: react-vite-ts-error-boundary
+title: "Add ErrorBoundary component with test"
+stack: react-vite-ts
+
+prompt: |
+  Create an ErrorBoundary component that catches render errors and shows a fallback UI
+  with the error message and a "Try again" button that resets the error state.
+  Include a Vitest test that verifies the component catches errors and renders the fallback.
+  Follow existing project patterns for component structure and test organization.
+
+test_command: "npx vitest run --reporter=verbose 2>&1 | tail -10"
+lint_command: "npx eslint src/ --no-error-on-unmatched-pattern 2>&1 | tail -10"
+
+expected_files:
+  - "src/**/ErrorBoundary*"
+  - "src/**/*.test.*"

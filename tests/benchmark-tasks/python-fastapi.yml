@@ -1,0 +1,18 @@
+# Benchmark task for python-fastapi stack
+# Used by /forge benchmark to compare full vs minimal config
+
+id: python-fastapi-health
+title: "Add GET /health endpoint with test"
+stack: python-fastapi
+
+prompt: |
+  Add a GET /health endpoint that returns {"status": "ok", "timestamp": "<ISO8601>"}.
+  Include a pytest test that verifies the endpoint returns 200 and has both fields.
+  Follow existing project patterns for router structure and test organization.
+
+test_command: "pytest tests/ -x -q 2>&1 | tail -5"
+lint_command: "ruff check . --select E,W,F 2>&1 | tail -10"
+
+expected_files:
+  - "*/health*"
+  - "tests/*health*"

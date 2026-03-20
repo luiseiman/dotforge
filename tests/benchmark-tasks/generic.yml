@@ -1,0 +1,18 @@
+# Generic benchmark task — fallback when no stack-specific task matches
+# Used by /forge benchmark to compare full vs minimal config
+
+id: generic-readme-update
+title: "Add CONTRIBUTING.md with project-specific guidelines"
+stack: generic
+
+prompt: |
+  Create a CONTRIBUTING.md file with: setup instructions (infer from project files),
+  coding conventions (infer from existing code), testing instructions (find and document
+  the test command), and PR guidelines. The file should be specific to this project,
+  not a generic template.
+
+test_command: "echo 'no test command for generic task'"
+lint_command: "echo 'no lint command for generic task'"
+
+expected_files:
+  - "CONTRIBUTING.md"
