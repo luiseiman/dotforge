@@ -259,6 +259,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge export cursor` | Export config to Cursor |
 | `/forge export codex` | Export config to Codex |
 | `/forge export windsurf` | Export config to Windsurf |
+| `/forge export openclaw` | Export config to OpenClaw |
 
 ### Global commands
 
@@ -584,6 +585,7 @@ See `docs/creating-stacks.md` for details.
 /forge export cursor
 /forge export codex
 /forge export windsurf
+/forge export openclaw
 ```
 
 Hooks are converted to textual instructions (no enforcement outside Claude Code).

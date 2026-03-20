@@ -1,6 +1,6 @@
 ---
 name: export-config
-description: Export claude-kit configuration to other AI code editors (Cursor, Codex, Windsurf).
+description: Export claude-kit configuration to other AI code editors (Cursor, Codex, Windsurf, OpenClaw).
 ---
 
 # Export Configuration
@@ -8,7 +8,7 @@ description: Export claude-kit configuration to other AI code editors (Cursor, C
 Convert the current project's claude-kit configuration into formats compatible with other AI coding tools.
 
 ## Input
-$ARGUMENTS contains the target format: `cursor`, `codex`, or `windsurf`.
+$ARGUMENTS contains the target format: `cursor`, `codex`, `windsurf`, or `openclaw`.
 
 If no argument provided, show available targets and ask.
 
@@ -48,6 +48,58 @@ Generate `.windsurfrules` at project root:
 2. Windsurf format is similar to `.cursorrules` — single markdown file
 3. Add Windsurf-specific header: "You are an AI assistant working on this project."
 4. Append all rules and converted hooks/permissions
+
+### `openclaw` → `~/.openclaw/skills/{project}/SKILL.md` + workspace agent config
+
+Generate an OpenClaw workspace skill for the current project:
+
+1. Create skill directory: `~/.openclaw/skills/{project-slug}/`
+2. Generate `SKILL.md` with frontmatter:
+   ```yaml
+   ---
+   name: {project-slug}
+   description: "AI assistant for {project-name} — {stack description}"
+   user-invocable: true
+   metadata: {"openclaw":{"requires":{"bins":["claude"]}}}
+   ---
+   ```
+3. Body content:
+   - Project context from `CLAUDE.md` (skip forge markers, keep substance)
+   - Build/test commands as executable instructions
+   - Rules converted to behavioral instructions (strip `globs:` frontmatter)
+   - Deny list as explicit "NEVER read or modify" instructions
+   - Hook logic as text: "Before executing commands, check for destructive patterns: ..."
+   - Agent roles summarized: "For architecture decisions, think like an architect. For security, scan for OWASP top 10."
+4. Add execution section:
+   ```markdown
+   ## Execution
+   When asked to work on this project:
+   1. cd to {project-path}
+   2. Use `claude --print "<task>"` to execute via Claude Code
+   3. Return the result formatted for the current channel
+   ```
+
+Additionally, if the project has specific commands (`.claude/commands/*.md`), list them as available actions:
+```markdown
+## Available commands
+- /audit — audit project configuration
+- /health — health check
+- /debug — assisted debugging
+- /review — code review
+```
+
+### What OpenClaw export preserves vs loses
+
+| Feature | Preserved | How |
+|---------|-----------|-----|
+| Project context | ✅ | CLAUDE.md content in skill body |
+| Rules | ✅ | Converted to text instructions |
+| Deny list | ✅ | "NEVER read/modify" instructions |
+| Hook logic | ⚠️ Partial | Text instructions (no enforcement) |
+| Agent orchestration | ⚠️ Partial | Summarized as behavioral guidance |
+| Audit scoring | ✅ | Via `claude --print "/forge audit"` bridge |
+| Session metrics | ❌ | OpenClaw sessions don't generate claude-kit metrics |
+| Stack-specific auto-loading | ❌ | All rules flattened into single skill |
 
 ## Step 3: Handle conflicts
 

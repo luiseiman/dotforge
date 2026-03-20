@@ -78,7 +78,7 @@ Agents:       N/M instalados
 Commands:     forge.md (symlink/archivo/falta)
 ```
 
-### `export <cursor|codex|windsurf>`
+### `export <cursor|codex|windsurf|openclaw>`
 Ejecutar el skill `/export-config` con el target especificado.
 Exporta la configuración claude-kit del proyecto actual a formato compatible con otra herramienta.
 
@@ -175,7 +175,7 @@ Comandos:
   audit         Auditar proyecto actual contra plantilla
   sync          Sincronizar config contra plantilla
   bootstrap     Inicializar .claude/ en proyecto nuevo [--profile minimal|standard|full]
-  export        Exportar config a cursor|codex|windsurf
+  export        Exportar config a cursor|codex|windsurf|openclaw
   diff          Qué cambió desde último sync
   reset         Restaurar .claude/ a plantilla (con backup)
   global sync   Sincronizar ~/.claude/ contra plantilla global
