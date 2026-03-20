@@ -1,0 +1,33 @@
+# Practice effectiveness tracking — binary recurrence model
+# Updated by /forge audit and /forge insights
+# Each practice that targets a specific error type gets tracked here
+#
+# Lifecycle:
+#   1. Practice activated → entry created with status: monitoring
+#   2. Each audit checks CLAUDE_ERRORS.md for recurrence of error_type
+#   3. After recurrence_target checks without recurrence → status: validated
+#   4. If error recurs → status: failed, practice needs revision
+#
+# Schema:
+#   id: practice ID (matches practices/active/*.md frontmatter)
+#   error_targeted: description of the error this practice prevents (null if not error-targeted)
+#   error_type: syntax | logic | integration | config | security | null
+#   activated: date when practice moved to active/
+#   recurrence_checks: number of audits performed since activation
+#   recurrence_target: checks needed to validate (default 5)
+#   recurred: boolean — did the targeted error recur?
+#   status: monitoring | validated | failed | not-applicable
+#   projects_applied: number of projects where this practice is active
+#   last_checked: date of last recurrence check
+
+practices:
+  - id: practice-2026-03-19-session-changes-example
+    error_targeted: null
+    error_type: null
+    activated: 2026-03-19
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 1
+    last_checked: 2026-03-20

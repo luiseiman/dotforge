@@ -24,6 +24,7 @@ Para cada práctica:
 1. **¿Es actionable?** — Se puede traducir a un cambio concreto en claude-kit
 2. **¿Es nueva?** — No duplica algo que ya está en `practices/active/`
 3. **¿Es generalizable?** — Aplica a >1 proyecto (no es project-specific)
+4. **¿Previene un error específico?** — Si sí, anotar `error_type` y descripción del error para tracking en metrics.yml
 
 ### Clasificar
 - **Aceptar** → mover a `practices/evaluating/`, anotar cambio concreto propuesto
@@ -69,8 +70,16 @@ Para cada práctica aceptada en `evaluating/`:
 2. Modificar los archivos de claude-kit correspondientes
 3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
 4. Mover práctica de `evaluating/` a `active/` con `incorporated_in:` actualizado
-5. Actualizar `docs/changelog.md`
-6. Bump `VERSION` según tipo
+5. Set frontmatter fields: `effectiveness: monitoring` (or `not-applicable` if no error targeted), `error_type` matching CLAUDE_ERRORS.md types
+6. Register in `$CLAUDE_KIT_DIR/practices/metrics.yml`:
+   - `error_targeted`: description of the error this practice prevents (null if not error-targeted)
+   - `error_type`: syntax | logic | integration | config | security | null
+   - `activated`: today's date
+   - `status`: monitoring (or not-applicable)
+   - `recurrence_checks`: 0
+   - `recurrence_target`: 5
+7. Actualizar `docs/changelog.md`
+8. Bump `VERSION` según tipo
 
 ---
 
@@ -95,6 +104,30 @@ NO propagar automáticamente. Solo informar.
 
 ---
 
+## Fase 4: VERIFICAR — Recurrence check de prácticas activas
+
+For each entry in `$CLAUDE_KIT_DIR/practices/metrics.yml` where `status: monitoring`:
+
+1. Read `CLAUDE_ERRORS.md` from each project in registry where the practice is applied
+2. Check if any error matching `error_type` + `error_targeted` description was logged AFTER the `activated` date
+3. Increment `recurrence_checks` by 1, update `last_checked` to today
+4. If error recurred: set `recurred: true`, `status: failed`
+5. If `recurrence_checks >= recurrence_target` and `recurred: false`: set `status: validated`
+6. Update `effectiveness` field in the practice's frontmatter file to match
+
+Report:
+```
+═══ EFFECTIVENESS CHECK ═══
+{{practice title}} — {{status}} ({{recurrence_checks}}/{{recurrence_target}} checks)
+  {{if failed: "⚠ Error recurred — practice needs revision"}}
+  {{if validated: "✅ No recurrence after {{N}} checks"}}
+  {{if monitoring: "🔍 {{remaining}} checks remaining"}}
+```
+
+Skip practices with `status: not-applicable` or `status: validated`.
+
+---
+
 ## Reporte final
 
 ```
@@ -104,6 +137,11 @@ Fecha: {{YYYY-MM-DD}}
 Evaluadas: {{N}} ({{aceptadas}} aceptadas, {{rechazadas}} rechazadas, {{pospuestas}} pospuestas)
 Incorporadas: {{N}} a claude-kit
 Propagación sugerida: {{N}} proyectos
+
+── EFFECTIVENESS ──
+Monitoreando: {{N}} prácticas
+Validadas: {{N}} (sin recurrencia tras {{target}} checks)
+Fallidas: {{N}} (necesitan revisión)
 
 VERSION: {{old}} → {{new}}
 ```
