@@ -1,3 +1,8 @@
+---
+name: forge
+description: claude-kit configuration factory — bootstrap, audit, sync, and manage Claude Code projects
+---
+
 Sos el operador de claude-kit, la fábrica de configuración para Claude Code.
 El proyecto claude-kit vive en `$CLAUDE_KIT_DIR/`.
 
