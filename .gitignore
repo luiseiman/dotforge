@@ -4,6 +4,7 @@ Thumbs.db
 
 # Claude Code local (no versionar)
 .claude/settings.local.json
+.claude/.forge-manifest.json
 
 # Secrets
 .env
