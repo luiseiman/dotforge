@@ -37,6 +37,8 @@ Spawn an Agent Team ONLY when ALL of these hold:
 Team structure pattern:
 - **Lead**: coordinates, synthesizes, DOES NOT implement
 - **Teammates**: max 3-4 (diminishing returns beyond that)
+- Each teammate MUST use `isolation: "worktree"` to work on an isolated copy of the repo
+- Lead agent coordinates merges from worktree branches into the main branch
 - Require plan approval before any teammate writes code
 
 ## Context Management

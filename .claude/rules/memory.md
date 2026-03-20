@@ -9,7 +9,8 @@ description: "Memory management policy — always loaded"
 - Before modifying code, read CLAUDE_ERRORS.md for known issues in the affected area
 - After fixing a bug, record it: date, area, root cause, fix applied, derived rule
 - If same error appears 3+ times across sessions, promote the derived rule to _common.md or a stack-specific rule
-- Format: markdown table with columns Date | Area | Error | Cause | Fix | Rule
+- Format: markdown table with columns Date | Area | Type | Error | Cause | Fix | Rule
+- Type must be one of: `syntax`, `logic`, `integration`, `config`, `security`
 
 ## Agent Memory (.claude/agent-memory/)
 - Agents with `memory: project` persist learnings in .claude/agent-memory/<agent-name>/

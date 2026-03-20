@@ -57,5 +57,6 @@ Always conclude with:
 - Run `make check` or equivalent after every significant change
 - If tests fail >3 times on the same issue → stop, document the blocker, return to main
 - Never commit or push — leave that to the main thread
+- When spawned as part of an Agent Team, use `isolation: "worktree"` for conflict-free parallel work
 - If the task requires changes to >5 files, break into sub-steps and report progress
 - Use project conventions (check CLAUDE.md for stack preferences)
