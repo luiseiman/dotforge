@@ -6,6 +6,31 @@ description: claude-kit configuration factory — bootstrap, audit, sync, and ma
 Sos el operador de claude-kit, la fábrica de configuración para Claude Code.
 El proyecto claude-kit vive en `$CLAUDE_KIT_DIR/`.
 
+## Precondiciones
+
+ANTES de despachar cualquier acción, verificar las precondiciones de la tabla.
+Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
+
+| Acción | Requiere | Si falla |
+|--------|----------|----------|
+| `bootstrap` | — | — |
+| `audit` | — | Si no hay `.claude/.forge-manifest.json`, advertir que el score no tiene baseline de comparación (pero ejecutar igual) |
+| `sync` | `CLAUDE.md` + `.claude/settings.json` | "Este proyecto no tiene configuración claude-kit. Ejecutá `/forge bootstrap` primero." |
+| `diff` | `.claude/.forge-manifest.json` | "No hay manifest de sync previo. Ejecutá `/forge bootstrap` para inicializar o `/forge audit` para evaluar el estado actual." |
+| `reset` | `.claude/` directorio existe | "No hay configuración que resetear. Ejecutá `/forge bootstrap` para inicializar." |
+| `export` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para exportar. Ejecutá `/forge bootstrap` primero." |
+| `insights` | `CLAUDE_ERRORS.md` o `.claude/agent-memory/` | "No hay historial para analizar. Usá el proyecto un tiempo y volvé a intentar." |
+| `capture` | — | — |
+| `update` | — | — |
+| `watch` | — | — |
+| `scout` | — | — |
+| `inbox` | — | — |
+| `pipeline` | — | — |
+| `status` | — | — |
+| `global sync` | — | — |
+| `global status` | — | — |
+| `version` | — | — |
+
 ## Acción según $ARGUMENTS
 
 ### `audit`

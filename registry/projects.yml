@@ -1,8 +1,9 @@
 # Registry of projects managed by claude-kit
 # Updated by /forge audit and /forge sync
-# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, notes
+# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, metrics_summary, notes
 # Scoring v1.5.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
 # history: array of {date, score, version} entries — appended by /forge audit, never overwritten
+# metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
 
 # Example entry:
 #
@@ -17,6 +18,12 @@
 #     history:
 #       - {date: 2026-03-01, score: 7.0, version: 1.0.0}
 #       - {date: 2026-03-19, score: 9.5, version: 1.2.2}
+#     metrics_summary:
+#       sessions: 15
+#       avg_errors: 0.3
+#       avg_hook_blocks: 0.8
+#       avg_rule_coverage: 0.72
+#       last_updated: 2026-03-19
 #     notes: "8 rules, 2 hooks, 4 commands, deny complete."
 
 projects:

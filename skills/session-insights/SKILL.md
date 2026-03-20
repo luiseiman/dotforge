@@ -11,17 +11,43 @@ Analyze the current project's Claude Code usage patterns and generate actionable
 
 Collect data from available sources in the current project:
 
-1. **CLAUDE_ERRORS.md** — error frequency by Area and Type
-2. **Git log** — files most frequently modified in commits mentioning "fix", "bug", "error"
-3. **.claude/agent-memory/** — learnings accumulated by agents
-4. **SESSION_REPORT.md** or session log (if FORGE_SESSION_REPORT is enabled) — tool usage, durations
+1. **Session metrics** — `~/.claude/metrics/{project-slug}/*.json` (structured JSON from session-report hook)
+2. **CLAUDE_ERRORS.md** — error frequency by Area and Type
+3. **Git log** — files most frequently modified in commits mentioning "fix", "bug", "error"
+4. **.claude/agent-memory/** — learnings accumulated by agents
 5. **Registry history** — audit score trend from `$CLAUDE_KIT_DIR/registry/projects.yml`
 
 If a source doesn't exist, skip it and note as "unavailable".
 
+### Retroactive Analysis (no session metrics yet)
+
+When `~/.claude/metrics/{project-slug}/` is empty or doesn't exist, reconstruct a pseudo-historical picture:
+
+1. **CLAUDE_ERRORS.md** → parse dates and group errors by week/month to show trends
+2. **Git log** → `git log --name-only --since="60 days ago"` to identify:
+   - Hot files (most frequently changed)
+   - Fix frequency (`git log --grep="fix" --oneline | wc -l`)
+   - Commit cadence by week
+3. **Registry history** → score progression over time
+4. **Rule glob coverage** → cross-reference `git log --name-only` against `.claude/rules/*.md` globs to estimate historical rule coverage
+
+Mark all retroactive data clearly as:
+```
+⚠ Inferred from git history — no session metrics available yet.
+   Session metrics will accumulate automatically after /forge sync.
+```
+
 ## Step 2: Compute metrics
 
 From available data, calculate:
+
+### Session Metrics (from ~/.claude/metrics/)
+When JSON metrics files exist, aggregate across the last N sessions (default 20):
+- **Total sessions**: count of metric files
+- **Avg files touched**: mean files_touched per session
+- **Avg hook blocks**: mean hook_blocks + lint_blocks (lower is better — team is learning)
+- **Rule coverage trend**: plot rule_coverage over time (improving / stable / declining)
+- **Error rate**: errors_added / sessions (target: < 0.5)
 
 ### Error Patterns
 - **Top error areas**: group CLAUDE_ERRORS.md entries by Area, rank by count
@@ -69,6 +95,14 @@ Output format:
 ═══ SESSION INSIGHTS: {{project}} ═══
 Fecha: {{YYYY-MM-DD}}
 Data sources: {{list of available sources}}
+
+── SESSION METRICS ──
+Sessions tracked: {{N}} (since {{first date}})
+Avg files/session: {{N}} | Avg commits/session: {{N}}
+Hook blocks: {{N}} destructive, {{N}} lint (total across sessions)
+Rule coverage: {{trend}} ({{current}}% — last 5: {{values}})
+Error rate: {{N}} errors/session
+{{if retroactive: "⚠ Inferred from git history"}}
 
 ── ERROR PATTERNS ──
 Top areas: {{area}} ({{count}} errors), ...
