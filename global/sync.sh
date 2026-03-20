@@ -236,26 +236,25 @@ for agent_file in "${CLAUDE_KIT_DIR}/agents"/*.md; do
   fi
 done
 
-# --- Commands (forge.md) ---
+# --- Commands (all .md files in global/commands/) ---
 echo ""
 echo "── Commands ──"
 action "mkdir -p '${CLAUDE_HOME}/commands'"
-forge_src="${CLAUDE_KIT_DIR}/global/commands/forge.md"
-forge_dst="${CLAUDE_HOME}/commands/forge.md"
-if [[ -f "$forge_src" ]]; then
-  if is_current_link "$forge_src" "$forge_dst" 2>/dev/null; then
-    echo "  ✓ forge.md (ok)"
-  elif [[ -e "$forge_dst" ]]; then
-    echo "  ↻ forge.md (update)"
-    action "remove_item '$forge_dst' && install_item '$forge_src' '$forge_dst'"
+for cmd_file in "${CLAUDE_KIT_DIR}/global/commands"/*.md; do
+  [[ -f "$cmd_file" ]] || continue
+  cmd_name=$(basename "$cmd_file")
+  cmd_dst="${CLAUDE_HOME}/commands/${cmd_name}"
+  if is_current_link "$cmd_file" "$cmd_dst" 2>/dev/null; then
+    echo "  ✓ ${cmd_name} (ok)"
+  elif [[ -e "$cmd_dst" ]]; then
+    echo "  ↻ ${cmd_name} (update)"
+    action "remove_item '$cmd_dst' && install_item '$cmd_file' '$cmd_dst'"
   else
-    echo "  + forge.md (new)"
-    action "install_item '$forge_src' '$forge_dst'"
+    echo "  + ${cmd_name} (new)"
+    action "install_item '$cmd_file' '$cmd_dst'"
   fi
-else
-  echo "  - forge.md (source not found, skipping)"
-fi
-# Preserve other commands (vault.md, etc.) — don't touch them
+done
+# Preserve other commands not from claude-kit (vault.md, etc.)
 
 # --- Settings.json deny list ---
 echo ""
