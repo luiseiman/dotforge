@@ -4,6 +4,56 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v1.5.0 (2026-03-20)
+
+### Intelligence & Analytics
+- Nuevo: skill `/forge insights` (`session-insights`) — analiza sesiones pasadas: error patterns, file activity, agent usage, score trends. Genera recomendaciones y alimenta practices pipeline
+- Nuevo: hook `session-report.sh` (Stop) — genera `SESSION_REPORT.md` al finalizar sesión (opt-in via `FORGE_SESSION_REPORT=true`)
+- Nuevo: scoring trends en `/forge status` — sparkline ASCII, flechas de tendencia, alertas cuando score baja >1.5 puntos
+- Nuevo: recomendación automática de `/forge sync` cuando score < 7.0 y hay nueva versión disponible
+
+---
+
+## v1.4.0 (2026-03-20)
+
+### Distribution & Plugin
+- Nuevo: `.claude-plugin/plugin.json` — metadata formal para el sistema de plugins de Claude Code
+- Nuevo: `.claude-plugin/INSTALL.md` — documentación de modos de instalación (plugin vs full)
+- Nuevo: `plugin.json` en cada uno de los 13 stacks para distribución independiente
+- Los stack plugins son composables: múltiples se pueden instalar, permisos se mergean por unión
+- Plugin mode = subconjunto curado (hooks + rules + commands)
+- Full mode = git clone + sync.sh (skills, agents, practices pipeline)
+
+---
+
+## v1.3.0 (2026-03-20)
+
+### Stack Expansion & Cross-Tool
+- Nuevo stack: **node-express** — Node.js + Express/Fastify (rules + permissions)
+- Nuevo stack: **java-spring** — Java + Spring Boot + Maven/Gradle (rules + permissions)
+- Nuevo stack: **aws-deploy** — AWS CDK/SAM/CloudFormation (rules + deny list para ops destructivos)
+- Nuevo stack: **go-api** — Go modules + standard library HTTP (rules + permissions)
+- Nuevo stack: **devcontainer** — configuración de devcontainers para Claude Code
+- Nuevo: skill `/forge export` (`export-config`) — exporta config a Cursor (`.cursorrules`), Codex (`AGENTS.md`), Windsurf (`.windsurfrules`)
+- Nuevo: bootstrap profiles — `--profile minimal|standard|full` controla qué se instala
+- Nuevo: project tier detection en audit — `simple|standard|complex` ajusta expectations de scoring
+- 13 stacks totales (era 8)
+- 11 skills totales (era 9)
+
+---
+
+## v1.2.3 (2026-03-20)
+
+### Hardening & Quick Wins
+- Nuevo: audit item 12 — prompt injection scan (escanea rules y CLAUDE.md por patrones sospechosos)
+- Nuevo: hook profiles (`FORGE_HOOK_PROFILE`: `minimal|standard|strict`) en block-destructive.sh
+- Nuevo: columna Type en CLAUDE_ERRORS.md (`syntax|logic|integration|config|security`)
+- Nuevo: instrucción de git worktree `isolation: "worktree"` para Agent Teams en agents.md e implementer.md
+- Nuevo: hook `warn-missing-test.sh` (PostToolUse, Write) — warning educativo cuando se crea archivo sin test (solo profile strict)
+- Cambio: scoring actualizado para 12 items recomendados (preserva split 70/30)
+
+---
+
 ## v1.2.2 (2026-03-19)
 
 ### Correcciones del análisis v1.2.1

@@ -31,9 +31,9 @@ There are many Claude Code starter kits, skills collections, and CLAUDE.md gener
 
 | Feature | What it means | Who else does this |
 |---------|---------------|-------------------|
-| **Additive stack layering** | Auto-detects your tech (8 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
+| **Additive stack layering** | Auto-detects your tech (13 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
 | **Template sync with markers** | `<!-- forge:section -->` separates managed sections from your customizations. `/forge sync` updates the managed parts without touching yours. | No one |
-| **Audit scoring (0-10)** | 11-item checklist (5 obligatory scored 0-2, 6 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. | tw93/claude-health has tiers but no numeric normalization or security cap |
+| **Audit scoring (0-10)** | 12-item checklist (5 obligatory scored 0-2, 7 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. Project tier (simple/standard/complex) adjusts expectations. | tw93/claude-health has tiers but no numeric normalization or security cap |
 | **Practices pipeline** | Continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Practices arrive from capture, web watch, repo scouting, audit gaps, or post-session hooks. | No one |
 | **Cross-project registry** | `registry/projects.yml` tracks audit scores with history across all managed projects. Spot regressions, compare configurations. | No one |
 | **Global config via symlinks** | `global/sync.sh` installs skills, agents, and commands as symlinks into `~/.claude/`. One source of truth, instant propagation. | No one with this symlink-based approach |
@@ -64,10 +64,10 @@ Multi-stack projects get all matching stack configs merged automatically.
 ```
 claude-kit/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Technology modules (8 stacks, additive)
+├── stacks/         # Technology modules (13 stacks, additive)
 ├── agents/         # 6 subagents (researcher, architect, implementer, ...)
-├── skills/         # 9 skills installed as ~/.claude/skills/ symlinks
-├── audit/          # Checklist (11 items) + scoring normalized to 10
+├── skills/         # 11 skills installed as ~/.claude/skills/ symlinks
+├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Project tracking with scores and history
@@ -90,6 +90,11 @@ Each stack provides contextual rules, permissions, and optional hooks. Stacks ar
 | **data-analysis** | `*.ipynb`, `*.csv`, `*.xlsx` | data.md |
 | **gcp-cloud-run** | `app.yaml`, `cloudbuild.yaml` | gcp.md |
 | **redis** | `redis` in dependencies | redis.md |
+| **node-express** | `package.json` with express/fastify | backend.md |
+| **java-spring** | `pom.xml`, `build.gradle`, Spring | backend.md |
+| **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
+| **go-api** | `go.mod`, `*.go` | backend.md |
+| **devcontainer** | `.devcontainer/` | devcontainer.md |
 
 Creating a new stack: see [docs/creating-stacks.md](docs/creating-stacks.md).
 
@@ -108,6 +113,8 @@ All skills are invoked through the `/forge` command:
 | `/forge update` | Process practices: inbox → evaluate → incorporate |
 | `/forge watch` | Search for upstream changes in Anthropic docs |
 | `/forge scout` | Review curated repos for useful patterns |
+| `/forge export` | Export config to Cursor, Codex, or Windsurf format |
+| `/forge insights` | Analyze sessions for patterns and recommendations |
 | `/forge global sync` | Sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
 
@@ -131,7 +138,8 @@ Orchestration follows a decision tree: researcher → architect → implementer 
 `/forge audit` scores your project's Claude Code configuration on a 10-point scale:
 
 - **5 obligatory items** (scored 0-2): settings.json, block-destructive hook, CLAUDE.md, rules, deny list
-- **6 recommended items** (scored 0-1): lint hook, commands, error log, agents, manifest, global hook
+- **7 recommended items** (scored 0-1): lint hook, commands, error log, agents, manifest, global hook, prompt injection scan
+- **Project tier**: simple/standard/complex adjusts scoring expectations
 - **Security cap**: missing settings.json or block-destructive hook caps score at 6.0
 
 Scores are tracked in `registry/projects.yml` with history for trending over time.
@@ -157,8 +165,8 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v1.2.2)
-- [Roadmap](docs/roadmap.md) — Future plans
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v1.5.0)
+- [Roadmap](ROADMAP.md) — Future plans (v1.6.0+)
 
 ## Requirements
 
@@ -217,9 +225,9 @@ Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para C
 
 | Feature | Qué significa | Quién más lo hace |
 |---------|---------------|-------------------|
-| **Stack layering aditivo** | Auto-detecta tu tech (8 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
+| **Stack layering aditivo** | Auto-detecta tu tech (13 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
 | **Template sync con markers** | `<!-- forge:section -->` separa secciones gestionadas de tus customizaciones. `/forge sync` actualiza lo gestionado sin tocar lo tuyo. | Nadie |
-| **Audit scoring (0-10)** | Checklist de 11 ítems (5 obligatorios 0-2, 6 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
+| **Audit scoring (0-10)** | Checklist de 12 ítems (5 obligatorios 0-2, 7 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. Tier de proyecto (simple/standard/complex) ajusta expectations. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
 | **Pipeline de prácticas** | Ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Las prácticas llegan desde capture, web watch, repo scouting, audit gaps, o hooks post-sesión. | Nadie |
 | **Registry cross-proyecto** | `registry/projects.yml` trackea audit scores con historial en todos los proyectos gestionados. Detectá regresiones, compará configuraciones. | Nadie |
 | **Config global via symlinks** | `global/sync.sh` instala skills, agentes y commands como symlinks en `~/.claude/`. Una sola fuente de verdad, propagación instantánea. | Nadie con este enfoque basado en symlinks |
@@ -250,10 +258,10 @@ Los proyectos multi-stack reciben todas las configuraciones de stacks coincident
 ```
 claude-kit/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Módulos tecnológicos (8 stacks, aditivos)
+├── stacks/         # Módulos tecnológicos (13 stacks, aditivos)
 ├── agents/         # 6 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 9 skills instalados como symlinks en ~/.claude/skills/
-├── audit/          # Checklist (11 ítems) + puntaje normalizado a 10
+├── skills/         # 11 skills instalados como symlinks en ~/.claude/skills/
+├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Seguimiento de proyectos con puntajes e historial
@@ -276,6 +284,11 @@ Cada stack provee reglas contextuales, permisos y hooks opcionales. Los stacks s
 | **data-analysis** | `*.ipynb`, `*.csv`, `*.xlsx` | data.md |
 | **gcp-cloud-run** | `app.yaml`, `cloudbuild.yaml` | gcp.md |
 | **redis** | `redis` en dependencias | redis.md |
+| **node-express** | `package.json` con express/fastify | backend.md |
+| **java-spring** | `pom.xml`, `build.gradle`, Spring | backend.md |
+| **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
+| **go-api** | `go.mod`, `*.go` | backend.md |
+| **devcontainer** | `.devcontainer/` | devcontainer.md |
 
 Para crear un nuevo stack: ver [docs/creating-stacks.md](docs/creating-stacks.md).
 
@@ -294,6 +307,8 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge update` | Procesar prácticas: inbox → evaluar → incorporar |
 | `/forge watch` | Buscar cambios upstream en la documentación de Anthropic |
 | `/forge scout` | Revisar repos curados en busca de patrones útiles |
+| `/forge export` | Exportar config a formato Cursor, Codex o Windsurf |
+| `/forge insights` | Analizar sesiones para patrones y recomendaciones |
 | `/forge global sync` | Sincronizar configuración global de `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |
 
@@ -317,7 +332,8 @@ La orquestación sigue un árbol de decisión: researcher → architect → impl
 `/forge audit` puntúa la configuración de Claude Code de tu proyecto en una escala de 10 puntos:
 
 - **5 ítems obligatorios** (puntaje 0-2): settings.json, hook de bloqueo destructivo, CLAUDE.md, rules, lista de denegación
-- **6 ítems recomendados** (puntaje 0-1): hook de lint, commands, registro de errores, agentes, manifiesto, hook global
+- **7 ítems recomendados** (puntaje 0-1): hook de lint, commands, registro de errores, agentes, manifiesto, hook global, scan de prompt injection
+- **Tier de proyecto**: simple/standard/complex ajusta expectations de scoring
 - **Tope de seguridad**: si falta settings.json o el hook de bloqueo destructivo, el puntaje máximo es 6.0
 
 Los puntajes se registran en `registry/projects.yml` con historial para seguimiento de tendencias.
@@ -343,8 +359,8 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v1.2.2)
-- [Roadmap](docs/roadmap.md) — Planes a futuro
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v1.5.0)
+- [Roadmap](ROADMAP.md) — Planes a futuro (v1.6.0+)
 
 ## Requisitos
 
