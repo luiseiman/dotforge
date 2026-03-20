@@ -1,69 +1,99 @@
 ---
 name: watch-upstream
-description: Busca actualizaciones en docs oficiales de Anthropic/Claude Code y reporta deltas contra la configuración actual de claude-kit.
+description: Fetch official Anthropic/Claude Code docs, detect changes relevant to claude-kit, report deltas.
 ---
 
 # Watch Upstream
 
-Search for updates in official Anthropic/Claude Code documentation and report deltas against current claude-kit configuration.
+Detect changes in official Claude Code documentation that may require updates to claude-kit.
 
-## Paso 1: Search for recent changes
+## Step 1: Fetch current documentation
 
-Use web search to find recent updates in these areas:
-1. Claude Code changelog and release notes (https://docs.anthropic.com/en/docs/claude-code)
-2. Claude Code hooks, settings, permissions changes
-3. New Claude Code features (agents, skills, commands, MCP)
-4. Claude API changes that affect Claude Code behavior
+Use WebFetch to read these pages directly:
 
-Search queries:
-- `Claude Code changelog site:docs.anthropic.com`
-- `Claude Code new features site:anthropic.com`
-- `Claude Code hooks settings site:github.com/anthropics`
+1. `https://docs.anthropic.com/en/docs/claude-code/overview` — main feature list
+2. `https://docs.anthropic.com/en/docs/claude-code/settings` — settings.json schema, permissions
+3. `https://docs.anthropic.com/en/docs/claude-code/hooks` — hook types, events, matchers
+4. `https://docs.anthropic.com/en/docs/claude-code/memory` — memory and context management
+5. `https://docs.anthropic.com/en/docs/claude-code/agent-tool` — subagent capabilities
+6. `https://docs.anthropic.com/en/docs/claude-code/cli` — CLI flags and options
 
-## Paso 2: Extract relevant changes
+If any URL fails, use WebSearch with query `"Claude Code" <topic> site:docs.anthropic.com` as fallback.
 
-For each finding, classify:
+Then search for recent announcements:
+- WebSearch: `Claude Code new features 2026`
+- WebSearch: `Claude Code changelog site:anthropic.com`
+- WebSearch: `Claude Code hooks settings update site:github.com/anthropics`
 
-| Category | Relevance to claude-kit |
-|----------|------------------------|
-| New hook types | May need new hooks in template/ |
-| New settings fields | May need updates to settings.json.tmpl |
-| Permission changes | May affect allow/deny lists |
-| New agent capabilities | May affect agents/ definitions |
-| Deprecated features | May need removal from template/ |
-| New CLI commands | May need new skills/ |
+## Step 2: Extract and classify changes
 
-Ignore: pricing changes, model updates (unless affecting tool use), marketing content.
+For each finding, check if it affects claude-kit:
 
-## Paso 3: Compare against current template
+| What to look for | Where it impacts claude-kit |
+|-------------------|---------------------------|
+| New hook event types (beyond PreToolUse/PostToolUse/Stop) | `template/hooks/`, `stacks/*/hooks/` |
+| New settings.json fields or changed schema | `template/settings.json.tmpl`, `global/settings.json.tmpl` |
+| New permission categories | `stacks/*/settings.json.partial` |
+| Changed deny list behavior | `template/settings.json.tmpl` deny section |
+| New agent/subagent capabilities | `agents/*.md` |
+| New skill/command system features | `skills/*/SKILL.md` |
+| Deprecated features or breaking changes | Any affected file |
+| New CLI flags relevant to automation | `skills/benchmark/SKILL.md` (uses `claude --print`) |
+| MCP server changes | `global/settings.json.tmpl` |
 
-For each relevant finding:
-1. Check if claude-kit already covers it (search template/, stacks/, global/)
-2. If not covered, note the gap with specific files that would need changes
-3. If partially covered, note what's missing
+Ignore: pricing, model releases (unless affecting tool use), marketing.
 
-## Paso 4: Report
+## Step 3: Compare against claude-kit
+
+For each relevant finding, check the current state:
+
+```bash
+# Search template for existing coverage
+grep -r "<keyword>" template/ stacks/ global/ agents/ skills/
+```
+
+Classify each finding:
+- **Gap**: claude-kit doesn't cover this at all
+- **Partial**: claude-kit covers this but is outdated or incomplete
+- **Covered**: claude-kit already handles this correctly
+- **Breaking**: claude-kit does something that conflicts with the new behavior
+
+## Step 4: Report
 
 ```
 ═══ WATCH UPSTREAM ═══
-Fecha: {{YYYY-MM-DD}}
-Fuentes consultadas: {{N}}
+Date: {{YYYY-MM-DD}}
+Sources fetched: {{N}} docs, {{N}} search results
 
-── CAMBIOS DETECTADOS ──
-{{🆕|⚠️|📝}} {{título}} ({{fecha del cambio}})
-   Relevancia: {{categoría}}
-   Estado claude-kit: {{cubierto|parcial|no cubierto}}
-   Acción: {{qué habría que cambiar}}
+── CHANGES DETECTED ──
 
-── RESUMEN ──
-Cubiertos: {{N}} | Parciales: {{N}} | No cubiertos: {{N}}
+🆕 NEW: {{title}}
+   Source: {{url}}
+   Impact: {{which claude-kit files would change}}
+   Priority: {{high|medium|low}}
 
-── SIGUIENTE PASO ──
-Para incorporar cambios: /forge capture "{{descripción}}" para cada hallazgo relevante.
+⚠️ BREAKING: {{title}}
+   Source: {{url}}
+   Current claude-kit behavior: {{what we do now}}
+   Required change: {{what needs to change}}
+
+📝 PARTIAL: {{title}}
+   Source: {{url}}
+   What's covered: {{existing coverage}}
+   What's missing: {{gap}}
+
+── SUMMARY ──
+Gaps: {{N}} | Partial: {{N}} | Breaking: {{N}} | Covered: {{N}}
+
+── NEXT STEPS ──
+For each gap/partial/breaking, run:
+  /forge capture "{{description}}"
+Then: /forge update to evaluate and incorporate.
 ```
 
 ## Constraints
 
-- DO NOT auto-incorporate changes. Only report.
-- DO NOT modify any claude-kit files. This is read-only + web search.
-- If web search fails or returns no results, report that clearly instead of guessing.
+- DO NOT modify any claude-kit files. Report only.
+- DO NOT auto-create practices. Suggest `/forge capture` commands for the user.
+- If web fetch fails, report clearly — don't guess or hallucinate features.
+- If no changes detected, report "No relevant changes found" — this is a valid outcome.

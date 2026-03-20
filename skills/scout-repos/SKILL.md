@@ -1,61 +1,124 @@
 ---
 name: scout-repos
-description: Revisa repos curados en practices/sources.yml, compara sus configuraciones .claude/ contra la plantilla claude-kit, y reporta patterns interesantes.
+description: Fetch .claude/ configs from curated repos in sources.yml, compare against claude-kit template, report novel patterns.
 ---
 
 # Scout Repos
 
-Review curated repos for Claude Code configuration patterns worth adopting.
+Review curated public repos for Claude Code configuration patterns worth adopting.
 
-## Paso 1: Load sources
+## Step 1: Load sources
 
-Read `$CLAUDE_KIT_DIR/practices/sources.yml`.
-For each source, note the `focus` areas to prioritize during review.
+Read `$CLAUDE_KIT_DIR/practices/sources.yml`. Build a list of repos with their focus areas.
 
-## Paso 2: Fetch and analyze each repo
+## Step 2: Fetch each repo's config
 
-For each source repo:
-1. Use web search or `gh` CLI to explore the repo's Claude Code configuration:
-   - `.claude/settings.json` — permissions, hooks, deny patterns
-   - `.claude/rules/` — contextual rules, globs patterns
-   - `.claude/commands/` — custom commands
-   - `.claude/agents/` — agent definitions
-   - `CLAUDE.md` — project configuration
-2. Focus on the `focus` areas defined in sources.yml
-3. Extract patterns that differ from or improve upon claude-kit's current template
+For each source, use `gh` CLI to fetch their Claude Code configuration files:
 
-## Paso 3: Compare against claude-kit
+```bash
+# Fetch CLAUDE.md
+gh api repos/{owner}/{repo}/contents/CLAUDE.md --jq '.content' | base64 -d 2>/dev/null
 
-For each discovered pattern:
-1. Check if claude-kit already has it (search template/, stacks/, global/)
-2. Classify:
-   - **Novel**: not in claude-kit at all → high interest
-   - **Variant**: similar but different approach → medium interest
-   - **Already covered**: claude-kit has it → skip
-   - **Incompatible**: conflicts with claude-kit philosophy → skip with note
+# Fetch .claude/ directory listing
+gh api repos/{owner}/{repo}/contents/.claude --jq '.[].name' 2>/dev/null
 
-## Paso 4: Report
+# Fetch specific files
+gh api repos/{owner}/{repo}/contents/.claude/settings.json --jq '.content' | base64 -d 2>/dev/null
+gh api repos/{owner}/{repo}/contents/.claude/rules --jq '.[].name' 2>/dev/null
+```
+
+If `gh` fails (rate limit, private repo), try WebFetch on the raw GitHub URL:
+```
+https://raw.githubusercontent.com/{owner}/{repo}/main/CLAUDE.md
+https://raw.githubusercontent.com/{owner}/{repo}/main/.claude/settings.json
+```
+
+If both fail, skip the repo and note it in the report.
+
+## Step 3: Analyze patterns
+
+For each repo's config, extract patterns in the source's `focus` areas:
+
+### Hooks
+- New hook event/matcher combinations not in claude-kit
+- Novel blocking logic (different from block-destructive or lint-on-save)
+- Hook chaining patterns
+
+### Settings
+- Deny list entries we don't have
+- Permission patterns (granular vs wildcard)
+- Hook wiring approaches
+
+### Rules
+- Globs patterns we don't use
+- Rule content structure (frontmatter fields, sections)
+- Cross-file rule dependencies
+
+### Agents
+- Agent definitions with novel roles
+- Memory policies different from ours
+- Orchestration patterns
+
+### Commands/Skills
+- Custom commands we could generalize
+- Skill structures with novel step patterns
+
+## Step 4: Compare against claude-kit
+
+For each discovered pattern, classify:
+
+- **Novel**: not in claude-kit → high interest, describe what it does and where it would go
+- **Variant**: similar approach but different implementation → medium interest, note tradeoffs
+- **Superior**: does what claude-kit does but better → high interest, describe improvement
+- **Covered**: claude-kit already has this → skip
+- **Incompatible**: conflicts with claude-kit philosophy (e.g., too complex, too opinionated) → skip with note
+
+## Step 5: Report
 
 ```
 ═══ SCOUT REPOS ═══
-Fecha: {{YYYY-MM-DD}}
-Repos analizados: {{N}}/{{total}}
+Date: {{YYYY-MM-DD}}
+Repos analyzed: {{N}}/{{total}}
+Repos skipped: {{list of inaccessible repos}}
 
-── PATTERNS ENCONTRADOS ──
-{{repo}} ({{focus areas}})
-  🆕 {{pattern}} — {{descripción}}
-     Impacto: {{qué archivos de claude-kit cambiarían}}
+── NOVEL PATTERNS ──
 
-── RESUMEN ──
-Novel: {{N}} | Variantes: {{N}} | Ya cubiertos: {{N}}
+{{repo}} (focus: {{areas}})
+  🆕 {{pattern name}}
+     What: {{description}}
+     Where: {{file in their repo}}
+     Impact on claude-kit: {{which files would change}}
+     Effort: {{low|medium|high}}
 
-── SIGUIENTE PASO ──
-Para incorporar: /forge capture "{{descripción}}" para cada pattern novel.
+── SUPERIOR PATTERNS ──
+
+{{repo}}
+  ⬆️ {{pattern name}}
+     Theirs: {{what they do}}
+     Ours: {{what we do}}
+     Why theirs is better: {{reason}}
+
+── VARIANTS ──
+
+{{repo}}
+  🔀 {{pattern name}}
+     Difference: {{what's different}}
+     Tradeoff: {{why we might or might not adopt}}
+
+── SUMMARY ──
+Novel: {{N}} | Superior: {{N}} | Variants: {{N}} | Covered: {{N}}
+Repos with most learnings: {{top 2-3 repos}}
+
+── NEXT STEPS ──
+For each novel/superior pattern:
+  /forge capture "{{description from {{repo}}}}"
+Then: /forge update to evaluate and incorporate.
 ```
 
 ## Constraints
 
-- DO NOT auto-incorporate patterns. Only report.
-- DO NOT modify any claude-kit files. This is read-only.
-- If a repo is private or inaccessible, skip it and note in the report.
-- Respect rate limits — if using GitHub API, don't fetch more than necessary.
+- DO NOT modify any claude-kit files. Report only.
+- DO NOT clone repos locally. Use `gh api` or WebFetch for read-only access.
+- Respect rate limits — fetch only files relevant to the source's `focus` areas.
+- If a repo has no `.claude/` directory, check for `CLAUDE.md` only. Skip if neither exists.
+- Maximum 10 repos per run to avoid rate limiting.

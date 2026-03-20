@@ -4,6 +4,18 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.1.0 (2026-03-20)
+
+### Making it real
+- Fix: `/forge benchmark` y `/forge rule-check` agregados al dispatch de forge.md (skills existían pero /forge no ruteaba a ellos)
+- Cambio: `/forge watch` reescrito — ahora usa WebFetch en docs oficiales + WebSearch como fallback, con comparación estructurada contra template
+- Cambio: `/forge scout` reescrito — usa `gh api` para fetch read-only de configs `.claude/` de repos en sources.yml, clasificación novel/variant/superior/covered
+- Cambio: usage guide + guía de uso actualizados con sección Config Validation (session metrics, rule-check, benchmark, test-config.sh)
+- Fix: skill counts 11 → 13 en ambas guías
+- Registrados 10 proyectos reales en registry (3 auditados, 4 bootstrap standard, 3 bootstrap minimal)
+
+---
+
 ## v2.0.0 (2026-03-20)
 
 ### Stabilization

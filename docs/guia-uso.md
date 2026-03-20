@@ -19,7 +19,8 @@ claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene
 8. [Pipeline de prácticas](#8-pipeline-de-prácticas)
 9. [Perfiles de bootstrap](#9-perfiles-de-bootstrap)
 10. [Estructura generada](#10-estructura-generada)
-11. [FAQ](#11-faq)
+11. [Validación de configuración](#11-validación-de-configuración)
+12. [FAQ](#12-faq)
 
 ---
 
@@ -44,7 +45,7 @@ cd ~/Documents/GitHub/claude-kit   # o donde tengas clonado claude-kit
 
 | Componente | Ubicación | Método |
 |-----------|-----------|--------|
-| Skills (11) | `~/.claude/skills/` | Symlinks |
+| Skills (13) | `~/.claude/skills/` | Symlinks |
 | Agents (6) | `~/.claude/agents/` | Symlinks |
 | Comando `/forge` | `~/.claude/commands/forge.md` | Copia (Claude Code no sigue symlinks para commands) |
 | CLAUDE.md global | `~/.claude/CLAUDE.md` | Merge con preservación de `<!-- forge:custom -->` |
@@ -63,7 +64,7 @@ Muestra:
 ═══ GLOBAL STATUS ═══
 CLAUDE.md:     ✓ sincronizado
 settings.json: deny list 9 items (plantilla: 9)
-Skills:        11/11 instalados
+Skills:        13/13 instalados
 Agents:        6/6 instalados
 Commands:      forge.md (archivo)
 ```
@@ -253,6 +254,8 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge diff` | Ver cambios pendientes desde último sync |
 | `/forge reset` | Restaurar desde cero (con backup) |
 | `/forge insights` | Analizar sesiones pasadas |
+| `/forge rule-check` | Detectar reglas inertes (cruzar globs vs git history) |
+| `/forge benchmark` | Comparar config full vs minimal en tareas estandarizadas |
 | `/forge export cursor` | Exportar config a Cursor |
 | `/forge export codex` | Exportar config a Codex |
 | `/forge export windsurf` | Exportar config a Windsurf |
@@ -487,7 +490,75 @@ mi-proyecto/
 
 ---
 
-## 11. FAQ
+## 11. Validación de configuración
+
+claude-kit no solo verifica si la configuración existe — mide si es efectiva.
+
+### Métricas de sesión (automático)
+
+Después del bootstrap, cada sesión genera métricas en `~/.claude/metrics/{proyecto}/`:
+
+```json
+{
+  "sessions": 1,
+  "errors_added": 0,
+  "hook_blocks": 1,
+  "lint_blocks": 3,
+  "files_touched": 12,
+  "rules_matched": 9,
+  "rule_coverage": 0.75,
+  "commits": 4
+}
+```
+
+Los hooks cuentan bloqueos automáticamente. `session-report.sh` (Stop hook) agrega y guarda los datos.
+
+Para generar también un `SESSION_REPORT.md` legible:
+```bash
+export FORGE_SESSION_REPORT=true
+```
+
+### Efectividad de reglas
+
+```
+/forge rule-check
+```
+
+Cruza globs de reglas contra `git log` para clasificar cada regla:
+
+| Clasificación | Match rate | Acción |
+|---------------|-----------|--------|
+| **Activa** | > 50% | Mantener |
+| **Ocasional** | 10-50% | Evaluar si vale los tokens de contexto |
+| **Inerte** | < 10% | Candidata a eliminar |
+
+También reporta **cobertura**: qué porcentaje de archivos tocados cae bajo al menos una regla.
+
+### Benchmark
+
+```
+/forge benchmark
+```
+
+Ejecuta la misma tarea estándar en dos worktrees aislados:
+1. **Config completa** — tu `.claude/` completo
+2. **Config mínima** — solo `CLAUDE.md` + `settings.json` básico
+
+Compara: archivos creados, tests pasando, lint issues, errores.
+
+**Costo:** ejecuta Claude Code dos veces. Siempre opt-in con confirmación.
+
+### Coherencia de configuración
+
+```bash
+bash tests/test-config.sh
+```
+
+30 checks que validan consistencia interna: hooks existen, globs válidos, deny list completa, sin contradicciones.
+
+---
+
+## 12. FAQ
 
 ### ¿Puedo usar claude-kit sin el CLAUDE.md global?
 
