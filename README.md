@@ -363,7 +363,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
 - **[Guía de Uso](docs/guia-uso.md)** — Guía completa paso a paso: instalación, bootstrap, sync, auditoría, prácticas ([English](docs/usage-guide.md))
 - [Best Practices](docs/best-practices.md) — Patrones de configuración de Claude Code
-- [Security Checklist](docs/security-checklist.md) — 31 ítems para revisión pre-deploy
+- [Security Checklist](docs/security-checklist.md) — 62 ítems para revisión pre-deploy
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 patrones reproducibles
 - [Creating Stacks](docs/creating-stacks.md) — Cómo agregar un nuevo stack tecnológico
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto

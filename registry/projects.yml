@@ -28,7 +28,7 @@
 
 projects:
   - name: claude-kit
-    path: /Users/luiseiman/Documents/GitHub/claude-kit
+    path: .  # self-reference (this repo)
     stacks: []
     tier: standard
     last_audit: 2026-03-20
