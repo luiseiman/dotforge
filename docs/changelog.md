@@ -4,6 +4,18 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.0.0 (2026-03-20)
+
+### Stabilization
+- Nuevo: `docs/internal/architecture-components.md` — component map completo (template, stacks, skills, agents, practices, audit, global, registry)
+- Nuevo: `docs/internal/scoring-algorithm.md` — fórmula, security cap, ejemplos por tier
+- Nuevo: `docs/internal/config-validation-flow.md` — diagramas de data flow para las 4 fases
+- Git tags retroactivos v0.1.0 → v1.6.0 (13 tags anotados)
+- Practices inbox limpio (plugin-system → deprecated, duplicate removed)
+- Registry re-auditado en v1.6.0, changelog completo v0.1.0 → v2.0.0
+
+---
+
 ## v1.6.0 (2026-03-20)
 
 ### Config Validation System

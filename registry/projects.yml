@@ -33,7 +33,7 @@ projects:
     tier: standard
     last_audit: 2026-03-20
     last_sync: 2026-03-20
-    claude_kit_version: 1.6.0
+    claude_kit_version: 2.0.0
     score: 10.0
     history:
       - {date: 2026-03-20, score: 10.0, version: 1.5.0}
