@@ -1,0 +1,14 @@
+{
+  "_comment": "Merge con template/settings.json.tmpl",
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw *)",
+      "Bash(./gradlew *)",
+      "Bash(mvn *)",
+      "Bash(gradle *)",
+      "Bash(java *)",
+      "Bash(javac *)",
+      "Bash(make *)"
+    ]
+  }
+}

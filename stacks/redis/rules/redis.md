@@ -17,7 +17,7 @@ globs: "**/*redis*,**/*stream*"
 - Serialización: JSON para legibilidad, msgpack si performance importa
 
 ## Keys
-- Namespace obligatorio: `{app}:{entity}:{id}` (ej: `soma:signals:btc`)
+- Namespace obligatorio: `{app}:{entity}:{id}` (ej: `myapp:users:123`)
 - TTL explícito en keys temporales. No keys eternos sin motivo.
 - `SCAN` para iterar. NUNCA `KEYS *` en producción (bloquea single-thread)
 - `EXISTS` antes de operaciones costosas

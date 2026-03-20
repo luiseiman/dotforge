@@ -1,0 +1,13 @@
+{
+  "name": "claude-kit-stack-python-fastapi",
+  "version": "1.4.0",
+  "description": "Python 3.12+ with FastAPI, async/await, type hints, and Ruff linting rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/backend.md", "rules/tests.md"],
+    "settings": "settings.json.partial",
+    "hooks": ["hooks/lint-python.sh"]
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

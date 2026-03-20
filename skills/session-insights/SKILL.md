@@ -1,0 +1,99 @@
+---
+name: session-insights
+description: Analyze past Claude Code sessions to extract patterns, metrics, and recommendations.
+---
+
+# Session Insights
+
+Analyze the current project's Claude Code usage patterns and generate actionable recommendations.
+
+## Step 1: Gather session data
+
+Collect data from available sources in the current project:
+
+1. **CLAUDE_ERRORS.md** — error frequency by Area and Type
+2. **Git log** — files most frequently modified in commits mentioning "fix", "bug", "error"
+3. **.claude/agent-memory/** — learnings accumulated by agents
+4. **SESSION_REPORT.md** or session log (if FORGE_SESSION_REPORT is enabled) — tool usage, durations
+5. **Registry history** — audit score trend from `$CLAUDE_KIT_DIR/registry/projects.yml`
+
+If a source doesn't exist, skip it and note as "unavailable".
+
+## Step 2: Compute metrics
+
+From available data, calculate:
+
+### Error Patterns
+- **Top error areas**: group CLAUDE_ERRORS.md entries by Area, rank by count
+- **Error types distribution**: count by Type (syntax, logic, integration, config, security)
+- **Repeat offenders**: areas with 3+ errors (candidates for rule creation)
+
+### File Activity
+- **Hot files**: top 10 most-edited files (from git log)
+- **Churn rate**: files edited > 5 times in last 30 days (may need refactoring)
+- **Untested hot files**: hot files without corresponding test files
+
+### Agent Usage (from agent-memory/)
+- **Active agents**: which agents have accumulated learnings
+- **Top learnings**: most recent entries per agent
+- **Gaps**: agents with memory enabled but no learnings (underused)
+
+### Score Trend (from registry)
+- **Current score**: latest audit score
+- **Trend**: improving, stable, or declining (compare last 3 audits)
+- **Projected**: if declining, estimate when score drops below 7.0
+
+## Step 3: Generate recommendations
+
+Based on metrics, produce actionable recommendations:
+
+1. **Repeat errors** → suggest creating a rule in `.claude/rules/` targeting that area
+2. **Hot untested files** → suggest test creation
+3. **Score declining** → suggest `/forge sync` to update configuration
+4. **Underused agents** → suggest delegation patterns for common tasks
+5. **High churn files** → suggest refactoring or better abstractions
+
+## Step 4: Feed practices pipeline
+
+For the top 3 most impactful recommendations:
+1. Check if a practice already exists in `$CLAUDE_KIT_DIR/practices/inbox/` or `active/`
+2. If not, create a practice in `practices/inbox/`:
+   - `source_type: session-insights`
+   - `tags: [insights, <area>]`
+3. Report which practices were created
+
+## Step 5: Generate report
+
+Output format:
+```
+═══ SESSION INSIGHTS: {{project}} ═══
+Fecha: {{YYYY-MM-DD}}
+Data sources: {{list of available sources}}
+
+── ERROR PATTERNS ──
+Top areas: {{area}} ({{count}} errors), ...
+Type distribution: logic {{N}}, config {{N}}, ...
+Repeat offenders: {{areas with 3+ errors}}
+
+── FILE ACTIVITY ──
+Hot files (last 30 days):
+  1. {{file}} — {{N}} edits
+  2. ...
+Untested hot files: {{list or "none"}}
+High churn (>5 edits): {{list or "none"}}
+
+── AGENT USAGE ──
+Active: {{agents with learnings}}
+Underused: {{agents with empty memory}}
+
+── SCORE TREND ──
+Current: {{score}}/10
+Trend: {{improving|stable|declining}} ({{last 3 scores}})
+
+── RECOMMENDATIONS ──
+1. {{recommendation}} — impact: {{high|medium|low}}
+2. ...
+
+── PRACTICES CREATED ──
+{{list of new practices or "none"}}
+```

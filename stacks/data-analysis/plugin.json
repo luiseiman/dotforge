@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-data-analysis",
+  "version": "1.4.0",
+  "description": "SQLite/PostgreSQL, pandas/polars, and Jupyter notebook rules for data analysis with Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/data.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-go-api",
+  "version": "1.4.0",
+  "description": "Go 1.22+ with standard library net/http, Go modules, and API patterns rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/backend.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

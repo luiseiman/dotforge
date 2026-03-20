@@ -1,5 +1,84 @@
 # Changelog — claude-kit
 
+> Version history. Entries use mixed Spanish/English as the project evolved. Technical terms are universal.
+>
+> Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
+
+## v1.5.0 (2026-03-20)
+
+### Intelligence & Analytics
+- Nuevo: skill `/forge insights` (`session-insights`) — analiza sesiones pasadas: error patterns, file activity, agent usage, score trends. Genera recomendaciones y alimenta practices pipeline
+- Nuevo: hook `session-report.sh` (Stop) — genera `SESSION_REPORT.md` al finalizar sesión (opt-in via `FORGE_SESSION_REPORT=true`)
+- Nuevo: scoring trends en `/forge status` — sparkline ASCII, flechas de tendencia, alertas cuando score baja >1.5 puntos
+- Nuevo: recomendación automática de `/forge sync` cuando score < 7.0 y hay nueva versión disponible
+
+---
+
+## v1.4.0 (2026-03-20)
+
+### Distribution & Plugin
+- Nuevo: `.claude-plugin/plugin.json` — metadata formal para el sistema de plugins de Claude Code
+- Nuevo: `.claude-plugin/INSTALL.md` — documentación de modos de instalación (plugin vs full)
+- Nuevo: `plugin.json` en cada uno de los 13 stacks para distribución independiente
+- Los stack plugins son composables: múltiples se pueden instalar, permisos se mergean por unión
+- Plugin mode = subconjunto curado (hooks + rules + commands)
+- Full mode = git clone + sync.sh (skills, agents, practices pipeline)
+
+---
+
+## v1.3.0 (2026-03-20)
+
+### Stack Expansion & Cross-Tool
+- Nuevo stack: **node-express** — Node.js + Express/Fastify (rules + permissions)
+- Nuevo stack: **java-spring** — Java + Spring Boot + Maven/Gradle (rules + permissions)
+- Nuevo stack: **aws-deploy** — AWS CDK/SAM/CloudFormation (rules + deny list para ops destructivos)
+- Nuevo stack: **go-api** — Go modules + standard library HTTP (rules + permissions)
+- Nuevo stack: **devcontainer** — configuración de devcontainers para Claude Code
+- Nuevo: skill `/forge export` (`export-config`) — exporta config a Cursor (`.cursorrules`), Codex (`AGENTS.md`), Windsurf (`.windsurfrules`)
+- Nuevo: bootstrap profiles — `--profile minimal|standard|full` controla qué se instala
+- Nuevo: project tier detection en audit — `simple|standard|complex` ajusta expectations de scoring
+- 13 stacks totales (era 8)
+- 11 skills totales (era 9)
+
+---
+
+## v1.2.3 (2026-03-20)
+
+### Hardening & Quick Wins
+- Nuevo: audit item 12 — prompt injection scan (escanea rules y CLAUDE.md por patrones sospechosos)
+- Nuevo: hook profiles (`FORGE_HOOK_PROFILE`: `minimal|standard|strict`) en block-destructive.sh
+- Nuevo: columna Type en CLAUDE_ERRORS.md (`syntax|logic|integration|config|security`)
+- Nuevo: instrucción de git worktree `isolation: "worktree"` para Agent Teams en agents.md e implementer.md
+- Nuevo: hook `warn-missing-test.sh` (PostToolUse, Write) — warning educativo cuando se crea archivo sin test (solo profile strict)
+- Cambio: scoring actualizado para 12 items recomendados (preserva split 70/30)
+
+---
+
+## v1.2.2 (2026-03-19)
+
+### Correcciones del análisis v1.2.1
+- Fix: fórmula de scoring — recomendados ahora pesan 50% real (obligatorios perfectos sin recomendados = 7.0, no 10.0)
+- Fix: template lint-on-save.sh usa swiftlint (consistente con stack swift-swiftui), eliminado swiftformat
+- Fix: implementer.md ya no referencia `.claude/specs/in-progress/` inexistente
+- Fix: README.md corregido "51 items" → "31 items" en security checklist
+- Fix: fórmula duplicada en audit-project skill actualizada a nueva fórmula
+- Nuevo: `stacks/detect.md` — lógica de detección de stacks centralizada (antes duplicada en 4 skills)
+- Nuevo: bootstrap crea `.claude/agent-memory/` para agentes con `memory: project`
+- Nuevo: git tags v0.1.0 a v1.2.1 (habilita `/forge diff` con comparación por tags)
+- Cambio: `/forge watch` y `/forge scout` marcados como stubs en forge.md
+- Cambio: registry scores recalculados con nueva fórmula
+- Nuevo: audit cross-project error promotion — errores recurrentes (3+) en CLAUDE_ERRORS.md se promueven a practices/inbox
+- Nuevo: audit gap capture — gaps de auditoría (obligatorios 0-1, recomendados 0) se capturan como prácticas
+- Nuevo: update-practices genera rules automáticamente cuando la práctica lo amerita
+- Nuevo: `/forge watch` skill formal (`watch-upstream`) — busca cambios en docs Anthropic
+- Nuevo: `/forge scout` skill formal (`scout-repos`) — revisa repos curados
+- Nuevo: `practices/sources.yml` — repos curados para scout
+- Nuevo: agent memory operativo — 4 agentes (implementer, architect, code-reviewer, security-auditor) leen/escriben `.claude/agent-memory/`
+- Nuevo: score trending — audit appends `history` entries al registry (nunca sobreescribe)
+- Fix: `{{CLAUDE_KIT_PATH}}` placeholder resuelto en instrucciones de global sync
+
+---
+
 ## v1.2.0 (2026-03-19)
 
 ### Tooling defensivo
@@ -35,7 +114,7 @@
 ### Higiene interna
 - Fix: frontmatter `globs:` agregado a `template/rules/_common.md` (inconsistencia con versión deployada)
 - Fix: command `audit.md` actualizado a 8 stacks (faltaban gcp-cloud-run y redis)
-- Fix: scores inflados corregidos en registry (SOMA 10→9.5, InviSight 10→9.5)
+- Fix: inflated scores corrected in registry (recalculated with v1.0 formula)
 - Fix: bootstrap siempre copia `lint-on-save.sh` genérico (resuelve ambigüedad hooks de stack vs genérico)
 - Fix: researcher constraint relajada de 5 a 15 file reads
 - Eliminado: `docs/x-references.md` (contenido efímero)
@@ -117,8 +196,8 @@
 - settings.json.partial para supabase (supabase CLI)
 - Hook lint-swift.sh para swift-swiftui (swiftlint + swift build fallback)
 - Pipeline de prácticas: directorios evaluating/, active/, deprecated/ creados
-- Práctica TRADINGBOT movida a active/ con incorporated_in completo
-- Práctica gestion-de-mora descartada (solo config local)
+- Example practice moved to active/ with incorporated_in complete
+- Domain-specific practice discarded (local config only)
 - Bootstrap skill: soporte multi-stack explícito + sugerencia de hook global
 - 6/6 stacks ahora tienen settings.json.partial
 

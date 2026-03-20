@@ -1,4 +1,68 @@
+> **[English](#troubleshooting)** | **[Español](#solución-de-problemas)**
+
 # Troubleshooting
+
+## Bootstrap doesn't detect my stack
+
+**Symptom:** `/forge bootstrap` says "stack not detected" or detects the wrong stack.
+
+**Cause:** Detection looks for specific files:
+- Python → `pyproject.toml`, `requirements.txt`, `Pipfile`
+- React → `package.json` with `react` or `vite` in dependencies
+- Swift → `Package.swift`, `*.xcodeproj`
+- Supabase → `supabase/` directory, `@supabase` imports
+- Docker → `docker-compose*`, `Dockerfile*`
+- GCP → `app.yaml`, `cloudbuild.yaml`
+- Redis → `redis` in Python dependencies
+
+**Fix:** If not detected, specify manually: "My stack is python-fastapi + docker-deploy".
+
+## Hook doesn't execute
+
+**Symptom:** You edit a .py file and the linter doesn't run automatically.
+
+**Checklist:**
+1. Is the hook executable? → `chmod +x .claude/hooks/lint-python.sh`
+2. Is it referenced in `.claude/settings.json` under `hooks`?
+3. Is the linter installed? → `which ruff` (Python) / `npx eslint --version` (TS)
+4. Does the hook read `$TOOL_INPUT` correctly? → Verify `jq` is installed
+
+**Quick fix:**
+```bash
+chmod +x .claude/hooks/*.sh
+```
+
+## Low score after sync
+
+**Symptom:** You ran `/forge sync` but the score didn't improve.
+
+**Common causes:**
+- CLAUDE.md exists but doesn't have required sections (stack, build, architecture) → score 1, not 2
+- Hook exists but isn't executable → score 1, not 2
+- Settings.json without deny list → score 1, not 2
+- Security cap: if settings.json or block-destructive is missing → max score 6.0
+
+**Fix:** Run `/forge audit` to see the per-item breakdown. Fix the gap with the lowest score first.
+
+## detect-claude-changes doesn't generate notes
+
+**Symptom:** You work on a project, modify `.claude/`, but nothing appears in `practices/inbox/`.
+
+**Checklist:**
+1. Is the hook installed globally?
+   - Check `~/.claude/settings.json` has a reference to `detect-claude-changes.sh` under `hooks.Stop`
+2. Is the script executable?
+   - `chmod +x $CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh`
+3. Were files modified less than 2 hours ago?
+   - The hook looks for changes in the last 2 hours
+4. Does a note already exist for this project today?
+   - The hook avoids duplicates per day
+
+**Fix:** Manually install the global hook following the instructions in the script.
+
+---
+
+# Solución de problemas
 
 ## Bootstrap no detecta mi stack
 
@@ -50,7 +114,7 @@ chmod +x .claude/hooks/*.sh
 1. ¿El hook está instalado globalmente?
    - Verificar `~/.claude/settings.json` tiene referencia a `detect-claude-changes.sh` bajo `hooks.Stop`
 2. ¿El script es ejecutable?
-   - `chmod +x ~/Documents/GitHub/claude-kit/hooks/detect-claude-changes.sh`
+   - `chmod +x $CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh`
 3. ¿Los archivos se modificaron hace <2 horas?
    - El hook busca cambios en las últimas 2 horas
 4. ¿Ya existe una nota de hoy para ese proyecto?

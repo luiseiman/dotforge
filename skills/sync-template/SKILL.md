@@ -23,7 +23,7 @@ Antes de sincronizar el proyecto, verificar que `~/.claude/CLAUDE.md` existe y t
 2. Leer `CLAUDE.md` actual
 3. Leer `.claude/rules/` existentes
 4. Leer `.claude/hooks/` existentes
-5. Detectar stacks del proyecto (misma lógica que bootstrap/audit)
+5. Detect stacks using `$CLAUDE_KIT_DIR/stacks/detect.md`
 6. Leer `~/.claude/CLAUDE.md` para saber qué reglas ya están cubiertas globalmente
 
 ## Paso 2: Comparar contra template
@@ -117,7 +117,7 @@ Después de aplicar cambios, actualizar (o crear) `.claude/.forge-manifest.json`
 Formato:
 ```json
 {
-  "claude_kit_version": "<version de ~/Documents/GitHub/claude-kit/VERSION>",
+  "claude_kit_version": "<version de $CLAUDE_KIT_DIR/VERSION>",
   "synced_at": "<fecha actual YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
@@ -130,7 +130,7 @@ Incluir TODOS los archivos en `.claude/` que son gestionados por claude-kit (no 
 
 ## Paso 5: Actualizar registry
 
-Actualizar en `~/Documents/GitHub/claude-kit/registry/projects.yml`:
+Actualizar en `$CLAUDE_KIT_DIR/registry/projects.yml`:
 - `last_sync:` → fecha actual
 - `claude_kit_version:` → versión actual de claude-kit
 

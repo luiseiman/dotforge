@@ -1,0 +1,14 @@
+{
+  "_comment": "Merge con template/settings.json.tmpl",
+  "permissions": {
+    "allow": [
+      "Bash(go *)",
+      "Bash(go test *)",
+      "Bash(go build *)",
+      "Bash(go run *)",
+      "Bash(go vet *)",
+      "Bash(golangci-lint *)",
+      "Bash(make *)"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-redis",
+  "version": "1.4.0",
+  "description": "Redis Streams, caching patterns, and pub/sub rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/redis.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

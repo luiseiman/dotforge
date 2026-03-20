@@ -1,3 +1,206 @@
+> **[English](#best-practices--claude-code-march-2026)** | **[Español](#mejores-prácticas--claude-code-marzo-2026)**
+
+# Best Practices — Claude Code (March 2026)
+
+Source of truth for claude-kit. Compiled from official documentation, community, and hands-on experience.
+
+---
+
+## 1. CLAUDE.md — The project's brain
+
+### Recommended structure
+```
+# CLAUDE.md — project-name
+## Build & Development       ← exact commands (build, test, lint, run)
+## Stack                     ← technologies with versions
+## Architecture              ← folder structure + data flow
+## Conventions               ← naming, error handling, testing
+## Working Rules             ← scope, plan mode, verification
+## Known Errors              ← reference to CLAUDE_ERRORS.md
+```
+
+### Golden rules
+- Keep <100 lines. If it grows, modularize with `@path/to/import`
+- Each line must pass: "Would Claude fail without this?" If not → cut it
+- Update at the end of each session with relevant changes
+- Don't duplicate what's in rules/ — CLAUDE.md is overview, rules/ is detail
+
+### Modularization
+For large projects, use imports:
+```
+@.claude/rules/backend.md
+@.claude/rules/frontend.md
+```
+Rules with `globs:` frontmatter auto-load by file path.
+
+---
+
+## 2. Project configuration (.claude/)
+
+### settings.json — Permissions
+```json
+{
+  "permissions": {
+    "allow": ["Bash(git *)", "Read", "Write", "Edit", "Glob", "Grep"],
+    "deny": ["Bash(rm -rf /)", "Read(.env)", "Read(*.key)"]
+  },
+  "hooks": { ... }
+}
+```
+- ALWAYS include a security deny list
+- Minimum necessary permissions — no `Bash(*)`
+- settings.json → project (commit). settings.local.json → personal (don't commit)
+
+### Rules — Automatic context
+- `globs:` frontmatter for auto-load by file path
+- One rule per domain (backend, frontend, infra, testing)
+- Include "Gotchas" at the top of each rule
+- Keep <50 lines per rule
+
+### Hooks — Automation
+Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`
+
+Essential hooks:
+1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push
+2. **lint-on-save** (PostToolUse:Write|Edit) — auto lint per stack
+
+Exit codes: 0 = ok, 1 = error (warning), 2 = block (stop operation)
+
+### Commands — Repeatable actions
+Files in `.claude/commands/name.md`. Invocable via `/name`.
+- Use `$ARGUMENTS` to receive parameters
+- Document clear, sequential Steps
+- Reference env vars with defaults: `${VAR:-default}`
+
+### Skills — Reusable capabilities
+Files in `.claude/skills/name/SKILL.md` with frontmatter:
+```yaml
+---
+name: skill-name
+description: What it does and when to use it
+---
+```
+Auto-discovery: loaded automatically without restart.
+
+---
+
+## 3. Subagents — Specialization
+
+### When to use subagents
+- Codebase exploration (protect main context)
+- Broad searches (>3 queries)
+- Independent parallelizable tasks
+- Read-only audits
+
+### Architect-Implementer pattern
+| Role | Tools | Usage |
+|------|-------|-------|
+| Explore | Read, Grep, Glob | Explore codebase |
+| Plan | Read, Grep, Glob | Design approach |
+| Implementer | Write, Edit, Bash | Code + tests |
+| Auditor | Read, Grep, Glob | Read-only |
+
+### Available agents (claude-kit)
+
+| Agent | Role | Permissions | Color |
+|-------|------|-------------|-------|
+| `researcher` | Exploration, search, context | Read-only | Cyan |
+| `architect` | Design, tradeoffs, ADRs | Read-only | Purple |
+| `implementer` | Code, tests, verification | Read-write | Green |
+| `code-reviewer` | Review by severity | Read-only | Yellow |
+| `security-auditor` | Vulnerabilities, secrets, CVEs | Read-only | Red |
+| `test-runner` | Tests, coverage, diagnostics | Read-write | Blue |
+
+### Typical chains
+- **New feature**: researcher → architect → implementer → test-runner → code-reviewer
+- **Bug fix**: researcher → implementer → code-reviewer
+- **Pre-deploy**: security-auditor → code-reviewer
+- **Cross-component refactor**: Agent Team (lead + 3-4 teammates)
+
+### Rules
+- Invoke with `Agent(subagent_type="<name>", ...)` — NEVER via bash
+- One task per subagent
+- Intermediate tool calls DON'T return to parent — only the final message
+- Provide enough context at spawn (don't assume inheritance)
+- Subagents can't invoke other subagents — chain from the main thread
+- Agent Teams: only for refactors ≥3 independent files, requires prior plan
+
+### Agent Teams (experimental)
+Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Lead coordinates, does NOT implement
+- Max 3-4 teammates (diminishing returns)
+- Each teammate = full session (~5x tokens)
+- Verify they don't edit the same files
+
+---
+
+## 4. Project lifecycle
+
+### Integrated workflow
+```
+CONTEXT → PLANNING → EXECUTION → VALIDATION → REFINEMENT → DOCUMENTATION
+```
+
+1. **Context**: CLAUDE.md + rules + memory
+2. **Planning**: Plan Mode for >3 files. Ask for plan before code.
+3. **Execution**: Small iterations. One feature/fix at a time.
+4. **Validation**: Tests + lint + review
+5. **Refinement**: Improve prompt before editing code
+6. **Documentation**: Update CLAUDE.md with changes
+
+### Plan Mode
+- Activate for tasks >3 files or architectural changes
+- Discrete steps: input → action → verification
+- If something goes wrong → stop, review, re-plan
+
+### Evolutionary error tracking
+- CLAUDE_ERRORS.md: per-project log
+- Recurring errors (3+ times) → promote to rule in CLAUDE.md or rules/
+- Auto-memory for cross-project errors
+
+---
+
+## 5. Effective prompting
+
+### Specific instructions
+BAD: "Build me a trading app"
+GOOD: "REST API in FastAPI: POST /orders (body: symbol, quantity, side), GET /positions, auth via X-API-Key, tests with pytest"
+
+### Ask for plan before code
+"Before writing code, describe: what files you'll create/modify, what specific changes, risks. Wait for my OK."
+
+### Incremental iteration
+Step 1: model → review → Step 2: endpoint → review → Step 3: tests
+
+### Scope control
+"Only modify strictly necessary files. Don't refactor or improve anything I didn't ask for."
+
+### Give complete errors
+Paste full stack trace + relevant code + context of when it occurs.
+
+---
+
+## 6. Security
+
+### Pre-deploy checklist
+- [ ] User inputs sanitized
+- [ ] No hardcoded credentials (use .env)
+- [ ] Errors don't expose sensitive info to user
+- [ ] Parameterized queries (no string interpolation)
+- [ ] Rate limiting on public endpoints
+- [ ] Authentication on endpoints that require it
+- [ ] HTTPS in production
+- [ ] .env in .gitignore
+- [ ] Dependencies without known vulnerabilities
+- [ ] Logs don't contain sensitive data
+
+### settings.json security
+- deny list: .env, *.key, *.pem, *credentials*
+- block-destructive hook always active
+- No Bash(*) — explicit permissions
+
+---
+
 # Mejores Prácticas — Claude Code (Marzo 2026)
 
 Fuente de verdad para claude-kit. Compilado de documentación oficial, comunidad, y experiencia propia.

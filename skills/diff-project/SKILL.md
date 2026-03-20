@@ -9,7 +9,7 @@ Mostrar qué cambió en claude-kit desde la última sincronización del proyecto
 
 ## Paso 1: Identificar baseline del proyecto
 
-1. Leer `~/Documents/GitHub/claude-kit/registry/projects.yml`
+1. Leer `$CLAUDE_KIT_DIR/registry/projects.yml`
 2. Buscar el proyecto actual por `path` (comparar con `$PWD`)
 3. Obtener `claude_kit_version` y `last_sync`
 4. Si no hay `claude_kit_version` registrada (null), reportar:
@@ -32,7 +32,7 @@ Si NO existe manifest, continuar con Paso 3 usando git log.
 
 ## Paso 3: Detectar cambios en claude-kit
 
-Ejecutar en `~/Documents/GitHub/claude-kit/`:
+Ejecutar en `$CLAUDE_KIT_DIR/`:
 
 ```bash
 git log --oneline v<version>..HEAD -- template/ stacks/
@@ -86,5 +86,5 @@ Los cambios no afectan a este proyecto. No es necesario sync.
 
 Este skill se instala automáticamente si ya existe el symlink de `skills/` en `~/.claude/skills/`. Si no, crear el symlink:
 ```bash
-ln -sf ~/Documents/GitHub/claude-kit/skills ~/.claude/skills
+ln -sf $CLAUDE_KIT_DIR/skills ~/.claude/skills
 ```

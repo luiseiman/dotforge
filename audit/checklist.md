@@ -35,7 +35,7 @@
 
 ### 6. CLAUDE_ERRORS.md
 - 0: No existe
-- 1: Existe con formato para registrar errores (tabla o estructura)
+- 1: Existe con formato para registrar errores (tabla con columna Type: syntax|logic|integration|config|security)
 
 ### 7. Hook de lint automático
 - 0: No hay lint post-write
@@ -56,3 +56,9 @@
 ### 11. .gitignore protege secrets
 - 0: No hay .gitignore o no protege .env/secrets
 - 1: .gitignore incluye .env, *.key, *.pem, credentials
+
+### 12. Prompt injection scan
+- 0: Rules or CLAUDE.md contain suspicious patterns (prompt injection risk)
+- 1: No suspicious patterns detected
+
+**Verification:** Scan `.claude/rules/`, `CLAUDE.md`, and any `*.md` in `.claude/` for patterns: `ignore previous`, `system:`, `<system>`, `</system>`, `<instructions>`, encoded payloads (base64 inline blocks), `IGNORE ALL`, `disregard`, `override instructions`. If any match → score 0 with explicit warning.

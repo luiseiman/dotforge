@@ -1,0 +1,13 @@
+{
+  "name": "claude-kit-stack-swift-swiftui",
+  "version": "1.4.0",
+  "description": "Swift 5.9+ with SwiftUI, iOS 17+, @Observable, async/await, and SPM rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/ios.md"],
+    "settings": "settings.json.partial",
+    "hooks": ["hooks/lint-swift.sh"]
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

@@ -9,22 +9,27 @@ Ejecutá una auditoría completa de la configuración de Claude Code del proyect
 
 ## Paso 1: Detectar stack
 
-Buscar indicadores de stack en el directorio actual:
-- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
-- `package.json` con react/vite/next → **react-vite-ts**
-- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
-- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
-- `*.db`, `*.sqlite`, `*.ipynb`, `*.csv`, `*.xlsx` prominentes → **data-analysis**
-- `docker-compose*`, `Dockerfile*` → **docker-deploy**
-- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
-- `redis` en requirements.txt/pyproject.toml → **redis**
+Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
-Un proyecto puede tener múltiples stacks.
+## Paso 1b: Detect project tier
+
+Auto-detect project tier based on signals:
+- **simple** (<5K LOC, 1 stack, no CI config): recommended items are relaxed (items 8-10 don't penalize)
+- **standard** (5K-50K LOC, 1-2 stacks): default behavior
+- **complex** (>50K LOC, 3+ stacks, monorepo indicators like `packages/` or `apps/`): recommended items 8-10 become semi-obligatory (each worth 0-2 instead of 0-1)
+
+Detection signals:
+1. LOC: count non-empty lines in source files (`find . -name '*.py' -o -name '*.ts' -o -name '*.js' -o -name '*.go' -o -name '*.java' -o -name '*.swift' | xargs wc -l`)
+2. Stack count: number of stacks detected in step 1
+3. CI: presence of `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/`
+4. Monorepo: presence of `packages/`, `apps/`, `lerna.json`, `pnpm-workspace.yaml`, `turbo.json`
+
+Save tier in registry entry.
 
 ## Paso 2: Cargar checklist
 
-Leer `~/Documents/GitHub/claude-kit/audit/checklist.md` para los criterios de evaluación.
-Leer `~/Documents/GitHub/claude-kit/audit/scoring.md` para los pesos y caps.
+Leer `$CLAUDE_KIT_DIR/audit/checklist.md` para los criterios de evaluación.
+Leer `$CLAUDE_KIT_DIR/audit/scoring.md` para los pesos y caps.
 
 ## Paso 3: Evaluar
 
@@ -44,21 +49,27 @@ Para cada item del checklist, verificar existencia **y calidad**:
    - ¿Está referenciado en `.claude/settings.json` bajo hooks?
 5. **Comandos build/test** — ¿Están en CLAUDE.md? ¿Corresponden al stack detectado?
 
-### Recomendado (0-6 puntos bonus)
-6. **CLAUDE_ERRORS.md** — ¿Existe con formato de tabla/estructura?
+### Recomendado (0-7 puntos bonus)
+6. **CLAUDE_ERRORS.md** — ¿Existe con formato de tabla con columna Type?
 7. **Hook lint** — ¿Existe? ¿Es ejecutable? (verificar `chmod +x`)
 8. **Comandos custom** — ¿Hay archivos en `.claude/commands/`?
 9. **Memory** — ¿Hay archivos de memoria del proyecto?
 10. **Agentes** — ¿Hay `.claude/agents/` + regla `agents.md` en rules?
 11. **.gitignore** — ¿Protege .env, *.key, *.pem, credentials?
+12. **Prompt injection scan** — ¿Rules/CLAUDE.md libres de patrones sospechosos?
+
+**Tier adjustments:**
+- `simple`: items 8-10 score 0 don't penalize (treated as N/A)
+- `complex`: items 8-10 become semi-obligatory (each 0-2 instead of 0-1)
 
 ## Paso 4: Calcular score
 
-Usar los pesos de `scoring.md`:
+Usar los pesos de `$CLAUDE_KIT_DIR/audit/scoring.md`:
 1. `score_obligatorio = sum(items 1-5)` — máximo 10
-2. `score_recomendado = sum(items 6-11)` — máximo 6
-3. `score_total = score_obligatorio + (score_recomendado * 0.5)`
-4. `score_normalizado = min(score_total / 10 * 10, 10)`
+2. `score_recomendado = sum(items 6-12)` — máximo 7
+3. `score_total = score_obligatorio * 0.7 + score_recomendado * (3.0 / 7)` — max 7.0 + 3.0 = 10.0
+4. Apply tier adjustments before calculating (see Paso 1b)
+4. `score_normalizado = min(score_total, 10)`
 
 **Cap de seguridad:** Si item 2 (settings.json) o item 4 (block-destructive) es 0, score máximo = 6.0.
 
@@ -69,6 +80,7 @@ Formato:
 ═══ AUDITORÍA claude-kit: {{proyecto}} ═══
 Fecha: {{YYYY-MM-DD}}
 Stack detectado: {{stacks}}
+Tier: {{simple|standard|complex}}
 claude-kit version: {{version del último bootstrap/sync si detectable}}
 Score: {{X.X}}/10 {{nivel}}
 
@@ -86,6 +98,7 @@ Score: {{X.X}}/10 {{nivel}}
 {{✅|⚠️}} Memory — {{detalle}}
 {{✅|⚠️}} Agentes — {{detalle}}
 {{✅|⚠️}} .gitignore — {{detalle}}
+{{✅|⚠️}} Prompt injection scan — {{detalle}}
 
 ── GAPS CRÍTICOS ──
 1. {{qué falta}} → {{acción recomendada}}
@@ -95,11 +108,39 @@ Score: {{X.X}}/10 {{nivel}}
 Ejecutar `/forge sync` para aplicar la plantilla claude-kit y cerrar los gaps.
 ```
 
-## Paso 6: Actualizar registry
+## Paso 6: Cross-project error promotion
 
-Si `~/Documents/GitHub/claude-kit/registry/projects.yml` existe, actualizar el entry del proyecto:
+If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
+1. Read `CLAUDE_ERRORS.md` and group errors by Area column
+2. If any Area has 3+ entries with similar root causes, it's a candidate for promotion
+3. Check `$CLAUDE_KIT_DIR/practices/inbox/` and `active/` for existing practices covering that pattern
+4. If no existing practice covers it, create a new practice in `practices/inbox/` using the capture format:
+   - `source_type: cross-project`
+   - `tags: [error-promotion, <area>]`
+   - Description: the recurring pattern and derived rule
+5. Report promotions in the audit output under `── ERROR PATTERNS ──`
+
+This closes the Memoria → Aprendizaje synergy: recurring project errors feed the practices pipeline.
+
+## Paso 7: Audit gaps as practices
+
+For each obligatory item scored 0 or 1, and each recommended item scored 0:
+1. Check if a practice already exists in `practices/inbox/` or `active/` for that gap
+2. If not, create a practice in `practices/inbox/`:
+   - `source_type: audit-gap`
+   - `tags: [audit-gap, <item-name>]`
+   - Description: what's missing and recommended fix
+3. Only create practices for gaps that reflect a template/stack issue (not project-specific misconfigurations)
+4. Report in audit output under `── GAPS CAPTURADOS ──`
+
+This closes the Auditoría → Aprendizaje synergy: detected gaps feed back into the practices pipeline.
+
+## Paso 8: Actualizar registry
+
+Si `$CLAUDE_KIT_DIR/registry/projects.yml` existe, actualizar el entry del proyecto:
 - `score:` con el score calculado
 - `last_audit:` con la fecha actual
 - `claude_kit_version:` con la versión de VERSION si el proyecto fue bootstrapped
 - `last_sync:` preservar el valor existente (no modificar aquí)
 - `notes:` resumen breve de la auditoría
+- `history:` append a new entry `{date: YYYY-MM-DD, score: X.X, version: <claude_kit_version>}`. Never overwrite previous entries — this enables score trending over time.

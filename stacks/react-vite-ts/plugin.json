@@ -1,0 +1,13 @@
+{
+  "name": "claude-kit-stack-react-vite-ts",
+  "version": "1.4.0",
+  "description": "React 18+ with Vite, TypeScript strict mode, Tailwind CSS, and Zustand rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/frontend.md"],
+    "settings": "settings.json.partial",
+    "hooks": ["hooks/lint-ts.sh"]
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

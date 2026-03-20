@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-docker-deploy",
+  "version": "1.4.0",
+  "description": "Docker Compose and Dockerfile best practices, health checks, and deployment rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/infra.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-node-express",
+  "version": "1.4.0",
+  "description": "Node.js 20+ with Express/Fastify, TypeScript, and ESM module rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/backend.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

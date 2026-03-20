@@ -1,11 +1,21 @@
 # Roadmap claude-kit v1.0.0 → v2.0.0
 
+> Development roadmap. Entries use mixed Spanish/English. See [changelog.md](changelog.md) for completed items.
+>
+> Hoja de ruta de desarrollo. Las entradas usan español/inglés mixto. Ver [changelog.md](changelog.md) para items completados.
+
+## Vision / Visión
+
+claude-kit is the only end-to-end configuration management system for Claude Code. While other tools offer one-shot bootstraps, skills collections, or CLAUDE.md generators, claude-kit uniquely combines **additive stack layering**, **intelligent template sync**, **normalized audit scoring**, **a practices pipeline for continuous improvement**, and **cross-project registry tracking** — all in markdown + shell scripts. The roadmap deepens each of these differentiators.
+
+claude-kit es el único sistema de gestión de configuración end-to-end para Claude Code. Mientras otras herramientas ofrecen bootstraps one-shot, colecciones de skills o generadores de CLAUDE.md, claude-kit combina de forma única **stack layering aditivo**, **sync inteligente de plantillas**, **audit scoring normalizado**, **un pipeline de prácticas para mejora continua** y **registry cross-proyecto con tracking** — todo en markdown + shell scripts. El roadmap profundiza cada uno de estos diferenciadores.
+
 ## v1.0.1 — Higiene interna
 Corregir inconsistencias sin agregar features.
 
 1. Agregar frontmatter `globs:` a `template/rules/_common.md`
 2. Actualizar `audit.md` command a 8 stacks (faltan gcp-cloud-run, redis)
-3. Corregir scores inflados en registry (SOMA 10→9.5, InviSight 10→9.5)
+3. Correct inflated registry scores (recalculate with updated formula)
 4. Resolver ambigüedad lint hooks en bootstrap: siempre copiar `lint-on-save.sh` genérico
 5. Relajar constraint researcher de "max 5 file reads" a "max 15"
 6. Eliminar `docs/x-references.md` (contenido efímero)
@@ -30,8 +40,8 @@ claude-kit pasa a gestionar la capa global.
 
 ## v1.3.0 — Stack composition
 
-1. Stack `websocket` (pyRofex, ws patterns, reconnect, heartbeat)
-2. Presets de composición: `fullstack-web`, `trading-bot`, `ios-app`
+1. Stack `websocket` (ws patterns, reconnect, heartbeat)
+2. Presets de composición: `fullstack-web`, `api-backend`, `ios-app`
 3. Rules de interacción cross-stack por preset
 4. Bootstrap acepta preset
 5. Audit evalúa coherencia multi-stack (item 12)
@@ -77,7 +87,7 @@ claude-kit pasa a gestionar la capa global.
 ## v2.0.0 — Estabilización
 
 1. Arquitectura interna documentada
-2. Sync real de los 7 proyectos con v2.0.0
+2. Sync real de todos los proyectos registrados con v2.0.0
 3. Scores auditados y reales
 4. Changelog completo
 5. Tag git v2.0.0

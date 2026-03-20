@@ -16,7 +16,7 @@ Pipeline de 3 fases para mantener claude-kit actualizado con prácticas descubie
 
 ## Fase 1: EVALUAR — Procesar inbox
 
-Leer todos los archivos en `~/Documents/GitHub/claude-kit/practices/inbox/`.
+Leer todos los archivos en `$CLAUDE_KIT_DIR/practices/inbox/`.
 
 Para cada práctica:
 
@@ -67,24 +67,25 @@ Para cada práctica aceptada en `evaluating/`:
 ### Aplicar
 1. Mostrar diff propuesto al usuario y pedir confirmación
 2. Modificar los archivos de claude-kit correspondientes
-3. Mover práctica de `evaluating/` a `active/` con `incorporated_in:` actualizado
-4. Actualizar `docs/changelog.md`
-5. Bump `VERSION` según tipo
+3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
+4. Mover práctica de `evaluating/` a `active/` con `incorporated_in:` actualizado
+5. Actualizar `docs/changelog.md`
+6. Bump `VERSION` según tipo
 
 ---
 
 ## Fase 3: PROPAGAR — Sugerir actualización de proyectos
 
-1. Leer `~/Documents/GitHub/claude-kit/registry/projects.yml`
+1. Leer `$CLAUDE_KIT_DIR/registry/projects.yml`
 2. Para cada proyecto, mostrar qué cambió desde su última sincronización:
 
 ```
 ═══ PROPAGACIÓN SUGERIDA ═══
 
-SOMA (último sync: {{fecha o "nunca"}})
+project-a (último sync: {{fecha o "nunca"}})
   → {{N}} rules actualizadas
 
-derup (último sync: {{fecha o "nunca"}})
+project-b (último sync: {{fecha o "nunca"}})
   → {{N}} rules actualizadas
 
 Para propagar: ejecutar /forge sync en cada proyecto.

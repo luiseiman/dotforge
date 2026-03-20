@@ -7,39 +7,56 @@ description: Inicializa la configuración de Claude Code en un proyecto nuevo o 
 
 Inicializar `.claude/` completo en el proyecto actual usando la plantilla claude-kit.
 
+## Paso 0: Determine profile
+
+Check if $ARGUMENTS contains `--profile minimal`, `--profile standard`, or `--profile full`.
+If not specified, use `standard` as default.
+
+**Profiles control what gets installed:**
+
+| Component | minimal | standard | full |
+|-----------|---------|----------|------|
+| CLAUDE.md | yes | yes | yes |
+| settings.json | yes | yes | yes |
+| block-destructive hook | yes | yes | yes |
+| lint-on-save hook | no | yes | yes |
+| warn-missing-test hook | no | no | yes (strict profile) |
+| rules/ (_common + stack) | yes | yes | yes |
+| commands/ | no | yes | yes |
+| agents/ + orchestration | no | yes | yes |
+| agent-memory/ | no | no | yes |
+| CLAUDE_ERRORS.md | no | yes | yes (pre-populated) |
+| memory.md rule | no | yes | yes |
+
+Save the profile in `.claude/settings.local.json` under `env.FORGE_BOOTSTRAP_PROFILE`.
+
 ## Paso 1: Detectar stack
 
-Analizar el directorio actual para detectar stacks:
-- `pyproject.toml`, `requirements.txt`, `Pipfile` → **python-fastapi**
-- `package.json` con react/vite/next → **react-vite-ts**
-- `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → **swift-swiftui**
-- `supabase/`, `supabase.ts`, `@supabase/supabase-js` en package.json → **supabase**
-- `*.db`, `*.sqlite`, `*.ipynb` prominentes → **data-analysis**
-- `docker-compose*`, `Dockerfile*` → **docker-deploy**
-- `app.yaml`, `cloudbuild.yaml`, `gcloud` en scripts → **gcp-cloud-run**
-- `redis` en requirements.txt/pyproject.toml → **redis**
-
-Un proyecto puede tener múltiples stacks. Si no se puede detectar, preguntar al usuario.
+Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
 ## Paso 2: Confirmar con usuario
 
 Mostrar:
 ```
+Profile: {{profile}}
 Stack detectado: {{stacks}}
 Se creará:
 - CLAUDE.md (plantilla base + stack rules)
 - .claude/settings.json (permisos base + stack)
 - .claude/rules/ (reglas comunes + stack)
-- .claude/hooks/ (block-destructive + lint)
-- .claude/commands/ (audit, health)
-- CLAUDE_ERRORS.md (vacío, para registro de errores)
+- .claude/hooks/ (block-destructive + lint)           [minimal: solo block-destructive]
+- .claude/commands/ (audit, health)                    [minimal: omitido]
+- .claude/agents/ + orchestration                      [minimal: omitido]
+- CLAUDE_ERRORS.md (vacío, para registro de errores)   [minimal: omitido]
 
 ¿Proceder? (sí/no)
 ```
 
+Adapt the list shown based on the profile (hide components that won't be installed).
+
 ## Paso 3: Generar CLAUDE.md
 
-Usar `~/Documents/GitHub/claude-kit/template/CLAUDE.md.tmpl` como base.
+Usar `$CLAUDE_KIT_DIR/template/CLAUDE.md.tmpl` como base.
 Reemplazar marcadores:
 - `{{PROJECT_NAME}}` → nombre del directorio actual
 - `<!-- forge:stack -->` → tecnologías detectadas
@@ -47,8 +64,8 @@ Reemplazar marcadores:
 
 ## Paso 4: Generar settings.json
 
-1. Cargar `~/Documents/GitHub/claude-kit/template/settings.json.tmpl` como base
-2. Para **cada** stack detectado, leer `~/Documents/GitHub/claude-kit/stacks/{stack}/settings.json.partial`
+1. Cargar `$CLAUDE_KIT_DIR/template/settings.json.tmpl` como base
+2. Para **cada** stack detectado, leer `$CLAUDE_KIT_DIR/stacks/{stack}/settings.json.partial`
 3. Merge: combinar los arrays `allow` de **todos** los partials con la base (unión de sets, sin duplicados)
 4. Merge: combinar los arrays `deny` igualmente
 5. Escribir en `.claude/settings.json`
@@ -72,27 +89,37 @@ Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corre
 
 ## Paso 5: Copiar hooks
 
-1. Copiar `~/Documents/GitHub/claude-kit/template/hooks/block-destructive.sh` → `.claude/hooks/`
-2. Copiar siempre el hook genérico `~/Documents/GitHub/claude-kit/template/hooks/lint-on-save.sh` (soporta Python + TS + Swift). Los hooks de lint por stack (`lint-python.sh`, `lint-ts.sh`, `lint-swift.sh`) son referencia, no se copian.
-3. `chmod +x` en ambos
+1. Copiar `$CLAUDE_KIT_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/` (ALL profiles)
+2. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/lint-on-save.sh`
+3. If profile is `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
+4. `chmod +x` all copied hooks
 
 ## Paso 6: Copiar rules
 
-1. Copiar `~/Documents/GitHub/claude-kit/template/rules/_common.md` → `.claude/rules/`
-2. Para cada stack detectado, copiar rules de `~/Documents/GitHub/claude-kit/stacks/{stack}/rules/` → `.claude/rules/`
+1. Copiar `$CLAUDE_KIT_DIR/template/rules/_common.md` → `.claude/rules/`
+2. Para cada stack detectado, copiar rules de `$CLAUDE_KIT_DIR/stacks/{stack}/rules/` → `.claude/rules/`
 
 ## Paso 7: Copiar comandos
 
-Copiar `~/Documents/GitHub/claude-kit/template/commands/` → `.claude/commands/`
+**Skip if profile is `minimal`.**
+
+Copiar `$CLAUDE_KIT_DIR/template/commands/` → `.claude/commands/`
 
 ## Paso 8: Copiar agentes y regla de orquestación
 
-1. Copiar `~/Documents/GitHub/claude-kit/agents/*.md` → `.claude/agents/`
-2. Copiar `~/Documents/GitHub/claude-kit/template/rules/agents.md` → `.claude/rules/agents.md`
+**Skip if profile is `minimal`.**
+
+1. Copiar `$CLAUDE_KIT_DIR/agents/*.md` → `.claude/agents/`
+2. Copiar `$CLAUDE_KIT_DIR/template/rules/agents.md` → `.claude/rules/agents.md`
 
 Esto da al proyecto acceso a los 6 subagentes especializados (researcher, architect, implementer, code-reviewer, security-auditor, test-runner) y la regla de orquestación que define cuándo delegar.
 
 ## Paso 9: Crear CLAUDE_ERRORS.md
+
+**Skip if profile is `minimal`.**
+
+For `full` profile: pre-populate with the Type column format and example entry.
+For `standard` profile: create empty template.
 
 ```markdown
 # Errores conocidos — {{PROJECT_NAME}}
@@ -102,9 +129,30 @@ Registro evolutivo de errores y lecciones aprendidas. Consultar ANTES de trabaja
 Jerarquía de verdad: código fuente > CLAUDE.md > CLAUDE_ERRORS.md > auto-memory
 
 ## Formato
-| Fecha | Área | Error | Causa raíz | Fix | Regla derivada |
-|-------|------|-------|------------|-----|---------------|
+| Fecha | Área | Tipo | Error | Causa raíz | Fix | Regla derivada |
+|-------|------|------|-------|------------|-----|---------------|
+
+Tipos válidos: `syntax`, `logic`, `integration`, `config`, `security`
 ```
+
+## Paso 9b: Crear agent-memory/
+
+**Only for `full` profile.** Standard creates the directory but not the seed files.
+
+Create `.claude/agent-memory/` directory for agents with `memory: project` to persist learnings:
+
+```bash
+mkdir -p .claude/agent-memory
+```
+
+Create a seed file for each memory-enabled agent so the directory structure is ready:
+```bash
+for agent in implementer architect code-reviewer security-auditor; do
+  touch ".claude/agent-memory/${agent}.md"
+done
+```
+
+This enables implementer, architect, code-reviewer, and security-auditor to accumulate project-specific knowledge across sessions.
 
 ## Paso 10: Sugerir hook global
 
@@ -128,7 +176,7 @@ shasum -a 256 <file> | cut -d' ' -f1
 Formato:
 ```json
 {
-  "claude_kit_version": "<version de ~/Documents/GitHub/claude-kit/VERSION>",
+  "claude_kit_version": "<version de $CLAUDE_KIT_DIR/VERSION>",
   "synced_at": "<fecha actual YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},

@@ -1,0 +1,12 @@
+{
+  "name": "claude-kit-stack-gcp-cloud-run",
+  "version": "1.4.0",
+  "description": "GCP Cloud Run container deployment, Cloud Build, and health check rules for Claude Code.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/gcp.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}
