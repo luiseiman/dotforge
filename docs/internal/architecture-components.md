@@ -14,6 +14,9 @@ Internal reference for claude-kit contributors. Maps all components and their in
 │                        global/                                   │
 │              (~/.claude/ management via sync.sh)                  │
 ├─────────────────────────────────────────────────────────────────┤
+│                    integrations/                                  │
+│              (cross-tool bridges: OpenClaw)                       │
+├─────────────────────────────────────────────────────────────────┤
 │                      registry/                                   │
 │              (cross-project tracking)                             │
 └─────────────────────────────────────────────────────────────────┘
@@ -158,3 +161,27 @@ See `docs/config-validation.md` for full documentation. Four layers:
 | Behavioral | `session-report.sh` | Session metrics (blocks, coverage, errors) |
 | Coverage | `/forge rule-check` | Rule match rate against git history |
 | Comparative | `/forge benchmark` | Full config vs minimal config on standard tasks |
+
+## Integrations
+
+`integrations/` contains cross-tool bridges that let other platforms use claude-kit.
+
+### OpenClaw (`integrations/openclaw/`)
+
+Two mechanisms:
+
+1. **Bridge skill** (`integrations/openclaw/SKILL.md`) — standalone OpenClaw skill that proxies all `/forge` commands via `claude --print`. Install with `bash integrations/openclaw/install.sh` → symlinks into `~/.openclaw/skills/forge/`.
+
+2. **Export** (`/forge export openclaw`) — generates a project-specific OpenClaw workspace skill at `~/.openclaw/skills/{project}/SKILL.md` with project context, rules, deny list, and claude CLI bridge. Part of the standard export-config skill.
+
+| Mechanism | Scope | Content |
+|-----------|-------|---------|
+| Bridge skill | All projects | Proxies `/forge` commands, resolves project from registry |
+| Export | Single project | Project-specific context, rules as instructions, CLI bridge |
+
+### Adding new integrations
+
+Each integration lives in `integrations/<tool>/` with:
+- `SKILL.md` or equivalent config in the target tool's format
+- `install.sh` for automated setup
+- Documentation of what's preserved vs lost in the conversion

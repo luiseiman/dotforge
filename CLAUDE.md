@@ -69,6 +69,10 @@ Six subagent definitions in `agents/`: researcher (read-only exploration), archi
 
 `audit/checklist.md` defines 12 items (5 obligatory scored 0-2, 7 recommended scored 0-1). `audit/scoring.md` normalizes to a 10-point scale. Security-critical items (settings.json, block-destructive hook) cap the score at 6.0 if missing. Registry in `registry/projects.yml` tracks scores across managed projects.
 
+### Integrations
+
+`integrations/` contains cross-tool bridges. Currently: OpenClaw (`integrations/openclaw/`) with a bridge skill for operating `/forge` from messaging channels, and `/forge export openclaw` for generating project-specific OpenClaw workspace skills.
+
 ## Conventions
 
 - Rules files: markdown with `globs:` frontmatter for auto-load

@@ -79,8 +79,9 @@ claude-kit/
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Project tracking with scores and history
 ├── hooks/          # Global post-session change detection hook
+├── integrations/   # Cross-tool bridges (OpenClaw)
 ├── docs/           # Guides, patterns, security checklist
-└── tests/          # Hook test suite
+└── tests/          # Hook test suite + benchmark tasks
 ```
 
 ## Stacks
@@ -278,8 +279,9 @@ claude-kit/
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Seguimiento de proyectos con puntajes e historial
 ├── hooks/          # Hook global post-sesión para detección de cambios
+├── integrations/   # Bridges cross-tool (OpenClaw)
 ├── docs/           # Guías, patrones, checklist de seguridad
-└── tests/          # Suite de tests para hooks
+└── tests/          # Suite de tests para hooks + benchmark tasks
 ```
 
 ## Stacks

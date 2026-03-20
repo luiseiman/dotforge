@@ -1,6 +1,6 @@
 ---
 name: forge-export
-description: Export config to Cursor (.cursorrules), Codex (AGENTS.md), or Windsurf (.windsurfrules)
+description: Export config to Cursor (.cursorrules), Codex (AGENTS.md), Windsurf (.windsurfrules), or OpenClaw (SKILL.md)
 ---
 
-Run `/forge export` with target from $ARGUMENTS (cursor|codex|windsurf). Converts the project's claude-kit configuration to the target editor's format.
+Run `/forge export` with target from $ARGUMENTS (cursor|codex|windsurf|openclaw). Converts the project's claude-kit configuration to the target editor's format.

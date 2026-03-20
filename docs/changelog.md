@@ -6,9 +6,12 @@
 
 ## v2.2.0 (2026-03-20)
 
-### CI/CD + Quality
+### CI/CD + Quality + OpenClaw Integration
 - Nuevo: GitHub Actions CI workflow — validates hooks (bash -n + permissions), YAML files, rules frontmatter, stack completeness, skill completeness, benchmark tasks, version consistency
 - Nuevo: `tests/lint-rules.sh` — validates all rule .md files have `globs:` frontmatter
+- Nuevo: `integrations/openclaw/` — bridge skill que permite operar `/forge` desde WhatsApp, Telegram, Slack, Discord via OpenClaw
+- Nuevo: `/forge export openclaw` — genera un workspace skill de OpenClaw por proyecto con contexto, reglas, deny list, y bridge CLI
+- Cambio: `forge-export.md` y export-config skill actualizados con OpenClaw como cuarto target
 - Fix: plugin.json version synced to VERSION file (CI catches mismatches)
 
 ---
