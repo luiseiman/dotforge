@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate hook syntax (bash -n)
+        run: |
+          echo "── Hook Syntax ──"
+          ERRORS=0
+          for f in template/hooks/*.sh stacks/*/hooks/*.sh hooks/*.sh; do
+            [ -f "$f" ] || continue
+            if bash -n "$f" 2>&1; then
+              echo "✓ $f"
+            else
+              echo "✗ $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          echo ""
+          echo "Checked: $(find template/hooks stacks/*/hooks hooks -name '*.sh' 2>/dev/null | wc -l) files"
+          [ $ERRORS -eq 0 ] || exit 1
+
+      - name: Validate hook permissions
+        run: |
+          echo "── Hook Permissions ──"
+          ERRORS=0
+          for f in template/hooks/*.sh stacks/*/hooks/*.sh hooks/*.sh; do
+            [ -f "$f" ] || continue
+            if [ -x "$f" ]; then
+              echo "✓ $f"
+            else
+              echo "✗ $f (not executable)"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          [ $ERRORS -eq 0 ] || exit 1
+
+      - name: Validate YAML files
+        run: |
+          echo "── YAML Validation ──"
+          python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml')); print('✓ registry/projects.yml')"
+          python3 -c "import yaml; yaml.safe_load(open('practices/sources.yml')); print('✓ practices/sources.yml')"
+          python3 -c "import yaml; yaml.safe_load(open('practices/metrics.yml')); print('✓ practices/metrics.yml')"
+
+      - name: Validate rules frontmatter
+        run: |
+          echo "── Rules Frontmatter ──"
+          bash tests/lint-rules.sh
+
+      - name: Validate stack completeness
+        run: |
+          echo "── Stack Completeness ──"
+          ERRORS=0
+          for d in stacks/*/; do
+            [ -f "${d}detect.md" ] && continue  # skip detect.md metadata file
+            STACK=$(basename "$d")
+            MISSING=""
+            [ -d "${d}rules" ] || MISSING="rules/"
+            [ -f "${d}settings.json.partial" ] || MISSING="$MISSING settings.json.partial"
+            if [ -n "$MISSING" ]; then
+              echo "✗ $STACK — missing: $MISSING"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "✓ $STACK"
+            fi
+          done
+          [ $ERRORS -eq 0 ] || exit 1
+
+      - name: Validate skill completeness
+        run: |
+          echo "── Skill Completeness ──"
+          ERRORS=0
+          for d in skills/*/; do
+            SKILL=$(basename "$d")
+            if [ ! -f "${d}SKILL.md" ]; then
+              echo "✗ $SKILL — missing SKILL.md"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "✓ $SKILL"
+            fi
+          done
+          [ $ERRORS -eq 0 ] || exit 1
+
+      - name: Validate benchmark tasks
+        run: |
+          echo "── Benchmark Tasks ──"
+          python3 -c "
+          import yaml, glob, sys
+          errors = 0
+          for f in sorted(glob.glob('tests/benchmark-tasks/*.yml')):
+              try:
+                  data = yaml.safe_load(open(f))
+                  assert 'id' in data, 'missing id'
+                  assert 'stack' in data, 'missing stack'
+                  assert 'prompt' in data, 'missing prompt'
+                  print(f'✓ {f}')
+              except Exception as e:
+                  print(f'✗ {f}: {e}')
+                  errors += 1
+          sys.exit(errors)
+          "
+
+      - name: Version consistency check
+        run: |
+          echo "── Version Consistency ──"
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          echo "VERSION file: $VERSION"
+
+          PLUGIN_VERSION=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "plugin.json:  $PLUGIN_VERSION"
+
+          if [ "$VERSION" != "$PLUGIN_VERSION" ]; then
+            echo "✗ Version mismatch: VERSION=$VERSION, plugin.json=$PLUGIN_VERSION"
+            exit 1
+          fi
+          echo "✓ Versions match"

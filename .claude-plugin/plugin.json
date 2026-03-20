@@ -1,6 +1,6 @@
 {
   "name": "claude-kit",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "Configuration factory for Claude Code — templates, stacks, hooks, rules, and audit tools",
   "author": "luiseiman",
   "license": "MIT",

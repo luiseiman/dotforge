@@ -4,6 +4,15 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.2.0 (2026-03-20)
+
+### CI/CD + Quality
+- Nuevo: GitHub Actions CI workflow — validates hooks (bash -n + permissions), YAML files, rules frontmatter, stack completeness, skill completeness, benchmark tasks, version consistency
+- Nuevo: `tests/lint-rules.sh` — validates all rule .md files have `globs:` frontmatter
+- Fix: plugin.json version synced to VERSION file (CI catches mismatches)
+
+---
+
 ## v2.1.0 (2026-03-20)
 
 ### Making it real
