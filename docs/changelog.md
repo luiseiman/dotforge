@@ -4,6 +4,27 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v1.6.0 (2026-03-20)
+
+### Config Validation System
+- Nuevo: `tests/test-config.sh` — 30 checks de coherencia interna (hooks existen, globs válidos, deny list completa, no contradicciones)
+- Nuevo: coherence check integrado en `/forge audit` (paso 1c)
+- Nuevo: skill `/forge rule-check` (`rule-effectiveness`) — clasifica reglas en activas/ocasionales/inertes cruzando globs contra git log
+- Cambio: `session-report.sh` reescrito — genera JSON metrics en `~/.claude/metrics/{slug}/{date}.json` (siempre activo, SESSION_REPORT.md sigue opt-in)
+- Nuevo: hook counters en `block-destructive.sh` y `lint-on-save.sh` — escriben a `/tmp/` para que session-report los agregue
+- Nuevo: rule coverage calculation — cruza archivos tocados contra globs de rules por sesión
+- Cambio: `session-insights` skill — retroactive analysis desde git log + CLAUDE_ERRORS.md cuando no hay métricas de sesión
+- Nuevo: `practices/metrics.yml` — tracking binario de efectividad (monitoring → validated/failed tras N checks sin recurrencia)
+- Cambio: `update-practices` skill — nueva Fase 4 recurrence check contra CLAUDE_ERRORS.md de proyectos del registry
+- Nuevo: campos `effectiveness` y `error_type` en frontmatter de prácticas
+- Nuevo: skill `/forge benchmark` — compara full config vs minimal en worktrees aislados con tareas estándar por stack
+- Nuevo: 6 benchmark tasks (python-fastapi, react-vite-ts, swift-swiftui, node-express, go-api, generic)
+- Nuevo: `metrics_summary` schema en registry para métricas agregadas por proyecto
+- Nuevo: tabla de precondiciones en `forge.md` — valida estado antes de despachar acciones
+- Nuevo: `docs/config-validation.md` — documentación completa del sistema de 4 fases
+
+---
+
 ## v1.5.0 (2026-03-20)
 
 ### Intelligence & Analytics

@@ -84,6 +84,16 @@ claude-kit pasa a gestionar la capa global.
 3. Migration guide automática al bumpar VERSION
 4. `/forge migrate` — aplica migration notes
 
+## v1.6.0 — Config Validation ✅
+
+1. ~~Config self-validation (`tests/test-config.sh`)~~
+2. ~~Session metrics JSON + hook counters~~
+3. ~~Rule effectiveness detection (`/forge rule-check`)~~
+4. ~~Practice effectiveness tracking (binary recurrence)~~
+5. ~~Comparative benchmark (`/forge benchmark`)~~
+6. ~~Retroactive analysis in `/forge insights`~~
+7. ~~Documentation (`docs/config-validation.md`)~~
+
 ## v2.0.0 — Estabilización
 
 1. Arquitectura interna documentada
@@ -96,7 +106,7 @@ claude-kit pasa a gestionar la capa global.
 
 ```
 v1.0.1 ──→ v1.1.0 ──→ v1.2.0 ──┐
-                                 ├──→ v2.0.0
+                                 ├──→ v1.6.0 ──→ v2.0.0
 v1.3.0 (paralelo) ──────────────┤
 v1.4.0 (paralelo) ──────────────┤
 v1.5.0 (paralelo) ──────────────┘
