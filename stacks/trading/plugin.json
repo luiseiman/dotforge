@@ -1,0 +1,18 @@
+{
+  "name": "claude-kit-stack-trading",
+  "version": "2.0.0",
+  "description": "Trading & investment analysis — thesis tracking, earnings watch, screening, catalyst calendar. AR + US markets.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/trading.md"],
+    "settings": "settings.json.partial",
+    "skills": [
+      "skills/thesis-tracker/SKILL.md",
+      "skills/earnings-watch/SKILL.md",
+      "skills/screen/SKILL.md",
+      "skills/catalyst-calendar/SKILL.md"
+    ]
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

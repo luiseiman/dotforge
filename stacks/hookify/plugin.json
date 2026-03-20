@@ -1,0 +1,18 @@
+{
+  "name": "claude-kit-stack-hookify",
+  "version": "2.0.0",
+  "description": "Dynamic hook rules from natural language. Create .claude/hookify.*.local.md files that act as warn/block rules without editing hooks.json.",
+  "parent": "claude-kit",
+  "components": {
+    "rules": ["rules/hookify.md"],
+    "settings": "settings.json.partial",
+    "hooks": [
+      "hooks/hookify-pretooluse.py",
+      "hooks/hookify-stop.py",
+      "hooks/hookify-userpromptsubmit.py"
+    ],
+    "skills": ["skills/hookify/SKILL.md"]
+  },
+  "composable": true,
+  "note": "Install multiple stack plugins in one project. Permissions merge via set union."
+}

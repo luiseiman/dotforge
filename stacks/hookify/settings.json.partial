@@ -1,0 +1,26 @@
+{
+  "_comment": "Merge con template/settings.json.tmpl. Hooks se registran en hooks.json del proyecto.",
+  "permissions": {
+    "allow": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-pretooluse.py"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-stop.py"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-userpromptsubmit.py"
+      }
+    ]
+  }
+}
