@@ -1,24 +1,137 @@
 #!/bin/bash
 # claude-kit global sync
-# Instala/actualiza symlinks de skills, agents y commands en ~/.claude/
-# Uso: ./global/sync.sh [--dry-run]
+# Installs/updates skills, agents, and commands into ~/.claude/
+# Works on Linux, macOS, and Windows (WSL/Git Bash)
+# Usage: ./global/sync.sh [--dry-run]
 
 set -euo pipefail
 
 CLAUDE_KIT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DRY_RUN=false
 
-# Resolve the correct home directory.
-# If running as root (e.g. via sudo or in containers), $HOME may point to /root
+# --- Platform detection ---
+detect_platform() {
+  case "$(uname -s)" in
+    Linux*)
+      if grep -qi microsoft /proc/version 2>/dev/null; then
+        echo "wsl"
+      else
+        echo "linux"
+      fi
+      ;;
+    Darwin*)  echo "macos" ;;
+    MINGW*|MSYS*|CYGWIN*) echo "gitbash" ;;
+    *)        echo "unknown" ;;
+  esac
+}
+
+PLATFORM=$(detect_platform)
+
+# --- Symlink support ---
+# Windows Git Bash may not support symlinks; fall back to file copy
+can_symlink() {
+  if [[ "$PLATFORM" == "gitbash" ]]; then
+    # Test if symlinks work (requires Developer Mode or admin on Windows)
+    local test_target=$(mktemp)
+    local test_link="${test_target}.link"
+    if ln -s "$test_target" "$test_link" 2>/dev/null; then
+      rm -f "$test_link" "$test_target"
+      return 0
+    else
+      rm -f "$test_target"
+      return 1
+    fi
+  fi
+  return 0
+}
+
+USE_SYMLINKS=true
+if ! can_symlink; then
+  USE_SYMLINKS=false
+  echo "⚠ Symlinks not supported — using file copies instead"
+  echo "  (Enable Developer Mode in Windows Settings for symlink support)"
+fi
+
+# --- Link or copy a file/directory ---
+# Usage: link_item <source> <destination>
+link_item() {
+  local src="$1"
+  local dst="$2"
+  if $USE_SYMLINKS; then
+    ln -s "$src" "$dst"
+  elif [[ -d "$src" ]]; then
+    cp -R "$src" "$dst"
+  else
+    cp "$src" "$dst"
+  fi
+}
+
+# --- Check if destination is a valid link to source ---
+# Usage: is_current_link <source> <destination>
+is_current_link() {
+  local src="$1"
+  local dst="$2"
+  if $USE_SYMLINKS; then
+    [[ -L "$dst" ]] && {
+      local current
+      current=$(readlink "$dst" 2>/dev/null || readlink -f "$dst" 2>/dev/null || echo "")
+      [[ "$current" == "$src" || "$current" == "${src%/}" ]]
+    }
+  else
+    # For copies, check a marker file we leave behind
+    [[ -f "${dst}/.claude-kit-source" ]] && [[ "$(cat "${dst}/.claude-kit-source" 2>/dev/null)" == "$src" ]]
+  fi
+}
+
+# --- Remove a link or copy ---
+remove_item() {
+  local dst="$1"
+  if [[ -L "$dst" ]]; then
+    rm "$dst"
+  elif [[ -d "$dst" ]]; then
+    rm -rf "$dst"
+  else
+    rm -f "$dst"
+  fi
+}
+
+# --- Install item (link or copy) with source marker ---
+install_item() {
+  local src="$1"
+  local dst="$2"
+  link_item "$src" "$dst"
+  # For copies, leave a marker so we can detect updates
+  if ! $USE_SYMLINKS && [[ -d "$dst" ]]; then
+    echo "$src" > "${dst}/.claude-kit-source"
+  fi
+}
+
+# --- File owner detection (cross-platform) ---
+get_file_owner() {
+  local path="$1"
+  case "$PLATFORM" in
+    macos)
+      stat -f '%Su' "$path" 2>/dev/null || echo ""
+      ;;
+    linux|wsl)
+      stat -c '%U' "$path" 2>/dev/null || echo ""
+      ;;
+    *)
+      echo ""
+      ;;
+  esac
+}
+
+# --- Resolve correct home directory ---
+# When running as root (sudo, containers), $HOME may point to /root or /var/root
 # instead of the actual user's home. We detect the real owner of the repo.
 if [[ "${CLAUDE_HOME:-}" != "" ]]; then
   # Explicit override — respect it
   :
 elif [[ "$(id -u)" == "0" ]]; then
-  # Running as root (sudo, container, etc.) — try to find the real user's home
   resolved=false
 
-  # Method 1: SUDO_USER (set by sudo)
+  # Method 1: SUDO_USER (set by sudo on Linux and macOS)
   if [[ -n "${SUDO_USER:-}" && "$SUDO_USER" != "root" ]]; then
     owner_home=$(eval echo "~${SUDO_USER}")
     CLAUDE_HOME="${owner_home}/.claude"
@@ -28,7 +141,7 @@ elif [[ "$(id -u)" == "0" ]]; then
 
   # Method 2: repo owner differs from root
   if ! $resolved; then
-    repo_owner=$(stat -c '%U' "$CLAUDE_KIT_DIR" 2>/dev/null || stat -f '%Su' "$CLAUDE_KIT_DIR" 2>/dev/null)
+    repo_owner=$(get_file_owner "$CLAUDE_KIT_DIR")
     if [[ -n "$repo_owner" && "$repo_owner" != "root" ]]; then
       owner_home=$(eval echo "~${repo_owner}")
       CLAUDE_HOME="${owner_home}/.claude"
@@ -37,12 +150,21 @@ elif [[ "$(id -u)" == "0" ]]; then
     fi
   fi
 
-  # Method 3: repo path is under /home/<user>/ (common in containers)
-  if ! $resolved && [[ "$CLAUDE_KIT_DIR" =~ ^/home/([^/]+)/ ]]; then
-    inferred_user="${BASH_REMATCH[1]}"
-    CLAUDE_HOME="/home/${inferred_user}/.claude"
-    echo "⚠ Running as root — inferred target from repo path: /home/${inferred_user}"
-    resolved=true
+  # Method 3: infer from repo path
+  if ! $resolved; then
+    # Linux/WSL: /home/<user>/...
+    # macOS: /Users/<user>/...
+    if [[ "$CLAUDE_KIT_DIR" =~ ^/home/([^/]+)/ ]]; then
+      inferred_user="${BASH_REMATCH[1]}"
+      CLAUDE_HOME="/home/${inferred_user}/.claude"
+      echo "⚠ Running as root — inferred target from repo path: /home/${inferred_user}"
+      resolved=true
+    elif [[ "$CLAUDE_KIT_DIR" =~ ^/Users/([^/]+)/ ]]; then
+      inferred_user="${BASH_REMATCH[1]}"
+      CLAUDE_HOME="/Users/${inferred_user}/.claude"
+      echo "⚠ Running as root — inferred target from repo path: /Users/${inferred_user}"
+      resolved=true
+    fi
   fi
 
   # Fallback: use root's home
@@ -53,10 +175,15 @@ else
   CLAUDE_HOME="${HOME}/.claude"
 fi
 
-if [[ "${1:-}" == "--dry-run" ]]; then
-  DRY_RUN=true
-  echo "=== DRY RUN — no se aplicarán cambios ==="
-fi
+# --- Parse args ---
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run)
+      DRY_RUN=true
+      echo "=== DRY RUN — no changes will be applied ==="
+      ;;
+  esac
+done
 
 action() {
   if $DRY_RUN; then
@@ -67,70 +194,63 @@ action() {
 }
 
 echo "═══ claude-kit global sync ═══"
-echo "claude-kit: ${CLAUDE_KIT_DIR}"
-echo "target:     ${CLAUDE_HOME}"
+echo "source:   ${CLAUDE_KIT_DIR}"
+echo "target:   ${CLAUDE_HOME}"
+echo "platform: ${PLATFORM}"
+echo "method:   $( $USE_SYMLINKS && echo "symlinks" || echo "file copies" )"
 echo ""
 
 # --- Skills ---
 echo "── Skills ──"
-mkdir -p "${CLAUDE_HOME}/skills"
+action "mkdir -p '${CLAUDE_HOME}/skills'"
 for skill_dir in "${CLAUDE_KIT_DIR}/skills"/*/; do
   skill_name=$(basename "$skill_dir")
   link="${CLAUDE_HOME}/skills/${skill_name}"
-  if [[ -L "$link" ]]; then
-    current=$(readlink "$link")
-    if [[ "$current" == "$skill_dir" || "$current" == "${skill_dir%/}" ]]; then
-      echo "  ✓ ${skill_name} (ok)"
-    else
-      echo "  ↻ ${skill_name} (update: ${current} → ${skill_dir})"
-      action "rm '$link' && ln -s '${skill_dir%/}' '$link'"
-    fi
+  src="${skill_dir%/}"
+  if is_current_link "$src" "$link" 2>/dev/null; then
+    echo "  ✓ ${skill_name} (ok)"
   elif [[ -e "$link" ]]; then
-    echo "  ⚠ ${skill_name} (exists but not a symlink — skipping)"
+    echo "  ↻ ${skill_name} (update)"
+    action "remove_item '$link' && install_item '$src' '$link'"
   else
     echo "  + ${skill_name} (new)"
-    action "ln -s '${skill_dir%/}' '$link'"
+    action "install_item '$src' '$link'"
   fi
 done
 
 # --- Agents ---
 echo ""
 echo "── Agents ──"
-mkdir -p "${CLAUDE_HOME}/agents"
+action "mkdir -p '${CLAUDE_HOME}/agents'"
 for agent_file in "${CLAUDE_KIT_DIR}/agents"/*.md; do
   agent_name=$(basename "$agent_file")
   link="${CLAUDE_HOME}/agents/${agent_name}"
-  if [[ -L "$link" ]]; then
-    current=$(readlink "$link")
-    if [[ "$current" == "$agent_file" ]]; then
-      echo "  ✓ ${agent_name} (ok)"
-    else
-      echo "  ↻ ${agent_name} (update)"
-      action "rm '$link' && ln -s '$agent_file' '$link'"
-    fi
+  if is_current_link "$agent_file" "$link" 2>/dev/null; then
+    echo "  ✓ ${agent_name} (ok)"
   elif [[ -e "$link" ]]; then
-    echo "  ⚠ ${agent_name} (exists but not a symlink — skipping)"
+    echo "  ↻ ${agent_name} (update)"
+    action "remove_item '$link' && install_item '$agent_file' '$link'"
   else
     echo "  + ${agent_name} (new)"
-    action "ln -s '$agent_file' '$link'"
+    action "install_item '$agent_file' '$link'"
   fi
 done
 
 # --- Commands (forge.md) ---
 echo ""
 echo "── Commands ──"
-mkdir -p "${CLAUDE_HOME}/commands"
+action "mkdir -p '${CLAUDE_HOME}/commands'"
 forge_src="${CLAUDE_KIT_DIR}/global/commands/forge.md"
 forge_dst="${CLAUDE_HOME}/commands/forge.md"
 if [[ -f "$forge_src" ]]; then
-  if [[ -L "$forge_dst" ]]; then
-    echo "  ✓ forge.md (symlink ok)"
-  elif [[ -f "$forge_dst" ]]; then
-    echo "  ↻ forge.md (replacing file with symlink)"
-    action "rm '$forge_dst' && ln -s '$forge_src' '$forge_dst'"
+  if is_current_link "$forge_src" "$forge_dst" 2>/dev/null; then
+    echo "  ✓ forge.md (ok)"
+  elif [[ -e "$forge_dst" ]]; then
+    echo "  ↻ forge.md (update)"
+    action "remove_item '$forge_dst' && install_item '$forge_src' '$forge_dst'"
   else
     echo "  + forge.md (new)"
-    action "ln -s '$forge_src' '$forge_dst'"
+    action "install_item '$forge_src' '$forge_dst'"
   fi
 else
   echo "  - forge.md (source not found, skipping)"
@@ -142,7 +262,6 @@ echo ""
 echo "── Settings.json ──"
 settings_file="${CLAUDE_HOME}/settings.json"
 if [[ -f "$settings_file" ]]; then
-  # Check if deny list is empty
   deny_count=$(python3 -c "
 import json
 with open('$settings_file') as f:
@@ -152,16 +271,15 @@ print(len(deny))
 " 2>/dev/null || echo "error")
 
   if [[ "$deny_count" == "0" ]]; then
-    echo "  ⚠ deny list VACÍA — esto contradice la filosofía de seguridad de claude-kit"
-    echo "    Ejecutá '/forge global sync' desde Claude Code para mergear deny list"
+    echo "  ⚠ deny list empty — run '/forge global sync' from Claude Code to merge deny list"
   elif [[ "$deny_count" == "error" ]]; then
-    echo "  ⚠ No se pudo leer settings.json"
+    echo "  ⚠ Could not read settings.json (python3 required)"
   else
-    echo "  ✓ deny list tiene ${deny_count} entries"
+    echo "  ✓ deny list has ${deny_count} entries"
   fi
 else
-  echo "  - No existe (se creará con /forge global sync desde Claude Code)"
+  echo "  - Does not exist (will be created with '/forge global sync' from Claude Code)"
 fi
 
 echo ""
-echo "═══ Sync completo ═══"
+echo "═══ Sync complete ═══"
