@@ -1,13 +1,13 @@
 ---
 name: init-project
-description: Quick-start Claude Code configuration in 5 seconds. Simplified bootstrap — auto-detects everything, zero questions.
+description: Quick-start Claude Code configuration. Auto-detects stack, asks 3 questions to understand the project, generates complete config.
 ---
 
 # Init Project
 
-Zero-friction Claude Code setup. Detects stack, generates config, done. No questions asked.
+Fast Claude Code setup: auto-detect stack + 3 quick questions = complete, personalized config.
 
-Unlike `/forge bootstrap` (which shows a preview and asks for confirmation), `/forge init` just does it.
+Unlike `/forge bootstrap` (full interactive preview), `/forge init` is streamlined: detect, ask, generate, done.
 
 ## Step 1: Check if already initialized
 
@@ -19,63 +19,118 @@ Exit without changes.
 
 ## Step 2: Detect stacks
 
-Scan project files silently:
+Scan project files silently using `$CLAUDE_KIT_DIR/stacks/detect.md` as reference:
 
-```bash
-# Check each stack's detection indicators
-# python-fastapi: pyproject.toml, requirements.txt with fastapi
-# react-vite-ts: package.json with react + vite
-# swift-swiftui: Package.swift, *.xcodeproj
-# node-express: package.json with express/fastify (no react)
-# go-api: go.mod
-# java-spring: pom.xml or build.gradle with spring
-# supabase: supabase/ dir or supabase in deps
-# docker-deploy: Dockerfile or docker-compose*
-# gcp-cloud-run: app.yaml or cloudbuild.yaml
-# aws-deploy: cdk.json or template.yaml
-# redis: redis in deps
-# data-analysis: *.ipynb prominent
-# devcontainer: .devcontainer/
+```
+python-fastapi: pyproject.toml, requirements.txt with fastapi
+react-vite-ts:  package.json with react + vite
+swift-swiftui:  Package.swift, *.xcodeproj
+node-express:   package.json with express/fastify (no react)
+go-api:         go.mod
+java-spring:    pom.xml or build.gradle with spring
+supabase:       supabase/ dir or supabase in deps
+docker-deploy:  Dockerfile or docker-compose*
+gcp-cloud-run:  app.yaml or cloudbuild.yaml
+aws-deploy:     cdk.json or template.yaml
+redis:          redis in deps
+data-analysis:  *.ipynb prominent
+devcontainer:   .devcontainer/
 ```
 
-Use `$CLAUDE_KIT_DIR/stacks/detect.md` as the detection reference.
+Also scan existing files for additional context:
+- README.md → project description
+- existing test files → testing patterns
+- CI config (.github/workflows, Makefile) → build/test commands
 
-If no stack detected, default to `standard` profile with `_common.md` rules only.
+## Step 3: Ask 3 questions
 
-## Step 3: Generate config
+Present all 3 questions together (not one at a time):
+
+```
+═══ FORGE INIT ═══
+Stack detected: {stacks or "none — generic config"}
+
+3 quick questions to generate a complete config:
+
+1. ¿Qué hace y qué NO hace?
+   → One sentence: the problem it solves, and explicit v0.1 limits.
+   Example: "API REST for real-time quotes. No auth, no frontend, no historical data yet."
+
+2. ¿Con qué?
+   → Stack, language, DB, external services, where it runs.
+   Example: "Python 3.12, FastAPI, Supabase, deployed on GCP Cloud Run."
+
+3. ¿Cómo trabajo?
+   → Solo or team, spec-first or prototype-first, testing level from day one.
+   Example: "Solo, prototype-first, tests only for critical paths."
+```
+
+Wait for user responses. If the user answers in a single message covering all 3, parse accordingly.
+
+If the user says "skip" or gives empty answers, proceed with auto-detected info only.
+
+## Step 4: Generate config
 
 Run `/bootstrap-project` internally with:
 - Profile: `standard`
 - Stacks: auto-detected
-- No confirmation prompt — just generate
+- No confirmation prompt
 
-## Step 4: Output (one-liner)
+Then **enrich the generated CLAUDE.md** with the user's answers:
 
-Print a single summary line:
+### CLAUDE.md enrichment
+
+Insert the user's answers into the `<!-- forge:custom -->` section of CLAUDE.md:
+
+```markdown
+<!-- forge:custom -->
+
+## What this project does
+{answer to question 1 — what it does AND what it doesn't do}
+
+## Stack & infrastructure
+{answer to question 2 — expanded with detected stacks}
+
+## Working style
+{answer to question 3 — solo/team, approach, testing expectations}
+```
+
+If the user provided build/test commands in their answers, also update the `## Build & Test` section above the forge:custom marker.
+
+### Deny list enrichment
+
+If the user mentioned specific services, external APIs, or sensitive areas in question 2, add relevant deny patterns to settings.json. Examples:
+- Mentioned Supabase → ensure `Read(**/.env)` covers SUPABASE_* vars
+- Mentioned external API → add API key env var patterns
+- Mentioned "no auth yet" → no auth-related deny needed
+
+## Step 5: Output
+
+Show a concise summary:
 
 ```
-✓ claude-kit initialized — {stacks detected} — score {X}/10
+═══ FORGE INIT — DONE ═══
+Project:  {name}
+Stacks:   {detected stacks}
+Config:   claude-kit v2.3.0 standard
+
+Generated:
+  CLAUDE.md          → project context (personalized)
+  .claude/settings.json → permissions + hooks
+  .claude/rules/     → {N} rules
+  .claude/hooks/     → {N} hooks
+  .claude/commands/  → {N} commands
+  .claude/agent-memory/ → persistent memory
+  CLAUDE_ERRORS.md   → error log
+  .forge-manifest.json → version tracking
+
+Score: {X}/10 (run /forge audit for details)
 ```
-
-Examples:
-```
-✓ claude-kit initialized — python-fastapi, docker-deploy — score 9.5/10
-✓ claude-kit initialized — react-vite-ts, supabase — score 9.5/10
-✓ claude-kit initialized — no stack detected (generic) — score 7.0/10
-```
-
-That's it. No walls of text, no previews, no confirmations.
-
-## After init
-
-Suggest next steps only if asked:
-- Edit `CLAUDE.md` below `<!-- forge:custom -->` with project-specific context
-- Run `/forge audit` for detailed score breakdown
-- Run `/forge rule-check` after a few sessions to check rule effectiveness
 
 ## Constraints
 
-- NEVER ask the user anything — the whole point is zero friction
-- NEVER show file-by-file output — one summary line only
-- If bootstrap-project fails, show the error concisely and suggest `/forge bootstrap` for the interactive version
-- Do NOT run audit separately — calculate the score from what was generated
+- Ask exactly 3 questions, together, not sequentially
+- If user skips questions, proceed with auto-detected info — never block on missing answers
+- Keep the output concise — no walls of text
+- The user's answers go in `<!-- forge:custom -->` section (protected from future syncs)
+- If bootstrap-project fails, show error and suggest `/forge bootstrap` for full interactive version
