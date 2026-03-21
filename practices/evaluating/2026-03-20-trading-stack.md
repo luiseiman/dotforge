@@ -5,7 +5,7 @@ source_type: project-observation
 source: claude-kit (stacks/trading/)
 status: evaluating
 evaluated_date: 2026-03-20
-evaluation_notes: "Clean structure, convention-compliant. Add category:domain to plugin.json. Test in InviSight or trading project before promoting to active."
+evaluation_notes: "Clean structure, convention-compliant. Add category:domain to plugin.json. Test in a real trading project before promoting to active."
 tags: [stacks, trading, domain-specific, skills]
 date: 2026-03-20
 tested_in: [claude-kit]
@@ -25,7 +25,7 @@ A `trading` stack was created during a real project session. It follows claude-k
 
 ## Evaluation Needed
 
-1. **Audience**: Trading is a niche domain. Other stacks (python-fastapi, react-vite-ts, docker-deploy) are broadly applicable. Is a trading stack useful beyond Luis's own projects?
+1. **Audience**: Trading is a niche domain. Other stacks (python-fastapi, react-vite-ts, docker-deploy) are broadly applicable. Is a trading stack useful beyond personal projects?
 2. **Precedent**: If accepted, this opens the door for other domain-specific stacks (healthcare, e-commerce, etc.). Is that the direction claude-kit should go?
 3. **Convention compliance**: Structure looks correct — no application code, only config/rules/skills. This is a clean stack.
 4. **Skills quality**: 4 skills is a lot for one stack. Are they well-scoped? Do they overlap?
