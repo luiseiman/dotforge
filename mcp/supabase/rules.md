@@ -35,3 +35,19 @@ Any operation that modifies schema or data requires showing the full operation a
 - When creating or modifying tables, always ask: "Should this table have Row Level Security enabled?"
 - Never disable RLS on an existing table without explicit user instruction
 - Review Edge Function code for secrets before deploying — never log tokens or keys
+
+## Read-only mode for production
+
+The server supports a `--read-only` flag that restricts it to non-destructive operations.
+Recommended pattern:
+
+- **Development/staging config**: use the standard template (no `--read-only`)
+- **Production config**: add `"--read-only"` to the `args` array in mcpServers
+
+```json
+"args": ["-y", "@supabase/mcp-server-supabase@0.7.0", "--access-token", "${SUPABASE_ACCESS_TOKEN}", "--read-only"]
+```
+
+With `--read-only`, `apply_migration`, `execute_sql` (writes), `create_branch`, and
+`merge_branch` are unavailable at the server level — not just behavioral restrictions.
+Use this as a hard enforcement layer for production access tokens.

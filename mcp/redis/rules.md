@@ -28,8 +28,10 @@ Before any SET, DEL, EXPIRE, XADD, or consumer group operation:
 4. Wait for explicit confirmation
 
 ## Hard stops (always denied)
-- `flushdb` / `flushall` — data destruction. Never call.
-- `debug` / `config resetstat` — operational risk.
+- `flushdb` / `flushall` — destroys all keys in DB or entire instance. Never call.
+- `config set` / `config rewrite` — runtime server config changes (maxmemory, bind, requirepass). Can permanently alter server behavior or expose the instance. Never call.
+- `shutdown` — terminates the Redis process. Never call.
+- `debug` / `config resetstat` — operational risk, no legitimate use case via MCP.
 
 ## Redis Streams guidance (SOMA pattern)
 - Use XADD with MAXLEN ~ N to prevent unbounded stream growth in high-frequency producers

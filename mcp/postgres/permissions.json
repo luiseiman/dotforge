@@ -1,6 +1,6 @@
 {
   "_template": "claude-kit/mcp/postgres",
-  "_comment": "The official postgres MCP server (@modelcontextprotocol/server-postgres) is read-only by design — it only exposes query (SELECT). This permissions file documents that posture and adds no deny entries beyond what the server already enforces.",
+  "_comment": "The @modelcontextprotocol/server-postgres 'query' tool executes arbitrary SQL — it is NOT read-only by design. SQL-level restrictions (no DDL, no unguarded DML) cannot be enforced via the permissions system (which only blocks tool calls by name, not SQL content). Enforcement is via rules.md. The allow list restricts which tools Claude may call; write protection is behavioral, governed by rules.md.",
   "allow": [
     "mcp__postgres__query",
     "mcp__postgres__list_tables",
