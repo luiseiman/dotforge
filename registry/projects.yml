@@ -1,10 +1,13 @@
 # Registry of projects managed by claude-kit
 # Updated by /forge audit and /forge sync
 # Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, metrics_summary, notes
-# Scoring v1.6.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
+# Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
 # history: array of {date, score, version} entries — appended by /forge audit, never overwritten
 # metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
-
+#
+# This file ships empty. /forge bootstrap and /forge audit populate it with your projects.
+# Your local registry is gitignored after first use — see .gitignore.
+#
 # Example entry:
 #
 # projects:
@@ -13,11 +16,11 @@
 #     stacks: [python-fastapi, docker-deploy]
 #     last_audit: 2026-03-19
 #     last_sync: 2026-03-19
-#     claude_kit_version: 1.2.2
+#     claude_kit_version: 2.3.0
 #     score: 9.5
 #     history:
 #       - {date: 2026-03-01, score: 7.0, version: 1.0.0}
-#       - {date: 2026-03-19, score: 9.5, version: 1.2.2}
+#       - {date: 2026-03-19, score: 9.5, version: 2.3.0}
 #     metrics_summary:
 #       sessions: 15
 #       avg_errors: 0.3
@@ -26,130 +29,4 @@
 #       last_updated: 2026-03-19
 #     notes: "8 rules, 2 hooks, 4 commands, deny complete."
 
-projects:
-  - name: claude-kit
-    path: .  # self-reference (this repo)
-    stacks: []
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 10.0
-    history:
-      - {date: 2026-03-20, score: 10.0, version: 1.5.0}
-      - {date: 2026-03-20, score: 10.0, version: 1.6.0}
-    notes: "Self-audit v1.6.0. 3 rules, 5 hooks, 4 commands, 6 agents, 13 skills, memory active, deny complete, config validation active."
-
-  - name: InviSight-iOS
-    path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
-    stacks: [swift-swiftui, supabase]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 9.6
-    history:
-      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
-    notes: "11 rules, 2 hooks, 9 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
-
-  - name: TRADINGBOT
-    path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
-    stacks: [python-fastapi, supabase, docker-deploy, react-vite-ts]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 9.6
-    history:
-      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
-    notes: "7 rules, 3 hooks, 4 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
-
-  - name: cotiza-api-cloud
-    path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
-    stacks: [python-fastapi, gcp-cloud-run, docker-deploy]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 9.6
-    history:
-      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
-    notes: "9 rules, 2 hooks, 15 commands, 6 agents, CLAUDE_ERRORS.md, agent-memory created. Synced to v2.0.0."
-
-  - name: Soma
-    path: /Users/luiseiman/Documents/GitHub/Soma
-    stacks: [python-fastapi, redis, docker-deploy]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 9.6
-    history:
-      - {date: 2026-03-20, score: 7.6, version: 2.0.0}
-      - {date: 2026-03-20, score: 9.6, version: 2.1.0}
-    notes: "6 rules, 2 hooks, 2 commands, agents.md, agent-memory, CLAUDE_ERRORS.md, .gitignore. Bash(*) granularizado (34 permisos)."
-
-  - name: openclaw
-    path: /Users/luiseiman/Documents/GitHub/openclaw
-    stacks: [python-fastapi, node-express, docker-deploy]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 10.0
-    history:
-      - {date: 2026-03-20, score: 8.7, version: 2.0.0}
-      - {date: 2026-03-20, score: 10.0, version: 2.1.0}
-    notes: "Rules + hooks + CLAUDE_ERRORS.md + commands/review + agent-memory + .gitignore hardened. Score perfecto."
-
-  - name: Cotiza-Api-Render
-    path: /Users/luiseiman/Documents/GitHub/Cotiza-Api-Render
-    stacks: [python-fastapi]
-    tier: minimal
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 8.3
-    history:
-      - {date: 2026-03-20, score: 5.1, version: 2.0.0}
-      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
-    notes: "Rules (_common + backend), hook block-destructive, CLAUDE_ERRORS.md, .gitignore hardened. Security cap levantado."
-
-  - name: botRatios
-    path: /Users/luiseiman/Documents/GitHub/botRatios
-    stacks: [python-fastapi]
-    tier: minimal
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 8.3
-    history:
-      - {date: 2026-03-20, score: 3.9, version: 2.0.0}
-      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
-    notes: "Rules (_common + backend), hook block-destructive, CLAUDE_ERRORS.md, .gitignore creado. Security cap levantado. Leak risk eliminado."
-
-  - name: vault-bot
-    path: /Users/luiseiman/Documents/GitHub/vault-bot
-    stacks: [python-fastapi]
-    tier: minimal
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 8.3
-    history:
-      - {date: 2026-03-20, score: 4.4, version: 2.0.0}
-      - {date: 2026-03-20, score: 8.3, version: 2.1.0}
-    notes: "Rules (_common + backend), hook block-destructive, allow list granular (31 permisos), CLAUDE_ERRORS.md, .gitignore hardened. Security cap levantado."
-
-  - name: SOMA2
-    path: /Users/luiseiman/Documents/SOMA2
-    stacks: [python-fastapi, react-vite-ts, docker-deploy, redis]
-    tier: standard
-    last_audit: 2026-03-20
-    last_sync: 2026-03-20
-    claude_kit_version: 2.0.0
-    score: 10.0
-    history:
-      - {date: 2026-03-20, score: 9.6, version: 2.0.0}
-      - {date: 2026-03-20, score: 10.0, version: 2.1.0}
-    notes: "10 rules, 3 hooks, 6 agents, 4 commands, CLAUDE_ERRORS.md, agent-memory, .gitignore con *credentials*. Score perfecto."
+projects: []

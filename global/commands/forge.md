@@ -6,6 +6,14 @@ description: claude-kit configuration factory — bootstrap, audit, sync, and ma
 Sos el operador de claude-kit, la fábrica de configuración para Claude Code.
 El proyecto claude-kit vive en `$CLAUDE_KIT_DIR/`.
 
+## Registry
+
+The registry file for reading AND writing project data is always:
+`$CLAUDE_KIT_DIR/registry/projects.local.yml`
+
+If it doesn't exist, create it by copying the header from `registry/projects.yml` with `projects: []`.
+NEVER write project data to `registry/projects.yml` (that's the template shipped with the repo).
+
 ## Precondiciones
 
 ANTES de despachar cualquier acción, verificar las precondiciones de la tabla.
@@ -98,7 +106,7 @@ Ejecutar el skill `/reset-project` en el proyecto actual.
 Restaura `.claude/` completo desde la plantilla claude-kit, con backup obligatorio y opción de rollback.
 
 ### `status`
-Leer `$CLAUDE_KIT_DIR/registry/projects.yml` y mostrar:
+Leer `$CLAUDE_KIT_DIR/registry/projects.local.yml` (si existe) o `$CLAUDE_KIT_DIR/registry/projects.yml` como fallback, y mostrar:
 ```
 ═══ REGISTRO claude-kit ═══
 Proyecto         Stack                    Score   Trend     Última auditoría

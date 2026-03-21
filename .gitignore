@@ -14,6 +14,9 @@ Thumbs.db
 *credentials*
 *.secret
 
+# Registry local (datos de tu máquina, no commitear)
+registry/projects.local.yml
+
 # Archivos temporales
 *.tmp
 *.bak
