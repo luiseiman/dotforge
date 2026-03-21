@@ -45,7 +45,7 @@ cd ~/Documents/GitHub/claude-kit   # o donde tengas clonado claude-kit
 
 | Componente | Ubicación | Método |
 |-----------|-----------|--------|
-| Skills (13) | `~/.claude/skills/` | Symlinks |
+| Skills (15) | `~/.claude/skills/` | Symlinks |
 | Agents (6) | `~/.claude/agents/` | Symlinks |
 | Comando `/forge` | `~/.claude/commands/forge.md` | Copia (Claude Code no sigue symlinks para commands) |
 | CLAUDE.md global | `~/.claude/CLAUDE.md` | Merge con preservación de `<!-- forge:custom -->` |
@@ -64,7 +64,7 @@ Muestra:
 ═══ GLOBAL STATUS ═══
 CLAUDE.md:     ✓ sincronizado
 settings.json: deny list 9 items (plantilla: 9)
-Skills:        13/13 instalados
+Skills:        15/15 instalados
 Agents:        6/6 instalados
 Commands:      forge.md (archivo)
 ```
@@ -246,7 +246,8 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 
 | Comando | Descripción |
 |---------|-------------|
-| `/forge bootstrap` | Inicializar `.claude/` en proyecto nuevo o existente |
+| `/forge init` | Setup rápido: auto-detecta stack, 3 preguntas, config personalizada |
+| `/forge bootstrap` | Bootstrap completo con preview y confirmación |
 | `/forge bootstrap --profile minimal` | Bootstrap con solo lo esencial |
 | `/forge bootstrap --profile full` | Bootstrap con todo incluido |
 | `/forge sync` | Actualizar config preservando customizaciones |
@@ -257,6 +258,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge rule-check` | Detectar reglas inertes (cruzar globs vs git history) |
 | `/forge benchmark` | Comparar config full vs minimal en tareas estandarizadas |
 | `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
+| `/forge unregister` | Eliminar proyecto del registro |
 | `/forge export cursor` | Exportar config a Cursor |
 | `/forge export codex` | Exportar config a Codex |
 | `/forge export windsurf` | Exportar config a Windsurf |

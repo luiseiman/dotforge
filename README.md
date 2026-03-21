@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.4.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -73,7 +73,7 @@ claude-kit/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Technology modules (13 stacks, additive)
 ├── agents/         # 6 subagents (researcher, architect, implementer, ...)
-├── skills/         # 13 skills installed as ~/.claude/skills/ symlinks
+├── skills/         # 15 skills installed as ~/.claude/skills/ symlinks
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
@@ -112,7 +112,8 @@ All skills are invoked through the `/forge` command:
 
 | Command | What it does |
 |---------|-------------|
-| `/forge bootstrap` | Initialize `.claude/` in a new project |
+| `/forge init` | Quick-start: auto-detect stack, 3 questions, generate personalized config |
+| `/forge bootstrap` | Full interactive bootstrap with preview and confirmation |
 | `/forge sync` | Update config against current template (merge, not overwrite) |
 | `/forge audit` | Audit configuration + calculate score (0-10) |
 | `/forge diff` | Show what changed in claude-kit since last sync |
@@ -126,12 +127,13 @@ All skills are invoked through the `/forge` command:
 | `/forge rule-check` | Detect inert rules by cross-referencing globs against git history |
 | `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
 | `/forge plugin` | Generate Claude Code plugin package for marketplace submission |
-| `/forge global sync` | Sync global `~/.claude/` config |
+| `/forge unregister` | Remove a project from the registry |
+| `/forge global sync` | Auto-update claude-kit + sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
 
 ## Agents
 
-Six specialized subagents, deployed to every bootstrapped project:
+Seven specialized subagents, deployed to every bootstrapped project:
 
 | Agent | Role | Memory |
 |-------|------|--------|
@@ -141,6 +143,7 @@ Six specialized subagents, deployed to every bootstrapped project:
 | **code-reviewer** | Review by severity (critical/warning/suggestion) | persistent |
 | **security-auditor** | Vulnerability scanning | persistent |
 | **test-runner** | Run tests + report coverage | transactional |
+| **session-reviewer** | Post-session analysis and pattern detection | transactional |
 
 Orchestration follows a decision tree: researcher → architect → implementer → test-runner → code-reviewer. See [agents/](agents/) for definitions.
 
@@ -274,7 +277,7 @@ claude-kit/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Módulos tecnológicos (13 stacks, aditivos)
 ├── agents/         # 6 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 13 skills instalados como symlinks en ~/.claude/skills/
+├── skills/         # 15 skills instalados como symlinks en ~/.claude/skills/
 ├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
@@ -313,7 +316,8 @@ Todos los skills se invocan a través del comando `/forge`:
 
 | Comando | Qué hace |
 |---------|----------|
-| `/forge bootstrap` | Inicializar `.claude/` en un proyecto nuevo |
+| `/forge init` | Setup rápido: auto-detecta stack, 3 preguntas, config personalizada |
+| `/forge bootstrap` | Bootstrap completo con preview y confirmación |
 | `/forge sync` | Actualizar configuración contra la plantilla actual (merge, no sobreescritura) |
 | `/forge audit` | Auditar configuración + calcular puntaje (0-10) |
 | `/forge diff` | Mostrar qué cambió en claude-kit desde la última sincronización |
@@ -327,12 +331,13 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git |
 | `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |
 | `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
-| `/forge global sync` | Sincronizar configuración global de `~/.claude/` |
+| `/forge unregister` | Eliminar proyecto del registro |
+| `/forge global sync` | Auto-actualizar claude-kit + sincronizar `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |
 
 ## Agentes
 
-Seis subagentes especializados, desplegados en cada proyecto inicializado:
+Siete subagentes especializados, desplegados en cada proyecto inicializado:
 
 | Agente | Rol | Memoria |
 |--------|-----|---------|
@@ -342,6 +347,7 @@ Seis subagentes especializados, desplegados en cada proyecto inicializado:
 | **code-reviewer** | Revisión por severidad (crítico/advertencia/sugerencia) | persistente |
 | **security-auditor** | Escaneo de vulnerabilidades | persistente |
 | **test-runner** | Ejecución de tests + reporte de cobertura | transaccional |
+| **session-reviewer** | Análisis post-sesión y detección de patrones | transaccional |
 
 La orquestación sigue un árbol de decisión: researcher → architect → implementer → test-runner → code-reviewer. Ver [agents/](agents/) para las definiciones.
 

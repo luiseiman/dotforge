@@ -4,6 +4,19 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.4.0 (2026-03-21)
+
+### Init, Unregister, Auto-update, Privacy
+- Nuevo: `/forge init` — setup rápido con detección de stack + 3 preguntas (qué hace/no hace, con qué, cómo trabajo). Detecta idioma del usuario. Genera CLAUDE.md personalizado
+- Nuevo: `/forge unregister <project>` — elimina proyecto del registry sin borrar config
+- Cambio: `/forge global sync` ahora hace `git pull --ff-only` automático de claude-kit antes de sincronizar
+- Fix: registry ships vacío (`projects: []`). Datos locales en `projects.local.yml` (gitignored). No más paths privados en el repo público
+- Fix: limpieza de datos personales en practices y evaluating
+- Nuevo: `demo/README.md` con instrucciones para grabar demo GIF manualmente (vhs no funciona con CLIs interactivos)
+- Nuevo: GitHub Releases para v2.1.0, v2.2.0, v2.3.0
+
+---
+
 ## v2.3.0 (2026-03-21)
 
 ### Plugin Generator + OpenClaw Integration

@@ -45,7 +45,7 @@ cd ~/Documents/GitHub/claude-kit   # or wherever you cloned claude-kit
 
 | Component | Location | Method |
 |-----------|----------|--------|
-| Skills (13) | `~/.claude/skills/` | Symlinks |
+| Skills (15) | `~/.claude/skills/` | Symlinks |
 | Agents (6) | `~/.claude/agents/` | Symlinks |
 | `/forge` command | `~/.claude/commands/forge.md` | Copy (Claude Code does not follow symlinks for commands) |
 | Global CLAUDE.md | `~/.claude/CLAUDE.md` | Merge with `<!-- forge:custom -->` preservation |
@@ -64,7 +64,7 @@ Output:
 === GLOBAL STATUS ===
 CLAUDE.md:     OK synced
 settings.json: deny list 9 items (template: 9)
-Skills:        13/13 installed
+Skills:        15/15 installed
 Agents:        6/6 installed
 Commands:      forge.md (file)
 ```
@@ -246,7 +246,8 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 
 | Command | Description |
 |---------|-------------|
-| `/forge bootstrap` | Initialize `.claude/` in a new or existing project |
+| `/forge init` | Quick-start: auto-detect stack, 3 questions, personalized config |
+| `/forge bootstrap` | Full interactive bootstrap with preview and confirmation |
 | `/forge bootstrap --profile minimal` | Bootstrap with only the essentials |
 | `/forge bootstrap --profile full` | Bootstrap with everything included |
 | `/forge sync` | Update config while preserving customizations |
@@ -257,6 +258,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge rule-check` | Detect inert rules (cross-reference globs vs git history) |
 | `/forge benchmark` | Compare full config vs minimal on standardized tasks |
 | `/forge plugin` | Generate Claude Code plugin package for marketplace |
+| `/forge unregister` | Remove project from registry |
 | `/forge export cursor` | Export config to Cursor |
 | `/forge export codex` | Export config to Codex |
 | `/forge export windsurf` | Export config to Windsurf |
