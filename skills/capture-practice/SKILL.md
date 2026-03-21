@@ -7,65 +7,111 @@ description: Captura un insight o práctica descubierta durante el trabajo y la 
 
 Registrar un insight, patrón, o lección aprendida en el inbox de claude-kit.
 
-## Input
-$ARGUMENTS contiene la descripción del insight. Puede ser:
-- Texto libre: "ruff check --fix es mejor que ruff check porque corrige automáticamente"
-- Referencia a algo que acaba de pasar: "el hook de lint debería ignorar archivos en migrations/"
+## Input routing
 
-## Paso 1: Parsear el insight
+**If $ARGUMENTS is empty → auto-detect mode (Step 0).**
+**If $ARGUMENTS has content → skip to Step 1.**
 
-Extraer:
-- **Qué**: la práctica o patrón descubierto
-- **Por qué**: evidencia o contexto (proyecto actual, error que lo motivó)
-- **Impacto**: qué archivos de claude-kit podrían cambiar
-- **Tags**: categorización (hooks, rules, prompting, security, stack-specific, etc.)
+---
 
-## Paso 2: Validar duplicados
+## Step 0: Auto-detect (only when $ARGUMENTS is empty)
 
-Antes de crear, verificar que no exista una práctica similar:
-1. Buscar en `$CLAUDE_KIT_DIR/practices/active/` por título o tags similares
-2. Buscar en `$CLAUDE_KIT_DIR/practices/inbox/` por título similar
-3. Si hay duplicado → informar al usuario y preguntar si quiere actualizar la existente o crear nueva
+Analyze the recent conversation to identify the most generalizable insight from this session.
 
-## Paso 3: Generar archivo
+### Detection signals (in priority order)
 
-Crear archivo en `$CLAUDE_KIT_DIR/practices/inbox/` con formato:
+1. **Workaround discovered** — the obvious approach failed and an alternative was used
+2. **Multi-attempt bug** — a fix required more than one attempt or root cause was non-obvious
+3. **Architectural decision with trade-offs** — two+ alternatives were considered, one chosen with reasoning
+4. **Non-obvious tool/API/flag behavior** — a parameter, edge case, or behavior was surprising
+5. **Missing rule** — the session revealed a gap in `.claude/rules/` or `CLAUDE.md` that would have prevented the problem
+
+### Extraction rules
+
+- Extract the single most generalizable insight — not session notes, not a summary of everything done
+- Formulate it as a reusable principle: "When X, do Y because Z" or "Never do X — use Y instead"
+- Keep it to 1-2 sentences max
+- Ignore: trivial tasks, first-attempt successes, routine edits
+
+### If no signal is present
+
+Respond: "No generalizable insight detected in this session. If you have something specific in mind, run `/cap \"description\"`."
+Stop — do not create a file.
+
+### Propose and confirm
+
+Show the proposed insight and ask for confirmation before proceeding:
+
+```
+💡 Proposed practice:
+"{{one-line insight}}"
+
+Tags: {{inferred tags}}
+Project: {{current project name}}
+
+Save this? [Y/n/edit]
+```
+
+- If **Y** or user confirms → continue to Step 1 with the proposed text as $ARGUMENTS
+- If **n** → stop, no file created
+- If **edit** or user rewrites → use the rewritten text as $ARGUMENTS, continue to Step 1
+
+---
+
+## Step 1: Parse the insight
+
+From $ARGUMENTS (provided or confirmed from Step 0), extract:
+- **What**: the practice or pattern
+- **Why**: evidence or context (current project, error that motivated it)
+- **Impact**: which claude-kit files could change
+- **Tags**: categorization (hooks, rules, prompting, security, stack-specific, etc.)
+
+## Step 2: Validate duplicates
+
+Before creating, check for existing similar practices:
+1. Search `$CLAUDE_KIT_DIR/practices/active/` by title or similar tags
+2. Search `$CLAUDE_KIT_DIR/practices/inbox/` by similar title
+3. If duplicate found → inform the user and ask: update existing or create new?
+
+## Step 3: Generate file
+
+Create file in `$CLAUDE_KIT_DIR/practices/inbox/` with format:
 
 ```yaml
 ---
 id: practice-{{YYYY-MM-DD}}-{{slug}}
-title: {{título corto}}
+title: {{short title}}
 source: "experiencia propia"
 source_type: experience
 discovered: {{YYYY-MM-DD}}
 status: inbox
 tags: [{{tags}}]
-tested_in: {{proyecto actual o null}}
+tested_in: {{current project or null}}
 incorporated_in: []
 replaced_by: null
 ---
 
 ## Descripción
-{{qué dice la práctica}}
+{{what the practice states}}
 
 ## Evidencia
-{{por qué funciona, contexto del descubrimiento}}
+{{why it works, discovery context}}
 
 ## Impacto en claude-kit
-{{qué archivos habría que modificar}}
+{{which files would need to change}}
 
 ## Decisión
 Pendiente
 ```
 
-Nombre del archivo: `{{YYYY-MM-DD}}-{{slug}}.md`
+File name: `{{YYYY-MM-DD}}-{{slug}}.md`
 
-## Paso 4: Confirmar
+## Step 4: Confirm
 
-Mostrar:
+Show:
 ```
-✅ Práctica capturada: {{título}}
-📁 practices/inbox/{{archivo}}
+✅ Práctica capturada: {{title}}
+📁 practices/inbox/{{file}}
 🏷️ Tags: {{tags}}
 
 Próximo paso: /forge update evalúa prácticas pendientes del inbox.
