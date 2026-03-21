@@ -1,0 +1,27 @@
+{
+  "_template": "claude-kit/mcp/redis",
+  "_warning": "Tool names vary by community implementation. Verify against your installed package before applying. These names follow the most common convention.",
+  "_comment": "Read operations auto-allowed. Write operations (SET, DEL, XADD) require user prompt. FLUSHDB/FLUSHALL always denied.",
+  "allow": [
+    "mcp__redis__get",
+    "mcp__redis__keys",
+    "mcp__redis__hgetall",
+    "mcp__redis__hget",
+    "mcp__redis__lrange",
+    "mcp__redis__smembers",
+    "mcp__redis__type",
+    "mcp__redis__ttl",
+    "mcp__redis__info",
+    "mcp__redis__dbsize",
+    "mcp__redis__xrange",
+    "mcp__redis__xlen",
+    "mcp__redis__xinfo_stream",
+    "mcp__redis__xinfo_groups"
+  ],
+  "deny": [
+    "mcp__redis__flushdb",
+    "mcp__redis__flushall",
+    "mcp__redis__debug",
+    "mcp__redis__config_resetstat"
+  ]
+}

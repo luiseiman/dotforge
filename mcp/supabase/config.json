@@ -1,0 +1,15 @@
+{
+  "_template": "claude-kit/mcp/supabase",
+  "_verified_with": "@supabase/mcp-server-supabase@0.x",
+  "_install": "Merge the 'supabase' key into mcpServers in ~/.claude/settings.json. Set SUPABASE_ACCESS_TOKEN env var (create at supabase.com/dashboard/account/tokens).",
+  "_note": "This template uses the Supabase management API server, which operates on projects and their schema. For direct SQL on a specific project, combine with mcp/postgres/ using the project's DATABASE_URL.",
+  "supabase": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@supabase/mcp-server-supabase@latest",
+      "--access-token", "${SUPABASE_ACCESS_TOKEN}"
+    ]
+  }
+}

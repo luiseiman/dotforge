@@ -1,0 +1,10 @@
+{
+  "_template": "claude-kit/mcp/postgres",
+  "_comment": "The official postgres MCP server (@modelcontextprotocol/server-postgres) is read-only by design — it only exposes query (SELECT). This permissions file documents that posture and adds no deny entries beyond what the server already enforces.",
+  "allow": [
+    "mcp__postgres__query",
+    "mcp__postgres__list_tables",
+    "mcp__postgres__describe_table"
+  ],
+  "deny": []
+}

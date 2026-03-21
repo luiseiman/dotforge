@@ -1,0 +1,14 @@
+{
+  "_template": "claude-kit/mcp/slack",
+  "_verified_with": "@modelcontextprotocol/server-slack@0.x",
+  "_install": "Merge the 'slack' key into mcpServers in ~/.claude/settings.json. Set SLACK_BOT_TOKEN and SLACK_TEAM_ID env vars.",
+  "slack": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-slack"],
+    "env": {
+      "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+      "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "_template": "claude-kit/mcp/github",
+  "_comment": "Merge allow/deny into permissions in .claude/settings.json. Operations not listed here will prompt the user each time (recommended for write ops).",
+  "allow": [
+    "mcp__github__get_file_contents",
+    "mcp__github__list_issues",
+    "mcp__github__get_issue",
+    "mcp__github__list_pull_requests",
+    "mcp__github__get_pull_request",
+    "mcp__github__get_pull_request_files",
+    "mcp__github__get_pull_request_diff",
+    "mcp__github__list_commits",
+    "mcp__github__get_commit",
+    "mcp__github__search_code",
+    "mcp__github__search_issues",
+    "mcp__github__search_repositories",
+    "mcp__github__list_branches",
+    "mcp__github__get_repository",
+    "mcp__github__add_issue_comment",
+    "mcp__github__create_issue"
+  ],
+  "deny": [
+    "mcp__github__merge_pull_request",
+    "mcp__github__delete_branch",
+    "mcp__github__delete_file"
+  ]
+}
