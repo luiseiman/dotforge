@@ -20,6 +20,7 @@ If not specified, use `standard` as default.
 | settings.json | yes | yes | yes |
 | block-destructive hook | yes | yes | yes |
 | lint-on-save hook | no | yes | yes |
+| session-report hook | no | yes | yes |
 | warn-missing-test hook | no | no | yes (strict profile) |
 | rules/ (_common + stack) | yes | yes | yes |
 | commands/ | no | yes | yes |
@@ -44,7 +45,7 @@ Se creará:
 - CLAUDE.md (plantilla base + stack rules)
 - .claude/settings.json (permisos base + stack)
 - .claude/rules/ (reglas comunes + stack)
-- .claude/hooks/ (block-destructive + lint)           [minimal: solo block-destructive]
+- .claude/hooks/ (block-destructive + lint + session-report)  [minimal: solo block-destructive]
 - .claude/commands/ (audit, health)                    [minimal: omitido]
 - .claude/agents/ + orchestration                      [minimal: omitido]
 - CLAUDE_ERRORS.md (vacío, para registro de errores)   [minimal: omitido]
@@ -91,8 +92,9 @@ Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corre
 
 1. Copiar `$CLAUDE_KIT_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/` (ALL profiles)
 2. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/lint-on-save.sh`
-3. If profile is `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
-4. `chmod +x` all copied hooks
+3. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/session-report.sh`
+4. If profile is `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
+5. `chmod +x` all copied hooks
 
 ## Paso 6: Copiar rules
 
