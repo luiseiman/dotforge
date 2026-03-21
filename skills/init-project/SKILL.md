@@ -5,9 +5,9 @@ description: Quick-start Claude Code configuration. Auto-detects stack, asks 3 q
 
 # Init Project
 
-Fast Claude Code setup: auto-detect stack + 3 quick questions = complete, personalized config.
+MANDATORY FLOW: detect stack → ask 3 questions → WAIT for answers → generate config.
 
-Unlike `/forge bootstrap` (full interactive preview), `/forge init` is streamlined: detect, ask, generate, done.
+You MUST ask the 3 questions in Step 4 and WAIT for the user to answer BEFORE generating any files. Do NOT skip the questions. Do NOT generate config before receiving answers.
 
 ## Step 1: Check if already initialized
 
@@ -42,19 +42,13 @@ Also scan existing files for additional context:
 - existing test files → testing patterns
 - CI config (.github/workflows, Makefile) → build/test commands
 
-## Step 3: Detect user language
+## Step 3: Detect user language and ask 3 questions
 
-Before asking questions, detect the user's language:
-1. Check if the user's previous messages are in a specific language
-2. Check `~/.claude/CLAUDE.md` for language preferences (e.g., "Comunicación: siempre en español")
-3. Check the system locale (`$LANG` or `$LC_ALL`)
-4. Default to English if unclear
+Detect language: check previous messages → global CLAUDE.md → system locale → default English.
 
-Present all questions in the detected language.
+OVERRIDE RULE: For `/forge init`, ALWAYS present questions in the detected language, even if global CLAUDE.md says "communicate in Spanish/English/etc." The questions are part of the tool's UI, not a conversation.
 
-## Step 4: Ask 3 questions
-
-Present all 3 questions together (not one at a time), in the user's language:
+Present all 3 questions together in one message. Then STOP and WAIT for the user's response. Do NOT proceed to Step 5 until the user answers.
 
 **English version:**
 ```
@@ -98,11 +92,12 @@ Stack detectado: {stacks o "ninguno — config genérica"}
 
 Use the appropriate version based on detected language. For other languages, translate the questions following the same structure.
 
-Wait for user responses. If the user answers in a single message covering all 3, parse accordingly.
+STOP HERE. Wait for the user's response before proceeding.
 
-If the user says "skip" or gives empty answers, proceed with auto-detected info only.
+If the user answers in a single message covering all 3, parse accordingly.
+If the user says "skip", proceed with auto-detected info only.
 
-**Important:** Regardless of user language, the CLAUDE.md content generated should be in the language the user answered in — Claude Code will read it and respond accordingly.
+**Important:** Generate CLAUDE.md content in English (Claude-consumed content must be in English per project conventions). The user's answers are incorporated as-is regardless of their language.
 
 ## Step 5: Generate config
 
