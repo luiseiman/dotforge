@@ -1,7 +1,13 @@
 # Roadmap Explicado — claude-kit
 
-> Explicación detallada y coloquial de cada punto del roadmap.
-> Complemento de [roadmap.md](roadmap.md) (versión técnica) y [ROADMAP.md](../ROADMAP.md) (versión de trabajo).
+> ⚠️ **Archivo histórico.** Este documento explica las decisiones de diseño de versiones anteriores (v1.x–v2.4.x). Ya no refleja el estado actual del proyecto.
+> Para el roadmap activo, ver [ROADMAP.md](../ROADMAP.md).
+> Para el historial de cambios, ver [changelog.md](changelog.md).
+
+---
+
+> _Archivo original — explicación detallada y coloquial de cada punto del roadmap durante el desarrollo inicial._
+> _Preservado como contexto de decisiones arquitectónicas._
 
 ---
 
