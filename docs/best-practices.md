@@ -132,6 +132,18 @@ Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 - Each teammate = full session (~5x tokens)
 - Verify they don't edit the same files
 
+### Model selection
+
+Use the right model for the task — defined in `template/rules/model-routing.md`:
+
+- **haiku**: search, test execution, repetitive transforms, short lookups
+- **sonnet**: implementation, debugging, code review, documentation
+- **opus**: architecture decisions, security audits, ambiguous high-stakes tasks
+
+Escalate when: multiple valid approaches with real consequences, production/security risk, or unclear approach after 2 attempts.
+
+Agents have explicit model defaults. Override only when the task warrants it.
+
 ---
 
 ## 4. Project lifecycle
@@ -332,6 +344,18 @@ Activar: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 - Max 3-4 teammates (rendimientos decrecientes)
 - Cada teammate = sesión completa (~5x tokens)
 - Verificar que no editen los mismos archivos
+
+### Selección de modelo
+
+Usar el modelo correcto por tipo de tarea — definido en `template/rules/model-routing.md`:
+
+- **haiku**: búsquedas, ejecución de tests, transforms repetitivos, lookups cortos
+- **sonnet**: implementación, debugging, code review, documentación
+- **opus**: decisiones arquitectónicas, auditorías de seguridad, tareas ambiguas de alto impacto
+
+Escalar cuando: múltiples approaches válidos con consecuencias reales, riesgo en producción/seguridad, o approach poco claro después de 2 intentos.
+
+Los agentes tienen modelos explícitos por defecto. Overridear solo cuando la tarea lo justifica.
 
 ---
 

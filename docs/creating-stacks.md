@@ -205,3 +205,16 @@ stacks/redis/
 ```
 
 Detección en bootstrap: `redis` aparece en `requirements.txt` o `pyproject.toml`.
+
+## Stacks vs MCP templates
+
+Stacks and MCP server templates are complementary, not alternatives:
+
+| | Stack | MCP template |
+|---|---|---|
+| **What it provides** | Rules, permissions, hooks for local code | Config, permissions, rules for external services |
+| **Location** | `stacks/<name>/` | `mcp/<name>/` |
+| **Installed to** | `.claude/rules/` + `.claude/settings.json` | `.claude/rules/mcp-<name>.md` + permissions |
+| **When to use** | Your code uses this technology | Claude uses this external service via MCP |
+
+Example: A project using Redis locally AND the Redis MCP server would use **both**: the `redis` stack (rules for writing Redis code) and `mcp/redis/` (rules for using Redis tools in Claude sessions).

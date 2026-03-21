@@ -1,7 +1,7 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.0.0
-**Date:** 2026-03-20
+**Version:** 2.5.0
+**Date:** 2026-03-21
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
 
@@ -21,6 +21,8 @@ claude-kit is a configuration factory for Claude Code. It generates and maintain
 10. [Generated structure](#10-generated-structure)
 11. [Config validation](#11-config-validation)
 12. [FAQ](#12-faq)
+13. [MCP server templates](#13-mcp-server-templates)
+14. [Model routing](#14-model-routing)
 
 ---
 
@@ -46,7 +48,7 @@ cd ~/Documents/GitHub/claude-kit   # or wherever you cloned claude-kit
 | Component | Location | Method |
 |-----------|----------|--------|
 | Skills (15) | `~/.claude/skills/` | Symlinks |
-| Agents (6) | `~/.claude/agents/` | Symlinks |
+| Agents (7) | `~/.claude/agents/` | Symlinks |
 | `/forge` command | `~/.claude/commands/forge.md` | Copy (Claude Code does not follow symlinks for commands) |
 | Global CLAUDE.md | `~/.claude/CLAUDE.md` | Merge with `<!-- forge:custom -->` preservation |
 | Global settings.json | `~/.claude/settings.json` | Merge of deny list + hooks |
@@ -65,7 +67,7 @@ Output:
 CLAUDE.md:     OK synced
 settings.json: deny list 9 items (template: 9)
 Skills:        15/15 installed
-Agents:        6/6 installed
+Agents:        7/7 installed
 Commands:      forge.md (file)
 ```
 
@@ -277,7 +279,9 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 
 | Command | Description |
 |---------|-------------|
-| `/forge capture "text"` | Record an insight in inbox |
+| `/forge capture "text"` | Record an insight in inbox (explicit) |
+| `/forge capture` | Auto-detect mode: analyzes session context, proposes insight, asks Y/n/edit before saving |
+| `/cap` | Shorthand alias for `/forge capture` (auto-detect mode) |
 | `/forge update` | Process inbox -> evaluate -> incorporate |
 | `/forge watch` | Check for updates in Anthropic docs |
 | `/forge scout` | Review curated repos for patterns |
@@ -425,7 +429,7 @@ Last update: 2026-03-20
 | Rules (_common + stack) | Y | Y | Y |
 | Hook lint-on-save | -- | Y | Y |
 | Commands (audit, health, debug, review) | -- | Y | Y |
-| Agents (6) + orchestration | -- | Y | Y |
+| Agents (7) + orchestration | -- | Y | Y |
 | CLAUDE_ERRORS.md | -- | Y (empty) | Y (pre-populated) |
 | Rule memory.md | -- | Y | Y |
 | Hook warn-missing-test | -- | -- | Y |
@@ -614,6 +618,73 @@ Then, in each project:
 ### Are agents mandatory?
 
 No. With the `minimal` profile they are not installed. With `standard` and `full` they are, but Claude decides when to use them based on the orchestration rule in `.claude/rules/agents.md`.
+
+---
+
+## 13. MCP server templates
+
+MCP servers extend Claude Code with tools for external services. claude-kit provides ready-to-use templates in `mcp/` covering configuration, permissions, and usage rules.
+
+### Available templates
+
+| Server | Package | Tools |
+|--------|---------|-------|
+| `github` | `@modelcontextprotocol/server-github` | Issues, PRs, code search, file contents |
+| `postgres` | `@modelcontextprotocol/server-postgres` | Read-only SQL queries, schema inspection |
+| `supabase` | `@supabase/mcp-server-supabase` | Projects, tables, migrations, branches, logs |
+| `redis` | `mcp-server-redis` (community) | Key inspection, stream monitoring |
+| `slack` | `@modelcontextprotocol/server-slack` | Messages, channels, search |
+
+### Installation
+
+**Step 1 — Register the server globally (once per machine):**
+Copy the `mcpServers` entry from `mcp/<server>/config.json` into `~/.claude/settings.json`. Replace `${ENV_VAR}` with real values or set env vars in your shell profile.
+
+**Step 2 — Install project rules:**
+```bash
+cp mcp/<server>/rules.md .claude/rules/mcp-<server>.md
+```
+
+Or let `/forge bootstrap` handle it automatically — it detects configured `mcpServers` in `~/.claude/settings.json` and offers to install matching rule templates.
+
+### Security posture
+
+Each template defines three tiers:
+- **Auto-allowed**: read operations (list, get, search)
+- **Prompt required**: write operations not in allow or deny lists
+- **Always denied**: destructive operations (delete_project, merge_pull_request, flushdb)
+
+See [mcp/README.md](../mcp/README.md) for full documentation.
+
+---
+
+## 14. Model routing
+
+claude-kit includes explicit model selection criteria in `template/rules/model-routing.md`. Every bootstrapped project gets this rule, which guides both direct Claude work and subagent instantiation.
+
+### Criteria
+
+| Model | Use for |
+|-------|---------|
+| **haiku** | File search, grepping, running tests, repetitive transformations, short factual questions |
+| **sonnet** | Feature implementation, bug fixing (known root cause), code review, standard debugging, docs |
+| **opus** | Architecture decisions with real tradeoffs, security audits, ambiguous tasks, production-risk operations |
+
+### Agent assignments
+
+| Agent | Model | Reason |
+|-------|-------|--------|
+| researcher | haiku | Exploration — speed over depth |
+| test-runner | haiku | Execute and report — no reasoning needed |
+| implementer | sonnet | Standard implementation work |
+| code-reviewer | sonnet | Focused review, single concern |
+| session-reviewer | sonnet | Pattern analysis, not architecture |
+| architect | opus | Tradeoffs with lasting consequences |
+| security-auditor | opus | Missing a vulnerability has prod consequences |
+
+### Escalation rule
+
+Start with sonnet. Escalate to opus when: 2+ valid approaches with real consequences for choosing wrong, task touches security/data integrity/production systems, or after 2 attempts the approach is still unclear.
 
 ---
 

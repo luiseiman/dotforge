@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.4.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.5.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -38,7 +38,8 @@ There are many Claude Code starter kits, skills collections, and CLAUDE.md gener
 
 | Feature | What it means | Who else does this |
 |---------|---------------|-------------------|
-| **Additive stack layering** | Auto-detects your tech (13 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
+| **Additive stack layering** | Auto-detects your tech (16 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
+| **MCP server templates** | Ready-to-use config, permissions, and usage rules for 5 common MCP servers (GitHub, Postgres, Supabase, Redis, Slack). Auto-detected by `/forge bootstrap`. | No one |
 | **Template sync with markers** | `<!-- forge:section -->` separates managed sections from your customizations. `/forge sync` updates the managed parts without touching yours. | No one |
 | **Audit scoring (0-10)** | 12-item checklist (5 obligatory scored 0-2, 7 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. Project tier (simple/standard/complex) adjusts expectations. | tw93/claude-health has tiers but no numeric normalization or security cap |
 | **Practices pipeline** | Continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Practices arrive from capture, web watch, repo scouting, audit gaps, or post-session hooks. | No one |
@@ -61,7 +62,7 @@ There are many Claude Code starter kits, skills collections, and CLAUDE.md gener
 - **.claude/rules/** — contextual rules auto-loaded by glob patterns
 - **.claude/hooks/** — block destructive commands, lint on save
 - **.claude/commands/** — audit, debug, health, review
-- **.claude/agents/** — 6 specialized subagents with orchestration
+- **.claude/agents/** — 7 specialized subagents with orchestration
 - **CLAUDE_ERRORS.md** — error log for cross-session learning
 
 Multi-stack projects get all matching stack configs merged automatically.
@@ -71,9 +72,10 @@ Multi-stack projects get all matching stack configs merged automatically.
 ```
 claude-kit/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Technology modules (13 stacks, additive)
-├── agents/         # 6 subagents (researcher, architect, implementer, ...)
+├── stacks/         # Technology modules (16 stacks, additive)
+├── agents/         # 7 subagents (researcher, architect, implementer, ...)
 ├── skills/         # 15 skills installed as ~/.claude/skills/ symlinks
+├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
@@ -103,6 +105,10 @@ Each stack provides contextual rules, permissions, and optional hooks. Stacks ar
 | **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
 | **go-api** | `go.mod`, `*.go` | backend.md |
 | **devcontainer** | `.devcontainer/` | devcontainer.md |
+| **hookify** | Custom hook framework | hooks.md |
+| **trading** | Custom stack | trading.md |
+
+MCP server templates (in `mcp/`) complement stacks by adding connection config, tool permissions, and usage rules for external services. See [mcp/README.md](mcp/README.md).
 
 Creating a new stack: see [docs/creating-stacks.md](docs/creating-stacks.md).
 
@@ -118,7 +124,8 @@ All skills are invoked through the `/forge` command:
 | `/forge audit` | Audit configuration + calculate score (0-10) |
 | `/forge diff` | Show what changed in claude-kit since last sync |
 | `/forge reset` | Restore `.claude/` from template with backup |
-| `/forge capture` | Register a practice in `practices/inbox/` |
+| `/forge capture` | Register a practice in `practices/inbox/` (with args) or auto-detect from session context (no args) |
+| `/cap` | Shorthand alias for `/forge capture` — same behavior, 4 chars |
 | `/forge update` | Process practices: inbox → evaluate → incorporate |
 | `/forge watch` | Search for upstream changes in Anthropic docs |
 | `/forge scout` | Review curated repos for useful patterns |
@@ -135,15 +142,17 @@ All skills are invoked through the `/forge` command:
 
 Seven specialized subagents, deployed to every bootstrapped project:
 
-| Agent | Role | Memory |
-|-------|------|--------|
-| **researcher** | Read-only codebase exploration | transactional |
-| **architect** | Design decisions, tradeoff analysis | persistent |
-| **implementer** | Code + tests | persistent |
-| **code-reviewer** | Review by severity (critical/warning/suggestion) | persistent |
-| **security-auditor** | Vulnerability scanning | persistent |
-| **test-runner** | Run tests + report coverage | transactional |
-| **session-reviewer** | Post-session analysis and pattern detection | transactional |
+| Agent | Role | Model | Memory |
+|-------|------|-------|--------|
+| **researcher** | Read-only codebase exploration | haiku | transactional |
+| **architect** | Design decisions, tradeoff analysis | opus | persistent |
+| **implementer** | Code + tests | sonnet | persistent |
+| **code-reviewer** | Review by severity (critical/warning/suggestion) | sonnet | persistent |
+| **security-auditor** | Vulnerability scanning | opus | persistent |
+| **test-runner** | Run tests + report coverage | haiku | transactional |
+| **session-reviewer** | Post-session analysis and pattern detection | sonnet | transactional |
+
+Model routing rules are defined in `template/rules/model-routing.md` — criteria for haiku/sonnet/opus selection by task type.
 
 Orchestration follows a decision tree: researcher → architect → implementer → test-runner → code-reviewer. See [agents/](agents/) for definitions.
 
@@ -166,7 +175,7 @@ A continuous improvement system for discovering and incorporating Claude Code co
 inbox/ → evaluating/ → active/ → deprecated/
 ```
 
-Practices arrive from: `/forge capture` (manual), `/forge update` (web search), `/forge watch` (upstream docs), `/forge scout` (curated repos), audit gaps, or post-session hooks.
+Practices arrive from: `/forge capture` or `/cap` (manual or auto-detected from session context), `/forge update` (web search), `/forge watch` (upstream docs), `/forge scout` (curated repos), audit gaps, or post-session hooks.
 
 See [practices/README.md](practices/README.md) for the lifecycle and format.
 
@@ -180,8 +189,8 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.0.0)
-- [Roadmap](ROADMAP.md) — Development history (v1.0.0 → v2.0.0)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.5.0)
+- [Roadmap](ROADMAP.md) — Completed features + upcoming v2.6.0
 
 ## Requirements
 
@@ -242,7 +251,8 @@ Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para C
 
 | Feature | Qué significa | Quién más lo hace |
 |---------|---------------|-------------------|
-| **Stack layering aditivo** | Auto-detecta tu tech (13 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
+| **Stack layering aditivo** | Auto-detecta tu tech (16 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
+| **Templates de servidores MCP** | Config, permisos y reglas de uso listas para 5 servidores MCP comunes (GitHub, Postgres, Supabase, Redis, Slack). Auto-detectados por `/forge bootstrap`. | Nadie |
 | **Template sync con markers** | `<!-- forge:section -->` separa secciones gestionadas de tus customizaciones. `/forge sync` actualiza lo gestionado sin tocar lo tuyo. | Nadie |
 | **Audit scoring (0-10)** | Checklist de 12 ítems (5 obligatorios 0-2, 7 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. Tier de proyecto (simple/standard/complex) ajusta expectations. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
 | **Pipeline de prácticas** | Ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Las prácticas llegan desde capture, web watch, repo scouting, audit gaps, o hooks post-sesión. | Nadie |
@@ -265,7 +275,7 @@ Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para C
 - **.claude/rules/** — reglas contextuales cargadas automáticamente por patrones glob
 - **.claude/hooks/** — bloqueo de comandos destructivos, lint al guardar
 - **.claude/commands/** — auditoría, debug, salud, revisión
-- **.claude/agents/** — 6 subagentes especializados con orquestación
+- **.claude/agents/** — 7 subagentes especializados con orquestación
 - **CLAUDE_ERRORS.md** — registro de errores para aprendizaje entre sesiones
 
 Los proyectos multi-stack reciben todas las configuraciones de stacks coincidentes fusionadas automáticamente.
@@ -275,9 +285,10 @@ Los proyectos multi-stack reciben todas las configuraciones de stacks coincident
 ```
 claude-kit/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Módulos tecnológicos (13 stacks, aditivos)
-├── agents/         # 6 subagentes (researcher, architect, implementer, ...)
+├── stacks/         # Módulos tecnológicos (16 stacks, aditivos)
+├── agents/         # 7 subagentes (researcher, architect, implementer, ...)
 ├── skills/         # 15 skills instalados como symlinks en ~/.claude/skills/
+├── mcp/            # Templates de servidores MCP (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
@@ -307,6 +318,10 @@ Cada stack provee reglas contextuales, permisos y hooks opcionales. Los stacks s
 | **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
 | **go-api** | `go.mod`, `*.go` | backend.md |
 | **devcontainer** | `.devcontainer/` | devcontainer.md |
+| **hookify** | Framework de hooks custom | hooks.md |
+| **trading** | Stack custom | trading.md |
+
+Los templates de servidores MCP (en `mcp/`) complementan los stacks con config de conexión, permisos de tools y reglas de uso para servicios externos. Ver [mcp/README.md](mcp/README.md).
 
 Para crear un nuevo stack: ver [docs/creating-stacks.md](docs/creating-stacks.md).
 
@@ -322,7 +337,8 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge audit` | Auditar configuración + calcular puntaje (0-10) |
 | `/forge diff` | Mostrar qué cambió en claude-kit desde la última sincronización |
 | `/forge reset` | Restaurar `.claude/` desde la plantilla con backup |
-| `/forge capture` | Registrar una práctica en `practices/inbox/` |
+| `/forge capture` | Registrar una práctica (con args) o auto-detectar desde el contexto de sesión (sin args) |
+| `/cap` | Alias corto para `/forge capture` — mismo comportamiento, 4 chars |
 | `/forge update` | Procesar prácticas: inbox → evaluar → incorporar |
 | `/forge watch` | Buscar cambios upstream en la documentación de Anthropic |
 | `/forge scout` | Revisar repos curados en busca de patrones útiles |
@@ -339,17 +355,17 @@ Todos los skills se invocan a través del comando `/forge`:
 
 Siete subagentes especializados, desplegados en cada proyecto inicializado:
 
-| Agente | Rol | Memoria |
-|--------|-----|---------|
-| **researcher** | Exploración de código (solo lectura) | transaccional |
-| **architect** | Decisiones de diseño, análisis de tradeoffs | persistente |
-| **implementer** | Código + tests | persistente |
-| **code-reviewer** | Revisión por severidad (crítico/advertencia/sugerencia) | persistente |
-| **security-auditor** | Escaneo de vulnerabilidades | persistente |
-| **test-runner** | Ejecución de tests + reporte de cobertura | transaccional |
-| **session-reviewer** | Análisis post-sesión y detección de patrones | transaccional |
+| Agente | Rol | Modelo | Memoria |
+|--------|-----|--------|---------|
+| **researcher** | Exploración de código (solo lectura) | haiku | transaccional |
+| **architect** | Decisiones de diseño, análisis de tradeoffs | opus | persistente |
+| **implementer** | Código + tests | sonnet | persistente |
+| **code-reviewer** | Revisión por severidad (crítico/advertencia/sugerencia) | sonnet | persistente |
+| **security-auditor** | Escaneo de vulnerabilidades | opus | persistente |
+| **test-runner** | Ejecución de tests + reporte de cobertura | haiku | transaccional |
+| **session-reviewer** | Análisis post-sesión y detección de patrones | sonnet | transaccional |
 
-La orquestación sigue un árbol de decisión: researcher → architect → implementer → test-runner → code-reviewer. Ver [agents/](agents/) para las definiciones.
+La orquestación sigue un árbol de decisión: researcher → architect → implementer → test-runner → code-reviewer. Las reglas de routing de modelos están en `template/rules/model-routing.md`. Ver [agents/](agents/) para las definiciones.
 
 ## Sistema de Auditoría
 
@@ -370,7 +386,7 @@ Un sistema de mejora continua para descubrir e incorporar patrones de configurac
 inbox/ → evaluating/ → active/ → deprecated/
 ```
 
-Las prácticas llegan desde: `/forge capture` (manual), `/forge update` (búsqueda web), `/forge watch` (docs upstream), `/forge scout` (repos curados), brechas de auditoría, o hooks post-sesión.
+Las prácticas llegan desde: `/forge capture` o `/cap` (manual o auto-detectado del contexto de sesión), `/forge update` (búsqueda web), `/forge watch` (docs upstream), `/forge scout` (repos curados), brechas de auditoría, o hooks post-sesión.
 
 Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
@@ -384,8 +400,8 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.0.0)
-- [Roadmap](ROADMAP.md) — Planes a futuro (v1.6.0+)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.5.0)
+- [Roadmap](ROADMAP.md) — Features completadas + próximo v2.6.0
 
 ## Requisitos
 

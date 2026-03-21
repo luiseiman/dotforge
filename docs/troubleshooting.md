@@ -121,3 +121,30 @@ chmod +x .claude/hooks/*.sh
    - El hook evita duplicados por día
 
 **Fix:** Instalar manualmente el hook global siguiendo las instrucciones en el script.
+
+## MCP server tools not available
+
+**Symptom:** Claude can't use GitHub/Postgres/Supabase tools even though the MCP server is configured.
+
+**Checklist:**
+1. Is the server registered in `~/.claude/settings.json` under `mcpServers`?
+2. Is the required env var set? (`GITHUB_TOKEN`, `DATABASE_URL`, `SUPABASE_ACCESS_TOKEN`)
+3. Is the npm package installed or accessible via `npx`?
+
+**Fix:** Copy the `mcpServers` entry from `mcp/<server>/config.json` into `~/.claude/settings.json`.
+
+## MCP tool denied unexpectedly
+
+**Symptom:** Claude says a tool is blocked when you expected it to work.
+
+**Cause:** The tool appears in the `deny` list in `.claude/settings.json` from the template in `mcp/<server>/permissions.json`.
+
+**Fix:** Review `mcp/<server>/permissions.json`. Move the tool from `deny` to `allow` (or remove from deny) in `.claude/settings.json` if appropriate for your project.
+
+## /cap or /forge capture auto-detect finds nothing
+
+**Symptom:** Running `/cap` returns "No generalizable insight detected in this session."
+
+**Cause:** The skill looks for specific signals (workaround, multi-attempt bug, arch decision, non-obvious API behavior). Routine sessions with clean first-attempt solutions won't trigger.
+
+**Fix:** Use `/cap "description"` with explicit text. Auto-detect is for non-trivial sessions only.

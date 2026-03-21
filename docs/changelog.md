@@ -4,6 +4,20 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.5.0 (2026-03-21)
+
+### Learning Loop + MCP Templates + Model Routing
+
+- Nuevo: `/forge capture` modo auto-detección — sin args, analiza contexto de sesión, propone insight pre-formateado, pide confirmación Y/n/edit antes de guardar
+- Nuevo: `/cap` — alias shorthand para `/forge capture` (4 chars vs 14)
+- Nuevo: Regla proactiva en `template/rules/_common.md` — Claude sugiere `/cap` al detectar workaround, bug multi-intento, decisión con trade-offs, o comportamiento de API no-obvio
+- Nuevo: `mcp/` — templates de servidores MCP para github, postgres, supabase, redis, slack. Cada uno con config.json (mcpServers entry), permissions.json (allow/deny/prompt por tool), rules.md (reglas Claude-consumed). Auto-detectados por `/forge bootstrap`
+- Nuevo: `template/rules/model-routing.md` — criterios explícitos haiku/sonnet/opus por tipo de tarea, con tabla de escalation y MCP operations
+- Cambio: 7 agents con modelo explícito — researcher/test-runner=haiku, implementer/code-reviewer/session-reviewer=sonnet, architect/security-auditor=opus. Anterior: todos en `model: inherit`
+- ROADMAP reescrito: documenta v2.4.0 completado, v2.5.0 completado, v2.6.0 próximo, descartados
+
+---
+
 ## v2.4.0 (2026-03-21)
 
 ### Init, Unregister, Auto-update, Privacy

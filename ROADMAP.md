@@ -1,6 +1,17 @@
 # Roadmap claude-kit
 
-Estado actual: **v2.4.0** (2026-03-21)
+Estado actual: **v2.5.0** (2026-03-21)
+
+---
+
+## v2.5.0 — Completado
+
+- `/forge capture` sin args: auto-detección de contexto de sesión, propone insight pre-formateado, pide confirmación Y/n/edit antes de guardar
+- `/cap`: alias shorthand para `/forge capture` — 4 chars vs 14
+- Regla proactiva de captura en `template/rules/_common.md`: Claude sugiere `/cap` al detectar workaround, bug multi-intento, decisión con trade-offs, o comportamiento no-obvio
+- MCP server templates en `mcp/`: github, postgres, supabase, redis, slack — cada uno con config.json, permissions.json, rules.md
+- `template/rules/model-routing.md`: criterios explícitos para haiku/sonnet/opus por tipo de tarea
+- 7 agents actualizados con modelo explícito (researcher/test-runner=haiku, implementer/code-reviewer/session-reviewer=sonnet, architect/security-auditor=opus)
 
 ---
 
@@ -25,41 +36,7 @@ Estado actual: **v2.4.0** (2026-03-21)
 
 ---
 
-## v2.5.0 — Learning loop + MCP + Model routing
-
-Foco: cerrar el loop de aprendizaje automático, cubrir el gap de MCP, y establecer model routing explícito.
-
-### `/forge capture` sin args — auto-detección de contexto
-
-- `/forge capture` sin argumentos analiza el contexto reciente de la conversación
-- Propone un insight pre-formateado basado en señales de la sesión (workaround, bug multi-intento, decisión con trade-offs)
-- Pide confirmación o edición antes de guardar — nunca escribe sin aprobación del usuario
-- Complementa la regla proactiva de A1 (ya implementada en `template/rules/_common.md`)
-- Complementa el alias `/cap` (ya implementado en `global/commands/cap.md`)
-- Modifica: `skills/capture-practice/SKILL.md` — agregar rama de `$ARGUMENTS` vacío
-
-### MCP server templates
-
-- Nuevo directorio `mcp/` con templates para servicios comunes
-- Templates iniciales: github, postgres, supabase, redis, slack
-- Cada template: `config.json` (entrada mergeable a mcpServers), `permissions.json` (allow/deny por tool), `rules.md` (reglas Claude-consumed con globs frontmatter)
-- `mcp/README.md`: instrucciones de instalación y composición
-- `mcp/_detect.md`: señales de detección para `/forge bootstrap`
-- `/forge bootstrap` detecta `mcpServers` en `~/.claude/settings.json` y sugiere instalar rules
-- Separación global/proyecto: mcpServers vive en `~/.claude/`, rules en `.claude/rules/mcp-<name>.md`
-
-### Model routing rules
-
-- Nuevo archivo `template/rules/model-routing.md`
-- Criterios explícitos para haiku / sonnet / opus por tipo de tarea
-- Los 7 agents actualizan su frontmatter `model:` con el modelo óptimo por rol:
-  - `researcher`, `test-runner` → haiku (velocidad sobre profundidad)
-  - `implementer`, `code-reviewer`, `session-reviewer` → sonnet (implementación estándar)
-  - `architect`, `security-auditor` → opus (razonamiento profundo, consecuencias altas)
-
----
-
-## v2.6.0 — CI/CD + Ecosystem automation
+## v2.6.0 — CI/CD + Ecosystem automation (próximo)
 
 Foco: integración con flujos de trabajo de PR y detección automática de cambios de stack.
 

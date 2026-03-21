@@ -1,8 +1,12 @@
-# Roadmap claude-kit v1.0.0 → v2.0.0
+# Roadmap claude-kit — Historical (v1.0.0 → v2.5.0)
 
-> Development roadmap. Entries use mixed Spanish/English. See [changelog.md](changelog.md) for completed items.
+> **This document is the historical development roadmap used during v1.x and v2.x development.**
+> For the current roadmap and upcoming features, see [ROADMAP.md](../ROADMAP.md).
+> For completed version history, see [changelog.md](changelog.md).
 >
-> Hoja de ruta de desarrollo. Las entradas usan español/inglés mixto. Ver [changelog.md](changelog.md) para items completados.
+> **Este documento es el roadmap histórico de desarrollo usado durante v1.x y v2.x.**
+> Para el roadmap actual y features próximas, ver [ROADMAP.md](../ROADMAP.md).
+> Para el historial de versiones completadas, ver [changelog.md](changelog.md).
 
 ## Vision / Visión
 
