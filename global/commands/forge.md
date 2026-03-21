@@ -20,6 +20,7 @@ Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
 | `reset` | `.claude/` directorio existe | "No hay configuración que resetear. Ejecutá `/forge bootstrap` para inicializar." |
 | `export` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para exportar. Ejecutá `/forge bootstrap` primero." |
 | `insights` | `CLAUDE_ERRORS.md` o `.claude/agent-memory/` | "No hay historial para analizar. Usá el proyecto un tiempo y volvé a intentar." |
+| `plugin` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para convertir en plugin. Ejecutá `/forge bootstrap` primero." |
 | `rule-check` | `.claude/rules/` con al menos 1 rule | "No hay reglas para evaluar. Ejecutá `/forge bootstrap` primero." |
 | `benchmark` | `.claude/settings.json` + `CLAUDE.md` + git repo limpio | "Requiere proyecto con config claude-kit y working tree limpio." |
 | `capture` | — | — |
@@ -121,6 +122,12 @@ Compara config full vs minimal ejecutando la misma tarea estándar en dos worktr
 Carga task de `$CLAUDE_KIT_DIR/tests/benchmark-tasks/{stack}.yml` según stack detectado.
 **Requiere confirmación explícita del usuario** (ejecuta Claude Code dos veces).
 
+### `plugin [output-dir]`
+Ejecutar el skill `/plugin-generator` en el proyecto actual.
+Genera un paquete de plugin de Claude Code a partir de la configuración claude-kit del proyecto.
+El output es un directorio listo para `claude --plugin-dir` o submission al marketplace.
+Si no se especifica output-dir, usa `./claude-kit-plugin/`.
+
 ### `insights`
 Ejecutar el skill `/session-insights` en el proyecto actual.
 Analiza patrones de uso, errores frecuentes, archivos más editados y tendencias de score.
@@ -183,6 +190,7 @@ Comandos:
   status        Ver registro de proyectos, scores y tendencias
   rule-check    Detectar reglas inertes cruzando globs contra git history
   benchmark     Comparar config full vs minimal en tareas estandarizadas
+  plugin        Generar paquete de plugin para Claude Code marketplace
   insights      Analizar sesiones pasadas y generar recomendaciones
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas

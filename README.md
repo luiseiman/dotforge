@@ -125,6 +125,7 @@ All skills are invoked through the `/forge` command:
 | `/forge insights` | Analyze sessions for patterns and recommendations |
 | `/forge rule-check` | Detect inert rules by cross-referencing globs against git history |
 | `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
+| `/forge plugin` | Generate Claude Code plugin package for marketplace submission |
 | `/forge global sync` | Sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
 
@@ -325,6 +326,7 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge insights` | Analizar sesiones para patrones y recomendaciones |
 | `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git |
 | `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |
+| `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
 | `/forge global sync` | Sincronizar configuración global de `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |
 

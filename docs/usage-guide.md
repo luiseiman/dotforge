@@ -256,6 +256,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge insights` | Analyze past sessions |
 | `/forge rule-check` | Detect inert rules (cross-reference globs vs git history) |
 | `/forge benchmark` | Compare full config vs minimal on standardized tasks |
+| `/forge plugin` | Generate Claude Code plugin package for marketplace |
 | `/forge export cursor` | Export config to Cursor |
 | `/forge export codex` | Export config to Codex |
 | `/forge export windsurf` | Export config to Windsurf |

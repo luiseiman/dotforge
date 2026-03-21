@@ -4,6 +4,18 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.3.0 (2026-03-21)
+
+### Plugin Generator + OpenClaw Integration
+- Nuevo: `/forge plugin` — genera un paquete de plugin de Claude Code desde la config del proyecto actual, listo para `claude --plugin-dir` o submission al marketplace oficial
+- Nuevo: skill `plugin-generator` — convierte rules a skills, hooks a hooks.json, extrae deny list, genera README
+- Nuevo: `integrations/openclaw/` — bridge skill para operar /forge desde WhatsApp, Telegram, Slack via OpenClaw
+- Nuevo: `/forge export openclaw` — genera workspace skill de OpenClaw por proyecto
+- Fix: OpenClaw install.sh usa `skills.load.extraDirs` en vez de symlinks (evita "Skipping skill outside root")
+- Fix: Variables de entorno van en `~/.openclaw/.env`, no en `.bashrc`
+
+---
+
 ## v2.2.0 (2026-03-20)
 
 ### CI/CD + Quality + OpenClaw Integration

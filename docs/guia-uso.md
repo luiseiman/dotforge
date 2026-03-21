@@ -256,6 +256,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge insights` | Analizar sesiones pasadas |
 | `/forge rule-check` | Detectar reglas inertes (cruzar globs vs git history) |
 | `/forge benchmark` | Comparar config full vs minimal en tareas estandarizadas |
+| `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
 | `/forge export cursor` | Exportar config a Cursor |
 | `/forge export codex` | Exportar config a Codex |
 | `/forge export windsurf` | Exportar config a Windsurf |
