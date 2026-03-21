@@ -146,6 +146,17 @@ Ejecutar el skill `/session-insights` en el proyecto actual.
 Analiza patrones de uso, errores frecuentes, archivos más editados y tendencias de score.
 Genera recomendaciones y alimenta el pipeline de prácticas automáticamente.
 
+### `unregister <project-name>`
+Remove a project from the local registry (`$CLAUDE_KIT_DIR/registry/projects.local.yml`).
+1. Read the registry file
+2. Find the project by name (case-insensitive)
+3. If not found, show: "Project '{{name}}' not found in registry."
+4. If found, show project details (name, path, stacks, score) and ask for confirmation
+5. On confirm: remove the entry from the YAML, save file
+6. Show: "✓ {{name}} removed from registry. Config in the project directory is untouched."
+
+This does NOT delete `.claude/` from the project — only removes it from tracking.
+
 ### `capture <descripción>`
 Ejecutar el skill `/capture-practice` con la descripción proporcionada.
 Registra un insight o práctica descubierta en practices/inbox/.
@@ -206,6 +217,7 @@ Comandos:
   benchmark     Comparar config full vs minimal en tareas estandarizadas
   plugin        Generar paquete de plugin para Claude Code marketplace
   insights      Analizar sesiones pasadas y generar recomendaciones
+  unregister    Eliminar proyecto del registro (no borra config)
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas
   watch         Buscar actualizaciones en docs Anthropic
