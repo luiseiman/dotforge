@@ -1,42 +1,25 @@
 # Demo Recording
 
-## Option A: vhs (recommended)
+`vhs` no funciona con CLIs interactivos como Claude Code. Hay que grabar manualmente.
 
-```bash
-brew install charmbracelet/tap/vhs
-vhs demo/demo.tape
-```
+## Instrucciones
 
-Generates `demo/demo.gif`. Edit `demo.tape` to customize.
-
-## Option B: asciinema
-
-```bash
-brew install asciinema
-asciinema rec demo/demo.cast
-# Run the commands manually, then ctrl+d to stop
-# Convert to GIF:
-npm install -g svg-term-cli
-svg-term --in demo/demo.cast --out demo/demo.svg --window
-```
-
-## Option C: Manual screen recording
-
-1. Open terminal, resize to ~900x500
-2. Run these commands:
+1. Instalar Kap: `brew install --cask kap`
+2. Abrir terminal, resize a ~900x500
+3. Iniciar grabación en Kap
+4. Correr:
    ```
-   cd ~/my-project
+   cd ~/Documents/GitHub/algún-proyecto
    claude
    /forge init
-   /forge audit
-   /forge status
    ```
-3. Trim to ~30 seconds
-4. Export as GIF (ezgif.com or gifski)
+5. Esperar output, mostrar resultado
+6. Exportar como GIF desde Kap (Settings → GIF, FPS 10, max width 900)
+7. Guardar como `demo/demo.gif`
 
-## After recording
+## Agregar al README
 
-Add to README.md after the badges:
+Una vez generado el GIF, agregar después de los badges en README.md:
 ```markdown
 ![claude-kit demo](demo/demo.gif)
 ```
