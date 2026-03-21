@@ -42,34 +42,69 @@ Also scan existing files for additional context:
 - existing test files → testing patterns
 - CI config (.github/workflows, Makefile) → build/test commands
 
-## Step 3: Ask 3 questions
+## Step 3: Detect user language
 
-Present all 3 questions together (not one at a time):
+Before asking questions, detect the user's language:
+1. Check if the user's previous messages are in a specific language
+2. Check `~/.claude/CLAUDE.md` for language preferences (e.g., "Comunicación: siempre en español")
+3. Check the system locale (`$LANG` or `$LC_ALL`)
+4. Default to English if unclear
 
+Present all questions in the detected language.
+
+## Step 4: Ask 3 questions
+
+Present all 3 questions together (not one at a time), in the user's language:
+
+**English version:**
 ```
 ═══ FORGE INIT ═══
 Stack detected: {stacks or "none — generic config"}
 
 3 quick questions to generate a complete config:
 
-1. ¿Qué hace y qué NO hace?
-   → One sentence: the problem it solves, and explicit v0.1 limits.
-   Example: "API REST for real-time quotes. No auth, no frontend, no historical data yet."
+1. What does it do and what does it NOT do?
+   → One sentence: the problem it solves, and explicit limits of v0.1.
+   Example: "REST API for real-time quotes. No auth, no frontend, no historical data yet."
 
-2. ¿Con qué?
+2. Built with what?
    → Stack, language, DB, external services, where it runs.
    Example: "Python 3.12, FastAPI, Supabase, deployed on GCP Cloud Run."
 
-3. ¿Cómo trabajo?
+3. How do you work?
    → Solo or team, spec-first or prototype-first, testing level from day one.
    Example: "Solo, prototype-first, tests only for critical paths."
 ```
+
+**Spanish version:**
+```
+═══ FORGE INIT ═══
+Stack detectado: {stacks o "ninguno — config genérica"}
+
+3 preguntas rápidas para generar una config completa:
+
+1. ¿Qué hace y qué NO hace?
+   → Una oración: el problema que resuelve, y los límites explícitos del v0.1.
+   Ejemplo: "API REST de cotizaciones en tiempo real. Sin auth, sin frontend, sin datos históricos aún."
+
+2. ¿Con qué?
+   → Stack, lenguaje, DB, servicios externos, dónde corre.
+   Ejemplo: "Python 3.12, FastAPI, Supabase, deploy en GCP Cloud Run."
+
+3. ¿Cómo trabajás?
+   → Solo o equipo, spec-first o prototype-first, nivel de testing desde el día uno.
+   Ejemplo: "Solo, prototype-first, tests solo para paths críticos."
+```
+
+Use the appropriate version based on detected language. For other languages, translate the questions following the same structure.
 
 Wait for user responses. If the user answers in a single message covering all 3, parse accordingly.
 
 If the user says "skip" or gives empty answers, proceed with auto-detected info only.
 
-## Step 4: Generate config
+**Important:** Regardless of user language, the CLAUDE.md content generated should be in the language the user answered in — Claude Code will read it and respond accordingly.
+
+## Step 5: Generate config
 
 Run `/bootstrap-project` internally with:
 - Profile: `standard`
@@ -104,7 +139,7 @@ If the user mentioned specific services, external APIs, or sensitive areas in qu
 - Mentioned external API → add API key env var patterns
 - Mentioned "no auth yet" → no auth-related deny needed
 
-## Step 5: Output
+## Step 6: Output
 
 Show a concise summary:
 
