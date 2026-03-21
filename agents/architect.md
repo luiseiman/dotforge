@@ -5,7 +5,7 @@ description: >
   evaluation, and pattern validation. Use before implementation when the
   approach isn't clear or when touching system boundaries.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 color: purple
 memory: project
 ---

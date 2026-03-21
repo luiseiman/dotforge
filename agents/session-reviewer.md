@@ -5,7 +5,7 @@ description: >
   and problematic tool usage. Feeds findings into practices/inbox/ or CLAUDE_ERRORS.md.
   Use after long sessions or when /forge insights triggers analysis.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 color: magenta
 memory: project
 ---

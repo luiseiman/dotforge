@@ -6,7 +6,7 @@ description: >
   implementation. Use when the main thread would fill with verbose output
   from grep, find, or file reads.
 tools: Read, Grep, Glob, Bash, WebSearch
-model: inherit
+model: haiku
 color: cyan
 # No memory: transactional agent — explores, reports, discards context
 ---

@@ -5,7 +5,7 @@ description: >
   research/architecture phases are complete. Handles writing code, running
   tests, fixing lint errors, and verifying changes compile/pass.
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 color: green
 memory: project
 ---

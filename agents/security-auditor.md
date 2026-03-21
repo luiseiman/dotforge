@@ -5,7 +5,7 @@ description: >
   auth gaps, dependency risks, and compliance issues. Use before any deployment
   or when touching auth/crypto/data-handling code.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 color: red
 memory: project
 ---

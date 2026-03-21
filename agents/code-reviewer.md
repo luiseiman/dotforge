@@ -5,7 +5,7 @@ description: >
   correctness, and maintainability. Reads diffs, analyzes patterns, reports
   issues by severity. Does not modify code.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 color: yellow
 memory: project
 ---
