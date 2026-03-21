@@ -44,6 +44,11 @@ Leer `$CLAUDE_KIT_DIR/audit/checklist.md` y `scoring.md` como referencia.
 Ejecutar el skill `/sync-template` en el proyecto actual.
 Comparar contra `$CLAUDE_KIT_DIR/template/` + stacks detectados.
 
+### `init`
+Ejecutar el skill `/init-project` en el proyecto actual.
+Bootstrap simplificado: auto-detecta stacks, genera config, cero preguntas.
+Output: una sola línea con stacks detectados y score.
+
 ### `bootstrap` o `bootstrap --profile <minimal|standard|full>`
 Ejecutar el skill `/bootstrap-project` en el proyecto actual.
 Usar `$CLAUDE_KIT_DIR/template/` como base.
@@ -179,6 +184,7 @@ Mostrar ayuda:
 /forge <comando>
 
 Comandos:
+  init          Setup rápido — auto-detecta stacks, cero preguntas
   audit         Auditar proyecto actual contra plantilla
   sync          Sincronizar config contra plantilla
   bootstrap     Inicializar .claude/ en proyecto nuevo [--profile minimal|standard|full]
