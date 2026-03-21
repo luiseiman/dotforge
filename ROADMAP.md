@@ -1,193 +1,95 @@
 # Roadmap claude-kit
 
-Estado actual: **v2.0.0** (2026-03-20)
+Estado actual: **v2.4.0** (2026-03-21)
 
 ---
 
-## v1.2.3 — Hardening & Quick Wins
+## v2.4.0 — Completado
 
-Foco: seguridad, flexibilidad de hooks, mejor error tracking. Todo low-effort, high-value.
-
-### Prompt injection detection en audit
-- Nuevo item 12 en `audit/checklist.md` (recomendado, 0-1)
-- Scan rules y CLAUDE.md buscando patrones sospechosos: `ignore previous`, `system:`, `<system>`, encoded payloads, base64 inline
-- Si detecta → score 0, warning explícito
-- Source: inspirado en tw93/claude-health
-
-### Hook profiles
-- Variable `FORGE_HOOK_PROFILE` con 3 niveles: `minimal`, `standard` (default), `strict`
-- `minimal`: solo rm -rf y force push
-- `standard`: current behavior (8 patrones)
-- `strict`: standard + bloqueo de `curl | sh`, `eval`, `chmod 777`, write a `/etc/`
-- Implementar en `block-destructive.sh` leyendo la variable
-- Bootstrap pregunta qué profile usar, guarda en `.claude/settings.local.json` como env
-- Source: inspirado en everything-claude-code
-
-### Error classification en CLAUDE_ERRORS.md
-- Agregar columna `Type` al formato: `syntax | logic | integration | config | security`
-- Actualizar template de CLAUDE_ERRORS.md
-- Actualizar rule `memory.md` con el nuevo formato
-- Actualizar `audit/checklist.md` item 6 para validar presencia de Type
-- Source: inspirado en alinaqi/claude-bootstrap
-
-### Git worktree en Agent Teams
-- Agregar instrucción a `agents.md` y al agent `implementer.md`
-- Cuando Agent Teams se activa (≥3 components), cada teammate usa `isolation: "worktree"`
-- Lead agent coordina merges al branch principal
-- Source: inspirado en obra/superpowers
-
-### TDD warning hook
-- Nuevo hook opcional `warn-missing-test.sh` (PostToolUse, Write matcher)
-- Detecta creación de archivo nuevo en `src/` o `app/` sin contrapartida en `tests/` o `__tests__/`
-- Warning (exit 0), no bloqueo (exit 2) — es educativo, no enforcement
-- Solo se activa en profile `strict`
-- Source: inspirado en alinaqi/claude-bootstrap
+- `/forge init`: quick-start con 3 preguntas, detección de idioma automática
+- `/forge global sync`: auto-pull de claude-kit + resync `~/.claude/` en un paso
+- `/forge unregister`: remover proyectos del registry
+- Plugin marketplace structure (`.claude-plugin/`)
+- OpenClaw integration completa (`/forge export openclaw`)
+- 16 stacks tecnológicos (hookify, trading, devcontainer incluidos)
+- 15 skills, 7 agents, 17 subcomandos `/forge`
+- Hook profiles: `FORGE_HOOK_PROFILE` minimal/standard/strict en `block-destructive.sh`
+- TDD warning hook (`warn-missing-test.sh`, solo perfil strict)
+- Session report hook (`session-report.sh`) con métricas JSON en `~/.claude/metrics/`
+- Project tier en audit: simple / standard / complex
+- Bootstrap profiles: minimal / standard / full
+- Prompt injection scan como item 12 del checklist de auditoría
+- Error Type column en CLAUDE_ERRORS.md (syntax/logic/integration/config/security)
+- Git worktree isolation para Agent Teams (isolation: "worktree" en agents.md)
+- CI: validación automática de hooks, YAML, frontmatter, stacks y skills en PRs
 
 ---
 
-## v1.3.0 — Stack Expansion & Cross-Tool
+## v2.5.0 — Learning loop + MCP + Model routing
 
-Foco: más stacks, exportación a otros harnesses, profiles de bootstrap.
+Foco: cerrar el loop de aprendizaje automático, cubrir el gap de MCP, y establecer model routing explícito.
 
-### Nuevos stacks (4)
-- `node-express` — Node.js + Express/Fastify
-- `java-spring` — Java + Spring Boot + Maven/Gradle
-- `aws-deploy` — AWS CDK/CloudFormation/SAM
-- `go-api` — Go modules + standard library HTTP
+### `/forge capture` sin args — auto-detección de contexto
 
-Cada uno con: `rules/*.md` (globs), `settings.json.partial`, detección en `stacks/detect.md`.
-Source: gaps identificados vs giuseppe-trisciuoglio/developer-kit
-
-### Cross-tool export: `/forge export`
-- Nuevo skill `export-config`
-- Subcomandos: `cursor`, `codex`, `windsurf`
-- `cursor`: genera `.cursorrules` a partir de rules + CLAUDE.md
-- `codex`: genera `codex.md` o `AGENTS.md` en formato compatible
-- `windsurf`: genera `.windsurfrules`
-- Mapeo: rules → reglas planas, hooks → instrucciones textuales, deny list → warnings
-- Source: inspirado en rohitg00/awesome-claude-code-toolkit
-
-### Bootstrap profiles
-- `/forge bootstrap --profile minimal|standard|full`
-- `minimal`: CLAUDE.md + settings.json + block-destructive hook. Sin agents, sin commands, sin agent-memory
-- `standard` (default): current behavior
-- `full`: standard + todos los agents + todos los commands + agent-memory + CLAUDE_ERRORS.md pre-poblado
-- Audit ajusta expectations por profile (minimal no penaliza items 8-10)
-- Source: inspirado en cloudnative-co/claude-code-starter-kit
-
-### Project tier en audit
-- Auto-detect tier por señales: LOC, cantidad de stacks, CI config, monorepo
-- `simple` (<5K LOC, 1 stack): items recomendados relajados
-- `standard` (5K-50K LOC, 1-2 stacks): current behavior
-- `complex` (>50K LOC, 3+ stacks, monorepo): items recomendados pasan a ser obligatorios
-- Tier se guarda en registry
-- Source: inspirado en tw93/claude-health
-
-### Devcontainer stack
-- Nuevo stack `devcontainer`
-- Template `.devcontainer/devcontainer.json` con sandbox config
-- Rules para comportamiento dentro del container
-- Detección: presencia de `.devcontainer/` existente
-- Source: inspirado en trailofbits/claude-code-config
-
----
-
-## v1.4.0 — Distribution & Plugin
-
-Foco: distribución más allá de git clone, empaquetado formal.
-
-### Plugin packaging
-- Estructura `claude-kit` como plugin oficial de Claude Code
-- `.claude-plugin/plugin.json` con metadata
-- Mantener git clone + sync.sh como opción completa
-- Plugin = subconjunto curado (hooks + rules + commands, sin skills que requieren el repo completo)
-- Evaluar marketplace submission
-- Prerequisito: plugin system de Claude Code debe estar estable (monitorear con `/forge watch`)
-- Source: practice inbox `2026-03-19-claude-code-plugin-system.md` + NikiforovAll/claude-code-rules
-
-### Stacks como plugins independientes
-- Cada stack empaquetable como plugin separado
-- `claude-kit-stack-python-fastapi`, `claude-kit-stack-react-vite-ts`, etc.
-- Permite adopción granular sin instalar todo claude-kit
-- Requiere resolver: cómo componer múltiples stack-plugins en un proyecto
-
----
-
-## v1.5.0 — Intelligence & Analytics
-
-Foco: insights de sesiones, reporte automático, mejora continua data-driven.
-
-### Session insights: `/forge insights`
-- Nuevo skill que analiza sesiones pasadas
-- Métricas: tools más usados, archivos más editados, errores frecuentes, patterns de trabajo
-- Output: markdown report con recomendaciones
-- Alimenta practices pipeline automáticamente (top patterns → inbox)
-- Source: inspirado en trailofbits `/insights`
-
-### Session report en Stop hook
-- Hook Stop genera `SESSION_REPORT.md` (o append a log)
-- Contenido: archivos tocados, tests corridos, errores encontrados, duración estimada
-- Formato markdown, no dashboard — respeta filosofía "no app code"
-- Configurable: on/off via `FORGE_SESSION_REPORT=true`
-- Source: concepto adaptado de davila7/claude-code-templates (dashboard → markdown)
-
-### Scoring trends y alertas
-- Registry ya tiene history de scores. Agregar:
-- Alerta si score baja >1.5 puntos entre audits
-- Trend chart en ASCII (sparkline) en `/forge status`
-- Recomendación automática de `/forge sync` si score < 7.0 y hay nueva versión
-
----
-
-## v1.6.0 — Ecosystem & Automation
-
-Foco: integración con ecosistema MCP, CI/CD, y detección automática de cambios.
+- `/forge capture` sin argumentos analiza el contexto reciente de la conversación
+- Propone un insight pre-formateado basado en señales de la sesión (workaround, bug multi-intento, decisión con trade-offs)
+- Pide confirmación o edición antes de guardar — nunca escribe sin aprobación del usuario
+- Complementa la regla proactiva de A1 (ya implementada en `template/rules/_common.md`)
+- Complementa el alias `/cap` (ya implementado en `global/commands/cap.md`)
+- Modifica: `skills/capture-practice/SKILL.md` — agregar rama de `$ARGUMENTS` vacío
 
 ### MCP server templates
-- Nuevo directorio `mcp/` con templates de configuración MCP para servicios comunes
-- Templates: `github.json`, `slack.json`, `postgres.json`, `sqlite.json`, `redis.json`
-- Cada template: connection config + tool permissions + usage rules
-- `/forge bootstrap` detecta MCP servers existentes y sugiere templates
-- Documentación de cómo componer múltiples MCP servers en un proyecto
 
-### CI integration: GitHub Action
-- Nuevo archivo `.github/actions/forge-audit/action.yml`
-- Corre `/forge audit` en PRs y comenta el score como review comment
-- Configurable: threshold mínimo (default 7.0), block PR si score < threshold
-- Badge dinámico para README: `![claude-kit score](badge-url)`
-- Soporte para GitHub Actions + GitLab CI (template `.gitlab-ci.yml`)
+- Nuevo directorio `mcp/` con templates para servicios comunes
+- Templates iniciales: github, postgres, supabase, redis, slack
+- Cada template: `config.json` (entrada mergeable a mcpServers), `permissions.json` (allow/deny por tool), `rules.md` (reglas Claude-consumed con globs frontmatter)
+- `mcp/README.md`: instrucciones de instalación y composición
+- `mcp/_detect.md`: señales de detección para `/forge bootstrap`
+- `/forge bootstrap` detecta `mcpServers` en `~/.claude/settings.json` y sugiere instalar rules
+- Separación global/proyecto: mcpServers vive en `~/.claude/`, rules en `.claude/rules/mcp-<name>.md`
 
-### Stack auto-update
-- Nuevo hook PostToolUse que detecta cambios en archivos de dependencias
-- Monitored files: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Gemfile`
-- Si se agrega una dependencia que implica un nuevo stack (ej: `express` en package.json → node-express)
-  sugiere `/forge sync` para incorporar las rules del stack
-- Si se elimina un stack completo (ej: quitar `react` de package.json), sugiere limpiar rules huérfanas
-- Warning only (exit 0), no bloqueo
+### Model routing rules
+
+- Nuevo archivo `template/rules/model-routing.md`
+- Criterios explícitos para haiku / sonnet / opus por tipo de tarea
+- Los 7 agents actualizan su frontmatter `model:` con el modelo óptimo por rol:
+  - `researcher`, `test-runner` → haiku (velocidad sobre profundidad)
+  - `implementer`, `code-reviewer`, `session-reviewer` → sonnet (implementación estándar)
+  - `architect`, `security-auditor` → opus (razonamiento profundo, consecuencias altas)
 
 ---
 
-## v1.7.0 — Team & Governance
+## v2.6.0 — CI/CD + Ecosystem automation
 
-Foco: soporte multi-usuario, model routing, y gobernanza de configuración.
+Foco: integración con flujos de trabajo de PR y detección automática de cambios de stack.
 
-### Team mode
-- Multi-user config con herencia: `base` → `team` → `individual`
-- Archivo `.claude/team.json` define:
-  - `base`: configuración compartida (rules, hooks, deny list)
-  - `overrides`: por rol (`backend`, `frontend`, `devops`) con rules y permissions adicionales
-- `settings.local.json` sigue siendo individual (no se commitea)
-- `/forge bootstrap --team` genera estructura team-aware
-- Merge: team rules son aditivas sobre base, individual sobre team
+### CI: `/forge audit` score en PRs
 
-### Model routing rules
-- Nuevo archivo de rules `template/rules/model-routing.md`
-- Reglas para cuándo usar cada modelo:
-  - `haiku`: tareas simples, búsquedas, preguntas rápidas, test-runner
-  - `sonnet`: implementación estándar, code review, debugging
-  - `opus`: arquitectura, refactoring complejo, security audit, tareas ambiguas
-- Integración con agent definitions: cada agent sugiere su modelo óptimo
-- Actualizar agents existentes con recomendación de modelo en frontmatter
+- Script shell standalone `audit/score.sh` que computa los 12 checks mecánicos sin depender de Claude
+- GitHub Action que corre `audit/score.sh` en PRs y comenta el score como review comment
+- Configurable: threshold mínimo (default 7.0), bloquea merge si score < threshold
+- Badge dinámico para README
+- Prerequisito bloqueante: `audit/score.sh` como nuevo artefacto
+- Nota: checks semánticos (calidad de CLAUDE.md) se aproximan con heurísticas — score es indicativo, no idéntico al skill
+
+### Stack auto-update detection
+
+- PostToolUse hook `detect-stack-drift.sh` sobre eventos `Write`
+- Monitorea: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Gemfile`
+- Si se detecta dependencia nueva con stack disponible en claude-kit no instalado → warning + sugerencia de `/forge sync`
+- Warning only (exit 0) — nunca bloquea
+- Sinergia con MCP templates: si la dependencia implica un MCP server, sugiere el template también
+
+---
+
+## Backlog (válido, sin fecha)
+
+| Item | Por qué no ahora |
+|------|-----------------|
+| Stacks como plugins independientes | Marketplace de Claude Code sin spec estable. Re-evaluar cuando `/forge watch` detecte release oficial. |
+| Team mode (`.claude/team.json`) | Fuera de scope para uso personal. Desbloquear si hay 3+ usuarios en el mismo proyecto con configs distintas. |
+| CI GitLab template | El usuario usa GitHub. Añadir si hay demanda concreta. |
+| Stop hook B2 (análisis via Claude API) | Evaluar después de medir cobertura de A1+A2+A3. Solo implementar si el inbox sigue subpoblado. |
 
 ---
 
@@ -196,7 +98,8 @@ Foco: soporte multi-usuario, model routing, y gobernanza de configuración.
 | Idea | Razón |
 |------|-------|
 | npm/npx distribution | Requiere app code, rompe filosofía md+shell |
-| Web UI / dashboard | Fuera de scope, somos terminal-native |
-| Model routing automático | Over-engineering para config factory |
-| 500+ skills at scale | Calidad > cantidad. 9 skills focalizados es suficiente |
-| Real-time analytics | Requiere proceso daemon, contradice "no app code" |
+| Web UI / dashboard | Fuera de scope, terminal-native |
+| Real-time analytics | Requiere daemon, contradice "no app code" |
+| Stop hook B1 (grep-based) | Genera ruido sin semántica — no vale el esfuerzo |
+| 500+ skills at scale | Calidad > cantidad. Skills focalizados son suficientes. |
+| Model routing automático en runtime | Over-engineering — las reglas explícitas son más predecibles |
