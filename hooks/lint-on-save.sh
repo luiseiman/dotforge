@@ -1,0 +1,1 @@
+../template/hooks/lint-on-save.sh

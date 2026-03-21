@@ -1,0 +1,1 @@
+../template/hooks/warn-missing-test.sh

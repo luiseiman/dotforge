@@ -1,0 +1,1 @@
+../template/hooks/block-destructive.sh

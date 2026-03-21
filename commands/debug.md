@@ -1,0 +1,1 @@
+../template/commands/debug.md

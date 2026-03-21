@@ -1,71 +1,23 @@
 {
   "name": "claude-kit",
   "version": "2.3.0",
-  "description": "Configuration factory for Claude Code — templates, stacks, hooks, rules, and audit tools",
-  "author": "luiseiman",
-  "license": "MIT",
+  "description": "Configuration factory for Claude Code — 14 skills, 7 agents, hooks, rules, audit scoring, and practices pipeline",
+  "author": {
+    "name": "Luis Eiman",
+    "url": "https://github.com/luiseiman"
+  },
+  "homepage": "https://github.com/luiseiman/claude-kit",
   "repository": "https://github.com/luiseiman/claude-kit",
-  "keywords": ["claude-code", "configuration", "hooks", "rules", "audit"],
-  "components": {
-    "hooks": [
-      {
-        "file": "template/hooks/block-destructive.sh",
-        "event": "PreToolUse",
-        "matcher": "Bash",
-        "description": "Block dangerous bash commands (rm -rf, DROP TABLE, force push)"
-      },
-      {
-        "file": "template/hooks/lint-on-save.sh",
-        "event": "PostToolUse",
-        "matcher": "Write",
-        "description": "Auto-lint on file save (Python, TypeScript, Swift)"
-      },
-      {
-        "file": "template/hooks/warn-missing-test.sh",
-        "event": "PostToolUse",
-        "matcher": "Write",
-        "description": "Warn when creating source files without tests (strict profile)"
-      },
-      {
-        "file": "template/hooks/session-report.sh",
-        "event": "Stop",
-        "matcher": null,
-        "description": "Generate session report on session end (requires FORGE_SESSION_REPORT=true)"
-      }
-    ],
-    "rules": [
-      "template/rules/_common.md",
-      "template/rules/memory.md",
-      "template/rules/agents.md"
-    ],
-    "commands": [
-      "template/commands/audit.md",
-      "template/commands/health.md",
-      "template/commands/review.md",
-      "template/commands/debug.md"
-    ]
-  },
-  "stacks": [
-    "python-fastapi",
-    "react-vite-ts",
-    "swift-swiftui",
-    "supabase",
-    "docker-deploy",
-    "data-analysis",
-    "gcp-cloud-run",
-    "redis",
-    "node-express",
-    "java-spring",
-    "aws-deploy",
-    "go-api",
-    "devcontainer"
-  ],
-  "install": {
-    "method": "git-clone",
-    "postInstall": "global/sync.sh",
-    "note": "Plugin mode installs hooks + rules + commands only. For full features (skills, agents, practices), use git clone + global/sync.sh"
-  },
-  "requires": {
-    "claudeCode": ">=1.0.0"
-  }
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "configuration",
+    "hooks",
+    "rules",
+    "audit",
+    "scaffolding",
+    "best-practices",
+    "agents",
+    "skills"
+  ]
 }

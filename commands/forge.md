@@ -1,0 +1,1 @@
+../global/commands/forge.md
