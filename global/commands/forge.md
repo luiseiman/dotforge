@@ -31,6 +31,7 @@ Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
 | `plugin` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para convertir en plugin. Ejecutá `/forge bootstrap` primero." |
 | `rule-check` | `.claude/rules/` con al menos 1 rule | "No hay reglas para evaluar. Ejecutá `/forge bootstrap` primero." |
 | `benchmark` | `.claude/settings.json` + `CLAUDE.md` + git repo limpio | "Requiere proyecto con config claude-kit y working tree limpio." |
+| `mcp add <server>` | target `settings.json` exists (project) OR `--global` flag | Si no hay settings.json: "No settings.json found. Run `/forge bootstrap` first, or use `--global` to install globally." |
 | `capture` | — | — |
 | `update` | — | — |
 | `watch` | — | — |
@@ -162,6 +163,12 @@ Remove a project from the local registry (`$CLAUDE_KIT_DIR/registry/projects.loc
 
 This does NOT delete `.claude/` from the project — only removes it from tracking.
 
+### `mcp add <server> [--global]`
+Ejecutar el skill `/mcp-add` con el server especificado.
+Instala un MCP server template de `$CLAUDE_KIT_DIR/mcp/<server>/` en la configuración del proyecto actual
+(o global con `--global`): mergea mcpServers en settings.json, agrega permisos, y copia rules.md.
+Servers disponibles: `github`, `postgres`, `supabase`, `redis`, `slack`.
+
 ### `capture <descripción>`
 Ejecutar el skill `/capture-practice` con la descripción proporcionada.
 Registra un insight o práctica descubierta en practices/inbox/.
@@ -223,6 +230,7 @@ Comandos:
   plugin        Generar paquete de plugin para Claude Code marketplace
   insights      Analizar sesiones pasadas y generar recomendaciones
   unregister    Eliminar proyecto del registro (no borra config)
+  mcp add       Instalar MCP server template en proyecto o global [--global]
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas
   watch         Buscar actualizaciones en docs Anthropic
