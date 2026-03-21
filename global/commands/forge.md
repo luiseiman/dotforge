@@ -63,7 +63,12 @@ Usar `$CLAUDE_KIT_DIR/template/` como base.
 Pasar el profile seleccionado (default: `standard`).
 
 ### `global sync`
-Sincronizar `~/.claude/` contra `$CLAUDE_KIT_DIR/global/`:
+Actualizar claude-kit y sincronizar `~/.claude/`:
+
+0. **Auto-update**: If `$CLAUDE_KIT_DIR` is a git repo, run `git -C "$CLAUDE_KIT_DIR" pull --ff-only 2>&1`. Show result:
+   - If updated: `✓ claude-kit updated: {old_hash}..{new_hash}`
+   - If already up to date: `✓ claude-kit already up to date`
+   - If pull fails (dirty tree, conflicts): `⚠ Auto-update failed: {reason}. Run 'cd $CLAUDE_KIT_DIR && git pull' manually.`
 
 1. **CLAUDE.md**: comparar `~/.claude/CLAUDE.md` contra `global/CLAUDE.md.tmpl`.
    - Secciones ANTES de `<!-- forge:custom -->` se actualizan desde la plantilla.
