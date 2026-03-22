@@ -1,12 +1,11 @@
 {
   "_template": "claude-kit/mcp/redis",
-  "_verified_with": "mcp-server-redis@community",
+  "_verified_with": "@modelcontextprotocol/server-redis@2025.4.25",
   "_install": "Merge the 'redis' key into mcpServers in ~/.claude/settings.json. Set REDIS_URL env var (format: redis://[:password@]host:6379[/db]).",
-  "_note": "No official Redis MCP server exists. Community implementations vary. Verify tool names against your chosen package before using permissions.json. rules.md is always applicable regardless of server implementation.",
   "redis": {
     "type": "stdio",
     "command": "npx",
-    "args": ["-y", "mcp-server-redis"],
+    "args": ["-y", "@modelcontextprotocol/server-redis@2025.4.25"],
     "env": {
       "REDIS_URL": "${REDIS_URL}"
     }

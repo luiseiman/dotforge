@@ -1,11 +1,11 @@
 {
   "_template": "claude-kit/mcp/github",
-  "_verified_with": "@modelcontextprotocol/server-github@2.x",
+  "_verified_with": "@modelcontextprotocol/server-github@2025.4.8",
   "_install": "Merge the 'github' key into mcpServers in ~/.claude/settings.json. Set GITHUB_TOKEN env var.",
   "github": {
     "type": "stdio",
     "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-github"],
+    "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
     "env": {
       "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
     }
