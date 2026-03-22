@@ -93,7 +93,8 @@ Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corre
 1. Copiar `$CLAUDE_KIT_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/` (ALL profiles)
 2. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/lint-on-save.sh`
 3. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/session-report.sh`
-4. If profile is `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
+4. If profile is `standard` or `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/detect-stack-drift.sh`
+5. If profile is `full`: copiar `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
 5. `chmod +x` all copied hooks
 
 ## Paso 6: Copiar rules
