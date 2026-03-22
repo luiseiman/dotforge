@@ -59,3 +59,15 @@ Downgrade to haiku if the task reduces to pure information retrieval with no rea
 | Write with known intent (INSERT, create issue) | sonnet |
 | Migration, schema change, production operation | opus |
 | Security review of MCP tool output | opus |
+
+## Model IDs (August 2025)
+
+Use these exact IDs when instantiating subagents programmatically or configuring model overrides.
+
+| Tier | Model ID | Notes |
+|------|----------|-------|
+| opus | `claude-opus-4-6` | Highest capability; default for architect, security-auditor |
+| sonnet | `claude-sonnet-4-6` | Balanced; default for implementer, code-reviewer, session-reviewer |
+| haiku | `claude-haiku-4-5-20251001` | Fastest; default for researcher, test-runner |
+
+> Update this table when Anthropic releases new model versions. Check `claude --version` or the Anthropic docs for the latest IDs.
