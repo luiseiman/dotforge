@@ -4,6 +4,22 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.6.0 (2026-03-21)
+
+### Audit CI + Stack Drift + MCP Versioning + Orchestration
+
+- Nuevo: `audit/score.sh` — script bash standalone (3.2+ compatible) que evalúa 12 items mecánicos sin Claude. Flags: `--json`, `--threshold N`. Score 0-10, security cap 6.0 si faltan settings.json o block-destructive
+- Nuevo: `.github/workflows/audit.yml` — CI que ejecuta score.sh en PRs y comenta el score. Bloquea si score < `AUDIT_SCORE_THRESHOLD` (default 7.0)
+- Nuevo: `template/hooks/detect-stack-drift.sh` — PostToolUse hook que detecta nuevas dependencias y avisa sobre stacks no instalados. Monitorea package.json, pyproject.toml, go.mod, pom.xml, Gemfile. Nunca bloquea (exit 0 siempre)
+- Nuevo: `skills/mcp-add/SKILL.md` — skill `/forge mcp add <server>` que instala templates MCP en proyectos (merge config, permisos aditivos, copia rules.md)
+- Mejora: MCP version pinning — todos los config.json con versiones exactas: github@2025.4.8, postgres@0.6.2, redis@2025.4.25, slack@2025.4.25, supabase@0.7.0
+- Nuevo: `mcp/update-versions.sh` — script que consulta npm y actualiza pines de versión en todos los config.json
+- Mejora: `template/rules/agents.md` — sección TodoWrite con guía de cuándo/cómo usarlo (session-scoped, mark immediately, ≥3 acciones)
+- Mejora: `template/rules/model-routing.md` — tabla de Model IDs explícitos (opus/sonnet/haiku con IDs de API exactos para agosto 2025)
+- Mejora: `template/settings.json.tmpl` — añadido Stop hook para session-report.sh y detect-stack-drift.sh en PostToolUse
+
+---
+
 ## v2.5.0 (2026-03-21)
 
 ### Learning Loop + MCP Templates + Model Routing

@@ -1,6 +1,6 @@
 {
   "name": "claude-kit",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Configuration factory for Claude Code \u2014 14 skills, 7 agents, hooks, rules, audit scoring, and practices pipeline",
   "author": {
     "name": "Luis Eiman",
