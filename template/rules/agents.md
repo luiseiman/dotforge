@@ -49,6 +49,17 @@ Team structure pattern:
 - Never let a subagent's raw output consume >30% of main context
 - Prefer summaries: "what changed, what was found, what to do next"
 
+## Task Tracking with TodoWrite
+
+Use `TodoWrite` to track multi-step work in the current session:
+- Break tasks into discrete steps before starting implementation
+- Mark each step `completed` immediately after finishing it — not in batch at the end
+- If a step fails or changes, update the todo list before continuing
+- Do NOT use TodoWrite for single-step tasks or quick fixes
+- TodoWrite is session-scoped: it does not persist across conversations
+
+Subagents MUST also use TodoWrite for their internal steps when handling tasks with ≥3 actions. The main agent should not duplicate the subagent's todo list.
+
 ## Error Handling
 
 - If a subagent fails or produces garbage → log to `CLAUDE_ERRORS.md`, don't retry blindly
