@@ -1,0 +1,108 @@
+name: claude-kit audit score
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'template/**'
+      - 'stacks/**'
+      - 'audit/**'
+      - 'agents/**'
+      - 'skills/**'
+      - 'mcp/**'
+      - 'global/**'
+
+jobs:
+  audit:
+    name: Audit score
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run audit/score.sh
+        id: audit
+        run: |
+          chmod +x audit/score.sh
+          # Run on the repo itself (self-audit)
+          JSON=$(bash audit/score.sh . --json 2>&1)
+          echo "result<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$JSON" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          SCORE=$(echo "$JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['score'])")
+          LEVEL=$(echo "$JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['level'])")
+          echo "score=$SCORE" >> "$GITHUB_OUTPUT"
+          echo "level=$LEVEL" >> "$GITHUB_OUTPUT"
+
+      - name: Comment score on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const result = JSON.parse(`${{ steps.audit.outputs.result }}`);
+            const score  = result.score;
+            const level  = result.level;
+            const cap    = result.security_cap ? '\n> ⚠️ **Security cap applied** — settings.json or block-destructive missing.' : '';
+
+            const emoji = score >= 9 ? '🟢' : score >= 7 ? '🟡' : score >= 5 ? '🟠' : '🔴';
+
+            const itemRows = Object.entries(result.items).map(([key, v]) => {
+              const num  = key.split('_')[0];
+              const name = key.split('_').slice(1).join('_');
+              const icon = v.score === 0 ? '❌' : v.score === 1 ? '⚠️' : '✅';
+              return `| ${num} | ${name} | ${icon} ${v.score} | ${v.note} |`;
+            }).join('\n');
+
+            const body = [
+              `## ${emoji} claude-kit Audit Score: **${score}/10** (${level})${cap}`,
+              '',
+              `| Obligatorio | ${result.score_obligatorio}/10 | Recomendado | ${result.score_recomendado}/7 |`,
+              '|---|---|---|---|',
+              '',
+              '| # | Item | Score | Note |',
+              '|---|---|---|---|',
+              itemRows,
+              '',
+              '_Score computed by `audit/score.sh` — mechanical checks only. Run `/forge audit` for full semantic evaluation._',
+            ].join('\n');
+
+            // Update existing comment if present, otherwise create new
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('claude-kit Audit Score')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Enforce minimum score
+        run: |
+          SCORE="${{ steps.audit.outputs.score }}"
+          THRESHOLD="${{ vars.AUDIT_SCORE_THRESHOLD || '7.0' }}"
+          BELOW=$(python3 -c "print(1 if float('$SCORE') < float('$THRESHOLD') else 0)")
+          if [[ "$BELOW" == "1" ]]; then
+            echo "❌ Score $SCORE is below threshold $THRESHOLD"
+            echo "   Set AUDIT_SCORE_THRESHOLD in repo variables to change the threshold."
+            exit 1
+          fi
+          echo "✅ Score $SCORE meets threshold $THRESHOLD"
