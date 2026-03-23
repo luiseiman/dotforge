@@ -30,3 +30,5 @@ Python 3.12+, FastAPI, async/await nativo. Type hints en funciones públicas. Ru
 - Olvidar `await` en async calls → retorna coroutine, no resultado
 - `response_model` sin `model_config = ConfigDict(from_attributes=True)` → falla con ORM
 - Background tasks que no capturan excepciones → mueren silenciosamente
+- `replace_all=True` in Edit without checking uniqueness — multiple similar patterns in a file get clobbered
+- Local `import asyncio` inside functions: `patch("module.asyncio.sleep")` fails with AttributeError — use `patch("asyncio.sleep")` directly
