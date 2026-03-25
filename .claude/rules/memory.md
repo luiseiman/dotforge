@@ -22,3 +22,7 @@ description: "Memory management policy — always loaded"
 - Claude Code persists discoveries automatically when autoMemoryEnabled is true
 - Do not duplicate auto-memory content in CLAUDE.md — they serve different purposes
 - CLAUDE.md = prescriptive (what to do). Auto-memory = descriptive (what was discovered)
+- **200-line cutoff**: only the first 200 lines of MEMORY.md are injected at session start — anything beyond is invisible
+- Keep MEMORY.md as a concise index of links to memory files, not a dump of content
+- If MEMORY.md approaches 150 lines, archive low-relevance entries or consolidate related memories
+- Memory files themselves have no line limit — only the MEMORY.md index is capped

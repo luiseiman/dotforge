@@ -1,7 +1,7 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.6.0
-**Date:** 2026-03-21
+**Version:** 2.6.1
+**Date:** 2026-03-24
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
 
@@ -292,7 +292,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 
 ## 6. Available stacks
 
-13 stacks that are detected automatically and can be combined (multi-stack):
+15 stacks that are detected automatically and can be combined (multi-stack):
 
 | Stack | Detection indicators |
 |-------|---------------------|

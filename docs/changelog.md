@@ -4,6 +4,17 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.6.1 (2026-03-24)
+
+### Practices pipeline — Python debugging rules
+
+- Incorporado: `stacks/python-fastapi/rules/backend.md` — regla "root cause first": antes de hacer un fix, verificar import errors, shadowed packages y env vars
+- Incorporado: `stacks/python-fastapi/rules/backend.md` — regla "package naming": verificar con `pip3 show <dirname>` antes de nombrar un directorio local para evitar shadowing de PyPI packages
+- Fuente: 2 prácticas promovidas a active/ desde cotiza-api-cloud (fix-loop-root-cause, websocket-shadow-import)
+- Deprecadas: 7 prácticas de inbox (session logs sin contenido generalizable, cotiza security action item project-specific)
+
+---
+
 ## v2.6.0 (2026-03-21)
 
 ### Audit CI + Stack Drift + MCP Versioning + Orchestration

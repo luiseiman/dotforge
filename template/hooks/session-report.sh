@@ -124,6 +124,15 @@ cat > "$METRICS_FILE" << JSON
 }
 JSON
 
+# --- Error tracking reminder ---
+# If files were touched but no errors were logged today, remind the user
+if [[ $FILES_TOUCHED -gt 5 && $ERRORS_ADDED -eq 0 ]]; then
+  if [[ -f "CLAUDE_ERRORS.md" ]]; then
+    echo "💡 Reminder: $FILES_TOUCHED files touched today but 0 errors logged in CLAUDE_ERRORS.md."
+    echo "   If you encountered any bugs or gotchas, run: /forge capture \"<description>\""
+  fi
+fi
+
 # --- Optional: SESSION_REPORT.md (human-readable) ---
 if [[ "${FORGE_SESSION_REPORT:-false}" == "true" ]]; then
   RECENT_COMMITS=$(git log --oneline --since="2 hours ago" 2>/dev/null | head -10)

@@ -9,7 +9,7 @@ Internal reference for claude-kit contributors. Maps all components and their in
 │                         claude-kit                               │
 ├──────────┬──────────┬──────────┬──────────┬──────────┬──────────┤
 │ template │  stacks  │  skills  │  agents  │practices │  audit   │
-│          │  (13)    │  (13)    │  (6)     │          │          │
+│          │  (15)    │  (16)    │  (7)     │          │          │
 ├──────────┴──────────┴──────────┴──────────┴──────────┴──────────┤
 │                        global/                                   │
 │              (~/.claude/ management via sync.sh)                  │
@@ -31,11 +31,11 @@ Files in `template/` are the starting point for every project.
 | CLAUDE.md | `template/CLAUDE.md.tmpl` | Project instructions with `<!-- forge:section -->` markers |
 | settings.json | `template/settings.json.tmpl` | Permissions, deny list, hook wiring |
 | Rules (3) | `template/rules/` | `_common.md` (code rules), `agents.md` (orchestration), `memory.md` (memory policy) |
-| Hooks (5) | `template/hooks/` | `block-destructive.sh`, `lint-on-save.sh`, `session-report.sh`, `warn-missing-test.sh`, `check-updates.sh` |
+| Hooks (6) | `template/hooks/` | `block-destructive.sh`, `lint-on-save.sh`, `session-report.sh`, `warn-missing-test.sh`, `check-updates.sh`, `detect-stack-drift.sh` |
 
 **Data flow:** `/forge bootstrap` copies template → project `.claude/`, replaces `<!-- forge:section -->` markers, layers stacks on top.
 
-## Stacks (13 technology modules)
+## Stacks (15 technology modules)
 
 Each stack is additive — layered on top of template during bootstrap.
 
@@ -54,12 +54,14 @@ Each stack is additive — layered on top of template during bootstrap.
 | aws-deploy | rules/aws.md, settings.json.partial | `cdk.json`, `template.yaml`, or `samconfig.toml` |
 | go-api | rules/go.md, settings.json.partial | `go.mod` |
 | devcontainer | rules/devcontainer.md, settings.json.partial | `.devcontainer/` dir |
+| hookify | rules/hooks.md, settings.json.partial | Custom hook framework |
+| trading | rules/trading.md, settings.json.partial | Custom trading stack |
 
 Detection logic centralized in `stacks/detect.md`.
 
 **Composition:** Multiple stacks can be applied to one project. `settings.json.partial` files are merged by union (allow lists, deny lists).
 
-## Skills (13 /forge subcommands)
+## Skills (16 /forge subcommands)
 
 Each skill is a `SKILL.md` file with name/description frontmatter, installed as symlink in `~/.claude/skills/`.
 
@@ -78,10 +80,13 @@ Each skill is a `SKILL.md` file with name/description frontmatter, installed as 
 | session-insights | `/forge insights` | Analytics |
 | rule-effectiveness | `/forge rule-check` | Analytics |
 | benchmark | `/forge benchmark` | Analytics |
+| init-project | `/forge init` | Setup |
+| plugin-generator | `/forge plugin` | Distribution |
+| mcp-add | `/forge mcp add` | Setup |
 
 **Dispatch:** `global/commands/forge.md` receives arguments and delegates to the matching skill.
 
-## Agents (6 specialized subagents)
+## Agents (7 specialized subagents)
 
 Defined in `agents/*.md`, installed as symlinks in `~/.claude/agents/`.
 
@@ -93,6 +98,7 @@ Defined in `agents/*.md`, installed as symlinks in `~/.claude/agents/`.
 | code-reviewer | Review by severity | `.claude/agent-memory/code-reviewer/` |
 | security-auditor | Vulnerability scanning | `.claude/agent-memory/security-auditor/` |
 | test-runner | Tests + coverage | Transactional (no persistence) |
+| session-reviewer | Post-session analysis, pattern detection | Transactional (no persistence) |
 
 **Orchestration chain:** researcher → architect → implementer → test-runner → code-reviewer (defined in `template/rules/agents.md`).
 

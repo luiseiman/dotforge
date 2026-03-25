@@ -288,7 +288,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 
 ## 6. Stacks disponibles
 
-13 stacks que se detectan automáticamente y se pueden combinar (multi-stack):
+15 stacks que se detectan automáticamente y se pueden combinar (multi-stack):
 
 | Stack | Indicadores de detección |
 |-------|-------------------------|

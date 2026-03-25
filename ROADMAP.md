@@ -1,6 +1,6 @@
 # Roadmap claude-kit
 
-Estado actual: **v2.6.0** (2026-03-21)
+Estado actual: **v2.6.1** (2026-03-24)
 
 ---
 

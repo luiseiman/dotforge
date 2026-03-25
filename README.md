@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.6.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.6.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -38,7 +38,7 @@ There are many Claude Code starter kits, skills collections, and CLAUDE.md gener
 
 | Feature | What it means | Who else does this |
 |---------|---------------|-------------------|
-| **Additive stack layering** | Auto-detects your tech (16 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
+| **Additive stack layering** | Auto-detects your tech (15 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
 | **MCP server templates** | Ready-to-use config, permissions, and usage rules for 5 common MCP servers (GitHub, Postgres, Supabase, Redis, Slack). Auto-detected by `/forge bootstrap`. | No one |
 | **Template sync with markers** | `<!-- forge:section -->` separates managed sections from your customizations. `/forge sync` updates the managed parts without touching yours. | No one |
 | **Audit scoring (0-10)** | 12-item checklist (5 obligatory scored 0-2, 7 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. Project tier (simple/standard/complex) adjusts expectations. | tw93/claude-health has tiers but no numeric normalization or security cap |
@@ -72,9 +72,9 @@ Multi-stack projects get all matching stack configs merged automatically.
 ```
 claude-kit/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Technology modules (16 stacks, additive)
+├── stacks/         # Technology modules (15 stacks, additive)
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
-├── skills/         # 15 skills installed as ~/.claude/skills/ symlinks
+├── skills/         # 16 skills installed as ~/.claude/skills/ symlinks
 ├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
@@ -189,8 +189,8 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.6.0)
-- [Roadmap](ROADMAP.md) — Completed features + upcoming v2.6.0
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.6.1)
+- [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
 
@@ -251,7 +251,7 @@ Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para C
 
 | Feature | Qué significa | Quién más lo hace |
 |---------|---------------|-------------------|
-| **Stack layering aditivo** | Auto-detecta tu tech (16 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
+| **Stack layering aditivo** | Auto-detecta tu tech (15 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
 | **Templates de servidores MCP** | Config, permisos y reglas de uso listas para 5 servidores MCP comunes (GitHub, Postgres, Supabase, Redis, Slack). Auto-detectados por `/forge bootstrap`. | Nadie |
 | **Template sync con markers** | `<!-- forge:section -->` separa secciones gestionadas de tus customizaciones. `/forge sync` actualiza lo gestionado sin tocar lo tuyo. | Nadie |
 | **Audit scoring (0-10)** | Checklist de 12 ítems (5 obligatorios 0-2, 7 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. Tier de proyecto (simple/standard/complex) ajusta expectations. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
@@ -285,9 +285,9 @@ Los proyectos multi-stack reciben todas las configuraciones de stacks coincident
 ```
 claude-kit/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Módulos tecnológicos (16 stacks, aditivos)
+├── stacks/         # Módulos tecnológicos (15 stacks, aditivos)
 ├── agents/         # 7 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 15 skills instalados como symlinks en ~/.claude/skills/
+├── skills/         # 16 skills instalados como symlinks en ~/.claude/skills/
 ├── mcp/            # Templates de servidores MCP (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
@@ -400,8 +400,8 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.6.0)
-- [Roadmap](ROADMAP.md) — Features completadas + próximo v2.6.0
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.6.1)
+- [Roadmap](ROADMAP.md) — Features completadas + próximas
 
 ## Requisitos
 

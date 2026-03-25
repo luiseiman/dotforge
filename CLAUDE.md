@@ -51,15 +51,15 @@ Each `stacks/<name>/` directory is a technology module containing:
 - `settings.json.partial` — permissions and hooks to merge into project settings
 - Optional `hooks/*.sh` — stack-specific lint/validation hooks
 
-Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer.
+Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer, hookify, trading.
 
 ### Skills & /forge Command
 
-Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `global sync`, `global status`.
+Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `benchmark`, `plugin`, `unregister`, `mcp add`, `global sync`, `global status`.
 
 ### Agents
 
-Six subagent definitions in `agents/`: researcher (read-only exploration), architect (design/tradeoffs), implementer (code+tests), code-reviewer (review by severity), security-auditor (vulnerabilities), test-runner (tests+coverage). Orchestration rules in `.claude/rules/agents.md` define delegation criteria and chaining: researcher → architect → implementer → test-runner → code-reviewer.
+Seven subagent definitions in `agents/`: researcher (read-only exploration), architect (design/tradeoffs), implementer (code+tests), code-reviewer (review by severity), security-auditor (vulnerabilities), test-runner (tests+coverage), session-reviewer (post-session analysis). Orchestration rules in `.claude/rules/agents.md` define delegation criteria and chaining: researcher → architect → implementer → test-runner → code-reviewer.
 
 ### Practices Pipeline
 
