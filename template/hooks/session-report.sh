@@ -120,9 +120,16 @@ cat > "$METRICS_FILE" << JSON
   "rules_matched": $RULES_MATCHED,
   "rules_total": $TOTAL_RULES,
   "rule_coverage": $RULE_COVERAGE,
-  "commits": $COMMITS
+  "commits": $COMMITS,
+  "domain_knowledge_updated": $DOMAIN_CHANGES
 }
 JSON
+
+# --- Domain knowledge tracking ---
+DOMAIN_CHANGES=0
+if [[ -d ".claude/rules/domain" ]]; then
+  DOMAIN_CHANGES=$(echo "$RECENT_FILES" | grep -c '.claude/rules/domain/' 2>/dev/null || echo "0")
+fi
 
 # --- Error tracking reminder ---
 # If files were touched but no errors were logged today, remind the user

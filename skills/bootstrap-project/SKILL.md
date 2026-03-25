@@ -102,6 +102,27 @@ Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corre
 1. Copiar `$CLAUDE_KIT_DIR/template/rules/_common.md` → `.claude/rules/`
 2. Para cada stack detectado, copiar rules de `$CLAUDE_KIT_DIR/stacks/{stack}/rules/` → `.claude/rules/`
 
+## Paso 6b: Domain knowledge scaffolding
+
+**Only if domain info was provided** (via `/forge init` Q4 or user explicitly requests it during bootstrap).
+
+If any detected stack has a `domain:` field in its rules (e.g., `stacks/trading/rules/trading.md`):
+1. Create `.claude/rules/domain/` directory
+2. Copy domain-tagged rules from the stack into `.claude/rules/domain/` instead of `.claude/rules/`
+3. Show: "Domain stack detected: {{domain}}. Domain rules copied to .claude/rules/domain/"
+
+If the user provided domain description (from init Q4 context):
+1. Create `.claude/rules/domain/` directory if not exists
+2. Generate 1-3 seed domain rule files based on the described concepts:
+   - Each file: frontmatter with `globs:` (domain-specific patterns), `domain:` tag, `last_verified:` (today)
+   - Content: key facts, constraints, business rules — concise, imperative, <40 lines each
+   - File names: kebab-case matching the domain area (e.g., `jira-api.md`, `agile-metrics.md`)
+3. Show generated files to user for confirmation before writing
+
+If neither condition is met, skip this paso entirely — no noise for projects without domain context.
+
+**Important:** Domain rules in `.claude/rules/domain/` are project-owned. They are NOT tracked in the forge manifest and are NOT updated by `/forge sync`.
+
 ## Paso 7: Copiar comandos
 
 **Skip if profile is `minimal`.**

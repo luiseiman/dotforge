@@ -41,6 +41,7 @@ Para cada componente, comparar con la versión de claude-kit:
 - ¿Faltan rules del stack detectado? → proponer agregar
 - ¿Rules existentes están desactualizadas? → mostrar diff, proponer update
 - Rules custom del proyecto (no en template) → NO TOCAR
+- `.claude/rules/domain/` → NEVER TOUCH. Domain rules are project-owned knowledge, not template-managed. Skip entirely during sync.
 
 ### Hooks
 - ¿Falta `block-destructive.sh`? → proponer agregar + chmod +x

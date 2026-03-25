@@ -1,5 +1,7 @@
 ---
 globs: "**/*trade*,**/*position*,**/*portfolio*,**/*thesis*,**/*earnings*,**/*screen*,**/*catalyst*"
+domain: trading
+last_verified: 2026-03-25
 ---
 
 # Trading & Investment Analysis Rules

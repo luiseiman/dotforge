@@ -1,13 +1,13 @@
 ---
 name: init-project
-description: Quick-start Claude Code configuration. Auto-detects stack, asks 3 questions to understand the project, generates complete config.
+description: Quick-start Claude Code configuration. Auto-detects stack, asks 4 questions to understand the project, generates complete config.
 ---
 
 # Init Project
 
-MANDATORY FLOW: detect stack → ask 3 questions → WAIT for answers → generate config.
+MANDATORY FLOW: detect stack → ask 4 questions → WAIT for answers → generate config.
 
-You MUST ask the 3 questions in Step 4 and WAIT for the user to answer BEFORE generating any files. Do NOT skip the questions. Do NOT generate config before receiving answers.
+You MUST ask the 4 questions in Step 4 and WAIT for the user to answer BEFORE generating any files. Do NOT skip the questions. Do NOT generate config before receiving answers.
 
 ## Step 1: Check if already initialized
 
@@ -42,20 +42,20 @@ Also scan existing files for additional context:
 - existing test files → testing patterns
 - CI config (.github/workflows, Makefile) → build/test commands
 
-## Step 3: Detect user language and ask 3 questions
+## Step 3: Detect user language and ask 4 questions
 
 Detect language: check previous messages → global CLAUDE.md → system locale → default English.
 
 OVERRIDE RULE: For `/forge init`, ALWAYS present questions in the detected language, even if global CLAUDE.md says "communicate in Spanish/English/etc." The questions are part of the tool's UI, not a conversation.
 
-Present all 3 questions together in one message. Then STOP and WAIT for the user's response. Do NOT proceed to Step 5 until the user answers.
+Present all 4 questions together in one message. Then STOP and WAIT for the user's response. Do NOT proceed to Step 5 until the user answers.
 
 **English version:**
 ```
 ═══ FORGE INIT ═══
 Stack detected: {stacks or "none — generic config"}
 
-3 quick questions to generate a complete config:
+4 quick questions to generate a complete config:
 
 1. What does it do and what does it NOT do?
    → One sentence: the problem it solves, and explicit limits of v0.1.
@@ -68,6 +68,11 @@ Stack detected: {stacks or "none — generic config"}
 3. How do you work?
    → Solo or team, spec-first or prototype-first, testing level from day one.
    Example: "Solo, prototype-first, tests only for critical paths."
+
+4. What domain and role?
+   → What expertise does Claude need? What business concepts are critical?
+   Example: "Expert in Jira API v3, agile metrics, dashboard generation.
+   Key concepts: velocity, cycle time, sprint burndown, JQL."
 ```
 
 **Spanish version:**
@@ -75,7 +80,7 @@ Stack detected: {stacks or "none — generic config"}
 ═══ FORGE INIT ═══
 Stack detectado: {stacks o "ninguno — config genérica"}
 
-3 preguntas rápidas para generar una config completa:
+4 preguntas rápidas para generar una config completa:
 
 1. ¿Qué hace y qué NO hace?
    → Una oración: el problema que resuelve, y los límites explícitos del v0.1.
@@ -88,13 +93,18 @@ Stack detectado: {stacks o "ninguno — config genérica"}
 3. ¿Cómo trabajás?
    → Solo o equipo, spec-first o prototype-first, nivel de testing desde el día uno.
    Ejemplo: "Solo, prototype-first, tests solo para paths críticos."
+
+4. ¿Qué dominio y qué rol?
+   → Qué expertise necesita Claude y qué conceptos del negocio son críticos.
+   Ejemplo: "Expert en Jira API v3, agile metrics, dashboard generation.
+   Conceptos clave: velocity, cycle time, sprint burndown, JQL."
 ```
 
 Use the appropriate version based on detected language. For other languages, translate the questions following the same structure.
 
 STOP HERE. Wait for the user's response before proceeding.
 
-If the user answers in a single message covering all 3, parse accordingly.
+If the user answers in a single message covering all 4, parse accordingly.
 If the user says "skip", proceed with auto-detected info only.
 
 **Important:** Generate CLAUDE.md content in English (Claude-consumed content must be in English per project conventions). The user's answers are incorporated as-is regardless of their language.
@@ -123,6 +133,12 @@ Insert the user's answers into the `<!-- forge:custom -->` section of CLAUDE.md:
 
 ## Working style
 {answer to question 3 — solo/team, approach, testing expectations}
+
+## Role
+{Generated from answer to question 4 — Claude's role and expertise for this project}
+
+## Domain
+{Generated from answer to question 4 — key domain concepts, business rules, reference data}
 ```
 
 If the user provided build/test commands in their answers, also update the `## Build & Test` section above the forge:custom marker.
@@ -133,6 +149,19 @@ If the user mentioned specific services, external APIs, or sensitive areas in qu
 - Mentioned Supabase → ensure `Read(**/.env)` covers SUPABASE_* vars
 - Mentioned external API → add API key env var patterns
 - Mentioned "no auth yet" → no auth-related deny needed
+
+### Domain rules scaffolding
+
+If the user answered question 4 with domain/role info:
+1. Create `.claude/rules/domain/` directory
+2. Based on the domain concepts mentioned, generate 1-3 domain rule files:
+   - Each file covers one domain area (e.g., jira-api.md, agile-metrics.md)
+   - Each file has frontmatter: globs (specific to domain keywords), description, domain tag, last_verified
+   - Content: key facts, constraints, and gotchas Claude needs to know about that domain
+   - Keep each file under 40 lines — concise, imperative, no filler
+3. Show the generated files to the user for review before writing
+
+If the user skipped question 4, skip this entirely.
 
 ## Step 6: Output
 
@@ -159,7 +188,7 @@ Score: {X}/10 (run /forge audit for details)
 
 ## Constraints
 
-- Ask exactly 3 questions, together, not sequentially
+- Ask exactly 4 questions, together, not sequentially
 - If user skips questions, proceed with auto-detected info — never block on missing answers
 - Keep the output concise — no walls of text
 - The user's answers go in `<!-- forge:custom -->` section (protected from future syncs)

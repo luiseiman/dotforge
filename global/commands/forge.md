@@ -32,6 +32,9 @@ Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
 | `rule-check` | `.claude/rules/` con al menos 1 rule | "No hay reglas para evaluar. Ejecutá `/forge bootstrap` primero." |
 | `benchmark` | `.claude/settings.json` + `CLAUDE.md` + git repo limpio | "Requiere proyecto con config claude-kit y working tree limpio." |
 | `mcp add <server>` | target `settings.json` exists (project) OR `--global` flag | Si no hay settings.json: "No settings.json found. Run `/forge bootstrap` first, or use `--global` to install globally." |
+| `domain extract` | `CLAUDE.md` o `.claude/` | "No hay proyecto configurado. Ejecutá `/forge init` o `/forge bootstrap` primero." |
+| `domain list` | `.claude/rules/domain/` | "No domain rules found. Run `/forge domain extract` to generate from existing sources." |
+| `domain sync-vault` | `.claude/rules/domain/` con al menos 1 file con `domain_source: vault://` | "No vault-linked domain rules found." |
 | `capture` | — | — |
 | `update` | — | — |
 | `watch` | — | — |
@@ -206,6 +209,18 @@ Deprecadas: {{N}} retiradas
 ```
 Leer de practices/inbox/, evaluating/, active/, deprecated/.
 
+### `domain extract`
+Ejecutar el skill `/domain-extract` en el proyecto actual.
+Analiza fuentes existentes (CLAUDE.md, auto-memory, CLAUDE_ERRORS.md, agent-memory, rules, git log) y propone domain rules para aprobación del usuario.
+
+### `domain list`
+Listar `.claude/rules/domain/` con status de cada archivo (domain tag, globs, last_verified, staleness).
+Si no existe el directorio: "No domain rules found. Run `/forge domain extract` to generate from existing sources."
+
+### `domain sync-vault`
+Ejecutar el skill `/domain-extract` con flag sync-vault.
+Para domain rules con `domain_source: vault://path` en frontmatter, compara contra la nota del vault y propone actualizaciones.
+
 ### `version`
 Leer `$CLAUDE_KIT_DIR/VERSION` y mostrar.
 
@@ -231,6 +246,9 @@ Comandos:
   insights      Analizar sesiones pasadas y generar recomendaciones
   unregister    Eliminar proyecto del registro (no borra config)
   mcp add       Instalar MCP server template en proyecto o global [--global]
+  domain extract  Extraer domain knowledge de fuentes existentes del proyecto
+  domain list     Listar domain rules con status
+  domain sync-vault  Sincronizar domain rules con notas del vault
   capture       Registrar insight o práctica descubierta
   update        Pipeline de actualización de prácticas
   watch         Buscar actualizaciones en docs Anthropic

@@ -114,6 +114,15 @@ Score: {{X.X}}/10 {{nivel}}
 {{✅|⚠️}} .gitignore — {{detalle}}
 {{✅|⚠️}} Prompt injection scan — {{detalle}}
 
+── DOMAIN KNOWLEDGE ──
+Role defined:     {{✓ if ## Role exists in CLAUDE.md with content | ✗ otherwise}}
+Domain rules:     {{N files in .claude/rules/domain/ | "none"}}
+Stale (>90 days): {{N files with last_verified older than 90 days | "none"}}
+Coverage:         {{list glob patterns from domain rules → cross-reference with git log --name-only -30 to estimate % of recent edits covered}}
+
+Note: Domain knowledge is informational only — does not affect the audit score.
+If no domain rules exist and the project has business logic, suggest: /forge domain extract
+
 ── GAPS CRÍTICOS ──
 1. {{qué falta}} → {{acción recomendada}}
 2. ...
