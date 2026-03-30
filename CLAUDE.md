@@ -46,6 +46,8 @@ grep -rL "^globs:" .claude/rules/ stacks/*/rules/
 
 `template/` is the base scaffold applied by `/forge bootstrap`. Files use `.tmpl` extension with `<!-- forge:section -->` markers that get replaced during bootstrap. The `<!-- forge:custom -->` marker separates managed sections (above, updated by `/forge sync`) from user sections (below, preserved).
 
+Key template files: `rules/domain-learning.md` (globs:**/* rule that instructs Claude to persist domain discoveries to `.claude/rules/domain/`), `hooks/post-compact.sh` (PostCompact hook — writes compact summary + git state to `.claude/session/last-compact.md`), `hooks/session-restore.sh` (SessionStart hook — re-injects last-compact.md when resuming after compaction).
+
 `global/` mirrors this pattern for `~/.claude/` — the user's global Claude Code config. `global/sync.sh` manages symlinks for skills, agents, and commands into `~/.claude/`.
 
 ### Stacks
@@ -59,7 +61,7 @@ Stacks are additive: `/forge bootstrap` detects the project's tech and layers ma
 
 ### Skills & /forge Command
 
-Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `benchmark`, `plugin`, `unregister`, `mcp add`, `global sync`, `global status`.
+Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `benchmark`, `plugin`, `unregister`, `mcp add`, `domain extract|sync-vault|list`, `global sync`, `global status`.
 
 ### Agents
 

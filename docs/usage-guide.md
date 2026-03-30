@@ -1,7 +1,7 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.6.1
-**Date:** 2026-03-24
+**Version:** 2.7.0
+**Date:** 2026-03-30
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
 
@@ -23,6 +23,8 @@ claude-kit is a configuration factory for Claude Code. It generates and maintain
 12. [FAQ](#12-faq)
 13. [MCP server templates](#13-mcp-server-templates)
 14. [Model routing](#14-model-routing)
+15. [Domain knowledge commands](#15-domain-knowledge-commands)
+16. [Context continuity](#16-context-continuity)
 
 ---
 
@@ -265,6 +267,9 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge export codex` | Export config to Codex |
 | `/forge export windsurf` | Export config to Windsurf |
 | `/forge export openclaw` | Export config to OpenClaw |
+| `/forge domain extract` | Extract domain rules from project code |
+| `/forge domain sync-vault` | Sync domain rules to Obsidian vault |
+| `/forge domain list` | List current domain rules with coverage |
 
 ### Global commands
 
@@ -733,3 +738,70 @@ Start with sonnet. Escalate to opus when: 2+ valid approaches with real conseque
          │ /forge pipeline  │  <- view status
          └──────────────────┘
 ```
+
+---
+
+## 15. Domain knowledge commands
+
+Domain rules capture what a project does, not just how to code in it. They live in `.claude/rules/domain/` and are never overwritten by `/forge sync`.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `/forge domain extract` | Analyzes code, CLAUDE.md, and git history to generate initial domain rules in `.claude/rules/domain/` |
+| `/forge domain sync-vault` | Syncs domain rules to `decisions/` in your Obsidian vault (requires `$VAULT_PATH`) |
+| `/forge domain list` | Lists existing domain rules with their globs and last_verified date |
+
+### Domain rule frontmatter
+
+```yaml
+---
+globs: "src/billing/**"
+domain: billing
+last_verified: 2026-03-30
+domain_source: code-review   # code-review | git-history | manual | practice
+---
+```
+
+### When to run `/forge domain extract`
+
+- After bootstrap, before starting work — establishes the baseline
+- After a major architectural change — captures the new reality
+- When onboarding to an existing project — faster than reading all the code
+
+Domain rules complement, not replace, CLAUDE.md. CLAUDE.md = prescriptive overview. Domain rules = accumulated specific knowledge that grows over time.
+
+---
+
+## 16. Context continuity
+
+Claude Code compacts the context window when it fills up. The PostCompact + session-restore hook pair preserves task continuity across compaction events.
+
+### How it works
+
+```
+1. Context fills → compaction triggered
+2. post-compact.sh writes:
+   - compact_summary (what was being done)
+   - git state (current branch, last commits, dirty files)
+   → .claude/session/last-compact.md
+
+3. Next session starts (source="compact")
+4. session-restore.sh reads last-compact.md
+   → re-injects as context before the first user message
+5. Claude resumes aware of the previous state
+```
+
+### Configuration
+
+```bash
+# Compact at 75% instead of 90% — more room for the summary
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75
+```
+
+Add to `~/.zshrc` or `~/.bashrc` to persist.
+
+### Proactive updates
+
+Claude also updates `.claude/session/last-compact.md` after completing significant tasks — not only on compaction events. This is defined in `template/rules/_common.md`. The file is ephemeral (session-scoped) and is not committed to git.

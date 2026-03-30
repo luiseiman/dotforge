@@ -58,13 +58,39 @@ Rules with `globs:` frontmatter auto-load by file path.
 - Keep <50 lines per rule
 
 ### Hooks — Automation
-Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`
+Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PostCompact`
 
 Essential hooks:
 1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push
 2. **lint-on-save** (PostToolUse:Write|Edit) — auto lint per stack
+3. **post-compact** (PostCompact) — capture summary to `.claude/session/last-compact.md`
+4. **session-restore** (SessionStart, source:compact) — re-inject last-compact.md on resume
 
 Exit codes: 0 = ok, 1 = error (warning), 2 = block (stop operation)
+
+### Domain rules — Project knowledge layer
+
+Domain rules live in `.claude/rules/domain/` and represent accumulated knowledge about the project's specific domain (business logic, architectural decisions, non-obvious constraints). Unlike stack rules (how to code), domain rules encode what the project does and why.
+
+**When to use each layer:**
+
+| Layer | Use for |
+|-------|---------|
+| `CLAUDE.md` | Overview: role, stack, build commands, architecture overview |
+| `template/rules/` + `stacks/*/rules/` | Technical patterns: how to code in this stack |
+| `.claude/rules/domain/` | Domain knowledge: what this project does, decisions with context |
+
+**Extended frontmatter for domain rules:**
+```yaml
+---
+globs: "src/payments/**"
+domain: payments
+last_verified: 2026-03-30
+domain_source: code-review
+---
+```
+
+Use `/forge domain extract` to generate initial domain rules from existing code. Use `/forge domain list` to see current coverage.
 
 ### Commands — Repeatable actions
 Files in `.claude/commands/name.md`. Invocable via `/name`.
@@ -164,6 +190,12 @@ CONTEXT → PLANNING → EXECUTION → VALIDATION → REFINEMENT → DOCUMENTATI
 - Activate for tasks >3 files or architectural changes
 - Discrete steps: input → action → verification
 - If something goes wrong → stop, review, re-plan
+
+### Context management
+- Set `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75` to compact at 75% — gives post-compact hook more room
+- After completing a significant task, update `.claude/session/last-compact.md` proactively
+- The PostCompact → session-restore cycle recovers context automatically; don't rely on it exclusively
+- Use subagents for token-heavy exploration to preserve the main thread
 
 ### Evolutionary error tracking
 - CLAUDE_ERRORS.md: per-project log
@@ -271,13 +303,39 @@ Las rules con frontmatter `globs:` se cargan automáticamente por path.
 - Mantener <50 líneas por rule
 
 ### Hooks — Automatización
-Eventos disponibles: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`
+Eventos disponibles: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PostCompact`
 
 Hooks esenciales:
 1. **block-destructive** (PreToolUse:Bash) — bloquear rm -rf, DROP, force push
 2. **lint-on-save** (PostToolUse:Write|Edit) — lint automático por stack
+3. **post-compact** (PostCompact) — captura resumen en `.claude/session/last-compact.md`
+4. **session-restore** (SessionStart, source:compact) — re-inyecta last-compact.md al retomar
 
 Exit codes: 0 = ok, 1 = error (warning), 2 = block (detener operación)
+
+### Domain rules — Capa de conocimiento del proyecto
+
+Las domain rules viven en `.claude/rules/domain/` y representan conocimiento acumulado sobre el dominio específico del proyecto (lógica de negocio, decisiones arquitectónicas, restricciones no-obvias). A diferencia de las stack rules (cómo codificar), las domain rules codifican qué hace el proyecto y por qué.
+
+**Cuándo usar cada capa:**
+
+| Capa | Para qué |
+|------|----------|
+| `CLAUDE.md` | Overview: rol, stack, comandos de build, resumen arquitectónico |
+| `template/rules/` + `stacks/*/rules/` | Patrones técnicos: cómo codificar en este stack |
+| `.claude/rules/domain/` | Conocimiento de dominio: qué hace este proyecto, decisiones con contexto |
+
+**Frontmatter extendido para domain rules:**
+```yaml
+---
+globs: "src/payments/**"
+domain: payments
+last_verified: 2026-03-30
+domain_source: code-review
+---
+```
+
+Usar `/forge domain extract` para generar domain rules iniciales desde código existente. Usar `/forge domain list` para ver cobertura actual.
 
 ### Commands — Acciones repetibles
 Archivos en `.claude/commands/nombre.md`. Invocables via `/nombre`.
@@ -377,6 +435,12 @@ CONTEXTO → PLANIFICACIÓN → EJECUCIÓN → VALIDACIÓN → REFINAMIENTO → 
 - Activar para tareas >3 archivos o cambio arquitectónico
 - Pasos discretos: entrada → acción → verificación
 - Si algo se tuerce → parar, revisar, re-planificar
+
+### Gestión de contexto
+- Configurar `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75` para compactar al 75% — le da más espacio al hook post-compact
+- Después de completar una tarea significativa, actualizar `.claude/session/last-compact.md` proactivamente
+- El ciclo PostCompact → session-restore recupera contexto automáticamente; no depender exclusivamente de eso
+- Usar subagentes para exploración intensiva en tokens para preservar el thread principal
 
 ### Error tracking evolutivo
 - CLAUDE_ERRORS.md: registro por proyecto

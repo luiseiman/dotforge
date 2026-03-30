@@ -59,6 +59,37 @@ Claude Code's auto-memory captures insights that no other layer does: build comm
 ### Why a separate memory.md rule?
 CLAUDE_ERRORS.md needs to be read before modifying code, but injecting the entire file as a rule would waste context on every tool use. Instead, the memory.md rule is a lightweight reminder that tells Claude to READ the file when relevant — not a dump of its contents.
 
+## Context Continuity (PostCompact cycle)
+
+Claude Code compacts the context window when it approaches the token limit. Without intervention, resuming after compaction means Claude has no memory of what was just done.
+
+**How it works:**
+
+```
+Session running → context fills → compaction triggered
+       ↓
+post-compact.sh (PostCompact hook)
+  writes compact_summary + git state → .claude/session/last-compact.md
+       ↓
+Next session starts with source="compact"
+  session-restore.sh (SessionStart hook)
+  re-injects last-compact.md as context
+       ↓
+Claude resumes with full task awareness
+```
+
+**Configuration:** set `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75` in your shell to trigger compaction at 75% instead of the default (90%), giving `post-compact.sh` more room to write useful summaries.
+
+Claude also updates `last-compact.md` proactively after significant tasks (defined in `template/rules/_common.md`) — not just on compaction events.
+
+**Files:**
+
+| File | Purpose |
+|------|---------|
+| `template/hooks/post-compact.sh` | PostCompact hook — captures summary + git state |
+| `template/hooks/session-restore.sh` | SessionStart hook — re-injects summary on resume |
+| `template/rules/_common.md` | Context Continuity section — proactive update rules |
+
 ## Template Files
 
 | File | Purpose |
@@ -132,6 +163,37 @@ La auto-memory de Claude Code captura insights que ninguna otra capa captura: pe
 
 ### ¿Por qué una regla memory.md separada?
 CLAUDE_ERRORS.md necesita leerse antes de modificar código, pero inyectar el archivo completo como regla desperdiciaría contexto en cada uso de herramienta. En su lugar, la regla memory.md es un recordatorio liviano que le dice a Claude que LEA el archivo cuando sea relevante — no un volcado de su contenido.
+
+## Context Continuity (ciclo PostCompact)
+
+Claude Code compacta el contexto cuando se acerca al límite de tokens. Sin intervención, retomar después de una compactación significa que Claude no recuerda lo que acababa de hacer.
+
+**Cómo funciona:**
+
+```
+Sesión en curso → contexto se llena → compactación disparada
+       ↓
+post-compact.sh (hook PostCompact)
+  escribe compact_summary + estado git → .claude/session/last-compact.md
+       ↓
+Nueva sesión inicia con source="compact"
+  session-restore.sh (hook SessionStart)
+  re-inyecta last-compact.md como contexto
+       ↓
+Claude retoma con conciencia completa de la tarea
+```
+
+**Configuración:** establecer `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75` en el shell para disparar compactación al 75% en lugar del default (90%), dándole más espacio a `post-compact.sh` para escribir resúmenes útiles.
+
+Claude también actualiza `last-compact.md` proactivamente después de tareas significativas (definidas en `template/rules/_common.md`) — no solo en eventos de compactación.
+
+**Archivos:**
+
+| Archivo | Propósito |
+|---------|-----------|
+| `template/hooks/post-compact.sh` | Hook PostCompact — captura resumen + estado git |
+| `template/hooks/session-restore.sh` | Hook SessionStart — re-inyecta resumen al retomar |
+| `template/rules/_common.md` | Sección Context Continuity — reglas de actualización proactiva |
 
 ## Archivos del Template
 

@@ -4,6 +4,30 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.7.0 (2026-03-30)
+
+### Domain Knowledge Layer + Context Continuity
+
+#### Domain Knowledge Layer
+
+- Nuevo: `template/rules/domain-learning.md` — regla `globs:**/*` que instruye a Claude a persistir descubrimientos de dominio en `.claude/rules/domain/`
+- Nuevo: `skills/domain-extract/SKILL.md` — skill `/forge domain extract|sync-vault|list` para extraer y gestionar conocimiento de dominio del proyecto
+- Nuevo: frontmatter extendido para domain rules: campos `domain:`, `last_verified:`, `domain_source:`
+- Mejora: `template/CLAUDE.md.tmpl` — secciones `## Role` y `## Domain` añadidas al template base
+- Mejora: `/forge init` — pregunta 4 sobre dominio/rol del proyecto
+- Mejora: `/forge bootstrap` — crea archivos seed en `domain/` durante el bootstrap
+- Mejora: `/forge audit` — muestra sección de domain knowledge (informacional, sin impacto en score)
+- Mejora: `/forge sync` — skippea explícitamente `.claude/rules/domain/` (nunca sobrescribe conocimiento de dominio acumulado)
+
+#### Context Continuity
+
+- Nuevo: `template/hooks/post-compact.sh` — hook PostCompact que escribe `compact_summary` + estado git en `.claude/session/last-compact.md`
+- Nuevo: `template/hooks/session-restore.sh` — hook SessionStart con `source="compact"` que re-inyecta last-compact.md como contexto al iniciar sesión después de compactación
+- Mejora: `template/settings.json.tmpl` — registra ambos hooks (PostCompact + SessionStart)
+- Mejora: `template/rules/_common.md` — sección Context Continuity: Claude actualiza last-compact.md después de tareas significativas
+
+---
+
 ## v2.6.1 (2026-03-24)
 
 ### Practices pipeline — Python debugging rules
