@@ -36,6 +36,11 @@
             "type": "command",
             "command": ".claude/hooks/check-updates.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-restore.sh",
+            "timeout": 5
           }
         ]
       }
@@ -59,6 +64,35 @@
           {
             "type": "command",
             "command": ".claude/hooks/lint-on-save.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/detect-stack-drift.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-compact.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-report.sh",
             "timeout": 10
           }
         ]
