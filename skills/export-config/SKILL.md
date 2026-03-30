@@ -27,7 +27,7 @@ If none exist, error: "No claude-kit configuration found. Run `/forge bootstrap`
 
 Generate a single `.cursorrules` file at project root:
 1. Extract content from `CLAUDE.md` (skip forge markers)
-2. Append all rules from `.claude/rules/*.md` (strip `globs:` frontmatter, keep content)
+2. Append all rules from `.claude/rules/*.md` (strip YAML frontmatter — `globs:`, `paths:`, `alwaysApply:`, etc. — keep content)
 3. Convert deny list to text: "DO NOT: read/modify files matching: .env, *.key, *.pem, *credentials*"
 4. Convert hooks to text instructions: "Before executing bash commands, check for destructive patterns: rm -rf, DROP TABLE, force push"
 5. Wrap in a single markdown document

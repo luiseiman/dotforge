@@ -37,3 +37,12 @@ The skill analyzes the description and generates the appropriate .local.md file.
 - Keep patterns simple — complex regex is hard to debug
 - Prefer `warn` over `block` unless the operation is truly dangerous
 - Test rules by triggering the pattern and checking the warning appears
+
+## Hook types in settings.json (separate from hookify DSL)
+
+Hookify generates `command` type hooks. Claude Code also supports these types directly in settings.json:
+- `http` — POST to a URL: `{"type": "http", "url": "http://localhost:8080/hook", "timeout": 5}`
+- `prompt` — LLM decision: `{"type": "prompt", "prompt": "Is this bash command safe to run?"}`
+- `agent` — spawn subagent: `{"type": "agent", "agent": "security-auditor"}`
+
+These are added manually to settings.json, not via `/hookify`.

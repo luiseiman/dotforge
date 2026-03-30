@@ -31,7 +31,7 @@ Save tier in registry entry.
 Before scoring, validate internal coherence. Run `$CLAUDE_KIT_DIR/tests/test-config.sh <project-dir>` or perform equivalent checks inline:
 
 1. Hooks referenced in settings.json exist and are executable
-2. Rules have valid `globs:` frontmatter
+2. Rules have valid `globs:` or `paths:` frontmatter (with `alwaysApply: false` for lazy loading)
 3. Rule globs match at least 1 real file in the project
 4. settings.json is valid JSON with deny list covering .env, *.key, *.pem
 5. CLAUDE.md has minimum required sections (stack, build/test, architecture)
@@ -56,7 +56,7 @@ Para cada item del checklist, verificar existencia **y calidad**:
    - Estructura o arquitectura del proyecto
    - NO contar solo líneas — un archivo de 50 líneas de boilerplate es score 1
 2. **settings.json** — ¿Existe en `.claude/`? ¿Tiene permisos explícitos? ¿Tiene deny list?
-3. **Rules** — ¿Hay al menos 1 rule en `.claude/rules/`? ¿Tiene frontmatter con globs?
+3. **Rules** — ¿Hay al menos 1 rule en `.claude/rules/`? ¿Tiene frontmatter con `globs:` o `paths:`?
 4. **Hook block-destructive** — Verificar:
    - ¿Existe el archivo `.claude/hooks/block-destructive.sh`?
    - ¿Es ejecutable? (`test -x` o verificar permisos)

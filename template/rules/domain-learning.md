@@ -21,7 +21,7 @@ assumptions about business logic, and enrich it when you discover new facts.
 
 1. Check if a relevant file exists in `.claude/rules/domain/`
 2. If yes: add the new fact to that file (prefer existing files over new ones)
-3. If no: create a new file with frontmatter: globs (domain-specific patterns), description, domain tag, last_verified (today)
+3. If no: create a new file with frontmatter: globs (domain-specific patterns, eager loading) or paths + alwaysApply: false (lazy loading), description, domain tag, last_verified (today)
 4. Never duplicate — check existing content first
 5. Keep each file under 40 lines. Split into separate files if a topic grows beyond that.
 6. Content: factual, concise, imperative. No filler. English only.

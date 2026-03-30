@@ -1,7 +1,7 @@
 # Guía de Uso — claude-kit
 
-**Versión:** 2.0.0
-**Fecha:** 2026-03-20
+**Versión:** 2.7.1
+**Fecha:** 2026-03-30
 
 claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene la carpeta `.claude/` de tus proyectos: reglas, hooks, permisos, agentes y comandos. Todo es markdown + shell scripts — no hay código de aplicación.
 
@@ -21,6 +21,10 @@ claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene
 10. [Estructura generada](#10-estructura-generada)
 11. [Validación de configuración](#11-validación-de-configuración)
 12. [FAQ](#12-faq)
+13. [Templates MCP](#13-templates-mcp)
+14. [Model routing](#14-model-routing)
+15. [Comandos de domain knowledge](#15-comandos-de-domain-knowledge)
+16. [Continuidad de contexto](#16-continuidad-de-contexto)
 
 ---
 
@@ -46,7 +50,7 @@ cd ~/Documents/GitHub/claude-kit   # o donde tengas clonado claude-kit
 | Componente | Ubicación | Método |
 |-----------|-----------|--------|
 | Skills (15) | `~/.claude/skills/` | Symlinks |
-| Agents (6) | `~/.claude/agents/` | Symlinks |
+| Agents (7) | `~/.claude/agents/` | Symlinks |
 | Comando `/forge` | `~/.claude/commands/forge.md` | Copia (Claude Code no sigue symlinks para commands) |
 | CLAUDE.md global | `~/.claude/CLAUDE.md` | Merge con preservación de `<!-- forge:custom -->` |
 | settings.json global | `~/.claude/settings.json` | Merge de deny list + hooks |
@@ -65,7 +69,7 @@ Muestra:
 CLAUDE.md:     ✓ sincronizado
 settings.json: deny list 9 items (plantilla: 9)
 Skills:        15/15 instalados
-Agents:        6/6 instalados
+Agents:        7/7 instalados
 Commands:      forge.md (archivo)
 ```
 
@@ -263,6 +267,9 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge export codex` | Exportar config a Codex |
 | `/forge export windsurf` | Exportar config a Windsurf |
 | `/forge export openclaw` | Exportar config a OpenClaw |
+| `/forge domain extract` | Extraer domain rules del código del proyecto |
+| `/forge domain sync-vault` | Sincronizar domain rules al vault de Obsidian |
+| `/forge domain list` | Listar domain rules con cobertura |
 
 ### Comandos globales
 
@@ -277,7 +284,9 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 
 | Comando | Descripción |
 |---------|-------------|
-| `/forge capture "texto"` | Registrar un insight en inbox |
+| `/forge capture "texto"` | Registrar un insight en inbox (explícito) |
+| `/forge capture` | Modo auto-detección: analiza contexto, propone insight, pide Y/n/edit |
+| `/cap` | Alias shorthand de `/forge capture` (modo auto-detección) |
 | `/forge update` | Procesar inbox → evaluar → incorporar |
 | `/forge watch` | Buscar actualizaciones en docs de Anthropic |
 | `/forge scout` | Revisar repos curados por patterns |
@@ -307,7 +316,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | **devcontainer** | `.devcontainer/`, `devcontainer.json` |
 
 Cada stack aporta:
-- `rules/*.md` — reglas contextuales con `globs:` frontmatter
+- `rules/*.md` — reglas contextuales con `globs:` frontmatter (eager loading). Para lazy loading, usar `paths:` como CSV sin quotes con `alwaysApply: false`
 - `settings.json.partial` — permisos y hooks específicos del stack
 - (Opcional) `hooks/*.sh` — hooks de validación específicos
 
@@ -325,7 +334,7 @@ Cada stack aporta:
 |---|------|---|---|---|
 | 1 | **CLAUDE.md** | No existe | Existe pero incompleto (<20 líneas útiles) | Completo: stack, arquitectura, comandos build/test, convenciones |
 | 2 | **settings.json** | No existe | Sin deny list o permisos excesivos | Permisos explícitos + deny list de seguridad |
-| 3 | **Rules contextuales** | No existen | Sin frontmatter `globs:` | Rules con globs específicos por área |
+| 3 | **Rules contextuales** | No existen | Sin frontmatter `globs:`/`paths:` | Rules con globs específicos por área + modo de carga correcto |
 | 4 | **Hook block-destructive** | No existe | Existe pero mal configurado | Existe + ejecutable + wired en settings.json |
 | 5 | **Comandos build/test** | No documentados | En README pero no en CLAUDE.md | Documentados en CLAUDE.md con comandos exactos |
 
@@ -425,7 +434,7 @@ Deprecadas: 2 retiradas
 | Rules (_common + stack) | ✓ | ✓ | ✓ |
 | Hook lint-on-save | — | ✓ | ✓ |
 | Comandos (audit, health, debug, review) | — | ✓ | ✓ |
-| Agentes (6) + orquestación | — | ✓ | ✓ |
+| Agentes (7) + orquestación | — | ✓ | ✓ |
 | CLAUDE_ERRORS.md | — | ✓ (vacío) | ✓ (pre-poblado) |
 | Rule memory.md | — | ✓ | ✓ |
 | Hook warn-missing-test | — | — | ✓ |
@@ -575,7 +584,7 @@ Sí, pero perdés las reglas de comportamiento (comunicación, planificación, p
 ### ¿Cómo agrego un stack que no existe?
 
 Crear directorio en `claude-kit/stacks/<nombre>/` con:
-- `rules/*.md` — reglas con frontmatter `globs:`
+- `rules/*.md` — reglas con frontmatter `globs:` (eager) o `paths:` + `alwaysApply: false` (lazy)
 - `settings.json.partial` — permisos y hooks
 
 Ver `docs/creating-stacks.md` para detalles.
@@ -659,3 +668,135 @@ No. Con perfil `minimal` no se instalan. Con `standard` y `full` sí, pero Claud
          │ /forge pipeline  │  ← ver estado
          └──────────────────┘
 ```
+
+---
+
+## 13. Templates MCP
+
+Los servidores MCP extienden Claude Code con herramientas para servicios externos. claude-kit provee templates listos en `mcp/` con configuración, permisos y reglas de uso.
+
+### Templates disponibles
+
+| Servidor | Paquete | Herramientas |
+|----------|---------|-------------|
+| `github` | `@modelcontextprotocol/server-github` | Issues, PRs, búsqueda de código, contenidos |
+| `postgres` | `@modelcontextprotocol/server-postgres` | Queries SQL read-only, inspección de schema |
+| `supabase` | `@supabase/mcp-server-supabase` | Proyectos, tablas, migraciones, branches, logs |
+| `redis` | `mcp-server-redis` (community) | Inspección de keys, monitoreo de streams |
+| `slack` | `@modelcontextprotocol/server-slack` | Mensajes, canales, búsqueda |
+
+### Instalación
+
+**Paso 1 — Registrar el servidor globalmente (una vez por máquina):**
+Copiar la entrada `mcpServers` de `mcp/<server>/config.json` a `~/.claude/settings.json`. Reemplazar `${ENV_VAR}` con valores reales o setear env vars en el perfil del shell.
+
+**Paso 2 — Instalar reglas del proyecto:**
+```bash
+cp mcp/<server>/rules.md .claude/rules/mcp-<server>.md
+```
+
+O dejar que `/forge bootstrap` lo maneje automáticamente.
+
+### Postura de seguridad
+
+Cada template define tres niveles:
+- **Auto-permitido**: operaciones de lectura (list, get, search)
+- **Requiere prompt**: operaciones de escritura no en allow/deny
+- **Siempre denegado**: operaciones destructivas (delete_project, merge_pull_request, flushdb)
+
+---
+
+## 14. Model routing
+
+claude-kit incluye criterios explícitos de selección de modelo en `template/rules/model-routing.md`.
+
+### Criterios
+
+| Modelo | Usar para |
+|--------|-----------|
+| **haiku** | Búsquedas, tests, transforms repetitivos, lookups cortos |
+| **sonnet** | Implementación, bug fixing, code review, debugging, docs |
+| **opus** | Decisiones arquitectónicas, auditorías de seguridad, tareas ambiguas de alto riesgo |
+
+### Asignaciones de agentes
+
+| Agente | Modelo | Razón |
+|--------|--------|-------|
+| researcher | haiku | Exploración — velocidad sobre profundidad |
+| test-runner | haiku | Ejecutar y reportar — no requiere razonamiento |
+| implementer | sonnet | Trabajo de implementación estándar |
+| code-reviewer | sonnet | Review enfocado |
+| session-reviewer | sonnet | Análisis de patrones |
+| architect | opus | Tradeoffs con consecuencias duraderas |
+| security-auditor | opus | Perder una vulnerabilidad tiene consecuencias en prod |
+
+### Regla de escalación
+
+Empezar con sonnet. Escalar a opus cuando: 2+ approaches válidos con consecuencias reales, tarea toca seguridad/integridad de datos/producción, o después de 2 intentos el approach sigue poco claro.
+
+---
+
+## 15. Comandos de domain knowledge
+
+Las domain rules capturan qué hace un proyecto, no solo cómo codificar en él. Viven en `.claude/rules/domain/` y nunca se sobrescriben por `/forge sync`.
+
+### Comandos
+
+| Comando | Descripción |
+|---------|-------------|
+| `/forge domain extract` | Analiza código, CLAUDE.md e historial git para generar domain rules iniciales |
+| `/forge domain sync-vault` | Sincroniza domain rules a `decisions/` en tu vault de Obsidian |
+| `/forge domain list` | Lista domain rules existentes con globs y fecha de verificación |
+
+### Frontmatter de domain rules
+
+```yaml
+---
+globs: "src/billing/**"
+domain: billing
+last_verified: 2026-03-30
+domain_source: code-review   # code-review | git-history | manual | practice
+---
+```
+
+Para lazy loading en proyectos grandes con muchas domain rules, usar `paths:` como CSV sin quotes con `alwaysApply: false` en vez de `globs:`.
+
+### Cuándo ejecutar `/forge domain extract`
+
+- Después del bootstrap, antes de empezar a trabajar — establece la baseline
+- Después de un cambio arquitectónico grande — captura la nueva realidad
+- Al onboardear a un proyecto existente — más rápido que leer todo el código
+
+---
+
+## 16. Continuidad de contexto
+
+Claude Code compacta la ventana de contexto cuando se llena. El par de hooks PostCompact + session-restore preserva la continuidad de tareas entre compactaciones.
+
+### Cómo funciona
+
+```
+1. Contexto se llena → compactación triggered
+2. post-compact.sh escribe:
+   - compact_summary (qué se estaba haciendo)
+   - git state (branch actual, últimos commits, archivos dirty)
+   → .claude/session/last-compact.md
+
+3. Siguiente sesión arranca (source="compact")
+4. session-restore.sh lee last-compact.md
+   → re-inyecta como contexto antes del primer mensaje del usuario
+5. Claude retoma consciente del estado anterior
+```
+
+### Configuración
+
+```bash
+# Compactar al 75% en vez de 90% — más espacio para el resumen
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75
+```
+
+Agregar a `~/.zshrc` o `~/.bashrc` para persistir.
+
+### Actualizaciones proactivas
+
+Claude también actualiza `.claude/session/last-compact.md` después de completar tareas significativas — no solo en eventos de compactación. Esto se define en `template/rules/_common.md`. El archivo es efímero (scoped a la sesión) y no se commitea a git.

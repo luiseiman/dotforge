@@ -14,7 +14,9 @@ Read all `.md` files in `.claude/rules/`. For each:
 2. Count lines of content (excluding frontmatter)
 3. Record filename and glob pattern
 
-If a rule has no `globs:` frontmatter, classify as **always-loaded** (loads every session regardless of files touched).
+If a rule has no `globs:` or `paths:` frontmatter, classify as **always-loaded** (loads every session regardless of files touched).
+
+Rules with `globs:` load eagerly at session start. Rules with `paths:` + `alwaysApply: false` load lazily (only when a matching file is touched). Note: `paths:` must be unquoted CSV — YAML arrays and quoted strings fail silently.
 
 ## Step 2: Collect file activity from git history
 

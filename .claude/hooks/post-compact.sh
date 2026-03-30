@@ -5,6 +5,7 @@
 set -euo pipefail
 
 HOOK_INPUT=$(cat)
+
 TRIGGER=$(echo "$HOOK_INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('trigger','auto'))" 2>/dev/null || echo "auto")
 SUMMARY=$(echo "$HOOK_INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('compact_summary',''))" 2>/dev/null || echo "")
 

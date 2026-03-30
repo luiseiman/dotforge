@@ -30,8 +30,8 @@ for d in stacks/*/; do ls "$d"rules/ "$d"settings.json.partial 2>/dev/null || ec
 # Validate registry YAML
 python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
 
-# Check frontmatter in rules (files without globs: are ok only for _common.md)
-grep -rL "^globs:" .claude/rules/ stacks/*/rules/
+# Check frontmatter in rules (files without globs:/paths: are ok only for _common.md)
+grep -rL "^globs:\|^paths:" .claude/rules/ stacks/*/rules/
 
 # Run global sync (dry run)
 ./global/sync.sh --dry-run
@@ -53,7 +53,7 @@ Key template files: `rules/domain-learning.md` (globs:**/* rule that instructs C
 ### Stacks
 
 Each `stacks/<name>/` directory is a technology module containing:
-- `rules/*.md` — contextual rules with `globs:` frontmatter for auto-loading
+- `rules/*.md` — contextual rules with `globs:` (eager) or `paths:` + `alwaysApply: false` (lazy) frontmatter
 - `settings.json.partial` — permissions and hooks to merge into project settings
 - Optional `hooks/*.sh` — stack-specific lint/validation hooks
 
@@ -81,7 +81,7 @@ Seven subagent definitions in `agents/`: researcher (read-only exploration), arc
 
 ## Conventions
 
-- Rules files: markdown with `globs:` frontmatter for auto-load
+- Rules files: markdown with `globs:` (eager) or `paths:` CSV + `alwaysApply: false` (lazy) frontmatter
 - Hooks: bash scripts, exit 0 (ok) or exit 2 (block), must be `chmod +x`
 - Skills: directory with `SKILL.md` containing name/description frontmatter
 - Templates: `.tmpl` extension with `<!-- forge:section -->` markers

@@ -108,7 +108,7 @@ Use `${CLAUDE_PLUGIN_ROOT}` for all script paths — this is resolved by Claude 
 
 For each `.claude/rules/*.md`:
 
-1. Read the frontmatter (globs, description)
+1. Read the frontmatter (globs/paths, description)
 2. Create `skills/{rule-name}/SKILL.md`:
 
 ```markdown

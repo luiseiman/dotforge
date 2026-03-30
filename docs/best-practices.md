@@ -31,7 +31,7 @@ For large projects, use imports:
 @.claude/rules/backend.md
 @.claude/rules/frontend.md
 ```
-Rules with `globs:` frontmatter auto-load by file path.
+Rules with `globs:` frontmatter load eagerly at session start. For lazy loading (on file match only), use `paths:` as unquoted CSV with `alwaysApply: false`.
 
 ---
 
@@ -52,13 +52,14 @@ Rules with `globs:` frontmatter auto-load by file path.
 - settings.json → project (commit). settings.local.json → personal (don't commit)
 
 ### Rules — Automatic context
-- `globs:` frontmatter for auto-load by file path
+- Two loading modes: `globs:` for eager loading (always in context), `paths:` + `alwaysApply: false` for lazy loading (on file match only)
+- `paths:` must be unquoted CSV — YAML arrays and quoted strings fail silently
 - One rule per domain (backend, frontend, infra, testing)
 - Include "Gotchas" at the top of each rule
 - Keep <50 lines per rule
 
 ### Hooks — Automation
-Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PostCompact`
+Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `PostCompact`, `SessionStart`, `SessionEnd`, `PermissionRequest`, `SubagentStart`, `CwdChanged`, `StopFailure`
 
 Essential hooks:
 1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push
@@ -276,7 +277,7 @@ Para proyectos grandes, usar imports:
 @.claude/rules/backend.md
 @.claude/rules/frontend.md
 ```
-Las rules con frontmatter `globs:` se cargan automáticamente por path.
+Las rules con frontmatter `globs:` se cargan eager al inicio de sesión. Para lazy loading (solo cuando se toca un archivo que matchea), usar `paths:` como CSV sin quotes con `alwaysApply: false`.
 
 ---
 
@@ -297,13 +298,14 @@ Las rules con frontmatter `globs:` se cargan automáticamente por path.
 - settings.json → proyecto (commitear). settings.local.json → personal (no commitear)
 
 ### Rules — Contexto automático
-- Frontmatter `globs:` para auto-load por path de archivo
+- Dos modos de carga: `globs:` para eager loading (siempre en contexto), `paths:` + `alwaysApply: false` para lazy loading (solo al tocar archivos que matchean)
+- `paths:` debe ser CSV sin quotes — YAML arrays y strings entre comillas fallan silenciosamente
 - Una rule por dominio (backend, frontend, infra, testing)
 - Incluir "Gotchas" al inicio de cada rule
 - Mantener <50 líneas por rule
 
 ### Hooks — Automatización
-Eventos disponibles: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PostCompact`
+Eventos disponibles: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `PostCompact`, `SessionStart`, `SessionEnd`, `PermissionRequest`, `SubagentStart`, `CwdChanged`, `StopFailure`
 
 Hooks esenciales:
 1. **block-destructive** (PreToolUse:Bash) — bloquear rm -rf, DROP, force push

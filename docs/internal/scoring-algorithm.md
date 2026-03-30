@@ -28,7 +28,7 @@ If either of these scores 0, the entire project score is **capped at 6.0**:
 |---|------|---|---|---|
 | 1 | CLAUDE.md | Missing | Exists but missing key sections | Has Stack, Build, Architecture sections |
 | 2 | settings.json | Missing | Exists, incomplete deny list | Complete deny (.env, *.key, *.pem) + permissions |
-| 3 | Contextual rules (.claude/rules/) | None | Exist but missing globs frontmatter | Rules with valid globs matching real files |
+| 3 | Contextual rules (.claude/rules/) | None | Exist but missing globs/paths frontmatter | Rules with valid globs/paths matching real files + correct loading mode |
 | 4 | block-destructive.sh | Missing | Exists but not executable or not wired | Executable + wired in settings.json |
 | 5 | Build/test documentation | None | Partial (only build or only test) | Both build and test commands documented |
 

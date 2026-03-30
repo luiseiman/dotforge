@@ -30,7 +30,7 @@ claude-kit valida **presencia** de configuración (audit score 0-10) pero no **e
 
 Valida coherencia interna de la configuración generada:
 - Hooks referenciados en settings.json existen y son ejecutables
-- Rules tienen frontmatter `globs:` válido
+- Rules tienen frontmatter `globs:` o `paths:` válido (con `alwaysApply: false` para lazy loading)
 - Globs matchean al menos 1 archivo real
 - settings.json es JSON válido
 - deny list cubre mínimo: .env, *.key, *.pem
@@ -80,7 +80,7 @@ Múltiples sesiones en el mismo día se acumulan incrementalmente.
 
 ### Rule coverage
 
-`session-report.sh` cruza los archivos tocados (git diff) contra los globs de frontmatter de cada regla en `.claude/rules/`. `rule_coverage = rules_matched / rules_total`.
+`session-report.sh` cruza los archivos tocados (git diff) contra los globs/paths de frontmatter de cada regla en `.claude/rules/`. `rule_coverage = rules_matched / rules_total`.
 
 ### SESSION_REPORT.md (opt-in)
 

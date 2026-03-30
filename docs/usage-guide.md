@@ -1,6 +1,6 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.7.0
+**Version:** 2.7.1
 **Date:** 2026-03-30
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
@@ -316,7 +316,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | **devcontainer** | `.devcontainer/`, `devcontainer.json` |
 
 Each stack provides:
-- `rules/*.md` — contextual rules with `globs:` frontmatter
+- `rules/*.md` — contextual rules with `globs:` frontmatter (eager loading). For lazy loading, use `paths:` as unquoted CSV with `alwaysApply: false`
 - `settings.json.partial` — stack-specific permissions and hooks
 - (Optional) `hooks/*.sh` — stack-specific validation hooks
 
@@ -334,7 +334,7 @@ Each stack provides:
 |---|------|---|---|---|
 | 1 | **CLAUDE.md** | Does not exist | Exists but incomplete (<20 useful lines) | Complete: stack, architecture, build/test commands, conventions |
 | 2 | **settings.json** | Does not exist | No deny list or excessive permissions | Explicit permissions + security deny list |
-| 3 | **Contextual rules** | Do not exist | No `globs:` frontmatter | Rules with specific globs per area |
+| 3 | **Contextual rules** | Do not exist | No `globs:`/`paths:` frontmatter | Rules with specific globs per area + correct loading mode |
 | 4 | **Hook block-destructive** | Does not exist | Exists but misconfigured | Exists + executable + wired in settings.json |
 | 5 | **Build/test commands** | Not documented | In README but not in CLAUDE.md | Documented in CLAUDE.md with exact commands |
 
@@ -586,7 +586,7 @@ Yes, but you lose the behavioral rules (communication, planning, critical partne
 ### How do I add a stack that does not exist?
 
 Create a directory at `claude-kit/stacks/<name>/` with:
-- `rules/*.md` — rules with `globs:` frontmatter
+- `rules/*.md` — rules with `globs:` frontmatter (eager) or `paths:` + `alwaysApply: false` (lazy)
 - `settings.json.partial` — permissions and hooks
 
 See `docs/creating-stacks.md` for details.
@@ -754,6 +754,8 @@ Domain rules capture what a project does, not just how to code in it. They live 
 | `/forge domain list` | Lists existing domain rules with their globs and last_verified date |
 
 ### Domain rule frontmatter
+
+Domain rules use `globs:` for eager loading (always in context). For large projects with many domain rules, use `paths:` as unquoted CSV with `alwaysApply: false` for lazy loading.
 
 ```yaml
 ---

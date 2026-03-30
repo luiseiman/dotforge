@@ -51,7 +51,7 @@ tests/test-config.sh
         │
         ├── Hook existence: settings.json hooks[] → file exists?
         ├── Hook permissions: chmod +x?
-        ├── Rule frontmatter: globs: present?
+        ├── Rule frontmatter: globs: or paths: present?
         ├── Glob validity: globs match ≥1 real file?
         ├── JSON validity: settings.json parseable?
         ├── Deny list: covers .env, *.key, *.pem?
@@ -121,7 +121,7 @@ session-report.sh (Stop event)
 **When:** On demand
 
 ```
-.claude/rules/*.md ──→ extract globs from frontmatter
+.claude/rules/*.md ──→ extract globs/paths from frontmatter
                             │
 git log --name-only ──→ files touched in last N sessions
                             │

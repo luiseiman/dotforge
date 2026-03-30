@@ -20,7 +20,7 @@ stacks/{stack-name}/
 
 ## 1. Rules (required)
 
-Create `stacks/{stack}/rules/{name}.md` with globs frontmatter:
+Create `stacks/{stack}/rules/{name}.md` with `globs:` frontmatter (eager loading). For large stacks where context optimization matters, use `paths:` as unquoted CSV with `alwaysApply: false` for lazy loading:
 
 ```markdown
 ---
@@ -124,7 +124,7 @@ stacks/{nombre-del-stack}/
 
 ## 1. Rules (obligatorio)
 
-Crear `stacks/{stack}/rules/{nombre}.md` con frontmatter globs:
+Crear `stacks/{stack}/rules/{nombre}.md` con frontmatter `globs:` (eager loading). Para stacks grandes donde importa la optimización de contexto, usar `paths:` como CSV sin quotes con `alwaysApply: false` para lazy loading:
 
 ```markdown
 ---

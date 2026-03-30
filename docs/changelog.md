@@ -4,6 +4,19 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.7.1 (2026-03-30)
+
+### Hook Architecture — Correcciones y expansión
+
+- Corrección: `PreCompact` es **non-blocking** — el exit code se ignora (documentación anterior era incorrecta)
+- Verificado: `PostCompact` recibe `compact_summary` y `trigger` — los docs oficiales dicen "common fields only" pero estos campos SÍ llegan
+- Nuevo: hook types `http`, `prompt`, `agent` documentados en `stacks/hookify/rules/hookify.md`
+- Nuevo: 4 eventos de alto valor añadidos a `hook-architecture.md`: PermissionRequest, SubagentStart, CwdChanged, StopFailure
+- Corrección: `rule-effectiveness.md` — documentación de eager loading (`globs:`) vs lazy loading (`paths:` CSV + `alwaysApply: false`). Ref: [anthropics/claude-code#17204](https://github.com/anthropics/claude-code/issues/17204)
+- 5 prácticas de investigación incorporadas al pipeline activo
+
+---
+
 ## v2.7.0 (2026-03-30)
 
 ### Domain Knowledge Layer + Context Continuity

@@ -68,7 +68,7 @@ Para cada práctica aceptada en `evaluating/`:
 ### Aplicar
 1. Mostrar diff propuesto al usuario y pedir confirmación
 2. Modificar los archivos de claude-kit correspondientes
-3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
+3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` (eager) or `paths:` + `alwaysApply: false` (lazy) frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
 4. Mover práctica de `evaluating/` a `active/` con `incorporated_in:` actualizado
 5. Set frontmatter fields: `effectiveness: monitoring` (or `not-applicable` if no error targeted), `error_type` matching CLAUDE_ERRORS.md types
 6. Register in `$CLAUDE_KIT_DIR/practices/metrics.yml`:

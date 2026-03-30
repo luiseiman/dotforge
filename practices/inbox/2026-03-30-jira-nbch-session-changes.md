@@ -5,7 +5,7 @@ source: "post-session hook — jira nbch"
 source_type: experience
 discovered: 2026-03-30
 status: inbox
-tags: [auto-detected, jira nbch]
+tags: [auto-detected, jira nbch, needs-more-info]
 tested_in: jira nbch
 incorporated_in: []
 replaced_by: null

@@ -2,14 +2,18 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-03-25
+last_verified: 2026-03-30
 ---
 
 # Rule Effectiveness
 
-- Rules are .md files with YAML frontmatter containing globs: pattern
-- Globs auto-load rules when edited files match — no registration needed
-- Only _common.md is allowed without globs (always loaded)
+- Rules are .md files with YAML frontmatter for conditional loading
+- Two frontmatter fields: `globs:` (eager loading) and `paths:` (lazy loading with `alwaysApply: false`)
+- `globs:` — always works, loads rule eagerly at session start. Preferred for lightweight rules.
+- `paths:` — works ONLY as unquoted CSV (`paths: src/**/*.ts, lib/**/*.ts`). NEVER use quoted strings or YAML arrays (fail silently). Requires `alwaysApply: false` for lazy loading.
+- Lazy loading (`paths:` + `alwaysApply: false`): rule loads only when Claude touches a matching file — saves context in large projects
+- Eager loading (`globs:` without `alwaysApply: false`): rule loads at session start — simpler, fine for small rule sets
+- Only _common.md is allowed without frontmatter (always loaded)
 - Max 50 lines per rule file; split if longer
 - Each rule should include: what it covers, clear patterns, common mistakes to avoid
 - Rule coverage = files touched in session that match ≥1 rule glob / total rules

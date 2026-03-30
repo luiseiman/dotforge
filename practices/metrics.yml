@@ -36,20 +36,75 @@ practices:
     error_targeted: "multiple fix commits for same symptom without resolving root cause (import errors, shadowed packages, config bugs)"
     error_type: logic
     activated: 2026-03-24
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 1
-    last_checked: 2026-03-24
+    last_checked: 2026-03-30
 
   - id: websocket-shadow-import
     error_targeted: "local directory name shadows PyPI package causing AttributeError on import (e.g., websocket/ shadows websocket-client)"
     error_type: config
     activated: 2026-03-24
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 1
-    last_checked: 2026-03-24
+    last_checked: 2026-03-30
+
+  - id: practice-2026-03-30-globs-vs-paths-frontmatter
+    error_targeted: null
+    error_type: null
+    activated: 2026-03-30
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-03-30
+
+  - id: practice-2026-03-30-hook-events-16-new
+    error_targeted: null
+    error_type: null
+    activated: 2026-03-30
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-03-30
+
+  - id: practice-2026-03-30-precompact-nonblocking
+    error_targeted: "writing PreCompact hook with exit 2 expecting to block compaction — silently ignored"
+    error_type: config
+    activated: 2026-03-30
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-03-30
+
+  - id: practice-2026-03-30-hook-types-http-prompt-agent
+    error_targeted: null
+    error_type: null
+    activated: 2026-03-30
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-03-30
+
+  - id: practice-2026-03-30-postcompact-payload-verify
+    error_targeted: null
+    error_type: null
+    activated: 2026-03-30
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-03-30
