@@ -58,3 +58,9 @@ If ANY signal is present, suggest at the end of your response:
 ```
 Do NOT suggest for: trivial tasks, routine edits, tasks where the first approach worked cleanly.
 Threshold: if you had to reason about it or backtrack, suggest it. If not, stay silent.
+
+## Context Continuity
+
+- After completing a significant task (>3 files changed, architectural decision, complex bug fix), update `.claude/session/last-compact.md` with active restrictions and decisions that must not be lost
+- Format: `## Active Constraints\n- [what must not change and why]`
+- This file is automatically re-injected after compaction via session-restore.sh

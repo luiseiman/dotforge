@@ -46,6 +46,23 @@
             "type": "command",
             "command": ".claude/hooks/check-updates.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-restore.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-compact.sh",
+            "timeout": 10
           }
         ]
       }
