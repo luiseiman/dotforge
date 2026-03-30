@@ -18,3 +18,7 @@ last_verified: 2026-03-25
 - All hooks must be executable: chmod +x (permissions -rwxr-xr-x)
 - Validate hooks with bash -n before deploying; shellcheck if available
 - Counter files for metrics use md5 hash of PWD for cross-invocation persistence
+- PostCompact hook receives: `trigger` ("auto"/"manual") + `compact_summary` (full generated text) — read-only
+- PreCompact hook receives: `trigger` ("auto"/"manual") + `custom_instructions` — can block with exit 2
+- SessionStart `source` field values: "startup", "resume", "compact", "clear" — use to differentiate behavior
+- Tasks System (Jan 2026): persistent state in `~/.claude/tasks/<id>/` — survives compaction and /clear
