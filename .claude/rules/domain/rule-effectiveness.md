@@ -2,23 +2,44 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-03-30
+last_verified: 2026-04-02
 ---
 
 # Rule Effectiveness
 
-- Rules are .md files with YAML frontmatter for conditional loading
-- Two frontmatter fields: `globs:` (eager loading) and `paths:` (lazy loading with `alwaysApply: false`)
-- `globs:` — always works, loads rule eagerly at session start. Preferred for lightweight rules.
-- `paths:` — works ONLY as unquoted CSV (`paths: src/**/*.ts, lib/**/*.ts`). NEVER use quoted strings or YAML arrays (fail silently). Requires `alwaysApply: false` for lazy loading.
-- Lazy loading (`paths:` + `alwaysApply: false`): rule loads only when Claude touches a matching file — saves context in large projects
-- Eager loading (`globs:` without `alwaysApply: false`): rule loads at session start — simpler, fine for small rule sets
+## Frontmatter fields (complete, source-verified)
+
+| Field | Values | Effect |
+|-------|--------|--------|
+| `globs:` | CSV glob patterns | Eager loading at session start |
+| `paths:` | Unquoted CSV only | Lazy loading with `alwaysApply: false` |
+| `model` | `haiku`, `sonnet`, `opus`, `inherit` | Pin model tier for rule/skill execution |
+| `effort` | `low`, `medium`, `high`, `max`, integer | Thinking level / reasoning depth |
+| `context` | `inline`, `fork` | Execute inline or fork to subagent |
+| `agent` | agent type string | Sub-agent type when `context: fork` |
+| `allowed-tools` | tool name filter | Restrict available tools |
+| `user-invocable` | boolean | Show as slash command |
+
+## Loading behavior
+
+- `globs:` — always works, loads eagerly at session start. Preferred for lightweight rules
+- `paths:` — ONLY unquoted CSV. NEVER quoted strings or YAML arrays (fail silently). Requires `alwaysApply: false`
 - Only _common.md is allowed without frontmatter (always loaded)
+- System prompt has static (cached) and dynamic (per-turn) boundary — rules land in dynamic section
+
+## Design constraints
+
 - Max 50 lines per rule file; split if longer
-- Each rule should include: what it covers, clear patterns, common mistakes to avoid
-- Rule coverage = files touched in session that match ≥1 rule glob / total rules
-- Classification: Active (>50% match rate), Occasional (10-50%), Inert (<10%)
-- Inert rules waste tokens — prune or broaden globs
-- Error promotion: if same error appears 3+ times → derive a rule and add to appropriate file
-- Stack rules live in stacks/{name}/rules/ with settings.json.partial
-- Domain rules live in .claude/rules/domain/ — project-owned, never touched by sync
+- Each rule: what it covers, clear patterns, common mistakes
+- Rule coverage = files matching ≥1 rule glob / total rules
+- Classification: Active (>50%), Occasional (10-50%), Inert (<10%) — prune inert rules
+- Error promotion: 3+ occurrences → derive rule
+- Stack rules: stacks/{name}/rules/ with settings.json.partial
+- Domain rules: .claude/rules/domain/ — project-owned, never touched by sync
+
+## System prompt conflicts to override
+
+These are hardcoded in Claude Code's system prompt — rules must use strong language to counter:
+- "DO NOT ADD ANY COMMENTS" — override with "ALWAYS add docstrings"
+- "fewer than 4 lines" response limit — override with "provide detailed explanations"
+- "Use TodoWrite VERY frequently" — cannot be suppressed easily

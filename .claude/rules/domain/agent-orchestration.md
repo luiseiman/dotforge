@@ -2,18 +2,45 @@
 globs: "**/agents/*.md,**/rules/agents.md"
 description: "Agent delegation patterns and team coordination"
 domain: claude-code-engineering
-last_verified: 2026-03-25
+last_verified: 2026-04-02
 ---
 
 # Agent Orchestration
 
+## Subagent architecture (source-verified)
+
+- Each subagent gets independent context window — genuinely isolated from main thread
+- Full tool access: Bash, Edit, Write, Read, Glob, Grep, etc.
+- Fork subagents share parent prompt cache (Anthropic caching API) — saves tokens
+- Max 10 concurrent tool executions across all agents (`gW5 = 10`)
+- `shouldAvoidPermissionPrompts: true` for background agents (auto-deny, no UI)
+
+## Task types
+
+- `local_agent` — sub-agent via AgentTool (standard delegation)
+- `remote_agent` — remote execution
+- `in_process_teammate` — shared memory (Coordinator mode)
+- `dream` — auto-dream background memory consolidation
+
+## Delegation rules
+
 - Decision tree: 1-file fix → direct. Research-heavy → researcher. Code+tests → implementer
-- Multi-component (>3 files, >2 concerns, >15 min estimated) → Agent Team
+- Multi-component (>3 files, >2 concerns) → Agent Team
 - Agent Team: Lead (coordinates, does NOT implement) + max 3-4 teammates
-- Each teammate MUST use isolation: "worktree" for independent copy of repo
+- Each teammate MUST use isolation: "worktree" (confirmed by EnterWorktree/ExitWorktree tools)
 - Sequential chaining: researcher → architect → implementer → test-runner → code-reviewer
 - NEVER spawn new agent for follow-ups — use SendMessage({to: agentId}) to continue
-- Memory agents: architect, implementer, code-reviewer, security-auditor (accumulate learnings)
+
+## Memory and lifecycle
+
+- Memory agents: architect, implementer, code-reviewer, security-auditor (persist in .claude/agent-memory/)
 - Transactional agents: researcher, test-runner (execute and report, no memory)
+- Dynamic loading from `~/.claude/agents/` — custom agent definitions auto-discovered
 - Subagent output must not exceed 30% of main context — always structured summaries
 - Always verify subagent output (run tests/lint) before declaring task done
+
+## Slash command priority (collision risk)
+
+bundledSkills > builtinPluginSkills > skillDirCommands > workflowCommands > pluginCommands > pluginSkills > COMMANDS()
+
+Skills installed via claude-kit can shadow built-in commands if names collide — be intentional about naming.
