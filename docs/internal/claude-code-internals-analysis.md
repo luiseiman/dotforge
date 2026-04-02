@@ -5,6 +5,8 @@
 - ComeOnOliver/claude-code-analysis (TypeScript source tree, 1,884 files)
 - ThreeFish-AI/analysis_claude_code (Reverse engineering of v1.0.33, obfuscated JS)
 - Kuberwastaken/claude-code (Architectural spec + Rust reimplementation)
+- 1rgs/nanocode (Minimal Python reimplementation, ~250 lines, 2.2K stars)
+- SafeRL-Lab/nano-claude-code (Full Python reimplementation, ~6,200 lines, multi-model)
 
 **Purpose**: Extract verified internals to improve claude-kit's configuration effectiveness.
 
@@ -336,6 +338,59 @@ Beyond `globs:` and `paths:`, rules support:
 15. **Read-after-compact gap** — `hasReadFile` state doesn't survive compaction; long sessions may need re-reads
 
 ---
+
+---
+
+## 12. Python Reimplementations — Validation & New Insights
+
+### 12.1 nanocode (1rgs/nanocode) — 250 lines, zero dependencies
+
+Proves the minimal viable agentic architecture: **a while loop feeding tool results back to the API**. Key validations:
+
+- **The agentic loop is trivial**: outer REPL loop + inner tool-result-feeding loop. Everything else (permissions, hooks, compaction, rules, memory) is productionization layer
+- **Edit uniqueness enforcement is client-side**: the tool rejects non-unique matches, not the model. Rules telling Claude to "provide larger context" prevent tool errors
+- **Minimal system prompt works**: `"Concise coding assistant. cwd: {cwd}"` (7 words) produces productive coding behavior. Claude's coding ability is intrinsic — our CLAUDE.md rules must focus on behavior modification, not teaching
+- **Tool descriptions ARE the instructions**: well-named tools with good descriptions are self-documenting. No system prompt guidance needed for basic tool use
+- **Zero-dependency API**: raw `urllib.request` with JSON is sufficient — the Anthropic tool-use API is clean enough to use directly
+- **Total absence of safety**: `rm -rf /` executes, credentials readable, no deny lists. Validates claude-kit's audit score cap at 6.0 for missing safety config
+
+### 12.2 nano-claude-code (SafeRL-Lab) — 6,200 lines, multi-model
+
+Most complete Python reimplementation. Correctly replicates core patterns AND adds novel ones:
+
+**Correctly replicated from Claude Code**:
+- Neutral message format converted at provider boundary (Anthropic vs OpenAI format)
+- Edit tool exact string replacement with uniqueness check
+- CLAUDE.md loading walking up from cwd + `~/.claude/CLAUDE.md`
+- MEMORY.md 200-line index cap (`MAX_INDEX_LINES = 200`)
+- Tool output truncation: first half + last quarter, max 32K chars
+- Git context injection (branch, status, recent commits)
+- Sub-agent with independent state + git worktree isolation
+- Skill system with `$ARGUMENTS` substitution and `context: fork` execution
+
+**Novel patterns not in original Claude Code**:
+- **Multi-model routing via OpenAI-compatible shim**: all non-Anthropic providers (GPT, Gemini, DeepSeek, Qwen, Ollama) treated as OpenAI-compatible endpoints with different base_url. Tool schema conversion: `{name, input_schema}` → `{type: "function", function: {name, parameters}}`
+- **Pre-compaction tool-result snipping**: truncate old tool results (>6 turns, >2K chars) BEFORE triggering LLM-based compaction. Cheap optimization that delays expensive compaction
+- **Compaction at 70% threshold** (vs Claude Code's 90%): more conservative, prevents mid-conversation failures on smaller models (64-128K context)
+- **`read_only` and `concurrent_safe` flags on ToolDef**: enables granular auto-permission (read-only tools never need permission) and concurrency control
+- **AI-powered memory search**: small LLM call to rank memory relevance
+- **Skill-as-a-tool**: model can invoke skills programmatically during conversation (vs user-only slash commands in real Claude Code)
+
+**Dangerous patterns to avoid**:
+- Safe-prefix list includes `python`, `node`, `ruby` — real Claude Code explicitly strips these in auto-mode because `python -c "import os; os.system('rm -rf /')"` bypasses the prefix check. Validates our `permission-model.md` warning
+
+### 12.3 Combined Insights for claude-kit
+
+| Finding | Source | Impact on claude-kit |
+|---------|--------|---------------------|
+| Agentic loop is just a while loop + tool results | nanocode | Confirms our value-add is configuration, not architecture |
+| Tool descriptions are self-documenting | nanocode | Hook descriptions in settings.json should be clear standalone |
+| Pre-compaction snipping delays expensive LLM compaction | nano-claude | Document as Layer 0 in `context-window-optimization.md` |
+| `read_only`/`concurrent_safe` tool annotations | nano-claude | Add to permission model for granular auto-permission |
+| 70% compaction threshold for smaller models | nano-claude | Relevant for users on non-Anthropic providers |
+| Interpreter prefix bypass vulnerability | nano-claude | Validates our auto-mode stripping documentation |
+| Neutral message format enables multi-provider | nano-claude | Relevant if claude-kit ever supports non-Anthropic |
+| Skill `context: fork` for heavy skills | nano-claude | Add frontmatter option to claude-kit skills |
 
 ## Appendix: Token Budget Reference
 

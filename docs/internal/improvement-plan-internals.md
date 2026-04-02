@@ -344,20 +344,80 @@ Agregar sección `## Compact Instructions` en CLAUDE.md template que le diga al 
 
 ---
 
+## Insights de Python Reimplementations (nanocode + nano-claude-code)
+
+### 32. Pre-compaction tool-result snipping (Layer 0)
+
+**Fuente**: nano-claude-code `compaction.py`
+
+**Descubrimiento**: Antes de la compactación LLM, truncar tool results viejos (>6 turnos, >2K chars) a first-half + last-quarter. Es una optimización barata que retrasa la compactación costosa.
+
+**Acción**: Documentar en `context-window-optimization.md` como Layer 0 del hierarchy de compactación. Evaluar si `post-compact.sh` puede aplicar este patrón.
+
+---
+
+### 33. `read_only` / `concurrent_safe` annotations para tools
+
+**Fuente**: nano-claude-code `tool_registry.py`
+
+**Descubrimiento**: Cada tool tiene flags explícitos `read_only: bool` y `concurrent_safe: bool`. Esto permite:
+- Read-only tools auto-permitidos sin prompt de permiso
+- Concurrent-safe tools ejecutados en paralelo, unsafe tools encolados
+
+**Acción**: Agregar a `permission-model.md` una tabla de clasificación de tools por read_only/concurrent_safe. Úsese en agent `allowed-tools` para diferenciar niveles de acceso.
+
+| Tool | read_only | concurrent_safe |
+|------|-----------|-----------------|
+| Read, Glob, Grep, LS, WebFetch, WebSearch | true | true |
+| TodoWrite | false | true |
+| Bash | false | false |
+| Write, Edit | false | false |
+
+---
+
+### 34. Skill `context: fork` execution mode
+
+**Fuente**: nano-claude-code `skill/manager.py`
+
+**Descubrimiento**: Skills pueden ejecutarse `inline` (misma conversación) o `fork` (sub-agente aislado con estado independiente). Fork previene que skills pesados contaminen el context window principal.
+
+**Acción**: Agregar `context: fork` como opción de frontmatter en skills de claude-kit. Skills candidates para fork: `watch-upstream`, `scout-repos`, `session-insights`, `benchmark`.
+
+**Archivos**: Skills con `model:` + `context: fork` en frontmatter
+
+---
+
+### 35. Validación: system prompt minimal es suficiente
+
+**Fuente**: nanocode — 7 palabras de system prompt producen coding productivo
+
+**Implicación**: Cada línea de CLAUDE.md y rules debe cambiar comportamiento observable. Si no, es token waste. Refuerza nuestra regla de <100 líneas en CLAUDE.md y la clasificación Active/Occasional/Inert en rule-effectiveness.
+
+---
+
+### 36. Tool descriptions como documentación self-contained
+
+**Fuente**: nanocode — sin instrucciones de tools en system prompt, solo tool schemas
+
+**Implicación**: Las descripciones de hooks en settings.json deben ser autoexplicativas. Agregar campo `description` a hooks en settings.json.tmpl para que Claude entienda qué hace cada hook sin leer el script.
+
+---
+
 ## Resumen cuantitativo
 
 | Prioridad | Items | Categoría |
 |-----------|-------|-----------|
-| P0 | 8 | Bugs (3), security (3), eficiencia (2) |
+| P0 | 8 | Bugs (3), security (3), eficiencia (2) — **IMPLEMENTADOS** |
 | P1 | 10 | System prompt conflicts (1), permissions (3), overlaps (2), skills (2), agents (1), hooks (1) |
 | P2 | 7 | Features (3), cleanup (3), docs (1) |
 | P3 | 6 | Investigación |
-| **Total** | **31** | |
+| Python | 5 | Insights de reimplementaciones (32-36) |
+| **Total** | **36** | |
 
 ## Orden de ejecución sugerido
 
 ```
-P0.1-P0.8 (bugs + security)  ─── v2.8.0 (fix release)
+P0.1-P0.8 (bugs + security)  ─── v2.8.0 (fix release) ✅ DONE
 
 P1.9  (system prompt overrides)  ─┐
 P1.10 (auto-mode stripping)       │
@@ -372,11 +432,15 @@ P1.17 (hookify fixes)             ├── v2.10.0 (hooks + skills)
 P1.18 (detect.md)                 │
 P2.20 (new hook events)           ┘
 
-P2.19 (redis duplication)  ─┐
-P2.21 (go-api cleanup)      │
-P2.22 (stack prompt-eng)    ├── v3.0.0 (new features)
-P2.23 (/forge ctx-budget)   │
-P2.24-25 (forge.md + make)  ┘
+P2.19 (redis duplication)   ─┐
+P2.21 (go-api cleanup)       │
+P2.22 (stack prompt-eng)     ├── v3.0.0 (new features)
+P2.23 (/forge ctx-budget)    │
+P2.24-25 (forge.md + make)   │
+#32 (pre-compact snipping)   │
+#33 (tool r/o annotations)   │
+#34 (skill context:fork)     ┘
 
 P3.26-31 (investigación)  ─── ongoing
+#35-36 (validaciones)      ─── incorporate into existing rules
 ```
