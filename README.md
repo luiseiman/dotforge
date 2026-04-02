@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.6.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.7.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -29,6 +29,24 @@ export CLAUDE_KIT_DIR="$(pwd)"
 ```
 
 > **New here?** Read the **[Usage Guide](docs/usage-guide.md)** for a complete walkthrough with examples.
+
+## See it in action
+
+### `/forge init` — Zero to config in one command
+
+![forge init demo](docs/assets/forge-init-demo.gif)
+
+### `/forge audit` — Score your project's configuration
+
+![forge audit demo](docs/assets/forge-audit-demo.gif)
+
+### `/forge bootstrap` — Full interactive setup
+
+![forge bootstrap demo](docs/assets/forge-bootstrap-demo.gif)
+
+### `/forge status` — Multi-project registry dashboard
+
+![forge status demo](docs/assets/forge-status-demo.gif)
 
 ## Why claude-kit
 
@@ -189,7 +207,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.6.1)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.7.1)
 - [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
@@ -242,6 +260,24 @@ export CLAUDE_KIT_DIR="$(pwd)"
 ```
 
 > **Primera vez?** Leé la **[Guía de Uso](docs/guia-uso.md)** para un walkthrough completo con ejemplos.
+
+## Miralo en acción
+
+### `/forge init` — De cero a config en un comando
+
+![forge init demo](docs/assets/forge-init-demo.gif)
+
+### `/forge audit` — Puntuá la configuración de tu proyecto
+
+![forge audit demo](docs/assets/forge-audit-demo.gif)
+
+### `/forge bootstrap` — Setup interactivo completo
+
+![forge bootstrap demo](docs/assets/forge-bootstrap-demo.gif)
+
+### `/forge status` — Dashboard multi-proyecto
+
+![forge status demo](docs/assets/forge-status-demo.gif)
 
 ## Por qué claude-kit
 
@@ -400,7 +436,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.6.1)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.7.1)
 - [Roadmap](ROADMAP.md) — Features completadas + próximas
 
 ## Requisitos
