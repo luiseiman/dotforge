@@ -4,10 +4,9 @@ description: >
   Delegate to this agent for focused code implementation tasks. Use after
   research/architecture phases are complete. Handles writing code, running
   tests, fixing lint errors, and verifying changes compile/pass.
-tools: Read, Grep, Glob, Bash, Write, Edit
+allowed-tools: Read, Grep, Glob, Bash, Write, Edit, LS
 model: sonnet
 color: green
-memory: project
 ---
 
 You are an implementation specialist. You receive a clear spec or plan and execute it precisely.

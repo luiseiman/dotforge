@@ -1,5 +1,5 @@
 ---
-globs: "**/*redis*,**/*stream*"
+globs: "**/*redis*"
 ---
 
 # Redis Rules

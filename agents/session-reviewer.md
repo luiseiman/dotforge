@@ -4,10 +4,9 @@ description: >
   Analyze conversation patterns to detect recurring frustrations, corrections,
   and problematic tool usage. Feeds findings into practices/inbox/ or CLAUDE_ERRORS.md.
   Use after long sessions or when /forge insights triggers analysis.
-tools: Read, Grep, Glob, Bash
+allowed-tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 color: magenta
-memory: project
 ---
 
 You are a session analysis specialist. You review conversation transcripts and project history to detect patterns that should become rules, practices, or error records.

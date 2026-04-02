@@ -4,7 +4,7 @@ description: >
   Delegate for writing new tests, running test suites, analyzing failures,
   and reporting coverage. Use after implementation to validate changes or
   when investigating test failures.
-tools: Read, Grep, Glob, Bash, Write, Edit
+allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 model: haiku
 color: blue
 # No memory: transactional agent — runs tests, reports results, discards context

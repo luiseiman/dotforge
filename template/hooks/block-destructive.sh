@@ -10,7 +10,7 @@ PROFILE="${FORGE_HOOK_PROFILE:-standard}"
 # Minimal: only the most catastrophic patterns
 MINIMAL_PATTERNS=(
   'rm -rf /'
-  'rm -rf \*'
+  'rm -rf \.?\*'
   'rm -rf ~'
   'git push.*--force.*main'
   'git push.*--force.*master'

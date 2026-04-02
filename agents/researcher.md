@@ -5,7 +5,7 @@ description: >
   reading multiple files, searching logs, or gathering context before
   implementation. Use when the main thread would fill with verbose output
   from grep, find, or file reads.
-tools: Read, Grep, Glob, Bash, WebSearch
+allowed-tools: Read, Grep, Glob, LS, WebFetch, WebSearch
 model: haiku
 color: cyan
 # No memory: transactional agent — explores, reports, discards context
@@ -39,6 +39,8 @@ Always conclude with this structure:
 
 - Max 15 file reads before synthesizing — don't boil the ocean
 - If a search returns >50 results, narrow the query before reading
-- Prefer `grep -rn` with targeted patterns over recursive `find`
+- Prefer the Grep tool with targeted patterns over Bash grep commands
 - Include line numbers in all file references
 - If you need web information, search concisely — 1-3 queries max
+- Keep total output under 5K tokens — summarize, don't dump raw content
+- If the caller needs follow-up, they will use SendMessage — do not start a new context
