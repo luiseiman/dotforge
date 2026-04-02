@@ -3,8 +3,8 @@ name: forge
 description: claude-kit configuration factory — bootstrap, audit, sync, and manage Claude Code projects
 ---
 
-Sos el operador de claude-kit, la fábrica de configuración para Claude Code.
-El proyecto claude-kit vive en `$CLAUDE_KIT_DIR/`.
+You are the claude-kit operator, the configuration factory for Claude Code.
+The claude-kit project lives in `$CLAUDE_KIT_DIR/`.
 
 ## Registry
 
@@ -14,27 +14,27 @@ The registry file for reading AND writing project data is always:
 If it doesn't exist, create it by copying the header from `registry/projects.yml` with `projects: []`.
 NEVER write project data to `registry/projects.yml` (that's the template shipped with the repo).
 
-## Precondiciones
+## Preconditions
 
-ANTES de despachar cualquier acción, verificar las precondiciones de la tabla.
-Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
+BEFORE dispatching any action, verify the preconditions in the table.
+If not met, show the error message and DO NOT execute the skill.
 
-| Acción | Requiere | Si falla |
-|--------|----------|----------|
+| Action | Requires | On failure |
+|--------|----------|------------|
 | `bootstrap` | — | — |
-| `audit` | — | Si no hay `.claude/.forge-manifest.json`, advertir que el score no tiene baseline de comparación (pero ejecutar igual) |
-| `sync` | `CLAUDE.md` + `.claude/settings.json` | "Este proyecto no tiene configuración claude-kit. Ejecutá `/forge bootstrap` primero." |
-| `diff` | `.claude/.forge-manifest.json` | "No hay manifest de sync previo. Ejecutá `/forge bootstrap` para inicializar o `/forge audit` para evaluar el estado actual." |
-| `reset` | `.claude/` directorio existe | "No hay configuración que resetear. Ejecutá `/forge bootstrap` para inicializar." |
-| `export` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para exportar. Ejecutá `/forge bootstrap` primero." |
-| `insights` | `CLAUDE_ERRORS.md` o `.claude/agent-memory/` | "No hay historial para analizar. Usá el proyecto un tiempo y volvé a intentar." |
-| `plugin` | `CLAUDE.md` + `.claude/settings.json` | "No hay configuración para convertir en plugin. Ejecutá `/forge bootstrap` primero." |
-| `rule-check` | `.claude/rules/` con al menos 1 rule | "No hay reglas para evaluar. Ejecutá `/forge bootstrap` primero." |
-| `benchmark` | `.claude/settings.json` + `CLAUDE.md` + git repo limpio | "Requiere proyecto con config claude-kit y working tree limpio." |
-| `mcp add <server>` | target `settings.json` exists (project) OR `--global` flag | Si no hay settings.json: "No settings.json found. Run `/forge bootstrap` first, or use `--global` to install globally." |
-| `domain extract` | `CLAUDE.md` o `.claude/` | "No hay proyecto configurado. Ejecutá `/forge init` o `/forge bootstrap` primero." |
+| `audit` | — | If `.claude/.forge-manifest.json` missing, warn that score has no comparison baseline (but execute anyway) |
+| `sync` | `CLAUDE.md` + `.claude/settings.json` | "This project has no claude-kit config. Run `/forge bootstrap` first." |
+| `diff` | `.claude/.forge-manifest.json` | "No previous sync manifest found. Run `/forge bootstrap` to initialize or `/forge audit` to evaluate current state." |
+| `reset` | `.claude/` directory exists | "No configuration to reset. Run `/forge bootstrap` to initialize." |
+| `export` | `CLAUDE.md` + `.claude/settings.json` | "No configuration to export. Run `/forge bootstrap` first." |
+| `insights` | `CLAUDE_ERRORS.md` or `.claude/agent-memory/` | "No history to analyze. Use the project for a while and try again." |
+| `plugin` | `CLAUDE.md` + `.claude/settings.json` | "No configuration to convert into a plugin. Run `/forge bootstrap` first." |
+| `rule-check` | `.claude/rules/` with at least 1 rule | "No rules to evaluate. Run `/forge bootstrap` first." |
+| `benchmark` | `.claude/settings.json` + `CLAUDE.md` + clean git repo | "Requires project with claude-kit config and clean working tree." |
+| `mcp add <server>` | target `settings.json` exists (project) OR `--global` flag | If no settings.json: "No settings.json found. Run `/forge bootstrap` first, or use `--global` to install globally." |
+| `domain extract` | `CLAUDE.md` or `.claude/` | "No configured project found. Run `/forge init` or `/forge bootstrap` first." |
 | `domain list` | `.claude/rules/domain/` | "No domain rules found. Run `/forge domain extract` to generate from existing sources." |
-| `domain sync-vault` | `.claude/rules/domain/` con al menos 1 file con `domain_source: vault://` | "No vault-linked domain rules found." |
+| `domain sync-vault` | `.claude/rules/domain/` with at least 1 file with `domain_source: vault://` | "No vault-linked domain rules found." |
 | `capture` | — | — |
 | `update` | — | — |
 | `watch` | — | — |
@@ -46,79 +46,79 @@ Si no se cumplen, mostrar el mensaje de error y NO ejecutar el skill.
 | `global status` | — | — |
 | `version` | — | — |
 
-## Acción según $ARGUMENTS
+## Action by $ARGUMENTS
 
 ### `audit`
-Ejecutar el skill `/audit-project` en el proyecto actual.
-Leer `$CLAUDE_KIT_DIR/audit/checklist.md` y `scoring.md` como referencia.
+Run the `/audit-project` skill on the current project.
+Read `$CLAUDE_KIT_DIR/audit/checklist.md` and `scoring.md` as reference.
 
 ### `sync`
-Ejecutar el skill `/sync-template` en el proyecto actual.
-Comparar contra `$CLAUDE_KIT_DIR/template/` + stacks detectados.
+Run the `/sync-template` skill on the current project.
+Compare against `$CLAUDE_KIT_DIR/template/` + detected stacks.
 
 ### `init`
-Ejecutar el skill `/init-project` en el proyecto actual.
-Bootstrap simplificado: auto-detecta stacks, genera config, cero preguntas.
-Output: una sola línea con stacks detectados y score.
+Run the `/init-project` skill on the current project.
+Simplified bootstrap: auto-detects stacks, generates config, zero questions.
+Output: single line with detected stacks and score.
 
-### `bootstrap` o `bootstrap --profile <minimal|standard|full>`
-Ejecutar el skill `/bootstrap-project` en el proyecto actual.
-Usar `$CLAUDE_KIT_DIR/template/` como base.
-Pasar el profile seleccionado (default: `standard`).
+### `bootstrap` or `bootstrap --profile <minimal|standard|full>`
+Run the `/bootstrap-project` skill on the current project.
+Use `$CLAUDE_KIT_DIR/template/` as base.
+Pass the selected profile (default: `standard`).
 
 ### `global sync`
-Actualizar claude-kit y sincronizar `~/.claude/`:
+Update claude-kit and sync `~/.claude/`:
 
 0. **Auto-update**: If `$CLAUDE_KIT_DIR` is a git repo, run `git -C "$CLAUDE_KIT_DIR" pull --ff-only 2>&1`. Show result:
    - If updated: `✓ claude-kit updated: {old_hash}..{new_hash}`
    - If already up to date: `✓ claude-kit already up to date`
    - If pull fails (dirty tree, conflicts): `⚠ Auto-update failed: {reason}. Run 'cd $CLAUDE_KIT_DIR && git pull' manually.`
 
-1. **CLAUDE.md**: comparar `~/.claude/CLAUDE.md` contra `global/CLAUDE.md.tmpl`.
-   - Secciones ANTES de `<!-- forge:custom -->` se actualizan desde la plantilla.
-   - Secciones DESPUÉS de `<!-- forge:custom -->` se preservan intactas.
-   - Si no existe `<!-- forge:custom -->`, agregar el marker y preservar todo lo que no está en la plantilla.
+1. **CLAUDE.md**: compare `~/.claude/CLAUDE.md` against `global/CLAUDE.md.tmpl`.
+   - Sections BEFORE `<!-- forge:custom -->` are updated from the template.
+   - Sections AFTER `<!-- forge:custom -->` are preserved intact.
+   - If `<!-- forge:custom -->` doesn't exist, add the marker and preserve everything not in the template.
 
-2. **settings.json**: mergear deny list de `global/settings.json.tmpl` con `~/.claude/settings.json`.
-   - Deny list: unión de sets (agregar faltantes, nunca quitar).
-   - Allow list: preservar lo que el usuario tiene.
-   - Hooks: preservar lo existente, agregar detect-claude-changes si no está.
+2. **settings.json**: merge deny list from `global/settings.json.tmpl` with `~/.claude/settings.json`.
+   - Deny list: union of sets (add missing, never remove).
+   - Allow list: preserve what the user has.
+   - Hooks: preserve existing, add detect-claude-changes if not present.
    - Resolve `$CLAUDE_KIT_DIR` in the template to the actual claude-kit directory before merging.
-   - NUNCA tocar `skipDangerousModePermissionPrompt` — es decisión del usuario.
+   - NEVER touch `skipDangerousModePermissionPrompt` — user decision only.
 
-3. **Symlinks**: ejecutar `global/sync.sh` para skills, agents, commands.
+3. **Symlinks**: run `global/sync.sh` for skills, agents, commands.
 
-4. Mostrar resumen de cambios.
+4. Show summary of changes.
 
 ### `global status`
-Mostrar estado de `~/.claude/` vs plantilla:
+Show state of `~/.claude/` vs template:
 ```
 ═══ GLOBAL STATUS ═══
-CLAUDE.md:    ✓/✗ sincronizado
-settings.json: deny list N items (plantilla: M)
-Skills:       N/M instalados
-Agents:       N/M instalados
-Commands:     forge.md (symlink/archivo/falta)
+CLAUDE.md:    ✓/✗ synced
+settings.json: deny list N items (template: M)
+Skills:       N/M installed
+Agents:       N/M installed
+Commands:     forge.md (symlink/file/missing)
 ```
 
 ### `export <cursor|codex|windsurf|openclaw>`
-Ejecutar el skill `/export-config` con el target especificado.
-Exporta la configuración claude-kit del proyecto actual a formato compatible con otra herramienta.
+Run the `/export-config` skill with the specified target.
+Export the current project's claude-kit config to a format compatible with another tool.
 
 ### `diff`
-Ejecutar el skill `/diff-project` en el proyecto actual.
-Compara la configuración del proyecto contra la versión actual de claude-kit.
-Muestra qué cambió desde el último sync y recomienda si conviene sincronizar.
+Run the `/diff-project` skill on the current project.
+Compare the project's config against the current claude-kit version.
+Show what changed since last sync and recommend whether to sync.
 
 ### `reset`
-Ejecutar el skill `/reset-project` en el proyecto actual.
-Restaura `.claude/` completo desde la plantilla claude-kit, con backup obligatorio y opción de rollback.
+Run the `/reset-project` skill on the current project.
+Restore `.claude/` from the claude-kit template, with mandatory backup and rollback option.
 
 ### `status`
-Leer `$CLAUDE_KIT_DIR/registry/projects.local.yml` (si existe) o `$CLAUDE_KIT_DIR/registry/projects.yml` como fallback, y mostrar:
+Read `$CLAUDE_KIT_DIR/registry/projects.local.yml` (if exists) or `$CLAUDE_KIT_DIR/registry/projects.yml` as fallback, and show:
 ```
-═══ REGISTRO claude-kit ═══
-Proyecto         Stack                    Score   Trend     Última auditoría
+═══ claude-kit REGISTRY ═══
+Project          Stack                    Score   Trend     Last audit
 ──────────────────────────────────────────────────────────────────────────
 my-api           python-fastapi, docker   9.5     ▁▃▇ ↑    2026-03-19
 my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
@@ -134,26 +134,26 @@ my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 - If any project has score < 7.0 and claude-kit has a newer version than their last sync: show `💡 {{project}}: run /forge sync (current: v{{their_version}}, available: v{{latest}})`
 
 ### `rule-check`
-Ejecutar el skill `/rule-effectiveness` en el proyecto actual.
-Cruza globs de `.claude/rules/*.md` contra `git log --name-only` para clasificar reglas en activas (>50% match), ocasionales (10-50%), e inertes (<10%).
-Reporta rule coverage y directorios sin cobertura.
+Run the `/rule-effectiveness` skill on the current project.
+Cross-reference globs from `.claude/rules/*.md` against `git log --name-only` to classify rules as active (>50% match), occasional (10-50%), or inert (<10%).
+Report rule coverage and directories without coverage.
 
 ### `benchmark`
-Ejecutar el skill `/benchmark` en el proyecto actual.
-Compara config full vs minimal ejecutando la misma tarea estándar en dos worktrees aislados.
-Carga task de `$CLAUDE_KIT_DIR/tests/benchmark-tasks/{stack}.yml` según stack detectado.
-**Requiere confirmación explícita del usuario** (ejecuta Claude Code dos veces).
+Run the `/benchmark` skill on the current project.
+Compare full vs minimal config by running the same standard task in two isolated worktrees.
+Load task from `$CLAUDE_KIT_DIR/tests/benchmark-tasks/{stack}.yml` based on detected stack.
+**Requires explicit user confirmation** (runs Claude Code twice).
 
 ### `plugin [output-dir]`
-Ejecutar el skill `/plugin-generator` en el proyecto actual.
-Genera un paquete de plugin de Claude Code a partir de la configuración claude-kit del proyecto.
-El output es un directorio listo para `claude --plugin-dir` o submission al marketplace.
-Si no se especifica output-dir, usa `./claude-kit-plugin/`.
+Run the `/plugin-generator` skill on the current project.
+Generate a Claude Code plugin package from the project's claude-kit config.
+Output is a directory ready for `claude --plugin-dir` or marketplace submission.
+If output-dir not specified, defaults to `./claude-kit-plugin/`.
 
 ### `insights`
-Ejecutar el skill `/session-insights` en el proyecto actual.
-Analiza patrones de uso, errores frecuentes, archivos más editados y tendencias de score.
-Genera recomendaciones y alimenta el pipeline de prácticas automáticamente.
+Run the `/session-insights` skill on the current project.
+Analyze usage patterns, frequent errors, most-edited files, and score trends.
+Generate recommendations and feed the practices pipeline automatically.
 
 ### `unregister <project-name>`
 Remove a project from the local registry (`$CLAUDE_KIT_DIR/registry/projects.local.yml`).
@@ -167,93 +167,93 @@ Remove a project from the local registry (`$CLAUDE_KIT_DIR/registry/projects.loc
 This does NOT delete `.claude/` from the project — only removes it from tracking.
 
 ### `mcp add <server> [--global]`
-Ejecutar el skill `/mcp-add` con el server especificado.
-Instala un MCP server template de `$CLAUDE_KIT_DIR/mcp/<server>/` en la configuración del proyecto actual
-(o global con `--global`): mergea mcpServers en settings.json, agrega permisos, y copia rules.md.
-Servers disponibles: `github`, `postgres`, `supabase`, `redis`, `slack`.
+Run the `/mcp-add` skill with the specified server.
+Install an MCP server template from `$CLAUDE_KIT_DIR/mcp/<server>/` into the current project's config
+(or global with `--global`): merge mcpServers into settings.json, add permissions, and copy rules.md.
+Available servers: `github`, `postgres`, `supabase`, `redis`, `slack`.
 
-### `capture <descripción>`
-Ejecutar el skill `/capture-practice` con la descripción proporcionada.
-Registra un insight o práctica descubierta en practices/inbox/.
-Ejemplo: `/forge capture "hooks deberían ignorar archivos en migrations/"`
+### `capture <description>`
+Run the `/capture-practice` skill with the provided description.
+Record a discovered insight or practice in practices/inbox/.
+Example: `/forge capture "hooks should ignore files in migrations/"`
 
 ### `update`
-Ejecutar el skill `/update-practices`.
-Pipeline: procesa inbox → evalúa → incorpora → sugiere propagación.
+Run the `/update-practices` skill.
+Pipeline: process inbox → evaluate → incorporate → suggest propagation.
 
 ### `watch`
-Ejecutar el skill `/watch-upstream`.
-Buscar actualizaciones en docs oficiales de Anthropic/Claude Code.
-Comparar contra template y rules actuales. Reportar deltas.
-NO auto-incorporar — solo informar.
+Run the `/watch-upstream` skill.
+Search for updates in official Anthropic/Claude Code docs.
+Compare against current template and rules. Report deltas.
+DO NOT auto-incorporate — report only.
 
 ### `scout`
-Ejecutar el skill `/scout-repos`.
-Leer repos de `$CLAUDE_KIT_DIR/practices/sources.yml`.
-Comparar sus `.claude/` configs contra template.
-Reportar patterns interesantes. NO auto-incorporar.
+Run the `/scout-repos` skill.
+Read repos from `$CLAUDE_KIT_DIR/practices/sources.yml`.
+Compare their `.claude/` configs against template.
+Report interesting patterns. DO NOT auto-incorporate.
 
 ### `inbox`
-Listar prácticas pendientes en `$CLAUDE_KIT_DIR/practices/inbox/`.
-Mostrar título, fecha, source_type y tags de cada una.
+List pending practices in `$CLAUDE_KIT_DIR/practices/inbox/`.
+Show title, date, source_type, and tags for each one.
 
 ### `pipeline`
-Mostrar estado del pipeline de prácticas:
+Show practices pipeline status:
 ```
-═══ PIPELINE DE PRÁCTICAS ═══
-Inbox:      {{N}} prácticas pendientes
-Evaluando:  {{N}} en evaluación
-Activas:    {{N}} incorporadas
-Deprecadas: {{N}} retiradas
-Última actualización: {{fecha}}
+═══ PRACTICES PIPELINE ═══
+Inbox:      {{N}} pending
+Evaluating: {{N}} under review
+Active:     {{N}} incorporated
+Deprecated: {{N}} retired
+Last update: {{date}}
 ```
-Leer de practices/inbox/, evaluating/, active/, deprecated/.
+Read from practices/inbox/, evaluating/, active/, deprecated/.
 
 ### `domain extract`
-Ejecutar el skill `/domain-extract` en el proyecto actual.
-Analiza fuentes existentes (CLAUDE.md, auto-memory, CLAUDE_ERRORS.md, agent-memory, rules, git log) y propone domain rules para aprobación del usuario.
+Run the `/domain-extract` skill on the current project.
+Analyze existing sources (CLAUDE.md, auto-memory, CLAUDE_ERRORS.md, agent-memory, rules, git log) and propose domain rules for user approval.
 
 ### `domain list`
-Listar `.claude/rules/domain/` con status de cada archivo (domain tag, globs, last_verified, staleness).
-Si no existe el directorio: "No domain rules found. Run `/forge domain extract` to generate from existing sources."
+List `.claude/rules/domain/` with status of each file (domain tag, globs, last_verified, staleness).
+If directory doesn't exist: "No domain rules found. Run `/forge domain extract` to generate from existing sources."
 
 ### `domain sync-vault`
-Ejecutar el skill `/domain-extract` con flag sync-vault.
-Para domain rules con `domain_source: vault://path` en frontmatter, compara contra la nota del vault y propone actualizaciones.
+Run the `/domain-extract` skill with sync-vault flag.
+For domain rules with `domain_source: vault://path` in frontmatter, compare against the vault note and propose updates.
 
 ### `version`
-Leer `$CLAUDE_KIT_DIR/VERSION` y mostrar.
+Read `$CLAUDE_KIT_DIR/VERSION` and display.
 
-### Sin argumentos
-Mostrar ayuda:
+### No arguments
+Show help:
 ```
-/forge <comando>
+/forge <command>
 
-Comandos:
-  init          Setup rápido — auto-detecta stacks, cero preguntas
-  audit         Auditar proyecto actual contra plantilla
-  sync          Sincronizar config contra plantilla
-  bootstrap     Inicializar .claude/ en proyecto nuevo [--profile minimal|standard|full]
-  export        Exportar config a cursor|codex|windsurf|openclaw
-  diff          Qué cambió desde último sync
-  reset         Restaurar .claude/ a plantilla (con backup)
-  global sync   Sincronizar ~/.claude/ contra plantilla global
-  global status Estado de ~/.claude/ vs plantilla
-  status        Ver registro de proyectos, scores y tendencias
-  rule-check    Detectar reglas inertes cruzando globs contra git history
-  benchmark     Comparar config full vs minimal en tareas estandarizadas
-  plugin        Generar paquete de plugin para Claude Code marketplace
-  insights      Analizar sesiones pasadas y generar recomendaciones
-  unregister    Eliminar proyecto del registro (no borra config)
-  mcp add       Instalar MCP server template en proyecto o global [--global]
-  domain extract  Extraer domain knowledge de fuentes existentes del proyecto
-  domain list     Listar domain rules con status
-  domain sync-vault  Sincronizar domain rules con notas del vault
-  capture       Registrar insight o práctica descubierta
-  update        Pipeline de actualización de prácticas
-  watch         Buscar actualizaciones en docs Anthropic
-  scout         Revisar repos curados
-  inbox         Ver prácticas pendientes
-  pipeline      Estado del ciclo de prácticas
-  version       Mostrar versión de claude-kit
+Commands:
+  init          Quick setup — auto-detect stacks, zero questions
+  audit         Audit current project against template
+  sync          Sync config against template
+  bootstrap     Initialize .claude/ in new project [--profile minimal|standard|full]
+  export        Export config to cursor|codex|windsurf|openclaw
+  diff          What changed since last sync
+  reset         Restore .claude/ from template (with backup)
+  global sync   Sync ~/.claude/ against global template
+  global status State of ~/.claude/ vs template
+  status        View project registry, scores, and trends
+  rule-check    Detect inert rules by crossing globs against git history
+  benchmark     Compare full vs minimal config on standardized tasks
+  plugin        Generate plugin package for Claude Code marketplace
+  insights      Analyze past sessions and generate recommendations
+  unregister    Remove project from registry (does not delete config)
+  mcp add       Install MCP server template in project or global [--global]
+  domain extract  Extract domain knowledge from existing project sources
+  domain list     List domain rules with status
+  domain sync-vault  Sync domain rules with vault notes
+  capture       Record discovered insight or practice
+  update        Practices update pipeline
+  watch         Check for updates in Anthropic docs
+  scout         Review curated repos
+  inbox         View pending practices
+  pipeline      Practices lifecycle status
+  version       Show claude-kit version
 ```
