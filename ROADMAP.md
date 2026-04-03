@@ -1,10 +1,14 @@
 # Roadmap claude-kit
 
-Estado actual: **v2.7.1** (2026-03-30)
+Estado actual: **v2.8.0** (2026-04-03)
 
 ---
 
 ## Completado
+
+### v2.8.0 — P1 Internals Alignment (2026-04-03)
+
+Ver sección v2.8.0 abajo para el detalle completo.
 
 ### v2.7.1 — Hook Architecture Corrections + Expansion (2026-03-30)
 
@@ -63,40 +67,36 @@ Estado actual: **v2.7.1** (2026-03-30)
 
 ---
 
-## v2.8.0 — Hook Intelligence + Developer Experience (próximo)
+### v2.8.0 — P1 Internals Alignment (2026-04-03)
 
-Foco: explotar los 16 nuevos eventos de hook descubiertos, mejorar DX, y consolidar las prácticas pendientes.
+#### Completado en v2.8.0
 
-### Hooks avanzados
+- Fix: node-express glob narrowed a backend paths — elimina overlap con react-vite-ts
+- Fix: data-analysis glob removido `.py` — elimina overlap con python-fastapi
+- Fix: auto-mode safe permissions — reemplazados python3/node/npm/aws/gcloud con tool commands específicos en 6 stacks
+- Nuevo: ToolSearch Step 0 en watch-upstream + scout-repos skills (deferred tools discovery)
+- Nuevo: `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000` en template settings
+- Nuevo: async hooks documentados en hookify (async flag, asyncRewake, streaming)
+- Mejora: detect.md — hookify + trading stacks añadidos, pyproject.toml refinado, priority rules
+- Cambio: test-runner model haiku → sonnet (escribe tests, requiere razonamiento)
+- Nuevo: 5K token output budget en 6 agents
+- Nuevo: SendMessage continuation instruction en todos los agents
+- Nuevo: system prompt override patterns en python-fastapi, java-spring, go-api
+- Nuevo: `context: fork` en 5 skills pesadas (plugin-generator, bootstrap-project, init-project, domain-extract, audit-project)
+- Nuevo: `docs/internal/claude-code-internals-analysis.md` — reverse engineering de 5 repos
+- Nuevo: `docs/internal/improvement-plan-internals.md` — plan 36 items (P0+P1 done, P2-P3 pendientes)
+- Nuevo: `docs/internal/feature-flags-reference.md` — env vars + feature gates usables hoy
 
-- **PermissionRequest hook**: auto-allow para operaciones conocidas safe, log para auditoría
+#### Pendiente (movido a v2.9.0+)
+
+- **PermissionRequest hook**: auto-allow para operaciones known-safe, log para auditoría
 - **SubagentStart hook**: inyectar contexto de dominio automáticamente a subagentes spawneados
 - **CwdChanged hook**: recargar reglas de dominio al cambiar de directorio mid-session
 - **StopFailure hook**: capturar errores de API (rate_limit, billing_error) y sugerir retry strategy
-- Soporte para hook types `http` y `prompt` en el template base (actualmente solo `command`)
-
-### `/forge doctor`
-
-- Diagnóstico del entorno: `$CLAUDE_KIT_DIR`, `~/.claude/` sync, hooks ejecutables, MCPs configurados, `claude` en PATH
-- Semáforo verde/amarillo/rojo + fix sugerido por item
-- Diferente de `/forge audit`: verifica entorno, no config del proyecto
-
-### OpenClaw workspace completo
-
-- IDENTITY.md (ELLUISH), SOUL.md, USER.md, AGENTS.md, TOOLS.md, HEARTBEAT.md ya creados
-- Falta: `/forge export openclaw` actualizado para generar estos 6 archivos desde la config del proyecto
-- Bridge skill para operar `/forge` desde Telegram/Discord/WhatsApp via OpenClaw gateway
-
-### Stacks en evaluación
-
-- **trading** (en `practices/evaluating/`): reglas domain-specific para bots y market data — necesita test en proyecto real
-- **cloud-function** (en `practices/evaluating/`): stack separado vs subconjunto de gcp-cloud-run — evaluar si la separación vale
-
-### Context continuity mejorada
-
-- `includedFiles` en settings template con `CLAUDE_ERRORS.md` pre-configurado
-- Capture skill: detectar si el contexto fue compactado y advertir sobre signals incompletas
-- Evaluar `Tasks System` (persistent state en `~/.claude/tasks/<id>/`) como complemento a last-compact.md
+- **`/forge doctor`**: diagnóstico del entorno con semáforo verde/amarillo/rojo
+- **`/forge export openclaw`**: generar los 6 archivos de workspace desde config del proyecto
+- **trading stack**: reglas domain-specific para bots y market data — necesita test en proyecto real
+- **cloud-function stack**: evaluar si stack separado vs subconjunto de gcp-cloud-run
 
 ---
 

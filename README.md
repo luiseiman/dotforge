@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.7.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.8.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.

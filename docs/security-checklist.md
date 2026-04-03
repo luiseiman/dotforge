@@ -51,6 +51,13 @@ Verify BEFORE deploying any project.
 - [ ] Base images with specific version (not :latest)
 - [ ] Secrets NOT in build args or layers
 
+## Claude Code permissions
+
+### Auto-Mode (YOLO) Safety
+- [ ] Replace interpreter allow patterns (python3, node, npm) with specific tool commands
+- [ ] Document which permissions are stripped in auto-mode for team awareness
+- [ ] Test critical workflows with auto-mode enabled to verify they still work
+
 ---
 
 # Checklist de Seguridad — Pre-deploy
@@ -103,3 +110,10 @@ Verificar ANTES de deployar cualquier proyecto.
 - [ ] .dockerignore incluye .env, .git, node_modules
 - [ ] Imágenes base con versión específica (no :latest)
 - [ ] Secrets NO en build args ni en layers
+
+## Permisos de Claude Code
+
+### Modo Auto (YOLO) — Seguridad
+- [ ] Reemplazar patrones de allow con intérpretes (python3, node, npm) por comandos específicos de herramientas
+- [ ] Documentar qué permisos se eliminan en modo auto para conciencia del equipo
+- [ ] Probar workflows críticos con modo auto activado para verificar que siguen funcionando

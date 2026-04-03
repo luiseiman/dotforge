@@ -33,6 +33,16 @@ For large projects, use imports:
 ```
 Rules with `globs:` frontmatter load eagerly at session start. For lazy loading (on file match only), use `paths:` as unquoted CSV with `alwaysApply: false`.
 
+## CLAUDE.md Modularization with @include
+
+Instead of monolithic CLAUDE.md files, use the `@include` directive:
+- `@./relative/path.md` — include relative to current file
+- `@~/path.md` — include from home directory
+- `@/absolute/path.md` — include absolute path
+- Max depth: 5 levels (circular refs prevented)
+- Only works in leaf text nodes (NOT inside code blocks)
+- Use `claudeMdExcludes` in settings.json to toggle includes without deleting
+
 ---
 
 ## 2. Project configuration (.claude/)
@@ -68,6 +78,15 @@ Essential hooks:
 4. **session-restore** (SessionStart, source:compact) — re-inject last-compact.md on resume
 
 Exit codes: 0 = ok, 1 = error (warning), 2 = block (stop operation)
+
+## Async Hooks
+
+Hooks can run in the background without blocking tool execution:
+- `{"type": "command", "command": "script.sh", "async": true}` in settings.json
+- Or stream `{"async":true}` as the first JSON line from hook stdout
+- `asyncRewake: true` — hook can wake the agent after background completion
+- Background hooks survive new user prompts but are killed on hard cancel (Escape)
+- Best for: long-running validations, external API calls, metrics collection
 
 ### Domain rules — Project knowledge layer
 
@@ -244,6 +263,18 @@ Paste full stack trace + relevant code + context of when it occurs.
 - block-destructive hook always active
 - No Bash(*) — explicit permissions
 
+## Auto-Mode Permission Stripping
+
+When users activate auto/YOLO mode, these allow patterns are **silently removed**:
+- Interpreters: `python`, `node`, `deno`, `ruby`, `perl`, `php`, `lua`
+- Package runners: `npx`, `bunx`, `npm run`, `yarn run`, `pnpm run`, `bun run`
+- Shells: `bash`, `sh`, `zsh`, `fish`, `eval`, `exec`
+- Network: `curl`, `wget`, `ssh`
+- System: `sudo`, `kubectl`, `aws`, `gcloud`
+
+**Impact**: `Bash(python3 *)` in your allow list stops working without warning.
+**Fix**: Use specific tool commands instead: `Bash(pytest *)`, `Bash(uvicorn *)`, `Bash(vitest *)`, `Bash(sam *)`.
+
 ---
 
 # Mejores Prácticas — Claude Code (Marzo 2026)
@@ -278,6 +309,16 @@ Para proyectos grandes, usar imports:
 @.claude/rules/frontend.md
 ```
 Las rules con frontmatter `globs:` se cargan eager al inicio de sesión. Para lazy loading (solo cuando se toca un archivo que matchea), usar `paths:` como CSV sin quotes con `alwaysApply: false`.
+
+## Modularización de CLAUDE.md con @include
+
+En vez de CLAUDE.md monolíticos, usar la directiva `@include`:
+- `@./relative/path.md` — include relativo al archivo actual
+- `@~/path.md` — include desde home directory
+- `@/absolute/path.md` — include con path absoluto
+- Profundidad máxima: 5 niveles (refs circulares prevenidas)
+- Solo funciona en nodos de texto hoja (NO dentro de code blocks)
+- Usar `claudeMdExcludes` en settings.json para togglear includes sin borrar
 
 ---
 
@@ -314,6 +355,15 @@ Hooks esenciales:
 4. **session-restore** (SessionStart, source:compact) — re-inyecta last-compact.md al retomar
 
 Exit codes: 0 = ok, 1 = error (warning), 2 = block (detener operación)
+
+## Async Hooks
+
+Los hooks pueden correr en segundo plano sin bloquear la ejecución de tools:
+- `{"type": "command", "command": "script.sh", "async": true}` en settings.json
+- O streamear `{"async":true}` como primera línea JSON desde stdout del hook
+- `asyncRewake: true` — el hook puede despertar al agente al completarse
+- Los hooks en background sobreviven nuevos prompts del usuario pero se matan con cancel duro (Escape)
+- Ideal para: validaciones largas, llamadas a APIs externas, recolección de métricas
 
 ### Domain rules — Capa de conocimiento del proyecto
 
@@ -489,3 +539,15 @@ Pegar stack trace completo + código relevante + contexto de cuándo ocurre.
 - deny list: .env, *.key, *.pem, *credentials*
 - Hook block-destructive siempre activo
 - No Bash(*) — permisos explícitos
+
+## Stripping de permisos en modo auto (YOLO)
+
+Cuando los usuarios activan modo auto/YOLO, estos patrones de allow se **eliminan silenciosamente**:
+- Intérpretes: `python`, `node`, `deno`, `ruby`, `perl`, `php`, `lua`
+- Package runners: `npx`, `bunx`, `npm run`, `yarn run`, `pnpm run`, `bun run`
+- Shells: `bash`, `sh`, `zsh`, `fish`, `eval`, `exec`
+- Red: `curl`, `wget`, `ssh`
+- Sistema: `sudo`, `kubectl`, `aws`, `gcloud`
+
+**Impacto**: `Bash(python3 *)` en tu allow list deja de funcionar sin advertencia.
+**Fix**: Usar comandos específicos de herramientas: `Bash(pytest *)`, `Bash(uvicorn *)`, `Bash(vitest *)`, `Bash(sam *)`.

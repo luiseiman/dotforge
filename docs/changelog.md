@@ -4,6 +4,37 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.8.0 (2026-04-03)
+
+### P1 Internals Alignment
+
+#### Bloque A — Fixes rápidos
+- Fix: node-express glob narrowed to backend paths (`src/routes/**, src/services/**`) — avoids overlap with react-vite-ts
+- Fix: data-analysis glob removed `.py` — avoids overlap with python-fastapi
+- Nuevo: ToolSearch Step 0 in watch-upstream + scout-repos skills (deferred tools discovery)
+- Nuevo: `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000` env var in template settings
+- Nuevo: async hooks documentation in hookify (async flag, asyncRewake, streaming)
+- Mejora: detect.md — added hookify + trading stacks, pyproject.toml detection refined, priority rules
+
+#### Bloque B — Agents
+- Cambio: test-runner model haiku → sonnet (writes tests, needs reasoning quality)
+- Nuevo: 5K token output budget instruction in 6 agents
+- Nuevo: SendMessage continuation instruction in all agents
+
+#### Bloque C — Permissions + System Prompt
+- Nuevo: system prompt override patterns in python-fastapi (docstrings), java-spring (Javadoc), go-api (doc comments)
+- Fix: auto-mode safe permissions — replaced python3/node/npm/aws/gcloud with specific tool commands in 6 stacks
+
+#### Bloque D — Skills
+- Nuevo: `context: fork` on 5 heavy skills for post-compaction safety (plugin-generator, bootstrap-project, init-project, domain-extract, audit-project)
+
+#### Internals Analysis (merged from analysis branch)
+- Nuevo: `docs/internal/claude-code-internals-analysis.md` — cross-repository reverse engineering (5 repos)
+- Nuevo: `docs/internal/improvement-plan-internals.md` — 36-item improvement plan (P0 done, P1 done, P2-P3 pending)
+- Nuevo: `docs/internal/feature-flags-reference.md` — env vars + feature gates usable today
+
+---
+
 ## v2.7.1 (2026-03-30)
 
 ### Hook Architecture — Correcciones y expansión
