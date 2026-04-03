@@ -30,6 +30,7 @@ last_verified: 2026-04-02
 - Each teammate MUST use isolation: "worktree" (confirmed by EnterWorktree/ExitWorktree tools)
 - Sequential chaining: researcher → architect → implementer → test-runner → code-reviewer
 - NEVER spawn new agent for follow-ups — use SendMessage({to: agentId}) to continue
+- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var: enables native Agent Teams (research preview, requires Opus)
 
 ## Memory and lifecycle
 

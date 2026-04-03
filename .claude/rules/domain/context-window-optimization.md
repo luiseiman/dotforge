@@ -2,7 +2,7 @@
 globs: "template/**/*.md,docs/memory-strategy.md,**/CLAUDE.md,**/rules/memory.md,**/MEMORY.md"
 description: "Context window management and token optimization patterns"
 domain: claude-code-engineering
-last_verified: 2026-04-02
+last_verified: 2026-04-03
 ---
 
 # Context Window Optimization
@@ -23,6 +23,12 @@ last_verified: 2026-04-02
 - Circuit breaker: 3 consecutive failures disables auto-compact for session
 - Post-compact file restoration: 5 files, 50K total, 5K per file
 - Skill restoration: 25K total, ~5 skills, 5K each
+
+## Env vars for compaction control
+
+- `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75`: override auto-compact threshold (default ~90%). Lower = earlier compaction, more room for hooks
+- `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1`: disable auto-compaction entirely
+- `/compact <instructions>`: manual trigger with custom instructions to guide what the compressor preserves
 
 ## CLAUDE.md and memory
 
