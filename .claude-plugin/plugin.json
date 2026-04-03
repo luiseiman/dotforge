@@ -1,6 +1,6 @@
 {
   "name": "claude-kit",
-  "version": "2.6.1",
+  "version": "2.7.1",
   "description": "Configuration factory for Claude Code — 16 skills, 7 agents, 15 stacks, 6 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
   "author": {
     "name": "Luis Eiman",
