@@ -61,3 +61,5 @@ Only record decisions with lasting impact. Skip trivial or one-off choices.
 - If the project has a `docs/adr/` or similar, follow the existing ADR format
 - Flag any proposal that requires infrastructure changes (new deps, services, config)
 - Never propose a technology switch without cost/effort analysis
+- Keep total output under 5K tokens — summarize, don't dump raw analysis
+- If the caller needs follow-up, they will use SendMessage — do not start a new context

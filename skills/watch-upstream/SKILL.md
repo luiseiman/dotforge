@@ -7,6 +7,12 @@ description: Fetch official Anthropic/Claude Code docs, detect changes relevant 
 
 Detect changes in official Claude Code documentation that may require updates to claude-kit.
 
+## Step 0: Discover tools
+
+WebFetch and WebSearch are deferred tools — they may not be loaded yet.
+Run `ToolSearch("WebFetch WebSearch")` to ensure both tools are available before proceeding.
+If either tool is not found, fall back to `Bash(curl -s <url>)` for fetching.
+
 ## Step 1: Fetch current documentation
 
 Use WebFetch to read these pages directly:

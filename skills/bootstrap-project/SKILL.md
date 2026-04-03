@@ -1,6 +1,7 @@
 ---
 name: bootstrap-project
 description: Inicializa la configuración de Claude Code en un proyecto nuevo o existente usando la plantilla claude-kit.
+context: fork
 ---
 
 # Bootstrap Proyecto

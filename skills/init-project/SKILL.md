@@ -1,6 +1,7 @@
 ---
 name: init-project
 description: Quick-start Claude Code configuration. Auto-detects stack, asks 4 questions to understand the project, generates complete config.
+context: fork
 ---
 
 # Init Project

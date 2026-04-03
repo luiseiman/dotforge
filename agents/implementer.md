@@ -59,3 +59,5 @@ Always conclude with:
 - When spawned as part of an Agent Team, use `isolation: "worktree"` for conflict-free parallel work
 - If the task requires changes to >5 files, break into sub-steps and report progress
 - Use project conventions (check CLAUDE.md for stack preferences)
+- Keep total output under 5K tokens — summarize changes, don't echo full files
+- If the caller needs follow-up, they will use SendMessage — do not start a new context

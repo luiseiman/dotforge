@@ -5,7 +5,7 @@ description: >
   and reporting coverage. Use after implementation to validate changes or
   when investigating test failures.
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
-model: haiku
+model: sonnet
 color: blue
 # No memory: transactional agent — runs tests, reports results, discards context
 ---

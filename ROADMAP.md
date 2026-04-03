@@ -1,121 +1,129 @@
 # Roadmap claude-kit
 
-Estado actual: **v2.6.1** (2026-03-24)
+Estado actual: **v2.7.1** (2026-03-30)
 
 ---
 
-## v2.5.0 — Completado
+## Completado
 
-- `/forge capture` sin args: auto-detección de contexto de sesión, propone insight pre-formateado, pide confirmación Y/n/edit antes de guardar
-- `/cap`: alias shorthand para `/forge capture` — 4 chars vs 14
-- Regla proactiva de captura en `template/rules/_common.md`: Claude sugiere `/cap` al detectar workaround, bug multi-intento, decisión con trade-offs, o comportamiento no-obvio
-- MCP server templates en `mcp/`: github, postgres, supabase, redis, slack — cada uno con config.json, permissions.json, rules.md
-- `template/rules/model-routing.md`: criterios explícitos para haiku/sonnet/opus por tipo de tarea
-- 7 agents actualizados con modelo explícito (researcher/test-runner=haiku, implementer/code-reviewer/session-reviewer=sonnet, architect/security-auditor=opus)
+### v2.7.1 — Hook Architecture Corrections + Expansion (2026-03-30)
 
----
+- Corrección: PreCompact es non-blocking (exit code ignorado)
+- Verificado: PostCompact recibe `compact_summary` + `trigger` (docs oficiales incompletas)
+- 4 eventos de hook de alto valor documentados: PermissionRequest, SubagentStart, CwdChanged, StopFailure
+- Hook types `http`, `prompt`, `agent` documentados en hookify
+- Corrección rule-effectiveness.md: eager loading (`globs:`) vs lazy loading (`paths:` CSV + `alwaysApply: false`)
+- 5 prácticas de investigación incorporadas al pipeline activo
+- Comentario en issue #17204 con workaround de `globs:`
 
-## v2.4.0 — Completado
+### v2.7.0 — Domain Knowledge Layer + Context Continuity (2026-03-30)
 
-- `/forge init`: quick-start con 3 preguntas, detección de idioma automática
-- `/forge global sync`: auto-pull de claude-kit + resync `~/.claude/` en un paso
+- `template/rules/domain-learning.md`: regla `globs:**/*` para persistir descubrimientos de dominio
+- `/forge domain extract|sync-vault|list`: skill de gestión de conocimiento de dominio
+- Frontmatter extendido: `domain:`, `last_verified:`, `domain_source:`
+- `template/hooks/post-compact.sh`: PostCompact → escribe compact_summary + git state a `last-compact.md`
+- `template/hooks/session-restore.sh`: SessionStart → re-inyecta last-compact.md tras compactación
+- `/forge init` pregunta dominio/rol; `/forge bootstrap` crea seeds en `domain/`
+- `/forge audit` muestra sección de domain knowledge (informacional, sin impacto en score)
+- `/forge sync` skipea `.claude/rules/domain/` (preserva conocimiento acumulado)
+- Demo GIFs: forge-init, forge-audit, forge-bootstrap, forge-status
+
+### v2.6.1 — Docs Update + Rule Loading (2026-03-25)
+
+- Documentación actualizada con eager vs lazy rule loading
+- `guia-uso.md` sincronizada con v2.7.1
+- Audit CI: `audit/score.sh` standalone para GitHub Actions
+
+### v2.6.0 — CI/CD + MCP UX + Quality fixes (2026-03-21)
+
+- `audit/score.sh`: script standalone para PRs sin depender de Claude
+- `detect-stack-drift.sh`: PostToolUse hook que detecta dependencias nuevas con stack disponible
+- `/forge mcp add <server>`: instala MCP server template en 1 comando
+- MCP version pinning + `mcp/update-versions.sh`
+- Model IDs explícitos en model-routing.md (haiku-4-5, sonnet-4-6, opus-4-6)
+- `session-report.sh` wired en perfil standard y full
+
+### v2.5.0 — Capture + MCP + Model Routing (2026-03-19)
+
+- `/forge capture` sin args: auto-detección de contexto, propone insight pre-formateado
+- `/cap`: alias shorthand (4 chars)
+- MCP server templates: github, postgres, supabase, redis, slack
+- `template/rules/model-routing.md`: criterios haiku/sonnet/opus por tipo de tarea
+- 7 agents con modelo explícito
+
+### v2.4.0 — Init + Global Sync + Integrations (2026-03-15)
+
+- `/forge init`: quick-start con 3 preguntas, detección de idioma
+- `/forge global sync`: auto-pull + resync `~/.claude/`
 - `/forge unregister`: remover proyectos del registry
-- Plugin marketplace structure (`.claude-plugin/`)
-- OpenClaw integration completa (`/forge export openclaw`)
-- 16 stacks tecnológicos (hookify, trading, devcontainer incluidos)
-- 15 skills, 7 agents, 17 subcomandos `/forge`
-- Hook profiles: `FORGE_HOOK_PROFILE` minimal/standard/strict en `block-destructive.sh`
-- TDD warning hook (`warn-missing-test.sh`, solo perfil strict)
-- Session report hook (`session-report.sh`) con métricas JSON en `~/.claude/metrics/`
-- Project tier en audit: simple / standard / complex
-- Bootstrap profiles: minimal / standard / full
-- Prompt injection scan como item 12 del checklist de auditoría
-- Error Type column en CLAUDE_ERRORS.md (syntax/logic/integration/config/security)
-- Git worktree isolation para Agent Teams (isolation: "worktree" en agents.md)
-- CI: validación automática de hooks, YAML, frontmatter, stacks y skills en PRs
+- OpenClaw integration (`/forge export openclaw`)
+- 15 stacks, hook profiles (minimal/standard/strict)
+- Session report hook, project tier en audit, bootstrap profiles
+- Prompt injection scan (item 12), error Type column, git worktree isolation
 
 ---
 
-## v2.6.0 — CI/CD + MCP UX + Quality fixes (próximo)
+## v2.8.0 — Hook Intelligence + Developer Experience (próximo)
 
-Foco: integración con flujos de trabajo de PR, UX de MCP, y correcciones de calidad.
+Foco: explotar los 16 nuevos eventos de hook descubiertos, mejorar DX, y consolidar las prácticas pendientes.
 
-### CI: `/forge audit` score en PRs
+### Hooks avanzados
 
-- Script shell standalone `audit/score.sh` que computa los 12 checks mecánicos sin depender de Claude
-- GitHub Action que corre `audit/score.sh` en PRs y comenta el score como review comment
-- Configurable: threshold mínimo (default 7.0), bloquea merge si score < threshold
-- Badge dinámico para README
-- Prerequisito bloqueante: `audit/score.sh` como nuevo artefacto
-- Nota: checks semánticos (calidad de CLAUDE.md) se aproximan con heurísticas — score es indicativo, no idéntico al skill
-
-### Stack auto-update detection
-
-- PostToolUse hook `detect-stack-drift.sh` sobre eventos `Write`
-- Monitorea: `package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Gemfile`
-- Si se detecta dependencia nueva con stack disponible en claude-kit no instalado → warning + sugerencia de `/forge sync`
-- Warning only (exit 0) — nunca bloquea
-- Sinergia con MCP templates: si la dependencia implica un MCP server, sugiere el template también
-
-### `/forge mcp add <server>`
-
-- Nuevo comando que toma un nombre de server (`github`, `postgres`, `supabase`, `redis`, `slack`)
-- Lee `mcp/<server>/config.json` + `permissions.json` y mergea automáticamente en `.claude/settings.json` del proyecto
-- Confirma antes de escribir, muestra diff de lo que se va a agregar
-- Output: `✓ GitHub MCP configurado. Seteá GITHUB_TOKEN y reiniciá Claude Code.`
-- Reduce el flujo de 4 pasos manuales a 1 comando
-
-### MCP version pinning + update script
-
-- Pinear todas las versiones de MCP templates a exactas (eliminado el uso de rangos semver)
-- Nuevo script `mcp/update-versions.sh` que consulta `npm view <package> version` y actualiza `config.json`
-- Instrucción en CONTRIBUTING.md de correr el script antes de cada release
-
-### Quality fixes (incluidos en este release)
-
-- `TodoWrite` en `template/rules/agents.md`: guidance explícita de uso para tasks >3 pasos
-- Model IDs explícitos en `template/rules/model-routing.md`: tabla de IDs actuales (haiku-4-5, sonnet-4-6, opus-4-6)
-- Stop hook en `template/settings.json.tmpl`: wirear `session-report.sh` en perfil standard y full
-
----
-
-## v2.7.0 — LLM Stack + Developer Experience (planificado)
-
-Foco: soporte para proyectos LLM, diagnóstico de entorno, y context management mejorado.
-
-### Stack `llm-python`
-
-- Stack para proyectos Python que usan LLM APIs (anthropic, openai, langchain, litellm)
-- `rules/llm-python.md`: manejo de API keys, retry con backoff, nunca loggear `content` de messages, costeo explícito antes de batch ops, prompt versioning
-- `settings.json.partial`: deny `Read(**/.anthropic*)`, deny `Read(**/.openai*)`, allow operaciones de Python LLM
-- Auto-detección: si `pyproject.toml` o `requirements.txt` contiene `anthropic`, `openai`, o `litellm`
+- **PermissionRequest hook**: auto-allow para operaciones conocidas safe, log para auditoría
+- **SubagentStart hook**: inyectar contexto de dominio automáticamente a subagentes spawneados
+- **CwdChanged hook**: recargar reglas de dominio al cambiar de directorio mid-session
+- **StopFailure hook**: capturar errores de API (rate_limit, billing_error) y sugerir retry strategy
+- Soporte para hook types `http` y `prompt` en el template base (actualmente solo `command`)
 
 ### `/forge doctor`
 
-- Diagnóstico completo del entorno de desarrollo:
-  1. `$CLAUDE_KIT_DIR` seteada y apunta a repo claude-kit válido
-  2. `~/.claude/` sincronizado (hash de skills instalados vs repo)
-  3. Hooks del proyecto: ejecutables (`-rwxr-xr-x`), bash syntax válida
-  4. Variables de entorno de MCPs configuradas (si el proyecto usa MCPs)
-  5. `claude` CLI en PATH
-- Output: semáforo verde/amarillo/rojo por item + fix sugerido para cada rojo
-- Diferente de `/forge audit`: verifica el entorno, no la config del proyecto
+- Diagnóstico del entorno: `$CLAUDE_KIT_DIR`, `~/.claude/` sync, hooks ejecutables, MCPs configurados, `claude` en PATH
+- Semáforo verde/amarillo/rojo + fix sugerido por item
+- Diferente de `/forge audit`: verifica entorno, no config del proyecto
 
-### MCP templates: `filesystem` + `brave-search`
+### OpenClaw workspace completo
 
-- `mcp/filesystem/`: config con paths permitidos, permissions.json con deny para `~/.ssh`, `~/.aws`, `~/.config`
-- `mcp/brave-search/`: config con `BRAVE_API_KEY`, permissions.json read-only
+- IDENTITY.md (ELLUISH), SOUL.md, USER.md, AGENTS.md, TOOLS.md, HEARTBEAT.md ya creados
+- Falta: `/forge export openclaw` actualizado para generar estos 6 archivos desde la config del proyecto
+- Bridge skill para operar `/forge` desde Telegram/Discord/WhatsApp via OpenClaw gateway
 
-### `includedFiles` en settings template
+### Stacks en evaluación
 
-- Agregar sección `includedFiles` a `template/settings.json.tmpl` con `CLAUDE_ERRORS.md` pre-configurado
-- Documentar jerarquía en `docs/memory-strategy.md`: auto-memory → agent-memory → CLAUDE_ERRORS → includedFiles → CLAUDE.md
+- **trading** (en `practices/evaluating/`): reglas domain-specific para bots y market data — necesita test en proyecto real
+- **cloud-function** (en `practices/evaluating/`): stack separado vs subconjunto de gcp-cloud-run — evaluar si la separación vale
 
-### Capture skill: manejo de context compaction
+### Context continuity mejorada
 
-- En Step 0 de `skills/capture-practice/SKILL.md`, detectar si el contexto fue compactado
-- Advertencia: "⚠ Context was compacted. Signals from early session may be incomplete."
-- Sugerencia de fallback: "If you remember a specific insight from before compaction, run `/cap 'description'`."
+- `includedFiles` en settings template con `CLAUDE_ERRORS.md` pre-configurado
+- Capture skill: detectar si el contexto fue compactado y advertir sobre signals incompletas
+- Evaluar `Tasks System` (persistent state en `~/.claude/tasks/<id>/`) como complemento a last-compact.md
+
+---
+
+## v2.9.0 — LLM Stack + Effectiveness (planificado)
+
+### Stack `llm-python`
+
+- Para proyectos Python con LLM APIs (anthropic, openai, langchain, litellm)
+- Rules: manejo de API keys, retry con backoff, no loggear `content`, costeo antes de batch ops, prompt versioning
+- Auto-detección: si `pyproject.toml`/`requirements.txt` contiene `anthropic`, `openai`, `litellm`
+
+### Practice effectiveness validation
+
+- Completar los 5 recurrence checks de las prácticas en monitoring (fix-loop-root-cause, websocket-shadow-import, precompact-nonblocking)
+- Promover prácticas validadas a reglas permanentes
+- Dashboard de effectiveness en `/forge insights`
+
+### MCP templates nuevos
+
+- `mcp/filesystem/`: config con paths permitidos, deny `~/.ssh`, `~/.aws`
+- `mcp/brave-search/`: config read-only con `BRAVE_API_KEY`
+
+### Audit v2
+
+- Puntaje de domain knowledge (actualmente informacional → opcional scored)
+- Hook coverage score: % de eventos utilizados vs disponibles
+- Config coherence como item obligatorio (actualmente solo warning)
 
 ---
 
@@ -124,9 +132,11 @@ Foco: soporte para proyectos LLM, diagnóstico de entorno, y context management 
 | Item | Por qué no ahora |
 |------|-----------------|
 | Stacks como plugins independientes | Marketplace de Claude Code sin spec estable. Re-evaluar cuando `/forge watch` detecte release oficial. |
-| Team mode (`.claude/team.json`) | Fuera de scope para uso personal. Desbloquear si hay 3+ usuarios en el mismo proyecto con configs distintas. |
+| Team mode (`.claude/team.json`) | Fuera de scope para uso personal. Desbloquear si hay 3+ usuarios en mismo proyecto. |
 | CI GitLab template | El usuario usa GitHub. Añadir si hay demanda concreta. |
-| Stop hook B2 (análisis via Claude API) | Evaluar en v2.7.0 después de medir cobertura de session-report. Solo implementar si inbox sigue subpoblado. |
+| Badge dinámico de audit score | Requiere CI pipeline estable primero. Evaluar post v2.8.0. |
+| `/forge migrate` | Migración entre versiones mayores de Claude Code. Esperar breaking change real. |
+| Hook `prompt` type en block-destructive | Dejar que Claude decida si un comando es destructivo en vez de regex. Alto costo por llamada — evaluar ROI. |
 
 ---
 
@@ -137,9 +147,8 @@ Foco: soporte para proyectos LLM, diagnóstico de entorno, y context management 
 | npm/npx distribution | Requiere app code, rompe filosofía md+shell |
 | Web UI / dashboard | Fuera de scope, terminal-native |
 | Real-time analytics | Requiere daemon, contradice "no app code" |
-| Stop hook B1 (grep-based) | Genera ruido sin semántica — no vale el esfuerzo |
-| 500+ skills at scale | Calidad > cantidad. Skills focalizados son suficientes. |
-| Model routing automático en runtime | Over-engineering — las reglas explícitas son más predecibles |
-| Auto-escalation de modelo por token count | Over-engineering — routing por tipo de tarea, no por tamaño |
-| MCP server self-hosting templates | Fuera de scope — claude-kit configura clientes, no servers |
-| `/forge export cursor\|windsurf` | Dependencia de specs de terceros inestables. Re-evaluar si alguno estabiliza su formato de config |
+| Stop hook B1 (grep-based) | Genera ruido sin semántica |
+| 500+ skills at scale | Calidad > cantidad |
+| Model routing automático en runtime | Over-engineering — reglas explícitas son más predecibles |
+| Auto-escalation por token count | Over-engineering — routing por tipo de tarea, no por tamaño |
+| MCP server self-hosting | claude-kit configura clientes, no servers |

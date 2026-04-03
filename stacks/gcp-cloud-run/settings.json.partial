@@ -1,9 +1,9 @@
 {
-  "_comment": "Merge con template/settings.json.tmpl",
+  "_comment": "Merge con template/settings.json.tmpl. WARNING: gcloud is stripped in auto/YOLO mode. Use specific subcommands (gcloud run *, gcloud builds *) but note these may also be stripped since they start with gcloud. Prefer wrapping gcloud calls in Makefile targets and allowing Bash(make *).",
   "permissions": {
     "allow": [
-      "Bash(gcloud *)",
-      "Bash(gcloud run *)"
+      "Bash(gcloud run *)",
+      "Bash(gcloud builds *)"
     ]
   }
 }

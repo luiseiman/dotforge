@@ -46,3 +46,12 @@ Hookify generates `command` type hooks. Claude Code also supports these types di
 - `agent` — spawn subagent: `{"type": "agent", "agent": "security-auditor"}`
 
 These are added manually to settings.json, not via `/hookify`.
+
+## Async hooks
+
+Hooks can run in the background without blocking the tool execution:
+- In settings.json: `{"type": "command", "command": "script.sh", "async": true}`
+- Or stream `{"async":true}` as the first JSON line from stdout
+- `asyncRewake`: hook can wake the agent after completion
+- Background hooks survive new user prompts but are killed on hard cancel (Escape)
+- Use for: long-running validations, external API calls, metrics collection
