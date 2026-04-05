@@ -4,9 +4,9 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
-## v2.9.0 (2026-04-05)
+## v2.9.0 (2026-04-05) — RELEASED
 
-### Hardening + Portability + Upstream Alignment
+### Hardening + Portability + Upstream Alignment + E2E Validated
 
 #### Reliability Fixes (Codex Review)
 - Fix: `audit/score.sh --json` — triple-quote Python heredoc + true/false → sanitized strings + True/False
@@ -52,6 +52,13 @@
 - Updated: `docs/best-practices.md` — 26 hook events
 - Updated: `docs/security-checklist.md` — auto mode safety section
 - Updated: `docs/creating-stacks.md` — paths YAML format + stack hook copying
+
+#### E2E Validation (2026-04-05)
+- Bootstrap on clean project: 20 files created, react-vite-ts detected, manifest with stacks
+- Audit: 8.87/10 (text + JSON valid)
+- Status: 12 projects, avg 9.8/10
+- Sync: all in sync, no destruction
+- Checklist: 28/28 passed. Verdict: SHIP
 
 ---
 
