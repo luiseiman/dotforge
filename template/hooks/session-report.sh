@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Stop hook: generate session metrics on session end
 # Matcher: (none — Stop event)
 # Outputs:
@@ -11,7 +11,15 @@ TIME=$(date +%H:%M)
 # --- Project identification ---
 PROJECT_NAME=$(basename "$PWD")
 PROJECT_SLUG=$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/[^a-z0-9-]//g')
-PROJECT_HASH=$(echo "$PWD" | md5sum 2>/dev/null | cut -c1-8 || md5 -q -s "$PWD" 2>/dev/null | cut -c1-8)
+
+# Portable hash: md5sum (Linux) || md5 (macOS) || cksum (POSIX fallback)
+_hash() {
+  printf '%s' "$1" | md5sum 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | md5 -q 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | cksum | cut -d' ' -f1
+}
+
+PROJECT_HASH=$(_hash "$PWD")
 
 # --- Collect raw data ---
 

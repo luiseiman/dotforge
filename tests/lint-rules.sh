@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Validate that all rule .md files have proper frontmatter
 # Exit 0 = all pass, exit 1 = failures found
 

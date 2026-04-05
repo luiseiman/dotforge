@@ -17,6 +17,11 @@ Thumbs.db
 # Registry local (datos de tu máquina, no commitear)
 registry/projects.local.yml
 
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
 # Archivos temporales
 *.tmp
 *.bak

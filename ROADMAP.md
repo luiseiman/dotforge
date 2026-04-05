@@ -1,10 +1,26 @@
 # Roadmap dotforge
 
-Estado actual: **v2.8.1** (2026-04-05)
+Estado actual: **v2.9.0** (2026-04-05)
 
 ---
 
 ## Completado
+
+### v2.9.0 — Hardening + Portability + Upstream Alignment (2026-04-05)
+
+Consolidación de confiabilidad basada en Codex review + alineación con Claude Code v2.1.84–v2.1.92.
+
+- Fix: score.sh --json (heredoc Python roto), check-updates.sh (path), detect-stack-drift.sh (schema + mensaje), hookify (paths), injection scan (falso positivo)
+- Portabilidad: timeout/md5sum/shebangs portables a macOS + Linux + WSL + Git Bash
+- Nuevo: install.sh one-liner con detección de plataforma
+- Upstream: 26 hook events, 6 permission modes, 1M context GA, paths: YAML list, Claude 3 Haiku deprecated
+- Nuevas domain rules: auto-mode.md, hook-events.md
+- Manifest: campo `stacks` agregado al schema
+- README: tagline "governance", lifecycle hero, Works with, Requirements con WSL
+- Auditoría completa: 12 proyectos, 8 perfect, avg 9.8/10
+- Migración claude-kit → dotforge completada en todos los proyectos
+- Deny list global alineada (+5 entries, **/recursive globs)
+- .gitignore: __pycache__/, *.pyc
 
 ### v2.8.0 — Internals Analysis + P0 Fixes + P1 Alignment (2026-04-05)
 

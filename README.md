@@ -4,29 +4,47 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.8.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.9.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
-Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
+Configuration governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, audit, sync, and evolve your `.claude/` configuration across projects — all markdown + shell scripts, zero dependencies.
 
-Bootstrap any project with a complete `.claude/` setup in seconds. Audit it. Keep it in sync as dotforge evolves.
+```
+bootstrap → audit → sync → capture → propagate
+    ↑                                    │
+    └────────────────────────────────────┘
+```
 
 ## Quick Start
 
 ```bash
-# 1. Clone
-git clone https://github.com/luiseiman/dotforge.git
-cd dotforge
+# One-liner install
+curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
 
-# 2. Install globally (symlinks skills, agents, commands into ~/.claude/)
-export DOTFORGE_DIR="$(pwd)"
-./global/sync.sh
+# Or manual:
+git clone https://github.com/luiseiman/dotforge.git ~/.dotforge
+export DOTFORGE_DIR="$HOME/.dotforge"
+$DOTFORGE_DIR/global/sync.sh
 
-# 3. In any project directory:
-/forge bootstrap    # Initialize .claude/ with full config
-/forge audit        # Audit configuration and get a score (0-10)
+# In any project directory:
+/forge init         # Zero to config in one command
+/forge audit        # Score your configuration (0-10)
 /forge sync         # Update against current template
 ```
+
+### Requirements
+
+bash (macOS, Linux, WSL). Git Bash works but WSL recommended on Windows. Optional: `python3`, `jq` for full hook support.
+
+### Works with
+
+dotforge manages your `.claude/` configuration. It complements, not replaces, other tools:
+
+| Tool | What it does | How dotforge helps |
+|------|-------------|-------------------|
+| [claude-skills](https://github.com/anthropics/claude-skills) | 248+ skills collection | dotforge manages the config around your skills |
+| [gstack](https://github.com/anthropics/gstack) | AI-native full-stack framework | dotforge audits and syncs the `.claude/` config gstack generates |
+| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Behavioral modes | dotforge adds lifecycle: audit, sync, practices, registry |
 
 > **New here?** Read the **[Usage Guide](docs/usage-guide.md)** for a complete walkthrough with examples.
 
@@ -50,26 +68,23 @@ export DOTFORGE_DIR="$(pwd)"
 
 ## Why dotforge
 
-There are many Claude Code starter kits, skills collections, and CLAUDE.md generators. dotforge is different because it's the only **end-to-end configuration management system** — not a one-shot bootstrap or a static collection.
+### What makes it different
 
-### What makes it unique
+1. **Cross-project registry with audit history** — track scores across all your projects, spot regressions, compare configurations over time
+2. **Practices pipeline** — continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Discoveries propagate across projects
+3. **Template sync with customization preservation** — `<!-- forge:section -->` markers let `/forge sync` update managed sections without touching your customizations
+4. **Audit scoring with security cap** — 12-item checklist normalized to 10 points. Missing security essentials caps score at 6.0 regardless of other items
 
-| Feature | What it means | Who else does this |
-|---------|---------------|-------------------|
-| **Additive stack layering** | Auto-detects your tech (15 stacks) and merges matching configs on top of a base template. Multi-stack projects get all layers combined. | No one — closest is project-type scanning, but without composable layering |
-| **MCP server templates** | Ready-to-use config, permissions, and usage rules for 5 common MCP servers (GitHub, Postgres, Supabase, Redis, Slack). Auto-detected by `/forge bootstrap`. | No one |
-| **Template sync with markers** | `<!-- forge:section -->` separates managed sections from your customizations. `/forge sync` updates the managed parts without touching yours. | No one |
-| **Audit scoring (0-10)** | 12-item checklist (5 obligatory scored 0-2, 7 recommended scored 0-1), normalized to 10. Security-critical items cap the score at 6.0 if missing. Project tier (simple/standard/complex) adjusts expectations. | tw93/claude-health has tiers but no numeric normalization or security cap |
-| **Practices pipeline** | Continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Practices arrive from capture, web watch, repo scouting, audit gaps, or post-session hooks. | No one |
-| **Cross-project registry** | `registry/projects.yml` tracks audit scores with history across all managed projects. Spot regressions, compare configurations. | No one |
-| **Global config via symlinks** | `global/sync.sh` installs skills, agents, and commands as symlinks into `~/.claude/`. One source of truth, instant propagation. | No one with this symlink-based approach |
+Other tools bootstrap once. dotforge bootstraps, audits, syncs, and evolves.
 
-### How it compares
+### Multi-platform export
 
-- **Skills collections** (superpowers, claude-skills) give you components — dotforge gives you the system that manages them
-- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrap once — dotforge bootstraps, syncs, audits, and evolves
-- **CLAUDE.md generators** generate one file — dotforge generates and maintains the entire `.claude/` directory
-- **Audit tools** (claude-health) check once — dotforge checks, scores, tracks over time, and feeds gaps back into the practices pipeline
+```
+/forge export cursor     → .cursorrules
+/forge export codex      → AGENTS.md
+/forge export windsurf   → .windsurfrules
+/forge export openclaw   → SKILL.md
+```
 
 ## What it does
 
@@ -212,9 +227,10 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-- `bash` (hooks are shell scripts)
-- `python3` with `pyyaml` (for registry validation, optional)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
+- `bash` (macOS, Linux, WSL — Git Bash works, WSL recommended on Windows)
+- `python3` (optional, for JSON hooks and registry validation)
+- `jq` (optional, for hook input parsing)
 
 ## Configuration
 
@@ -238,24 +254,28 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # dotforge (Español)
 
-Fábrica de configuración para [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Plantillas, stacks, skills, agentes, sistema de auditoría y un pipeline de prácticas — todo en markdown + shell scripts.
+Gobernanza de configuración para [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, auditoría, sync y evolución de tu configuración `.claude/` entre proyectos — todo en markdown + shell scripts, sin dependencias.
 
-Inicializá cualquier proyecto con una configuración `.claude/` completa en segundos. Auditalo. Mantenelo sincronizado a medida que dotforge evoluciona.
+```
+bootstrap → audit → sync → capture → propagate
+    ↑                                    │
+    └────────────────────────────────────┘
+```
 
 ## Inicio Rápido
 
 ```bash
-# 1. Clonar
-git clone https://github.com/luiseiman/dotforge.git
-cd dotforge
+# Instalación en una línea
+curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
 
-# 2. Instalar globalmente (crea symlinks de skills, agentes y comandos en ~/.claude/)
-export DOTFORGE_DIR="$(pwd)"
-./global/sync.sh
+# O manual:
+git clone https://github.com/luiseiman/dotforge.git ~/.dotforge
+export DOTFORGE_DIR="$HOME/.dotforge"
+$DOTFORGE_DIR/global/sync.sh
 
-# 3. En cualquier directorio de proyecto:
-/forge bootstrap    # Inicializar .claude/ con configuración completa
-/forge audit        # Auditar la configuración y obtener un puntaje (0-10)
+# En cualquier directorio de proyecto:
+/forge init         # De cero a config en un comando
+/forge audit        # Puntuar tu configuración (0-10)
 /forge sync         # Actualizar contra la plantilla actual
 ```
 
@@ -281,26 +301,23 @@ export DOTFORGE_DIR="$(pwd)"
 
 ## Por qué dotforge
 
-Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para Claude Code. dotforge es diferente porque es el único **sistema de gestión de configuración end-to-end** — no un bootstrap one-shot ni una colección estática.
+### Qué lo hace diferente
 
-### Qué lo hace único
+1. **Registry cross-proyecto con historial de auditoría** — seguí scores en todos tus proyectos, detectá regresiones, compará configuraciones
+2. **Pipeline de prácticas** — ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Los descubrimientos se propagan entre proyectos
+3. **Template sync con preservación de customizaciones** — markers `<!-- forge:section -->` permiten que `/forge sync` actualice sin tocar lo tuyo
+4. **Audit scoring con security cap** — checklist de 12 ítems normalizado a 10. Faltar seguridad esencial capea el score a 6.0
 
-| Feature | Qué significa | Quién más lo hace |
-|---------|---------------|-------------------|
-| **Stack layering aditivo** | Auto-detecta tu tech (15 stacks) y mergea configs coincidentes sobre una plantilla base. Proyectos multi-stack reciben todas las capas combinadas. | Nadie — lo más cercano es detección de tipo de proyecto, pero sin layering composable |
-| **Templates de servidores MCP** | Config, permisos y reglas de uso listas para 5 servidores MCP comunes (GitHub, Postgres, Supabase, Redis, Slack). Auto-detectados por `/forge bootstrap`. | Nadie |
-| **Template sync con markers** | `<!-- forge:section -->` separa secciones gestionadas de tus customizaciones. `/forge sync` actualiza lo gestionado sin tocar lo tuyo. | Nadie |
-| **Audit scoring (0-10)** | Checklist de 12 ítems (5 obligatorios 0-2, 7 recomendados 0-1), normalizado a 10. Ítems críticos de seguridad capean el score a 6.0 si faltan. Tier de proyecto (simple/standard/complex) ajusta expectations. | tw93/claude-health tiene tiers pero sin normalización numérica ni security cap |
-| **Pipeline de prácticas** | Ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Las prácticas llegan desde capture, web watch, repo scouting, audit gaps, o hooks post-sesión. | Nadie |
-| **Registry cross-proyecto** | `registry/projects.yml` trackea audit scores con historial en todos los proyectos gestionados. Detectá regresiones, compará configuraciones. | Nadie |
-| **Config global via symlinks** | `global/sync.sh` instala skills, agentes y commands como symlinks en `~/.claude/`. Una sola fuente de verdad, propagación instantánea. | Nadie con este enfoque basado en symlinks |
+Otras herramientas bootstrapean una vez. dotforge bootstrapea, audita, sincroniza y evoluciona.
 
-### Cómo se compara
+### Export multi-plataforma
 
-- **Colecciones de skills** (superpowers, claude-skills) te dan componentes — dotforge te da el sistema que los gestiona
-- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrapean una vez — dotforge bootstrapea, sincroniza, audita y evoluciona
-- **Generadores de CLAUDE.md** generan un archivo — dotforge genera y mantiene todo el directorio `.claude/`
-- **Herramientas de auditoría** (claude-health) revisan una vez — dotforge revisa, puntúa, trackea en el tiempo y alimenta los gaps al pipeline de prácticas
+```
+/forge export cursor     → .cursorrules
+/forge export codex      → AGENTS.md
+/forge export windsurf   → .windsurfrules
+/forge export openclaw   → SKILL.md
+```
 
 ## Qué hace
 
@@ -441,9 +458,10 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
 ## Requisitos
 
-- CLI de [Claude Code](https://docs.anthropic.com/en/docs/claude-code) instalado
-- `bash` (los hooks son shell scripts)
-- `python3` con `pyyaml` (para validación del registro, opcional)
+- CLI de [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- `bash` (macOS, Linux, WSL — Git Bash funciona, WSL recomendado en Windows)
+- `python3` (opcional, para hooks JSON y validación del registro)
+- `jq` (opcional, para parsing de input de hooks)
 
 ## Configuración
 

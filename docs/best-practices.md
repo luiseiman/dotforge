@@ -69,7 +69,7 @@ Instead of monolithic CLAUDE.md files, use the `@include` directive:
 - Keep <50 lines per rule
 
 ### Hooks — Automation
-Available events: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `PostCompact`, `SessionStart`, `SessionEnd`, `PermissionRequest`, `SubagentStart`, `CwdChanged`, `StopFailure`
+Available events: `SessionStart`, `SessionEnd`, `Stop`, `StopFailure`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `PermissionRequest`, `PermissionDenied`, `Elicitation`, `ElicitationResult`, `SubagentStart`, `SubagentStop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `PreCompact`, `PostCompact`, `CwdChanged`, `FileChanged`, `InstructionsLoaded`, `ConfigChange`, `Notification`, `WorktreeCreate`, `WorktreeRemove`
 
 Essential hooks:
 1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push
@@ -346,7 +346,7 @@ En vez de CLAUDE.md monolíticos, usar la directiva `@include`:
 - Mantener <50 líneas por rule
 
 ### Hooks — Automatización
-Eventos disponibles: `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `PostCompact`, `SessionStart`, `SessionEnd`, `PermissionRequest`, `SubagentStart`, `CwdChanged`, `StopFailure`
+Eventos disponibles: `SessionStart`, `SessionEnd`, `Stop`, `StopFailure`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `PermissionRequest`, `PermissionDenied`, `Elicitation`, `ElicitationResult`, `SubagentStart`, `SubagentStop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `PreCompact`, `PostCompact`, `CwdChanged`, `FileChanged`, `InstructionsLoaded`, `ConfigChange`, `Notification`, `WorktreeCreate`, `WorktreeRemove`
 
 Hooks esenciales:
 1. **block-destructive** (PreToolUse:Bash) — bloquear rm -rf, DROP, force push

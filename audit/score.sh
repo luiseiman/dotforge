@@ -197,7 +197,7 @@ for f in CLAUDE.md .claude/rules/*.md .claude/*.md; do
   [[ -f "$f" ]] || continue
   SCAN_COUNT=$((SCAN_COUNT+1))
   MATCH=$(grep -niE \
-    'ignore (all |previous |above )?(instructions|rules)|system:|<system>|</system>|<instructions>|IGNORE ALL|disregard (all |previous )?instructions|override instructions|you are now|forget (all |everything|previous)|base64:[A-Za-z0-9+/]{40}' \
+    'ignore (all |previous |above )?(instructions|rules)|system:|<system>|</system>|<instructions>.*</instructions>|IGNORE ALL|disregard (all |previous )?instructions|override instructions|you are now|forget (all |everything|previous)|base64:[A-Za-z0-9+/]{40}' \
     "$f" 2>/dev/null | head -2 || true)
   [[ -n "$MATCH" ]] && SCAN_FOUND="${SCAN_FOUND} ${f}"
 done
@@ -233,12 +233,15 @@ LEVEL=$(awk "BEGIN {
 # ─────────────────────────────────────────────────────────────────────────────
 # Output
 # ─────────────────────────────────────────────────────────────────────────────
-CAP_STR="false"
-$SECURITY_CAP && CAP_STR="true"
+CAP_STR="False"
+$SECURITY_CAP && CAP_STR="True"
+
+# Sanitize notes for safe Python string interpolation
+_san() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' '; }
 
 if $OUTPUT_JSON; then
   python3 - <<PYEOF
-import json, sys
+import json
 data = {
   "score": float("${SCORE_TOTAL}"),
   "level": "${LEVEL}",
@@ -246,18 +249,18 @@ data = {
   "score_obligatorio": ${SCORE_OBL},
   "score_recomendado": ${SCORE_REC},
   "items": {
-    "1_claude_md":         {"score": ${s1},  "note": """${n1}"""},
-    "2_settings_json":     {"score": ${s2},  "note": """${n2}"""},
-    "3_rules":             {"score": ${s3},  "note": """${n3}"""},
-    "4_block_destructive": {"score": ${s4},  "note": """${n4}"""},
-    "5_build_test":        {"score": ${s5},  "note": """${n5}"""},
-    "6_errors_md":         {"score": ${s6},  "note": """${n6}"""},
-    "7_lint_hook":         {"score": ${s7},  "note": """${n7}"""},
-    "8_commands":          {"score": ${s8},  "note": """${n8}"""},
-    "9_memory":            {"score": ${s9},  "note": """${n9}"""},
-    "10_agents":           {"score": ${s10}, "note": """${n10}"""},
-    "11_gitignore":        {"score": ${s11}, "note": """${n11}"""},
-    "12_injection":        {"score": ${s12}, "note": """${n12}"""}
+    "1_claude_md":         {"score": ${s1},  "note": "$(_san "$n1")"},
+    "2_settings_json":     {"score": ${s2},  "note": "$(_san "$n2")"},
+    "3_rules":             {"score": ${s3},  "note": "$(_san "$n3")"},
+    "4_block_destructive": {"score": ${s4},  "note": "$(_san "$n4")"},
+    "5_build_test":        {"score": ${s5},  "note": "$(_san "$n5")"},
+    "6_errors_md":         {"score": ${s6},  "note": "$(_san "$n6")"},
+    "7_lint_hook":         {"score": ${s7},  "note": "$(_san "$n7")"},
+    "8_commands":          {"score": ${s8},  "note": "$(_san "$n8")"},
+    "9_memory":            {"score": ${s9},  "note": "$(_san "$n9")"},
+    "10_agents":           {"score": ${s10}, "note": "$(_san "$n10")"},
+    "11_gitignore":        {"score": ${s11}, "note": "$(_san "$n11")"},
+    "12_injection":        {"score": ${s12}, "note": "$(_san "$n12")"}
   }
 }
 print(json.dumps(data, indent=2))

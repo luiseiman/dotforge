@@ -20,7 +20,7 @@ stacks/{stack-name}/
 
 ## 1. Rules (required)
 
-Create `stacks/{stack}/rules/{name}.md` with `globs:` frontmatter (eager loading). For large stacks where context optimization matters, use `paths:` as unquoted CSV with `alwaysApply: false` for lazy loading:
+Create `stacks/{stack}/rules/{name}.md` with `globs:` frontmatter (eager loading). For large stacks where context optimization matters, use `paths:` with `alwaysApply: false` for lazy loading. Since Claude Code v2.1.84+, `paths:` accepts both unquoted CSV and YAML list syntax:
 
 ```markdown
 ---
@@ -86,6 +86,20 @@ exit 0
 
 **Important:** `chmod +x` the script after creating it.
 
+## Stack hooks during bootstrap
+
+Stack hooks in `stacks/{name}/hooks/` are automatically copied to `.claude/hooks/{name}/` during bootstrap, preserving the stack namespace. For stacks with Python-based hooks (e.g., `hookify`), the `core/` directory is also copied to support the hook implementation.
+
+**Example:** A `hookify` stack with hooks would have:
+```
+stacks/hookify/
+├── hooks/
+│   └── lint-hookify.sh
+└── core/
+    └── hookify.py     ← Helper library for hooks
+```
+After bootstrap, both appear in `.claude/hooks/hookify/` with the core module available to the hook scripts.
+
 ## 4. Register detection
 
 Add the new stack to `stacks/detect.md` detection rules table.
@@ -124,7 +138,7 @@ stacks/{nombre-del-stack}/
 
 ## 1. Rules (obligatorio)
 
-Crear `stacks/{stack}/rules/{nombre}.md` con frontmatter `globs:` (eager loading). Para stacks grandes donde importa la optimización de contexto, usar `paths:` como CSV sin quotes con `alwaysApply: false` para lazy loading:
+Crear `stacks/{stack}/rules/{nombre}.md` con frontmatter `globs:` (eager loading). Para stacks grandes donde importa la optimización de contexto, usar `paths:` con `alwaysApply: false` para lazy loading. Desde Claude Code v2.1.84+, `paths:` acepta tanto CSV sin quotes como sintaxis YAML list:
 
 ```markdown
 ---
@@ -189,6 +203,20 @@ exit 0
 ```
 
 **Importante:** `chmod +x` el script después de crearlo.
+
+## Hooks de stack durante bootstrap
+
+Los hooks en `stacks/{nombre}/hooks/` se copian automáticamente a `.claude/hooks/{nombre}/` durante bootstrap, preservando el namespace del stack. Para stacks con hooks basados en Python (ej. `hookify`), el directorio `core/` también se copia para soportar la implementación del hook.
+
+**Ejemplo:** Un stack `hookify` con hooks tendría:
+```
+stacks/hookify/
+├── hooks/
+│   └── lint-hookify.sh
+└── core/
+    └── hookify.py     ← Librería auxiliar para los hooks
+```
+Después de bootstrap, ambos aparecen en `.claude/hooks/hookify/` con el módulo core disponible para los scripts.
 
 ## 4. Registrar detección
 

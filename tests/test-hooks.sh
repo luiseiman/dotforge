@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Test suite for dotforge hooks
 # Run: ./tests/test-hooks.sh
 # Exit 0 if all pass, exit 1 if any fail

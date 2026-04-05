@@ -97,6 +97,10 @@ If validation fails, show the exact error and DO NOT write the file. Fix the JSO
 4. If profile is `standard` or `full`: copy `$DOTFORGE_DIR/template/hooks/detect-stack-drift.sh`
 5. If profile is `full`: copy `$DOTFORGE_DIR/template/hooks/warn-missing-test.sh`
 5. `chmod +x` all copied hooks
+6. For each detected stack, if `$DOTFORGE_DIR/stacks/{stack}/hooks/` exists:
+   - Copy the entire hooks directory to `.claude/hooks/{stack}/`
+   - If a `core/` directory exists alongside hooks, copy it too (e.g., hookify needs core/ + hooks/)
+   - Ensure Python scripts are executable
 
 ## Step 6: Copy rules
 
@@ -203,6 +207,7 @@ Format:
 {
   "dotforge_version": "<version from $DOTFORGE_DIR/VERSION>",
   "synced_at": "<current date YYYY-MM-DD>",
+  "stacks": ["<detected-stack-1>", "<detected-stack-2>"],
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
     ".claude/rules/_common.md": {"hash": "sha256:<hash>", "source": "template"},

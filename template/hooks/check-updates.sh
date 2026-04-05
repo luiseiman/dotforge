@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SessionStart hook: notify if dotforge has updates available
 # Silent unless updates found. Designed for < 2s execution.
 # Requires: DOTFORGE_DIR env var or ~/Documents/GitHub/dotforge default
@@ -14,7 +14,7 @@ CK_VERSION=$(cat "$DOTFORGE_DIR/VERSION" 2>/dev/null | tr -d '[:space:]')
 
 # --- Check 1: project version vs dotforge version ---
 PROJECT_VERSION=""
-MANIFEST=".forge-manifest.json"
+MANIFEST=".claude/.forge-manifest.json"
 if [[ -f "$MANIFEST" ]]; then
   PROJECT_VERSION=$(jq -r '.dotforge_version // empty' "$MANIFEST" 2>/dev/null)
 fi
@@ -36,7 +36,14 @@ fi
 # --- Check 2: remote updates (non-blocking, timeout 3s) ---
 REMOTE_AHEAD=0
 if [[ -d "$DOTFORGE_DIR/.git" ]]; then
-  FETCH_OUTPUT=$(cd "$DOTFORGE_DIR" && timeout 3 git fetch --dry-run 2>&1)
+  # Portable timeout: try timeout, then gtimeout (macOS brew), then skip
+  if command -v timeout &>/dev/null; then
+    FETCH_OUTPUT=$(cd "$DOTFORGE_DIR" && timeout 3 git fetch --dry-run 2>&1)
+  elif command -v gtimeout &>/dev/null; then
+    FETCH_OUTPUT=$(cd "$DOTFORGE_DIR" && gtimeout 3 git fetch --dry-run 2>&1)
+  else
+    FETCH_OUTPUT=""
+  fi
   if [[ -n "$FETCH_OUTPUT" ]] && echo "$FETCH_OUTPUT" | grep -q "main"; then
     REMOTE_AHEAD=1
   fi

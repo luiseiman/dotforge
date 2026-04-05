@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # PreToolUse hook: block dangerous bash commands
 # Install: .claude/hooks/block-destructive.sh
 # Matcher: Bash
@@ -6,6 +6,13 @@
 COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty' 2>/dev/null)
 
 PROFILE="${FORGE_HOOK_PROFILE:-standard}"
+
+# Portable hash: md5sum (Linux) || md5 (macOS) || cksum (POSIX fallback)
+_hash() {
+  printf '%s' "$1" | md5sum 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | md5 -q 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | cksum | cut -d' ' -f1
+}
 
 # Minimal: only the most catastrophic patterns
 MINIMAL_PATTERNS=(
@@ -56,7 +63,7 @@ for pattern in "${DANGEROUS_PATTERNS[@]}"; do
     echo "Pattern: $pattern" >&2
     echo "Command: $COMMAND" >&2
     # Increment block counter for session metrics
-    COUNTER_FILE="/tmp/claude-destructive-blocks-$(echo "$PWD" | md5sum 2>/dev/null | cut -c1-8 || md5 -q -s "$PWD" 2>/dev/null | cut -c1-8)"
+    COUNTER_FILE="/tmp/claude-destructive-blocks-$(_hash "$PWD")"
     echo "$(date +%Y-%m-%dT%H:%M:%S) $pattern" >> "$COUNTER_FILE"
     exit 2
   fi

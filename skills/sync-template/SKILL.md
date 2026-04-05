@@ -112,7 +112,7 @@ After applying changes, update (or create) `.claude/.forge-manifest.json`:
    ```bash
    shasum -a 256 <file> | cut -d' ' -f1
    ```
-3. Update `dotforge_version` and `synced_at`
+3. Update `dotforge_version`, `synced_at`, and `stacks` (from detected stacks)
 4. Write the updated manifest
 
 Format:
@@ -120,6 +120,7 @@ Format:
 {
   "dotforge_version": "<version from $DOTFORGE_DIR/VERSION>",
   "synced_at": "<current date YYYY-MM-DD>",
+  "stacks": ["<detected-stack-1>", "<detected-stack-2>"],
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
     ".claude/rules/_common.md": {"hash": "sha256:<hash>", "source": "template"}

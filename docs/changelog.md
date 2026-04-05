@@ -4,6 +4,57 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.9.0 (2026-04-05)
+
+### Hardening + Portability + Upstream Alignment
+
+#### Reliability Fixes (Codex Review)
+- Fix: `audit/score.sh --json` — triple-quote Python heredoc + true/false → sanitized strings + True/False
+- Fix: `check-updates.sh` — manifest path `.forge-manifest.json` → `.claude/.forge-manifest.json`
+- Fix: `detect-stack-drift.sh` — reads stacks from manifest file sources (was reading nonexistent `stacks` field)
+- Fix: `detect-stack-drift.sh` — react/vite message `/forge mcp add` → `/forge sync`
+- Fix: `test-config.sh` — injection scan false positive on `<instructions>` (now requires closing tag)
+- Fix: `hookify` — settings.json.partial paths from `$DOTFORGE_DIR/stacks/hookify/` → `.claude/hooks/hookify/`
+- Schema: manifest now includes `stacks` array (bootstrap + sync skills updated)
+
+#### Portability
+- Fix: `check-updates.sh` — portable timeout: `timeout` → `gtimeout` → skip (macOS + Git Bash)
+- Fix: 3 hooks — `_hash()` POSIX function: `md5sum` → `md5` → `cksum` (Git Bash compatible)
+- Fix: 11 scripts — shebangs normalized `#!/bin/bash` → `#!/usr/bin/env bash`
+- New: `install.sh` — one-liner installer with platform detection (macOS/Linux/WSL/Git Bash)
+
+#### Upstream Alignment (Claude Code v2.1.84–v2.1.92)
+- Update: 26 hook events (Setup removed), `if` conditional field, `defer` decision documented
+- Update: 6 permission modes (added auto, dontAsk) with classifier details
+- Update: 1M context window GA for Opus 4.6 / Sonnet 4.6, auto-compact buffers recalculated
+- Update: MCP tools can override result cap to 500K via `_meta` annotation
+- Update: `paths:` frontmatter now accepts YAML list syntax
+- Update: Claude 3 Haiku deprecated (retiring April 19, 2026)
+- New domain rules: `auto-mode.md`, `hook-events.md`
+- Split: `hook-architecture.md` → `hook-architecture.md` + `hook-events.md` (50-line constraint)
+- Split: `permission-model.md` → `permission-model.md` + `auto-mode.md`
+
+#### Project Health
+- Audit: all 12 projects scored (8 perfect 10.0, avg 9.8/10)
+- Migration: claude-kit → dotforge completed across all 12 projects (symlinks, hooks, settings, commands)
+- Global sync: deny list aligned (global template +5 entries, `**/` recursive globs)
+- Security: Jira PAT removed from global settings.json, stale entries cleaned
+- Hygiene: `__pycache__/`, `*.pyc` added to .gitignore
+
+#### README
+- Tagline: "Configuration factory" → "Configuration governance"
+- New: lifecycle hero diagram, "Works with" table, multi-platform export section
+- New: Requirements with WSL/Windows guidance
+- Updated: Spanish section aligned
+
+#### Documentation
+- New: `docs/plan-v2.9.md` — execution plan with competitive analysis
+- Updated: `docs/best-practices.md` — 26 hook events
+- Updated: `docs/security-checklist.md` — auto mode safety section
+- Updated: `docs/creating-stacks.md` — paths YAML format + stack hook copying
+
+---
+
 ## v2.8.1 (2026-04-05)
 
 ### Source-Verified Corrections + Cleanup

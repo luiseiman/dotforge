@@ -2,14 +2,14 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-02
+last_verified: 2026-04-05
 ---
 
 # Hook Architecture
 
-## Events (27 total, SDK schema verified)
+## Events (26 total, verified v2.1.90+)
 
-Core: SessionStart, SessionEnd, Setup, Stop, StopFailure
+Core: SessionStart, SessionEnd, Stop, StopFailure
 Tool lifecycle: PreToolUse, PostToolUse, PostToolUseFailure
 User: UserPromptSubmit
 Permissions: PermissionRequest, PermissionDenied
@@ -19,52 +19,30 @@ Context: PreCompact, PostCompact, CwdChanged, FileChanged, InstructionsLoaded
 System: ConfigChange, Notification
 Worktree: WorktreeCreate, WorktreeRemove
 
-## Exit codes and types
+## Exit codes, types, and decisions
 
-- Exit codes: 0 = allow, 1 = warn/error (non-blocking), 2 = block (stops the operation)
-- Hook types: `command` (bash), `http` (POST to URL), `prompt` (LLM decision), `agent` (subagent)
-- In settings.json, hooks MUST be objects: {"type": "command", "command": "path/to/script.sh"}
-- NEVER use plain strings — Claude Code rejects them silently
+- Exit codes: 0 = allow, 1 = warn (non-blocking), 2 = block
+- PreToolUse: also supports `defer` (pause for SDK integrations, v2.1.89+)
+- Types: `command` (bash), `http` (POST), `prompt` (LLM decision), `agent` (subagent)
+- Hooks MUST be objects: `{"type": "command", "command": "path.sh"}`
+- NEVER plain strings — Claude Code rejects them silently
 
-## Async hooks
+## Conditional hooks (v2.1.85+)
 
-- Declare `async: true` or `asyncRewake` in hook config, or stream `{"async":true}` as first JSON line
-- Background hooks survive new user prompts but killed on hard cancel (Escape)
-- Use for long-running validations that shouldn't block the main loop
+- `if` field: filter by permission rule syntax (e.g., `"if": "Bash(git *)"`) — replaces matcher + script logic
 
-## Timeouts
+## Async, timeouts, matchers
 
-- Tool hooks: 10 minutes (TOOL_HOOK_EXECUTION_TIMEOUT_MS)
-- SessionEnd hooks: 1.5 seconds default — session-report.sh MUST be fast
-- Override: `hook.timeout` per-hook, or `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` env var
-
-## Matchers and patterns
-
-- Matchers: Bash, Read, Write, Edit, Grep, Glob — determine which tool triggers the hook
-- Glob matching on tool names: `*` wildcard, prefix/suffix matching
+- Async: `async: true` or stream `{"async":true}` as first JSON line
+- Tool hooks: 10min timeout. SessionEnd: 1.5s default. Override: `hook.timeout`
+- Matchers: Bash, Read, Write, Edit, Grep, Glob. Wildcard `*` supported
 
 ## Key hooks
 
-- block-destructive.sh: mandatory; supports profiles: minimal, standard, strict
-- lint-on-save.sh: recommended; matcher = Write|Edit for post-save linting
-- session-report.sh: runs on Stop; generates JSON metrics to ~/.claude/metrics/
-- All hooks must be executable: chmod +x (permissions -rwxr-xr-x)
-- Validate hooks with bash -n before deploying; shellcheck if available
-
-## Event details
-
-- PostCompact command hook: `trigger` ("auto"/"manual") + `compact_summary` (full text) — VERIFIED live
-- PostCompact SDK schema: `compactType` ('automatic'|'manual') + `messageCountBefore` + `messageCountAfter`
-- Both interfaces valid — command hooks use trigger/compact_summary, SDK uses compactType/messageCounts
-- PreCompact receives: `compactType` ("automatic"/"manual") + `messageCount` — NON-BLOCKING, exit code ignored
-- SessionStart `source` field: "startup", "resume", "compact", "clear"
-- PostToolUseFailure: fires when tool execution fails — use for error tracking
-- FileChanged: fires on external file modification — use for auto-reload patterns
-- TaskCreated/TaskCompleted: agent lifecycle — use for orchestration metrics
-- PermissionDenied: audit trail for denied operations
-- PermissionRequest: intercept permission dialog, can auto-allow/deny with exit 2
-- SubagentStart: inject additionalContext into spawned subagent via stdout
-- CwdChanged: fires on directory change, supports CLAUDE_ENV_FILE
+- block-destructive.sh: mandatory; profiles: minimal, standard, strict
+- lint-on-save.sh: matcher = Write|Edit for post-save linting
+- session-report.sh: Stop event; JSON metrics to ~/.claude/metrics/
+- All hooks: chmod +x, validate with `bash -n`, shellcheck if available
 
 ## Plugin env vars
 

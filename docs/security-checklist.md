@@ -53,8 +53,18 @@ Verify BEFORE deploying any project.
 
 ## Claude Code permissions
 
+### Permission Modes
+Claude Code supports 6 permission modes that control when operations require confirmation:
+- **default**: prompt on every potentially destructive operation
+- **acceptEdits**: auto-accept file edits, prompt on destructive operations
+- **plan**: read-only enforcement, no write/bash/agent operations
+- **auto** (YOLO): minimal prompts, broad allow rules — **see stripping rules below**
+- **dontAsk**: rarely used; disable prompts entirely (dangerous)
+- **bypassPermissions**: skip all permission checks (local dev only)
+
 ### Auto-Mode (YOLO) Safety
-- [ ] Replace interpreter allow patterns (python3, node, npm) with specific tool commands
+- [ ] Verify auto-mode stripping rules: broad interpreter patterns (python, python3, node, etc.), package runners (npx, npm run, yarn run, etc.), and shell patterns (bash, sh, zsh, eval, etc.) are SILENTLY REMOVED when auto mode activates
+- [ ] Replace interpreter allow patterns with specific tool commands: use `pytest` instead of `python`, `uvicorn` instead of `python`, `vitest`/`jest` instead of `node`
 - [ ] Document which permissions are stripped in auto-mode for team awareness
 - [ ] Test critical workflows with auto-mode enabled to verify they still work
 
@@ -113,7 +123,17 @@ Verificar ANTES de deployar cualquier proyecto.
 
 ## Permisos de Claude Code
 
+### Modos de Permisos
+Claude Code soporta 6 modos de permisos que controlan cuándo se requiere confirmación:
+- **default**: confirmar en toda operación potencialmente destructiva
+- **acceptEdits**: auto-aceptar edits de archivo, confirmar operaciones destructivas
+- **plan**: read-only, sin operaciones write/bash/agent
+- **auto** (YOLO): prompts mínimos, reglas de allow amplias — **ver reglas de stripping abajo**
+- **dontAsk**: raramente usado; deshabilitar prompts completamente (peligroso)
+- **bypassPermissions**: saltear todos los checks de permiso (local dev únicamente)
+
 ### Modo Auto (YOLO) — Seguridad
-- [ ] Reemplazar patrones de allow con intérpretes (python3, node, npm) por comandos específicos de herramientas
+- [ ] Verificar reglas de stripping en modo auto: patrones amplios de intérpretes (python, python3, node, etc.), ejecutores de paquetes (npx, npm run, yarn run, etc.) y shells (bash, sh, zsh, eval, etc.) se ELIMINAN SILENCIOSAMENTE al activar modo auto
+- [ ] Reemplazar patrones de allow con intérpretes por comandos específicos de herramientas: usar `pytest` en vez de `python`, `uvicorn` en vez de `python`, `vitest`/`jest` en vez de `node`
 - [ ] Documentar qué permisos se eliminan en modo auto para conciencia del equipo
 - [ ] Probar workflows críticos con modo auto activado para verificar que siguen funcionando

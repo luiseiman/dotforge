@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # PostToolUse hook: warn when creating source files without corresponding tests
 # Matcher: Write
 # Only active when FORGE_HOOK_PROFILE=strict
