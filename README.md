@@ -7,13 +7,28 @@
 [![Version](https://img.shields.io/badge/version-2.9.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
-Configuration governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, audit, sync, and evolve your `.claude/` configuration across projects — all markdown + shell scripts, zero dependencies.
+Configuration governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, audit, sync, and evolve your `.claude/` configuration across projects — all markdown + shell scripts, zero required dependencies.
 
 ```
 bootstrap → audit → sync → capture → propagate
     ↑                                    │
     └────────────────────────────────────┘
 ```
+
+For people and teams managing more than one Claude Code project.
+
+Use dotforge if:
+
+- your `.claude/` configuration drifts across repos
+- you want to audit configuration quality, not just generate files once
+- you want to propagate improvements discovered in one project to others
+- you want a repeatable system, not a loose collection of prompts
+
+Do not use dotforge if:
+
+- you only have one small repo
+- you only want a `CLAUDE.md` generator
+- you do not care about sync, audit history, or cross-project consistency
 
 ## Quick Start
 
@@ -44,7 +59,7 @@ dotforge manages your `.claude/` configuration. It complements, not replaces, ot
 |------|-------------|-------------------|
 | [claude-skills](https://github.com/alirezarezvani/claude-skills) | 248+ skills collection | dotforge manages the config around your skills |
 | [gstack](https://github.com/garrytan/gstack) | AI-native full-stack framework | dotforge audits and syncs the `.claude/` config gstack generates |
-| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Behavioral modes | dotforge adds lifecycle: audit, sync, practices, registry |
+| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Behavioral modes | dotforge adds lifecycle management: audit, sync, practices, registry |
 
 > **New here?** Read the **[Usage Guide](docs/usage-guide.md)** for a complete walkthrough with examples.
 
@@ -255,7 +270,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # dotforge (Español)
 
-Gobernanza de configuración para [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, auditoría, sync y evolución de tu configuración `.claude/` entre proyectos — todo en markdown + shell scripts, sin dependencias.
+Gobernanza de configuración para [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, auditoría, sync y evolución de tu configuración `.claude/` entre proyectos — todo en markdown + shell scripts, sin dependencias obligatorias.
 
 ```
 bootstrap → audit → sync → capture → propagate
@@ -270,11 +285,11 @@ Usá dotforge si:
 - tu configuración `.claude/` deriva entre repos
 - querés auditar calidad de configuración, no solo generar archivos una vez
 - querés propagar mejoras descubiertas en un proyecto hacia otros
-- querés un sistema repetible, no una pila de prompts sueltos
+- querés un sistema repetible, no una colección de prompts sueltos
 
 No uses dotforge si:
 
-- solo tenés un repo muy chico
+- solo tenés un repo chico
 - solo querés un generador de `CLAUDE.md`
 - no te importa sync, historial de auditoría o consistencia entre proyectos
 
@@ -290,7 +305,7 @@ dotforge gestiona tu configuración `.claude/`. Complementa otras herramientas, 
 |-------------|----------|---------------------|
 | [claude-skills](https://github.com/alirezarezvani/claude-skills) | Colección de 248+ skills | dotforge gestiona la configuración alrededor de tus skills |
 | [gstack](https://github.com/garrytan/gstack) | Framework full-stack AI-native | dotforge audita y sincroniza la config `.claude/` que genera gstack |
-| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Modos de comportamiento | dotforge agrega lifecycle: audit, sync, prácticas y registry |
+| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Modos de comportamiento | dotforge agrega gestión del ciclo de vida: audit, sync, prácticas y registry |
 
 ## Inicio Rápido
 

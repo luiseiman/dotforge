@@ -1,7 +1,7 @@
 {
   "name": "dotforge",
   "version": "2.9.0",
-  "description": "Configuration factory for Claude Code — 17 skills, 7 agents, 15 stacks, 8 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
+  "description": "Configuration governance for Claude Code — 18 skills, 7 agents, 16 stacks, 9 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
   "author": {
     "name": "Luis Eiman",
     "url": "https://github.com/luiseiman"

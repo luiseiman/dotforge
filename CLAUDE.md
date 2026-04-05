@@ -8,7 +8,7 @@ Senior Claude Code configuration engineer. Expert in structural prompt engineeri
 
 ## What is dotforge
 
-Configuration factory for Claude Code. Contains templates, stacks, skills, and audit tools. Everything is markdown + shell scripts — no application code. All content is consumed directly by Claude Code.
+Configuration governance for Claude Code. Contains templates, stacks, skills, and audit tools. Everything is markdown + shell scripts — no application code. All content is consumed directly by Claude Code.
 
 Current version: see `VERSION` file.
 
