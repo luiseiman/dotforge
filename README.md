@@ -163,6 +163,7 @@ All skills are invoked through the `/forge` command:
 | `/forge watch` | Search for upstream changes in Anthropic docs |
 | `/forge scout` | Review curated repos for useful patterns |
 | `/forge export` | Export config to Cursor, Codex, Windsurf, or OpenClaw format |
+| `/forge learn` | Scan code to detect patterns (ORM, auth, testing) and propose domain rules |
 | `/forge insights` | Analyze sessions for patterns and recommendations |
 | `/forge rule-check` | Detect inert rules by cross-referencing globs against git history |
 | `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
@@ -396,6 +397,7 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge watch` | Buscar cambios upstream en la documentación de Anthropic |
 | `/forge scout` | Revisar repos curados en busca de patrones útiles |
 | `/forge export` | Exportar config a formato Cursor, Codex, Windsurf u OpenClaw |
+| `/forge learn` | Escanear código para detectar patrones (ORM, auth, testing) y proponer domain rules |
 | `/forge insights` | Analizar sesiones para patrones y recomendaciones |
 | `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git |
 | `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |

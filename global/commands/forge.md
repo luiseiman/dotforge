@@ -35,6 +35,7 @@ If not met, show the error message and DO NOT execute the skill.
 | `domain extract` | `CLAUDE.md` or `.claude/` | "No configured project found. Run `/forge init` or `/forge bootstrap` first." |
 | `domain list` | `.claude/rules/domain/` | "No domain rules found. Run `/forge domain extract` to generate from existing sources." |
 | `domain sync-vault` | `.claude/rules/domain/` with at least 1 file with `domain_source: vault://` | "No vault-linked domain rules found." |
+| `learn` | project source code exists | "No source code found to scan." |
 | `capture` | — | — |
 | `update` | — | — |
 | `watch` | — | — |
@@ -209,6 +210,10 @@ Last update: {{date}}
 ```
 Read from practices/inbox/, evaluating/, active/, deprecated/.
 
+### `learn`
+Run the `/learn-project` skill on the current project.
+Scan source code to detect patterns (ORM, auth, testing, naming, deployment) and propose domain rules based on what the code actually does. Unlike `domain extract` (which reads dotforge memory), `learn` reads the CODE directly.
+
 ### `domain extract`
 Run the `/domain-extract` skill on the current project.
 Analyze existing sources (CLAUDE.md, auto-memory, CLAUDE_ERRORS.md, agent-memory, rules, git log) and propose domain rules for user approval.
@@ -246,6 +251,7 @@ Commands:
   insights      Analyze past sessions and generate recommendations
   unregister    Remove project from registry (does not delete config)
   mcp add       Install MCP server template in project or global [--global]
+  learn           Scan code to detect patterns and propose domain rules
   domain extract  Extract domain knowledge from existing project sources
   domain list     List domain rules with status
   domain sync-vault  Sync domain rules with vault notes
