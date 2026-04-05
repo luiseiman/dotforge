@@ -1,0 +1,8 @@
+{
+  "name": "tdd",
+  "version": "2.9.0",
+  "description": "TDD workflow enforcement with auto-test hook",
+  "detection": {
+    "files": ["tests/", "__tests__/", "spec/", "test/", "pytest.ini", "vitest.config.*", "jest.config.*"]
+  }
+}

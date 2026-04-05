@@ -115,6 +115,18 @@
           }
         ]
       }
+    ],
+    "PermissionDenied": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/permission-denied.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }

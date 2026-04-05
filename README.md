@@ -263,6 +263,35 @@ bootstrap → audit → sync → capture → propagate
     └────────────────────────────────────┘
 ```
 
+Para personas y equipos que gestionan más de un proyecto con Claude Code.
+
+Usá dotforge si:
+
+- tu configuración `.claude/` deriva entre repos
+- querés auditar calidad de configuración, no solo generar archivos una vez
+- querés propagar mejoras descubiertas en un proyecto hacia otros
+- querés un sistema repetible, no una pila de prompts sueltos
+
+No uses dotforge si:
+
+- solo tenés un repo muy chico
+- solo querés un generador de `CLAUDE.md`
+- no te importa sync, historial de auditoría o consistencia entre proyectos
+
+### Requisitos
+
+bash (macOS, Linux, WSL). Git Bash funciona, pero en Windows se recomienda WSL. Opcional: `python3`, `jq` para soporte completo de hooks.
+
+### Funciona con
+
+dotforge gestiona tu configuración `.claude/`. Complementa otras herramientas, no las reemplaza.
+
+| Herramienta | Qué hace | Cómo ayuda dotforge |
+|-------------|----------|---------------------|
+| [claude-skills](https://github.com/alirezarezvani/claude-skills) | Colección de 248+ skills | dotforge gestiona la configuración alrededor de tus skills |
+| [gstack](https://github.com/garrytan/gstack) | Framework full-stack AI-native | dotforge audita y sincroniza la config `.claude/` que genera gstack |
+| [duthaho/claudekit](https://github.com/duthaho/claudekit) | Modos de comportamiento | dotforge agrega lifecycle: audit, sync, prácticas y registry |
+
 ## Inicio Rápido
 
 ```bash

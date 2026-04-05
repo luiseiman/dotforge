@@ -25,6 +25,7 @@ Scan the current project directory for these indicators:
 | `.devcontainer/`, `devcontainer.json` | **devcontainer** |
 | `.claude/hookify.*.md` files present | **hookify** |
 | User declares or `trading` keyword in project description | **trading** |
+| `pytest.ini`, `pyproject.toml` with `[tool.pytest]`, `vitest.config.*`, `jest.config.*`, or `tests/`/`__tests__`/`spec/`/`test/` directories with ≥2 test files | **tdd** |
 
 A project can match multiple stacks. If none detected, ask the user.
 
@@ -35,3 +36,5 @@ When indicators conflict:
 - `Dockerfile` + `app.yaml`/`cloudbuild.yaml` → **gcp-cloud-run** takes priority over docker-deploy
 - `package.json` with both react and express → both **react-vite-ts** AND **node-express** (additive)
 - `*.py` files do NOT auto-trigger data-analysis — requires notebooks, CSV, or SQL files
+- `pyproject.toml` alone does NOT trigger tdd — verify `[tool.pytest]` section is present
+- A single `test_*.py` file does NOT trigger tdd — require a dedicated test directory or config file

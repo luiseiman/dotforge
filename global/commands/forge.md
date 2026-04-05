@@ -130,9 +130,20 @@ my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 - Show ASCII sparkline from last 5 audit scores in `history[]`
 - Arrow: ↑ (improving: last > first), → (stable: delta < 0.5), ↓ (declining: last < first)
 
+**Score indicators:**
+- ≥9.0: `●` (excellent)
+- 7.0-8.9: `◐` (good)
+- <7.0: `○` (needs attention)
+
+**Summary line:**
+```
+N projects | avg score: X.X | N need sync | N perfect
+```
+
 **Alerts:**
-- If any project's score dropped >1.5 points between last two audits: show `⚠️ ALERT: {{project}} score dropped {{delta}} points`
-- If any project has score < 7.0 and dotforge has a newer version than their last sync: show `💡 {{project}}: run /forge sync (current: v{{their_version}}, available: v{{latest}})`
+- If any project's score dropped >1.5 points between last two audits: show `⚠ ALERT: {{project}} score dropped {{delta}} points`
+- If any project has score < 7.0 and dotforge has a newer version than their last sync: show `→ {{project}}: run /forge sync (current: v{{their_version}}, available: v{{latest}})`
+- If any project's last_audit is >30 days old: show `⏳ {{project}}: last audit {{days}} days ago`
 
 ### `rule-check`
 Run the `/rule-effectiveness` skill on the current project.
