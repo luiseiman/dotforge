@@ -4,6 +4,28 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.8.1 (2026-04-05)
+
+### Source-Verified Corrections + Cleanup
+
+- Fix: compaction threshold corrected from "~90%" to "effectiveContextWindow - 13K tokens (≈93.5% for 200K)"
+- Fix: MEMORY.md index has dual cap: 200 lines AND 25KB — whichever triggers first
+- Fix: auto-mode permission stripping is reversible (restored on exit)
+- Fix: complete dangerous patterns list: +tsx, +env, +xargs, +ssh, matching rules documented
+- Fix: hook events count 25 → 27 (+PermissionDenied, +Setup, +WorktreeCreate, +WorktreeRemove)
+- Fix: PostCompact dual interface documented (command hook vs SDK schema field names)
+- Nuevo: tool result size limits documented (50K/tool, 200K/turn, 30K bash)
+- Nuevo: tool concurrency & safety classification table
+- Nuevo: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80` in template settings
+- Cleanup: go-api redundant permissions removed (go test/build/run/vet → go *)
+- Cleanup: python-fastapi Redis section removed (use redis stack)
+- Cleanup: _common.md split to ≤50 lines → practice-capture.md + context-continuity.md
+- Fix: forge.md init description ("zero questions" → "4 quick questions")
+- Ref: hardcoded system prompt rules documented in internals (reference only)
+- Ref: 6 additional settings.json keys documented, constants table expanded
+
+---
+
 ## v2.8.0 (2026-04-05)
 
 ### Internals Analysis + P0 Fixes + P1 Alignment

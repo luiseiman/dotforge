@@ -7,14 +7,17 @@ last_verified: 2026-04-02
 
 # Hook Architecture
 
-## Events (25 total, source-verified)
+## Events (27 total, SDK schema verified)
 
 Core: SessionStart, SessionEnd, Setup, Stop, StopFailure
 Tool lifecycle: PreToolUse, PostToolUse, PostToolUseFailure
-User: UserPromptSubmit, PermissionRequest, PermissionDenied, Elicitation, ElicitationResult
+User: UserPromptSubmit
+Permissions: PermissionRequest, PermissionDenied
+Elicitation: Elicitation, ElicitationResult
 Agent: SubagentStart, SubagentStop, TeammateIdle, TaskCreated, TaskCompleted
 Context: PreCompact, PostCompact, CwdChanged, FileChanged, InstructionsLoaded
-System: ConfigChange, Notification, StatusLine, FileSuggestion
+System: ConfigChange, Notification
+Worktree: WorktreeCreate, WorktreeRemove
 
 ## Exit codes and types
 
@@ -50,8 +53,10 @@ System: ConfigChange, Notification, StatusLine, FileSuggestion
 
 ## Event details
 
-- PostCompact receives: `trigger` ("auto"/"manual") + `compact_summary` (full text) — VERIFIED
-- PreCompact receives: `trigger` ("auto"/"manual") — NON-BLOCKING, exit code ignored
+- PostCompact command hook: `trigger` ("auto"/"manual") + `compact_summary` (full text) — VERIFIED live
+- PostCompact SDK schema: `compactType` ('automatic'|'manual') + `messageCountBefore` + `messageCountAfter`
+- Both interfaces valid — command hooks use trigger/compact_summary, SDK uses compactType/messageCounts
+- PreCompact receives: `compactType` ("automatic"/"manual") + `messageCount` — NON-BLOCKING, exit code ignored
 - SessionStart `source` field: "startup", "resume", "compact", "clear"
 - PostToolUseFailure: fires when tool execution fails — use for error tracking
 - FileChanged: fires on external file modification — use for auto-reload patterns

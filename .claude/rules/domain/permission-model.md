@@ -31,12 +31,24 @@ Managed (enterprise, read-only) > Local project (.claude/settings.local.json) > 
 ## Auto-mode permission stripping
 
 When auto/YOLO mode activates, allow rules matching these are SILENTLY REMOVED:
-- Interpreters: python, node, deno, ruby, perl, php, lua
+- Interpreters: python, python3, python2, node, deno, tsx, ruby, perl, php, lua
 - Package runners: npx, bunx, npm run, yarn run, pnpm run, bun run
-- Shells: bash, sh, zsh, fish, eval, exec
-- Network: curl, wget, ssh
-- System: sudo, kubectl, aws, gcloud
-- Workaround: use specific script paths, not interpreter patterns
+- Shells: bash, sh, zsh, fish, eval, exec, env, xargs, ssh
+- System: sudo
+- Matching: exact (`python`), prefix (`python:*`), wildcard (`python*`, `python *`, `python -*`)
+- Stripping is REVERSIBLE — rules stored in `strippedDangerousRules`, restored on exit
+- Workaround: use specific tool commands (pytest, uvicorn, vitest), not interpreter patterns
+
+## Tool concurrency & safety
+
+| Tool | Concurrent-Safe | Read-Only |
+|------|----------------|-----------|
+| Read, Glob, Grep, LS | ✅ | ✅ |
+| WebFetch, WebSearch | ✅ | ✅ |
+| TodoWrite | ✅ | ❌ |
+| Bash | ❌ | ❌ |
+| Write, Edit | ❌ | ❌ |
+| Agent | ❌ | ❌ |
 
 ## Core rules
 

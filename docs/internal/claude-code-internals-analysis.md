@@ -62,7 +62,7 @@ The compaction system is far more sophisticated than documented:
 | API-Native Microcompact | Server-side | `cache_edits`, zero client mutation | No |
 | Time-Based Microcompact | 60min idle gap | Replaces tool results with `[Old tool result content cleared]` | No |
 | Cached Microcompact | Main thread only | Queues `CacheEditsBlock` without mutation | No |
-| Auto Compaction | ~90% context window | Full summarization (9-section template, 20K token budget) | Yes (PreCompact, PostCompact) |
+| Auto Compaction | contextWindow - 13K tokens (≈93.5% for 200K) | Full summarization (9-section template, 20K token budget) | Yes (PreCompact, PostCompact) |
 | Context Collapse | ~97% (emergency) | Ultra-short 500-word summary, keeps only summary + last turn | No |
 
 ### Auto-Compaction Constants (Verified)
@@ -392,6 +392,36 @@ Most complete Python reimplementation. Correctly replicates core patterns AND ad
 | Neutral message format enables multi-provider | nano-claude | Relevant if claude-kit ever supports non-Anthropic |
 | Skill `context: fork` for heavy skills | nano-claude | Add frontmatter option to claude-kit skills |
 
+## Hardcoded System Prompt Rules (Reference Only)
+
+> These rules are baked into Claude Code's tool prompts. They are already active in every session.
+> Do NOT duplicate them in .claude/rules/ — that wastes tokens by loading them twice.
+
+### BashTool
+- NEVER skip hooks (--no-verify, --no-gpg-sign) unless user explicitly asks
+- NEVER update git config
+- NEVER run destructive git commands (push --force, reset --hard, checkout .) unless explicitly requested
+- NEVER commit changes unless explicitly asked
+- ALWAYS use Grep tool for search (not bash grep/rg)
+- ALWAYS pass commit messages via HEREDOC
+
+### FileWriteTool
+- NEVER create documentation files (*.md) or README unless explicitly requested
+
+### FileEditTool
+- ALWAYS prefer editing existing files. NEVER write new files unless required
+
+### GrepTool
+- ALWAYS use Grep for search tasks. NEVER invoke grep or rg as Bash command
+
+### SkillTool
+- NEVER mention a skill without actually calling the tool
+
+### Global
+- NEVER generate or guess URLs unless confident they are for programming help
+
+---
+
 ## Appendix: Token Budget Reference
 
 | Component | Limit |
@@ -410,5 +440,16 @@ Most complete Python reimplementation. Correctly replicates core patterns AND ad
 | Tool hook timeout | 10 minutes |
 | `@include` max depth | 5 levels |
 | Context collapse threshold | ~97% |
-| Auto-compact threshold | ~90% |
+| Auto-compact threshold | contextWindow - 13K tokens (≈93.5% for 200K) |
 | Compaction circuit breaker | 3 consecutive failures |
+| Manual compact buffer | 3,000 tokens |
+| Max compact streaming retries | 2 |
+| Per-tool result size cap | 50,000 characters |
+| Per-turn aggregate result cap | 200,000 characters |
+| WebFetch timeout | 60,000ms |
+| WebFetch max markdown | 100,000 characters |
+| WebFetch cache size | 50MB, 15min TTL |
+| Max scheduled cron jobs | 50 |
+| Dream max turns | 30 |
+| Dream scan interval | 10 minutes |
+| Max worktree fanout | 50 |

@@ -3,10 +3,6 @@
   "permissions": {
     "allow": [
       "Bash(go *)",
-      "Bash(go test *)",
-      "Bash(go build *)",
-      "Bash(go run *)",
-      "Bash(go vet *)",
       "Bash(golangci-lint *)",
       "Bash(make *)"
     ]

@@ -58,7 +58,7 @@ Compare against `$CLAUDE_KIT_DIR/template/` + detected stacks.
 
 ### `init`
 Run the `/init-project` skill on the current project.
-Simplified bootstrap: auto-detects stacks, generates config, zero questions.
+auto-detects stacks, asks 4 quick questions to understand the project, generates complete config.
 Output: single line with detected stacks and score.
 
 ### `bootstrap` or `bootstrap --profile <minimal|standard|full>`
@@ -230,7 +230,7 @@ Show help:
 /forge <command>
 
 Commands:
-  init          Quick setup — auto-detect stacks, zero questions
+  init          Quick setup — auto-detects stacks, asks 4 questions, generates complete config
   audit         Audit current project against template
   sync          Sync config against template
   bootstrap     Initialize .claude/ in new project [--profile minimal|standard|full]

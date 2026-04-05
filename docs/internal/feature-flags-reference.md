@@ -12,7 +12,7 @@
 | Variable | Efecto | Verificado |
 |----------|--------|------------|
 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Habilita Agent Teams (Lead + hasta 4 teammates paralelos con worktree isolation). Requiere Opus. | Sí — única feature-flag major accesible |
-| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75` | Override del threshold de auto-compactación (default ~90%). Poner en 75 para trigger más temprano, dando más room a post-compact hooks | Sí |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80` | Override del threshold de auto-compactación (default ≈93.5% for 200K). Poner en 80 para trigger más temprano, dando más room a post-compact hooks | Sí |
 | `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1` | Desactiva compactación automática completamente | Sí |
 | `CLAUDE_CODE_DISABLE_CLAUDE_MDS` | Desactiva ALL CLAUDE.md loading (debug) | Sí |
 | `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000` | Override SessionEnd hook timeout (default: 1500ms). Crítico para session-report.sh | Sí |
@@ -29,6 +29,17 @@
 | `claudeMdExcludes` | string[] | Glob patterns de CLAUDE.md files a excluir del loading. Toggle sin borrar |
 | `env` | object | Key/value env vars seteadas para cada sesión. Evita wrapper scripts |
 | `skipDangerousModePermissionPrompt` | boolean | Suprime el warning de `bypassPermissions`. Auto-set en primera aceptación |
+
+### Additional settings.json keys
+
+| Key | Type | Default | Impact |
+|-----|------|---------|--------|
+| `cleanupPeriodDays` | number | 30 | Transcript retention days. Set to 0 for no persistence (sensitive projects) |
+| `effortLevel` | low/medium/high | (default) | Global thinking depth override |
+| `worktree.symlinkDirectories` | string[] | — | Directories to symlink in Agent Team worktrees |
+| `worktree.sparsePaths` | string[] | — | Sparse-checkout paths for large monorepos |
+| `autoMode.allow/soft_deny` | string[] | — | Custom auto-mode classifier rules |
+| `respectGitignore` | boolean | true | Set false to include gitignored files in search |
 
 ---
 
