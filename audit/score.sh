@@ -4,7 +4,7 @@
 #
 # Usage: ./audit/score.sh [PROJECT_DIR] [--json] [--threshold N]
 #
-# Computes the 12-item checklist mechanically without Claude.
+# Computes the 13-item checklist mechanically without Claude.
 # Semantic checks (CLAUDE.md quality, rule content) are approximated with heuristics.
 # Score is indicative — /forge audit provides authoritative semantic evaluation.
 #
@@ -36,10 +36,10 @@ fi
 
 cd "$PROJECT_DIR"
 
-# --- Score variables (s1..s12) and notes (n1..n12) ---
+# --- Score variables (s1..s13) and notes (n1..n13) ---
 s1=0; n1=""; s2=0; n2=""; s3=0; n3=""; s4=0; n4=""; s5=0; n5=""
 s6=0; n6=""; s7=0; n7=""; s8=0; n8=""; s9=0; n9=""; s10=0; n10=""
-s11=0; n11=""; s12=0; n12=""
+s11=0; n11=""; s12=0; n12=""; s13=0; n13=""
 
 # ─────────────────────────────────────────────────────────────────────────────
 # OBLIGATORIO (each 0-2)
@@ -207,13 +207,32 @@ else
   s12=1; n12="Clean (${SCAN_COUNT} files scanned)"
 fi
 
+# 13. Auto mode safety
+if [[ ! -f "$SETTINGS" ]]; then
+  s13=1; n13="settings.json not found — auto mode not enabled (pass)"
+elif ! grep -q '"defaultMode"' "$SETTINGS" 2>/dev/null; then
+  s13=1; n13="defaultMode not set — auto mode not enabled (pass)"
+elif ! grep -q '"auto"' "$SETTINGS" 2>/dev/null; then
+  s13=1; n13="defaultMode present but not auto (pass)"
+else
+  # Auto mode is enabled — check deny list covers secrets
+  HE=$(grep -c '\.env'        "$SETTINGS" 2>/dev/null)
+  HK=$(grep -c '\.key'        "$SETTINGS" 2>/dev/null)
+  HP=$(grep -c '\.pem'        "$SETTINGS" 2>/dev/null)
+  HR=$(grep -c 'credentials'  "$SETTINGS" 2>/dev/null)
+  DC=$((HE + HK + HP + HR))
+  if [[ $DC -ge 3 ]]; then s13=1; n13="Auto mode enabled WITH deny list covering secrets (${DC}/4)"
+  else                      s13=0; n13="Auto mode enabled WITHOUT complete deny list (.env:${HE} .key:${HK} .pem:${HP} credentials:${HR})"
+  fi
+fi
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Calculate score
 # ─────────────────────────────────────────────────────────────────────────────
 SCORE_OBL=$((s1 + s2 + s3 + s4 + s5))
-SCORE_REC=$((s6 + s7 + s8 + s9 + s10 + s11 + s12))
+SCORE_REC=$((s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13))
 
-SCORE_TOTAL=$(awk "BEGIN { printf \"%.2f\", ${SCORE_OBL} * 0.7 + ${SCORE_REC} * (3.0 / 7) }")
+SCORE_TOTAL=$(awk "BEGIN { printf \"%.2f\", ${SCORE_OBL} * 0.7 + ${SCORE_REC} * (3.0 / 8) }")
 
 SECURITY_CAP=false
 if [[ $s2 -eq 0 || $s4 -eq 0 ]]; then
@@ -260,7 +279,8 @@ data = {
     "9_memory":            {"score": ${s9},  "note": "$(_san "$n9")"},
     "10_agents":           {"score": ${s10}, "note": "$(_san "$n10")"},
     "11_gitignore":        {"score": ${s11}, "note": "$(_san "$n11")"},
-    "12_injection":        {"score": ${s12}, "note": "$(_san "$n12")"}
+    "12_injection":        {"score": ${s12}, "note": "$(_san "$n12")"},
+    "13_auto_mode":        {"score": ${s13}, "note": "$(_san "$n13")"}
   }
 }
 print(json.dumps(data, indent=2))
@@ -278,7 +298,7 @@ else
   printf "  [%s] 4.  block-destructive    %s\n" "$s4"  "$n4"
   printf "  [%s] 5.  Build/test commands  %s\n" "$s5"  "$n5"
   echo ""
-  echo "── RECOMENDADO (${SCORE_REC}/7) ──"
+  echo "── RECOMENDADO (${SCORE_REC}/8) ──"
   printf "  [%s] 6.  CLAUDE_ERRORS.md     %s\n" "$s6"  "$n6"
   printf "  [%s] 7.  Lint hook            %s\n" "$s7"  "$n7"
   printf "  [%s] 8.  Custom commands      %s\n" "$s8"  "$n8"
@@ -286,6 +306,7 @@ else
   printf "  [%s] 10. Agents               %s\n" "$s10" "$n10"
   printf "  [%s] 11. .gitignore           %s\n" "$s11" "$n11"
   printf "  [%s] 12. Injection scan       %s\n" "$s12" "$n12"
+  printf "  [%s] 13. Auto mode safety     %s\n" "$s13" "$n13"
 fi
 
 # CI threshold gate

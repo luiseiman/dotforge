@@ -62,3 +62,9 @@
 - 1: No suspicious patterns detected
 
 **Verification:** Scan `.claude/rules/`, `CLAUDE.md`, and any `*.md` in `.claude/` for patterns: `ignore previous`, `system:`, `<system>`, `</system>`, `<instructions>`, encoded payloads (base64 inline blocks), `IGNORE ALL`, `disregard`, `override instructions`. If any match → score 0 with explicit warning.
+
+### 13. Auto mode safety (0-1)
+- 0: Auto mode enabled without deny list covering .env, *.key, *.pem, *credentials*
+- 1: Auto mode enabled WITH complete deny list OR auto mode not enabled
+
+**Verification:** Check if `permissions.defaultMode` is set to `"auto"` in settings.json. If yes, verify deny list covers secrets. If auto mode is not enabled (default), automatic pass.
