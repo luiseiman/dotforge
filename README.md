@@ -1,5 +1,9 @@
 > **[English](#dotforge)** | **[Español](#dotforge-español)**
 
+<p align="center">
+  <img src="docs/assets/dotforge-banner.svg" alt="dotforge" width="600">
+</p>
+
 # dotforge
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
@@ -120,9 +124,9 @@ Multi-stack projects get all matching stack configs merged automatically.
 ```
 dotforge/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Technology modules (15 stacks, additive)
+├── stacks/         # Technology modules (16 stacks, additive)
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
-├── skills/         # 17 skills installed as ~/.claude/skills/ symlinks
+├── skills/         # 18 skills installed as ~/.claude/skills/ symlinks
 ├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
@@ -153,6 +157,7 @@ Each stack provides contextual rules, permissions, and optional hooks. Stacks ar
 | **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
 | **go-api** | `go.mod`, `*.go` | backend.md |
 | **devcontainer** | `.devcontainer/` | devcontainer.md |
+| **tdd** | `pytest.ini`, `vitest.config.*`, `jest.config.*` | tdd-workflow.md |
 | **hookify** | Custom hook framework | hooks.md |
 | **trading** | Custom stack | trading.md |
 
@@ -416,6 +421,7 @@ Cada stack provee reglas contextuales, permisos y hooks opcionales. Los stacks s
 | **aws-deploy** | `cdk.json`, `template.yaml` (SAM) | aws.md |
 | **go-api** | `go.mod`, `*.go` | backend.md |
 | **devcontainer** | `.devcontainer/` | devcontainer.md |
+| **tdd** | `pytest.ini`, `vitest.config.*`, `jest.config.*` | tdd-workflow.md |
 | **hookify** | Framework de hooks custom | hooks.md |
 | **trading** | Stack custom | trading.md |
 
@@ -462,7 +468,7 @@ Siete subagentes especializados, desplegados en cada proyecto inicializado:
 | **code-reviewer** | Revisión por severidad (crítico/advertencia/sugerencia) | sonnet | persistente |
 | **security-auditor** | Escaneo de vulnerabilidades | opus | persistente |
 | **test-runner** | Ejecución de tests + reporte de cobertura | sonnet | transaccional |
-| **session-reviewer** | Análisis post-sesión y detección de patrones | sonnet | transaccional |
+| **session-reviewer** | Análisis post-sesión y detección de patrones | sonnet | persistente |
 
 La orquestación sigue un árbol de decisión: researcher → architect → implementer → test-runner → code-reviewer. Las reglas de routing de modelos están en `template/rules/model-routing.md`. Ver [agents/](agents/) para las definiciones.
 

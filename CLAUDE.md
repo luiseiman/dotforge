@@ -57,7 +57,7 @@ Each `stacks/<name>/` directory is a technology module containing:
 - `settings.json.partial` — permissions and hooks to merge into project settings
 - Optional `hooks/*.sh` — stack-specific lint/validation hooks
 
-Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer, hookify, trading.
+Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer, hookify, trading, tdd.
 
 ### Skills & /forge Command
 
