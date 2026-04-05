@@ -7,19 +7,19 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-pretooluse.py"
+        "command": "python3 $DOTFORGE_DIR/stacks/hookify/hooks/hookify-pretooluse.py"
       }
     ],
     "Stop": [
       {
         "type": "command",
-        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-stop.py"
+        "command": "python3 $DOTFORGE_DIR/stacks/hookify/hooks/hookify-stop.py"
       }
     ],
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "python3 $CLAUDE_KIT_DIR/stacks/hookify/hooks/hookify-userpromptsubmit.py"
+        "command": "python3 $DOTFORGE_DIR/stacks/hookify/hooks/hookify-userpromptsubmit.py"
       }
     ]
   }

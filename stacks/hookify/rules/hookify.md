@@ -38,20 +38,9 @@ The skill analyzes the description and generates the appropriate .local.md file.
 - Prefer `warn` over `block` unless the operation is truly dangerous
 - Test rules by triggering the pattern and checking the warning appears
 
-## Hook types in settings.json (separate from hookify DSL)
+## Other hook types (settings.json, not hookify)
 
-Hookify generates `command` type hooks. Claude Code also supports these types directly in settings.json:
-- `http` — POST to a URL: `{"type": "http", "url": "http://localhost:8080/hook", "timeout": 5}`
-- `prompt` — LLM decision: `{"type": "prompt", "prompt": "Is this bash command safe to run?"}`
-- `agent` — spawn subagent: `{"type": "agent", "agent": "security-auditor"}`
-
-These are added manually to settings.json, not via `/hookify`.
-
-## Async hooks
-
-Hooks can run in the background without blocking the tool execution:
-- In settings.json: `{"type": "command", "command": "script.sh", "async": true}`
-- Or stream `{"async":true}` as the first JSON line from stdout
-- `asyncRewake`: hook can wake the agent after completion
-- Background hooks survive new user prompts but are killed on hard cancel (Escape)
-- Use for: long-running validations, external API calls, metrics collection
+- `http` — POST to URL: `{"type": "http", "url": "...", "timeout": 5}`
+- `prompt` — LLM decision: `{"type": "prompt", "prompt": "Is this safe?"}`
+- `agent` — subagent: `{"type": "agent", "agent": "security-auditor"}`
+- Async: add `"async": true` or stream `{"async":true}` as first JSON line

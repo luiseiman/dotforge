@@ -83,6 +83,12 @@ if [[ $TOTAL_RULES -gt 0 ]]; then
   RULE_COVERAGE=$(awk "BEGIN {printf \"%.2f\", $RULES_MATCHED / $TOTAL_RULES}")
 fi
 
+# --- Domain knowledge tracking ---
+DOMAIN_CHANGES=0
+if [[ -d ".claude/rules/domain" ]]; then
+  DOMAIN_CHANGES=$(echo "$RECENT_FILES" | grep -c '.claude/rules/domain/' 2>/dev/null || echo "0")
+fi
+
 # --- Write JSON metrics ---
 METRICS_DIR="$HOME/.claude/metrics/$PROJECT_SLUG"
 mkdir -p "$METRICS_DIR"
@@ -124,12 +130,6 @@ cat > "$METRICS_FILE" << JSON
   "domain_knowledge_updated": $DOMAIN_CHANGES
 }
 JSON
-
-# --- Domain knowledge tracking ---
-DOMAIN_CHANGES=0
-if [[ -d ".claude/rules/domain" ]]; then
-  DOMAIN_CHANGES=$(echo "$RECENT_FILES" | grep -c '.claude/rules/domain/' 2>/dev/null || echo "0")
-fi
 
 # --- Error tracking reminder ---
 # If files were touched but no errors were logged today, remind the user

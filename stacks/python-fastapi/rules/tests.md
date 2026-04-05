@@ -4,17 +4,17 @@ globs: "tests/**/*.py"
 
 # Python Testing Rules
 
-## Convenciones
-- Factory functions en `tests/factories.py` para crear test data — importar directo, no via conftest.py
-- Fixtures explícitas en conftest.py con nombres descriptivos. No fixtures "mágicas" sin tipo de retorno claro
-- Nombres de test: `test_<qué>_<condición>_<resultado_esperado>`
-- Assert con mensajes descriptivos: `assert result == expected, f"Expected {expected}, got {result}"`
-- No mockear lo que se puede testear directamente. Mock solo para servicios externos (APIs, DB real, third-party)
+## Conventions
+- Factory functions in `tests/factories.py` for test data — import directly, not via conftest.py
+- Explicit fixtures in conftest.py with descriptive names. No "magic" fixtures without a clear return type
+- Test names: `test_<what>_<condition>_<expected_result>`
+- Assert with descriptive messages: `assert result == expected, f"Expected {expected}, got {result}"`
+- Do not mock what can be tested directly. Mock only external services (APIs, real DB, third-party)
 
 ## Async
-- pytest-asyncio con `asyncio_mode = "auto"` en pyproject.toml
-- Fixtures async: `@pytest_asyncio.fixture` (no `@pytest.fixture` para async)
-- httpx.AsyncClient para test de endpoints FastAPI
+- pytest-asyncio with `asyncio_mode = "auto"` in pyproject.toml
+- Async fixtures: `@pytest_asyncio.fixture` (not `@pytest.fixture` for async)
+- httpx.AsyncClient for FastAPI endpoint tests
 
 ## Patching
 - Patch targets follow the namespace where the name is **used**, not where it's **defined**. After refactoring a method to a new module, update all `patch()` paths accordingly
@@ -31,6 +31,6 @@ globs: "tests/**/*.py"
 - Remove module prefix constants (e.g. `PRINT_PREFIX = "[module]"`) — logger name provides this
 
 ## Coverage
-- No apuntar a 100% — cubrir paths críticos y edge cases
-- Priorizar: happy path, error handling, boundary conditions
-- Ignorar: boilerplate, getters triviales, código generado
+- Do not target 100% — cover critical paths and edge cases
+- Prioritize: happy path, error handling, boundary conditions
+- Ignore: boilerplate, trivial getters, generated code

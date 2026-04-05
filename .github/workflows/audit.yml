@@ -38,9 +38,11 @@ jobs:
 
       - name: Comment score on PR
         uses: actions/github-script@v7
+        env:
+          AUDIT_RESULT: ${{ steps.audit.outputs.result }}
         with:
           script: |
-            const result = JSON.parse(`${{ steps.audit.outputs.result }}`);
+            const result = JSON.parse(process.env.AUDIT_RESULT);
             const score  = result.score;
             const level  = result.level;
             const cap    = result.security_cap ? '\n> ⚠️ **Security cap applied** — settings.json or block-destructive missing.' : '';

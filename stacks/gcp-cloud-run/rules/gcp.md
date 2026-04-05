@@ -4,45 +4,45 @@ globs: "Dockerfile*,cloudbuild*,app.yaml,.gcloudignore"
 
 # GCP Cloud Run Rules
 
-## Requisitos
-- Dockerfile obligatorio (Cloud Run es container-based)
-- Puerto configurable via env `PORT` (Cloud Run lo asigna, default 8080)
-- Health check endpoint GET `/health` o `/` que responda 200
+## Requirements
+- Dockerfile required (Cloud Run is container-based)
+- Configurable port via `PORT` env var (Cloud Run assigns it, default 8080)
+- Health check endpoint GET `/health` or `/` responding 200
 
 ## Entrypoint
-- CMD en Dockerfile: usar exec form `["python", "main.py"]` no shell form
-- Single process por container (no supervisord, no multiple workers)
-- Startup time <10s para evitar cold start penalties
+- CMD in Dockerfile: use exec form `["python", "main.py"]` not shell form
+- Single process per container (no supervisord, no multiple workers)
+- Startup time <10s to avoid cold start penalties
 
-## Secrets y config
-- Variables de entorno via Cloud Run config o Secret Manager. NUNCA en imagen.
-- `.gcloudignore` actualizado (similar a .dockerignore + .git + .env + __pycache__)
-- Secrets sensibles → Secret Manager con `--set-secrets` en deploy
+## Secrets and config
+- Environment variables via Cloud Run config or Secret Manager. NEVER in the image.
+- `.gcloudignore` up to date (similar to .dockerignore + .git + .env + __pycache__)
+- Sensitive secrets → Secret Manager with `--set-secrets` on deploy
 
 ## Logging
-- Logs a stdout/stderr (Cloud Logging los captura automáticamente)
-- JSON structured logging preferido: `{"severity": "INFO", "message": "..."}`
-- No escribir a archivos de log (filesystem es efímero)
+- Logs to stdout/stderr (Cloud Logging captures them automatically)
+- JSON structured logging preferred: `{"severity": "INFO", "message": "..."}`
+- Do not write to log files (filesystem is ephemeral)
 
 ## Deploy
 ```bash
 gcloud run deploy SERVICE_NAME \
   --source . \
   --region REGION \
-  --allow-unauthenticated \  # solo si es público
+  --allow-unauthenticated \  # only if public
   --set-env-vars KEY=VALUE \
   --min-instances 0 \
   --max-instances 10
 ```
 
 ## Scaling
-- `--min-instances 0` para ahorrar (acepta cold starts)
-- `--min-instances 1` para latencia baja (cuesta más)
-- `--concurrency` default 80; reducir si la app es CPU-intensive
-- `--memory` default 512Mi; subir para apps pesadas
+- `--min-instances 0` to save cost (accepts cold starts)
+- `--min-instances 1` for low latency (costs more)
+- `--concurrency` default 80; reduce for CPU-intensive apps
+- `--memory` default 512Mi; increase for heavy apps
 
-## Errores comunes
-- No escuchar en `0.0.0.0` → container no recibe tráfico
-- No leer `PORT` del env → Cloud Run inyecta un puerto distinto a 8080
-- Dockerfile sin `.dockerignore` → imagen de 2GB con node_modules/.git
-- Timeout de request excedido (default 300s) → revisar si necesita más o si es un bug
+## Common errors
+- Not listening on `0.0.0.0` → container receives no traffic
+- Not reading `PORT` from env → Cloud Run injects a port different from 8080
+- Dockerfile without `.dockerignore` → 2GB image with node_modules/.git
+- Request timeout exceeded (default 300s) → check if more time is needed or if it's a bug

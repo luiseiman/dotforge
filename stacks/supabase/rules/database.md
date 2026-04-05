@@ -5,26 +5,26 @@ globs: "supabase/**,**/migrations/**"
 # Supabase Rules
 
 ## Migrations
-- Una migración por cambio lógico. Nombre descriptivo: `YYYYMMDDHHMMSS_add_<entity>_table.sql`
-- SIEMPRE crear migración reversible (incluir DOWN aunque no se use)
-- RLS (Row Level Security) OBLIGATORIO en toda tabla con datos de usuario
-- Después de crear tabla: verificar que RLS está habilitado
+- One migration per logical change. Descriptive name: `YYYYMMDDHHMMSS_add_<entity>_table.sql`
+- ALWAYS create a reversible migration (include DOWN even if unused)
+- RLS (Row Level Security) REQUIRED on every table with user data
+- After creating a table: verify RLS is enabled
 
 ## RLS Policies
-- Política por defecto: DENY ALL. Crear policies explícitas.
-- Nombre de policy descriptivo: `users_select_own`, `admin_all_access`
-- Verificar con `supabase db lint` después de cambios
+- Default policy: DENY ALL. Create explicit policies.
+- Descriptive policy names: `users_select_own`, `admin_all_access`
+- Verify with `supabase db lint` after changes
 
 ## Edge Functions
-- Deno runtime. Import maps en `supabase/functions/import_map.json`
-- CORS headers explícitos en cada función
-- Verificar JWT por defecto (--no-verify-jwt solo con justificación)
+- Deno runtime. Import maps in `supabase/functions/import_map.json`
+- Explicit CORS headers in every function
+- Verify JWT by default (--no-verify-jwt only with justification)
 
-## Tipos
-- Generar tipos TS: `supabase gen types typescript --project-id <id>`
-- Regenerar después de cada migración
+## Types
+- Generate TS types: `supabase gen types typescript --project-id <id>`
+- Regenerate after every migration
 
-## Errores comunes
-- Olvidar RLS → datos expuestos públicamente
-- Foreign key sin ON DELETE → registros huérfanos
-- Trigger que referencia función inexistente → migración silenciosamente rota
+## Common errors
+- Forgetting RLS → data exposed publicly
+- Foreign key without ON DELETE → orphaned records
+- Trigger referencing a non-existent function → silently broken migration

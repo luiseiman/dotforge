@@ -1,7 +1,9 @@
 ---
+id: practice-2026-03-24-websocket-shadow-import
 name: websocket-shadow-import
 description: Local directory named websocket/ shadows websocket-client PyPI package
 type: config
+source: session-discovery
 source_type: cross-project
 tags: [error-promotion, imports, naming, pyrofex, python]
 date: 2026-03-23

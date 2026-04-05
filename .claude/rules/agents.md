@@ -42,15 +42,9 @@ Team structure pattern:
 - Lead agent coordinates merges from worktree branches into the main branch
 - Require plan approval before any teammate writes code
 
-## Context Management
+## Context & Error Handling
 
-- Subagents preserve main thread context — use them for token-heavy exploration
+- Subagent raw output must not exceed 30% of main context — always structured summaries
 - After compaction, re-summarize active agent results if still relevant
-- Never let a subagent's raw output consume >30% of main context
-- Prefer summaries: "what changed, what was found, what to do next"
-
-## Error Handling
-
-- If a subagent fails or produces garbage → log to `CLAUDE_ERRORS.md`, don't retry blindly
-- If Agent Team coordination degrades (merge conflicts, stale messages) → dissolve team, fallback to sequential subagents
+- If a subagent fails → log to `CLAUDE_ERRORS.md`, don't retry blindly
 - Always verify subagent output (run tests/lint) before declaring done

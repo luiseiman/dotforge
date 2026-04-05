@@ -1,5 +1,6 @@
 #!/bin/bash
 # PreToolUse hook: block dangerous bash commands
+# Install: .claude/hooks/block-destructive.sh
 # Matcher: Bash
 # Supports FORGE_HOOK_PROFILE: minimal | standard (default) | strict
 COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty' 2>/dev/null)
@@ -9,7 +10,7 @@ PROFILE="${FORGE_HOOK_PROFILE:-standard}"
 # Minimal: only the most catastrophic patterns
 MINIMAL_PATTERNS=(
   'rm -rf /'
-  'rm -rf \*'
+  'rm -rf \.?\*'
   'rm -rf ~'
   'git push.*--force.*main'
   'git push.*--force.*master'
@@ -54,6 +55,9 @@ for pattern in "${DANGEROUS_PATTERNS[@]}"; do
     echo "BLOCKED: destructive command detected [$PROFILE profile]" >&2
     echo "Pattern: $pattern" >&2
     echo "Command: $COMMAND" >&2
+    # Increment block counter for session metrics
+    COUNTER_FILE="/tmp/claude-destructive-blocks-$(echo "$PWD" | md5sum 2>/dev/null | cut -c1-8 || md5 -q -s "$PWD" 2>/dev/null | cut -c1-8)"
+    echo "$(date +%Y-%m-%dT%H:%M:%S) $pattern" >> "$COUNTER_FILE"
     exit 2
   fi
 done

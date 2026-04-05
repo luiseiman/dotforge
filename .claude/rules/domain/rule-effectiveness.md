@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-04-02
+last_verified: 2026-04-05
 ---
 
 # Rule Effectiveness

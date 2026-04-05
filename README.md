@@ -168,7 +168,7 @@ Seven specialized subagents, deployed to every bootstrapped project:
 | **code-reviewer** | Review by severity (critical/warning/suggestion) | sonnet | persistent |
 | **security-auditor** | Vulnerability scanning | opus | persistent |
 | **test-runner** | Run tests + report coverage | sonnet | transactional |
-| **session-reviewer** | Post-session analysis and pattern detection | sonnet | transactional |
+| **session-reviewer** | Post-session analysis and pattern detection | sonnet | persistent |
 
 Model routing rules are defined in `template/rules/model-routing.md` — criteria for haiku/sonnet/opus selection by task type.
 
@@ -201,7 +201,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 
 - **[Usage Guide](docs/usage-guide.md)** — Complete step-by-step guide: install, bootstrap, sync, audit, practices ([Español](docs/guia-uso.md))
 - [Best Practices](docs/best-practices.md) — Claude Code configuration patterns
-- [Security Checklist](docs/security-checklist.md) — 62 items for pre-deploy review
+- [Security Checklist](docs/security-checklist.md) — 34 items for pre-deploy review
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 reproducible patterns
 - [Creating Stacks](docs/creating-stacks.md) — How to add a new technology stack
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
@@ -430,7 +430,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
 - **[Guía de Uso](docs/guia-uso.md)** — Guía completa paso a paso: instalación, bootstrap, sync, auditoría, prácticas ([English](docs/usage-guide.md))
 - [Best Practices](docs/best-practices.md) — Patrones de configuración de Claude Code
-- [Security Checklist](docs/security-checklist.md) — 62 ítems para revisión pre-deploy
+- [Security Checklist](docs/security-checklist.md) — 34 ítems para revisión pre-deploy
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 patrones reproducibles
 - [Creating Stacks](docs/creating-stacks.md) — Cómo agregar un nuevo stack tecnológico
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto

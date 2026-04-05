@@ -1,7 +1,7 @@
 # Análisis de Impacto — Roadmap dotforge
 
 > Mapeo detallado de qué archivos y componentes se ven afectados por cada item del roadmap.
-> Complemento de [roadmap-explained.md](roadmap-explained.md) (beneficios) y [roadmap.md](roadmap.md) (técnico).
+> Complemento de [roadmap-explained.md](../roadmap-explained.md) (beneficios) y [roadmap.md](roadmap.md) (técnico).
 
 ---
 

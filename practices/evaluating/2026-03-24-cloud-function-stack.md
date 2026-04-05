@@ -1,6 +1,7 @@
 ---
-id: cloud-function-stack
+id: practice-2026-03-24-cloud-function-stack
 title: "Evaluar si vault-bot necesita stack cloud-function separado de gcp-cloud-run"
+source: session-discovery
 source_type: manual
 status: evaluating
 tags: [stacks, gcp, cloud-function, vault-bot]

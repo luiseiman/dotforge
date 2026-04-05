@@ -48,4 +48,4 @@ pkg/                # Only truly reusable public packages
 - Goroutine leak: forgetting to cancel context or close channels
 - Data race: shared state without mutex or channels — run `go test -race`
 - `defer resp.Body.Close()` before checking `err` → nil pointer on error
-- `json.NewDecoder` vs `json.Unmarshal`: decoder for streams, unmarshal for known-size
+- `json.NewDecoder` for streams, `json.Unmarshal` for known-size payloads

@@ -2,40 +2,40 @@
 globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl,**/*.py,**/*.ts,**/*.tsx,**/*.swift"
 ---
 
-# Reglas de código
+# Code Rules
 
-Reglas técnicas por proyecto. Las reglas de comportamiento (comunicación, planificación, autonomía) están en el CLAUDE.md global y no se repiten acá.
+Technical rules per project. Behavioral rules (communication, planning, autonomy) live in global CLAUDE.md and are not repeated here.
 
 ## Git
-- Commits atómicos: un cambio lógico por commit
-- Mensajes en imperativo, primera línea <72 chars
-- No commitear .env, secrets, keys, credenciales
-- No force push a main/master sin confirmación explícita
+- Atomic commits: one logical change per commit
+- Messages in imperative mood, first line <72 chars
+- Never commit .env, secrets, keys, credentials
+- No force push to main/master without explicit confirmation
 - Branch naming: feature/, fix/, refactor/, chore/
 
 ## Naming
-- Variables/funciones descriptivas, no abreviaciones crípticas
-- Constantes en UPPER_SNAKE_CASE
-- No single-letter variables excepto iteradores (i, j, k) y lambdas
+- Descriptive variable/function names, no cryptic abbreviations
+- Constants in UPPER_SNAKE_CASE
+- No single-letter variables except iterators (i, j, k) and lambdas
 
 ## Testing
-- Funcionalidad nueva → test obligatorio
-- Nombres de test descriptivos: test_<qué>_<condición>_<resultado_esperado>
-- No mockear lo que se puede testear de verdad
+- New functionality → test required
+- Descriptive test names: test_<what>_<condition>_<expected_result>
+- Do not mock what can be tested for real
 
-## Errores
-- Nunca catch vacío — siempre log o re-raise
-- No exponer stack traces al usuario final
+## Errors
+- Never empty catch — always log or re-raise
+- Do not expose stack traces to end users
 
-## Seguridad
-- Inputs del usuario: sanitizar siempre
-- Sin credenciales hardcodeadas — usar variables de entorno
-- Queries parametrizadas (no string interpolation)
-- Rate limiting en endpoints públicos
+## Security
+- Sanitize all user inputs
+- No hardcoded credentials — use environment variables
+- Parameterized queries (no string interpolation)
+- Rate limiting on public endpoints
 
 ## Scope
-- Solo modificar archivos estrictamente necesarios
-- No agregar features no solicitadas
+- Modify only strictly necessary files
+- Do not add unrequested features
 
 ## Prompt Language
 - All Claude-consumed content (rules, agent prompts, skill steps, system prompts) MUST be in English

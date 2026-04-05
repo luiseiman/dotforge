@@ -5,31 +5,30 @@ globs: "**/*.swift"
 # Swift / SwiftUI Rules
 
 ## Stack
-Swift 5.9+, SwiftUI, iOS 17+. @Observable (no @ObservableObject para nuevos). async/await nativo. SPM para dependencias.
+Swift 5.9+, SwiftUI, iOS 17+. @Observable (not @ObservableObject for new code). Native async/await. SPM for dependencies.
 
 ## Patterns
 - MVVM: @Observable ViewModel + SwiftUI View
-- @MainActor en ViewModels que actualizan UI
-- URLSession nativo para networking. No Alamofire salvo justificación.
-- Codable para JSON parsing. JSONDecoder con `keyDecodingStrategy: .convertFromSnakeCase`
-- UserDefaults para config simple. Keychain para secrets.
+- @MainActor on ViewModels that update UI
+- Native URLSession for networking. No Alamofire without justification.
+- Codable for JSON parsing. JSONDecoder with `keyDecodingStrategy: .convertFromSnakeCase`
+- UserDefaults for simple config. Keychain for secrets.
 
 ## Navigation
-- NavigationStack (no NavigationView)
-- @Environment(\.dismiss) para pop
+- NavigationStack (not NavigationView)
+- @Environment(\.dismiss) for pop
 - Deep links via .onOpenURL
 
 ## Error handling
-- do/catch con tipos de error específicos, no genéricos
-- Alert/toast para errores de usuario
-- Log silencioso para errores recuperables
+- do/catch with specific error types, not generic
+- Alert/toast for user-facing errors
+- Silent log for recoverable errors
 
-## Convenciones
-- UI en español (si el usuario es hispanohablante)
+## Conventions
 - Timeouts: 30s request, 300s resource
-- SSE: exponential backoff con max 30s
+- SSE: exponential backoff with max 30s
 
 ## Build
-- `open *.xcodeproj` o `open *.xcworkspace` (Xcode 15+)
-- `swift build` para SPM packages
-- `xcodebuild -scheme <name> -sdk iphonesimulator build` para CI
+- `open *.xcodeproj` or `open *.xcworkspace` (Xcode 15+)
+- `swift build` for SPM packages
+- `xcodebuild -scheme <name> -sdk iphonesimulator build` for CI

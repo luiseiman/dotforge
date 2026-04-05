@@ -34,7 +34,7 @@ last_verified: 2026-04-02
 
 ## Memory and lifecycle
 
-- Memory agents: architect, implementer, code-reviewer, security-auditor (persist in .claude/agent-memory/)
+- Memory agents: architect, implementer, code-reviewer, security-auditor, session-reviewer (persist in .claude/agent-memory/)
 - Transactional agents: researcher, test-runner (execute and report, no memory)
 - Dynamic loading from `~/.claude/agents/` — custom agent definitions auto-discovered
 - Subagent output must not exceed 30% of main context — always structured summaries

@@ -4,7 +4,7 @@ title: "Changes detected in .claude/ of luiseiman"
 source: "post-session hook — luiseiman"
 source_type: experience
 discovered: 2026-03-23
-status: inbox
+status: deprecated
 tags: [auto-detected, luiseiman]
 tested_in: luiseiman
 incorporated_in: []

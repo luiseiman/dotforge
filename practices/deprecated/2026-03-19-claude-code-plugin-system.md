@@ -1,6 +1,8 @@
 ---
+id: practice-2026-03-19-claude-code-plugin-system
 title: "Claude Code tiene sistema formal de plugins"
 date: 2026-03-19
+source: upstream
 source_type: upstream
 status: deprecated
 reason: "Not applicable — dotforge is single-user. Revisit if distributing to teams."

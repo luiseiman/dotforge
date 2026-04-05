@@ -185,10 +185,17 @@ for arg in "$@"; do
   esac
 done
 
+# Guard: reject CLAUDE_HOME with shell metacharacters
+if [[ "$CLAUDE_HOME" =~ [\`\$\(\)\;\|] ]]; then
+  echo "ERROR: CLAUDE_HOME contains unsafe characters: $CLAUDE_HOME" >&2
+  exit 1
+fi
+
 action() {
   if $DRY_RUN; then
     echo "  [dry-run] $*"
   else
+    # eval required for compound commands (&&). Paths are single-quoted by callers.
     eval "$*"
   fi
 }

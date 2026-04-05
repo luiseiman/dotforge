@@ -5,22 +5,22 @@ globs: "docker-compose*,Dockerfile*,*.dockerfile"
 # Docker / Deploy Rules
 
 ## Docker Compose
-- `docker compose up --build` después de cambios (git pull NO actualiza containers)
-- `--no-cache` si cambios no aparecen después de build
-- Health checks obligatorios en servicios críticos
-- Named volumes para datos persistentes. Bind mounts solo para desarrollo.
+- `docker compose up --build` after changes (git pull does NOT update containers)
+- `--no-cache` if changes don't appear after build
+- Health checks required on critical services
+- Named volumes for persistent data. Bind mounts for development only.
 
 ## Dockerfile
-- Multi-stage builds para producción (builder → runtime)
-- `.dockerignore` actualizado (node_modules, .git, .env, __pycache__)
-- Pin versions: `python:3.12-slim` no `python:latest`
-- COPY requirements/package.json primero → install → COPY rest (cache de layers)
+- Multi-stage builds for production (builder → runtime)
+- `.dockerignore` up to date (node_modules, .git, .env, __pycache__)
+- Pin versions: `python:3.12-slim` not `python:latest`
+- COPY requirements/package.json first → install → COPY rest (layer caching)
 
-## Producción
-- Variables de entorno via `.env` o secrets manager. NUNCA en Dockerfile/compose.
-- Logs a stdout/stderr (no a archivos)
-- Restart policy: `unless-stopped` para servicios, `no` para one-shot
-- Resource limits (mem_limit, cpus) en compose para evitar OOM
+## Production
+- Environment variables via `.env` or secrets manager. NEVER in Dockerfile/compose.
+- Logs to stdout/stderr (not to files)
+- Restart policy: `unless-stopped` for services, `no` for one-shot
+- Resource limits (mem_limit, cpus) in compose to prevent OOM
 
 ## Health checks
 ```yaml
@@ -33,11 +33,11 @@ healthcheck:
 ```
 
 ## Deploy checklist
-1. Tests pasan localmente
-2. Build sin errores
-3. Push a remote
-4. Pull en servidor
-5. Build + restart servicios
-6. Verificar containers running
+1. Tests pass locally
+2. Build without errors
+3. Push to remote
+4. Pull on server
+5. Build + restart services
+6. Verify containers running
 7. Health check endpoints
-8. Verificar logs (primeros 30s)
+8. Verify logs (first 30s)

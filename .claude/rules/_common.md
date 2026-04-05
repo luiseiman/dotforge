@@ -2,40 +2,38 @@
 globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl,**/*.py,**/*.ts,**/*.tsx,**/*.swift"
 ---
 
-# Reglas de código
-
-Reglas técnicas por proyecto. Las reglas de comportamiento (comunicación, planificación, autonomía) están en el CLAUDE.md global y no se repiten acá.
+# Code Rules
 
 ## Git
-- Commits atómicos: un cambio lógico por commit
-- Mensajes en imperativo, primera línea <72 chars
-- No commitear .env, secrets, keys, credenciales
-- No force push a main/master sin confirmación explícita
+- Atomic commits: one logical change per commit
+- Messages in imperative mood, first line <72 chars
+- Never commit .env, secrets, keys, credentials
+- No force push to main/master without explicit confirmation
 - Branch naming: feature/, fix/, refactor/, chore/
 
 ## Naming
-- Variables/funciones descriptivas, no abreviaciones crípticas
-- Constantes en UPPER_SNAKE_CASE
-- No single-letter variables excepto iteradores (i, j, k) y lambdas
+- Descriptive variable/function names, no cryptic abbreviations
+- Constants in UPPER_SNAKE_CASE
+- No single-letter variables except iterators (i, j, k) and lambdas
 
 ## Testing
-- Funcionalidad nueva → test obligatorio
-- Nombres de test descriptivos: test_<qué>_<condición>_<resultado_esperado>
-- No mockear lo que se puede testear de verdad
+- New functionality → test required
+- Descriptive test names: test_<what>_<condition>_<expected_result>
+- Do not mock what can be tested for real
 
-## Errores
-- Nunca catch vacío — siempre log o re-raise
-- No exponer stack traces al usuario final
+## Errors
+- Never empty catch — always log or re-raise
+- Do not expose stack traces to end users
 
-## Seguridad
-- Inputs del usuario: sanitizar siempre
-- Sin credenciales hardcodeadas — usar variables de entorno
-- Queries parametrizadas (no string interpolation)
-- Rate limiting en endpoints públicos
+## Security
+- Sanitize all user inputs
+- No hardcoded credentials — use environment variables
+- Parameterized queries (no string interpolation)
+- Rate limiting on public endpoints
 
 ## Scope
-- Solo modificar archivos estrictamente necesarios
-- No agregar features no solicitadas
+- Modify only strictly necessary files
+- Do not add unrequested features
 
 ## Prompt Language
 - All Claude-consumed content (rules, agent prompts, skill steps, system prompts) MUST be in English
@@ -45,22 +43,8 @@ Reglas técnicas por proyecto. Las reglas de comportamiento (comunicación, plan
 - If a rule can be expressed in fewer words without losing meaning, rewrite it shorter
 
 ## Practice Capture
-After completing a task, check if any of these signals are present:
-- A workaround was needed because the obvious approach failed
-- A bug required more than one fix attempt to resolve
-- An architectural or config decision involved real trade-offs
-- A tool, flag, or API behavior was non-obvious or surprising
-- A rule in CLAUDE.md or a stack rule was missing and would have prevented the problem
-
-If ANY signal is present, suggest at the end of your response:
-```
-💡 This looks generalizable. Run `/cap "<one-line summary>"` to capture it.
-```
-Do NOT suggest for: trivial tasks, routine edits, tasks where the first approach worked cleanly.
-Threshold: if you had to reason about it or backtrack, suggest it. If not, stay silent.
+If a task required workarounds, multiple fix attempts, real trade-offs, or revealed missing rules:
+suggest `💡 Run /cap "<summary>"` at end of response. Skip for trivial/routine tasks.
 
 ## Context Continuity
-
-- After completing a significant task (>3 files changed, architectural decision, complex bug fix), update `.claude/session/last-compact.md` with active restrictions and decisions that must not be lost
-- Format: `## Active Constraints\n- [what must not change and why]`
-- This file is automatically re-injected after compaction via session-restore.sh
+After significant tasks (>3 files, architectural decisions): update `.claude/session/last-compact.md` with active constraints. Auto-re-injected after compaction.

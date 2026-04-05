@@ -1,7 +1,9 @@
 ---
+id: practice-2026-03-24-fix-loop-root-cause
 name: fix-loop-root-cause
 description: Multiple fix commits for same symptom signals unresolved root cause
 type: process
+source: session-discovery
 source_type: audit-gap
 tags: [debugging, root-cause, process, python]
 date: 2026-03-23
