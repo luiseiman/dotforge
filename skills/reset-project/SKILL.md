@@ -1,100 +1,100 @@
 ---
 name: reset-project
-description: Restaura .claude/ de un proyecto a la plantilla claude-kit desde cero, con backup y opción de rollback.
+description: Restore a project's .claude/ directory to the claude-kit template from scratch, with backup and rollback option.
 ---
 
-# Reset Proyecto
+# Reset Project
 
-Restaurar `.claude/` completo del proyecto actual a la plantilla claude-kit, desde cero.
+Restore the current project's `.claude/` directory completely to the claude-kit template, from scratch.
 
-## Paso 1: Confirmar con el usuario (OBLIGATORIO)
+## Step 1: Confirm with the user (MANDATORY)
 
-Mostrar advertencia antes de proceder:
+Show warning before proceeding:
 
 ```
 ╔══════════════════════════════════════════════════╗
-║  RESET: se reemplazará .claude/ completo        ║
+║  RESET: .claude/ will be fully replaced         ║
 ║                                                  ║
-║  Se perderán:                                    ║
-║  - Customizaciones en settings.json              ║
-║  - Rules personalizadas                          ║
-║  - Hooks custom                                  ║
-║  - Cualquier archivo manual en .claude/          ║
+║  The following will be lost:                     ║
+║  - Customizations in settings.json               ║
+║  - Custom rules                                  ║
+║  - Custom hooks                                  ║
+║  - Any manually created files in .claude/        ║
 ║                                                  ║
-║  Se preservará:                                  ║
-║  - settings.local.json (no se toca)              ║
-║  - CLAUDE.md (se regenera desde template)        ║
-║  - CLAUDE_ERRORS.md (se preserva si existe)      ║
+║  The following will be preserved:                ║
+║  - settings.local.json (not touched)             ║
+║  - CLAUDE.md (regenerated from template)         ║
+║  - CLAUDE_ERRORS.md (preserved if it exists)     ║
 ║                                                  ║
-║  Se creará backup en .claude.backup-YYYY-MM-DD/  ║
+║  A backup will be created at .claude.backup-YYYY-MM-DD/  ║
 ╚══════════════════════════════════════════════════╝
 
-¿Confirmar reset? (sí/no)
+Confirm reset? (yes/no)
 ```
 
-Si el usuario dice "no", cancelar inmediatamente. NO proceder sin confirmación explícita.
+If the user says "no", cancel immediately. DO NOT proceed without explicit confirmation.
 
-## Paso 2: Detectar stacks
+## Step 2: Detect stacks
 
 Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 Confirm detected stacks with the user.
 
-## Paso 3: Hacer backup
+## Step 3: Create backup
 
-1. Crear directorio `.claude.backup-{YYYY-MM-DD}/` en la raíz del proyecto
-2. Copiar TODO `.claude/` al backup:
+1. Create directory `.claude.backup-{YYYY-MM-DD}/` in the project root
+2. Copy ALL of `.claude/` to the backup:
    ```bash
    cp -R .claude/ .claude.backup-$(date +%Y-%m-%d)/
    ```
-3. Si `CLAUDE_ERRORS.md` existe, copiarlo aparte (se restaurará después)
-4. Verificar que el backup existe y tiene contenido
+3. If `CLAUDE_ERRORS.md` exists, copy it separately (it will be restored afterwards)
+4. Verify the backup exists and has content
 
-## Paso 4: Re-ejecutar bootstrap completo
+## Step 4: Re-run full bootstrap
 
-1. Eliminar `.claude/` actual:
+1. Delete the current `.claude/`:
    ```bash
    rm -rf .claude/
    ```
-2. Ejecutar el skill `/bootstrap-project` completo desde cero
-3. Si `CLAUDE_ERRORS.md` existía, restaurar el archivo original (no el template vacío)
+2. Run the `/bootstrap-project` skill in full from scratch
+3. If `CLAUDE_ERRORS.md` existed, restore the original file (not the empty template)
 
-## Paso 5: Mostrar diff entre backup y nuevo
+## Step 5: Show diff between backup and new
 
-Comparar backup vs nuevo `.claude/`:
+Compare backup vs new `.claude/`:
 
 ```
-═══ RESET COMPLETADO ═══
+═══ RESET COMPLETE ═══
 
-Archivos nuevos (no existían antes):
+New files (did not exist before):
 + .claude/rules/agents.md
 + .claude/agents/researcher.md
 
-Archivos actualizados (diferencias con backup):
-~ .claude/settings.json — 3 permisos nuevos en allow
-~ .claude/hooks/block-destructive.sh — 2 patterns nuevos
+Updated files (differences from backup):
+~ .claude/settings.json — 3 new permissions in allow
+~ .claude/hooks/block-destructive.sh — 2 new patterns
 
-Archivos eliminados (estaban en backup, no en template):
+Deleted files (were in backup, not in template):
 - .claude/rules/custom-strategy.md
 
-Archivos preservados:
-= CLAUDE_ERRORS.md (restaurado del backup)
+Preserved files:
+= CLAUDE_ERRORS.md (restored from backup)
 ```
 
-## Paso 6: Ofrecer rollback
+## Step 6: Offer rollback
 
 ```
-Backup disponible en: .claude.backup-YYYY-MM-DD/
-Para restaurar: rm -rf .claude && mv .claude.backup-YYYY-MM-DD .claude
-¿Eliminar backup? (sí/no — recomendado: no, al menos hasta verificar)
+Backup available at: .claude.backup-YYYY-MM-DD/
+To restore: rm -rf .claude && mv .claude.backup-YYYY-MM-DD .claude
+Delete backup? (yes/no — recommended: no, at least until verified)
 ```
 
-Si el usuario quiere restaurar, ejecutar el rollback inmediatamente.
-Si el usuario quiere eliminar el backup, hacerlo.
-Si el usuario no decide, dejar el backup (se puede limpiar manualmente después).
+If the user wants to restore, execute the rollback immediately.
+If the user wants to delete the backup, do it.
+If the user does not decide, leave the backup (it can be cleaned up manually later).
 
-## Instalación
+## Installation
 
-Este skill se instala automáticamente si ya existe el symlink de `skills/` en `~/.claude/skills/`. Si no, crear el symlink:
+This skill is installed automatically if the symlink from `skills/` already exists in `~/.claude/skills/`. If not, create the symlink:
 ```bash
 ln -sf $CLAUDE_KIT_DIR/skills ~/.claude/skills
 ```

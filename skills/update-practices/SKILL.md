@@ -1,75 +1,75 @@
 ---
 name: update-practices
-description: Procesa el inbox de prácticas, evalúa, incorpora a claude-kit, y sugiere propagación a proyectos.
+description: Process the practices inbox, evaluate, incorporate into claude-kit, and suggest propagation to projects.
 ---
 
-# Actualizar Prácticas
+# Update Practices
 
-Pipeline de 3 fases para mantener claude-kit actualizado con prácticas descubiertas.
+3-phase pipeline to keep claude-kit up to date with discovered practices.
 
-**Fuentes de prácticas:**
-- Hook post-sesión (`detect-claude-changes.sh`) → automático
-- Captura manual (`/forge capture`) → usuario
-- Para búsqueda web manual: investigar y luego usar `/forge capture` con los hallazgos
+**Practice sources:**
+- Post-session hook (`detect-claude-changes.sh`) → automatic
+- Manual capture (`/forge capture`) → user
+- For manual web search: research and then use `/forge capture` with the findings
 
 ---
 
-## Fase 1: EVALUAR — Procesar inbox
+## Phase 1: EVALUATE — Process inbox
 
-Leer todos los archivos en `$CLAUDE_KIT_DIR/practices/inbox/`.
+Read all files in `$CLAUDE_KIT_DIR/practices/inbox/`.
 
-Para cada práctica:
+For each practice:
 
-### Criterios de aceptación
-1. **¿Es actionable?** — Se puede traducir a un cambio concreto en claude-kit
-2. **¿Es nueva?** — No duplica algo que ya está en `practices/active/`
-3. **¿Es generalizable?** — Aplica a >1 proyecto (no es project-specific)
-4. **¿Previene un error específico?** — Si sí, anotar `error_type` y descripción del error para tracking en metrics.yml
+### Acceptance criteria
+1. **Is it actionable?** — Can be translated into a concrete change in claude-kit
+2. **Is it new?** — Does not duplicate something already in `practices/active/`
+3. **Is it generalizable?** — Applies to >1 project (not project-specific)
+4. **Does it prevent a specific error?** — If yes, annotate `error_type` and error description for tracking in metrics.yml
 
-### Clasificar
-- **Aceptar** → mover a `practices/evaluating/`, anotar cambio concreto propuesto
-- **Rechazar** → eliminar de inbox con nota de por qué en la decisión
-- **Posponer** → dejar en inbox con tag `needs-more-info`
+### Classify
+- **Accept** → move to `practices/evaluating/`, note proposed concrete change
+- **Reject** → remove from inbox with a note explaining why
+- **Defer** → leave in inbox with tag `needs-more-info`
 
-### Prioridad
-1. Seguridad (vulnerabilidades, permisos)
-2. Breaking changes (APIs que cambiaron)
-3. Features nuevas que simplifican algo existente
-4. Patrones validados en >1 proyecto
-5. Optimizaciones menores
+### Priority
+1. Security (vulnerabilities, permissions)
+2. Breaking changes (APIs that changed)
+3. New features that simplify something existing
+4. Patterns validated in >1 project
+5. Minor optimizations
 
-Mostrar resumen:
+Show summary:
 ```
-═══ EVALUACIÓN DE INBOX ═══
-{{N}} prácticas en inbox
+═══ INBOX EVALUATION ═══
+{{N}} practices in inbox
 
-✅ ACEPTAR: {{título}} → {{cambio propuesto}}
-❌ RECHAZAR: {{título}} → {{razón}}
-⏸️ POSPONER: {{título}} → {{qué falta}}
+✅ ACCEPT: {{title}} → {{proposed change}}
+❌ REJECT: {{title}} → {{reason}}
+⏸️ DEFER: {{title}} → {{what is missing}}
 
-¿Proceder con las aceptadas? (sí/no/seleccionar)
+Proceed with accepted? (yes/no/select)
 ```
 
 ---
 
-## Fase 2: INCORPORAR — Aplicar cambios a claude-kit
+## Phase 2: INCORPORATE — Apply changes to claude-kit
 
-Para cada práctica aceptada en `evaluating/`:
+For each accepted practice in `evaluating/`:
 
-### Determinar impacto
-| Tipo de cambio | Archivos afectados | Versión bump |
-|---------------|-------------------|-------------|
-| Regla nueva/modificada | template/rules/, stacks/*/rules/ | minor |
-| Hook nuevo/modificado | template/hooks/, stacks/*/hooks/ | minor |
-| Documentación | docs/*.md | patch |
-| Template modificado | template/*.tmpl | minor |
-| Security fix | cualquiera | patch |
+### Determine impact
+| Change type | Affected files | Version bump |
+|-------------|----------------|--------------|
+| New/modified rule | template/rules/, stacks/*/rules/ | minor |
+| New/modified hook | template/hooks/, stacks/*/hooks/ | minor |
+| Documentation | docs/*.md | patch |
+| Modified template | template/*.tmpl | minor |
+| Security fix | any | patch |
 
-### Aplicar
-1. Mostrar diff propuesto al usuario y pedir confirmación
-2. Modificar los archivos de claude-kit correspondientes
+### Apply
+1. Show proposed diff to the user and ask for confirmation
+2. Modify the corresponding claude-kit files
 3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` (eager) or `paths:` + `alwaysApply: false` (lazy) frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
-4. Mover práctica de `evaluating/` a `active/` con `incorporated_in:` actualizado
+4. Move practice from `evaluating/` to `active/` with `incorporated_in:` updated
 5. Set frontmatter fields: `effectiveness: monitoring` (or `not-applicable` if no error targeted), `error_type` matching CLAUDE_ERRORS.md types
 6. Register in `$CLAUDE_KIT_DIR/practices/metrics.yml`:
    - `error_targeted`: description of the error this practice prevents (null if not error-targeted)
@@ -78,33 +78,33 @@ Para cada práctica aceptada en `evaluating/`:
    - `status`: monitoring (or not-applicable)
    - `recurrence_checks`: 0
    - `recurrence_target`: 5
-7. Actualizar `docs/changelog.md`
-8. Bump `VERSION` según tipo
+7. Update `docs/changelog.md`
+8. Bump `VERSION` according to type
 
 ---
 
-## Fase 3: PROPAGAR — Sugerir actualización de proyectos
+## Phase 3: PROPAGATE — Suggest project updates
 
-1. Leer `$CLAUDE_KIT_DIR/registry/projects.yml`
-2. Para cada proyecto, mostrar qué cambió desde su última sincronización:
+1. Read `$CLAUDE_KIT_DIR/registry/projects.yml`
+2. For each project, show what changed since its last sync:
 
 ```
-═══ PROPAGACIÓN SUGERIDA ═══
+═══ SUGGESTED PROPAGATION ═══
 
-project-a (último sync: {{fecha o "nunca"}})
-  → {{N}} rules actualizadas
+project-a (last sync: {{date or "never"}})
+  → {{N}} rules updated
 
-project-b (último sync: {{fecha o "nunca"}})
-  → {{N}} rules actualizadas
+project-b (last sync: {{date or "never"}})
+  → {{N}} rules updated
 
-Para propagar: ejecutar /forge sync en cada proyecto.
+To propagate: run /forge sync in each project.
 ```
 
-NO propagar automáticamente. Solo informar.
+DO NOT propagate automatically. Inform only.
 
 ---
 
-## Fase 4: VERIFICAR — Recurrence check de prácticas activas
+## Phase 4: VERIFY — Recurrence check for active practices
 
 For each entry in `$CLAUDE_KIT_DIR/practices/metrics.yml` where `status: monitoring`:
 
@@ -128,20 +128,20 @@ Skip practices with `status: not-applicable` or `status: validated`.
 
 ---
 
-## Reporte final
+## Final report
 
 ```
-═══ REPORTE DE ACTUALIZACIÓN ═══
-Fecha: {{YYYY-MM-DD}}
+═══ UPDATE REPORT ═══
+Date: {{YYYY-MM-DD}}
 
-Evaluadas: {{N}} ({{aceptadas}} aceptadas, {{rechazadas}} rechazadas, {{pospuestas}} pospuestas)
-Incorporadas: {{N}} a claude-kit
-Propagación sugerida: {{N}} proyectos
+Evaluated: {{N}} ({{accepted}} accepted, {{rejected}} rejected, {{deferred}} deferred)
+Incorporated: {{N}} into claude-kit
+Propagation suggested: {{N}} projects
 
 ── EFFECTIVENESS ──
-Monitoreando: {{N}} prácticas
-Validadas: {{N}} (sin recurrencia tras {{target}} checks)
-Fallidas: {{N}} (necesitan revisión)
+Monitoring: {{N}} practices
+Validated: {{N}} (no recurrence after {{target}} checks)
+Failed: {{N}} (need revision)
 
 VERSION: {{old}} → {{new}}
 ```

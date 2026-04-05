@@ -1,11 +1,11 @@
 ---
 name: capture-practice
-description: Captura un insight o práctica descubierta durante el trabajo y la registra en claude-kit practices/inbox.
+description: Captures an insight or practice discovered during work and registers it in the claude-kit practices/inbox.
 ---
 
-# Capturar Práctica
+# Capture Practice
 
-Registrar un insight, patrón, o lección aprendida en el inbox de claude-kit.
+Register an insight, pattern, or lesson learned in the claude-kit inbox.
 
 ## Input routing
 
@@ -43,7 +43,7 @@ Stop — do not create a file.
 Show the proposed insight and ask for confirmation before proceeding:
 
 ```
-💡 Proposed practice:
+Proposed practice:
 "{{one-line insight}}"
 
 Tags: {{inferred tags}}
@@ -81,7 +81,7 @@ Create file in `$CLAUDE_KIT_DIR/practices/inbox/` with format:
 ---
 id: practice-{{YYYY-MM-DD}}-{{slug}}
 title: {{short title}}
-source: "experiencia propia"
+source: "own experience"
 source_type: experience
 discovered: {{YYYY-MM-DD}}
 status: inbox
@@ -91,17 +91,17 @@ incorporated_in: []
 replaced_by: null
 ---
 
-## Descripción
+## Description
 {{what the practice states}}
 
-## Evidencia
+## Evidence
 {{why it works, discovery context}}
 
-## Impacto en claude-kit
+## Impact on claude-kit
 {{which files would need to change}}
 
-## Decisión
-Pendiente
+## Decision
+Pending
 ```
 
 File name: `{{YYYY-MM-DD}}-{{slug}}.md`
@@ -110,9 +110,9 @@ File name: `{{YYYY-MM-DD}}-{{slug}}.md`
 
 Show:
 ```
-✅ Práctica capturada: {{title}}
-📁 practices/inbox/{{file}}
-🏷️ Tags: {{tags}}
+Practice captured: {{title}}
+File: practices/inbox/{{file}}
+Tags: {{tags}}
 
-Próximo paso: /forge update evalúa prácticas pendientes del inbox.
+Next step: /forge update evaluates pending practices from inbox.
 ```

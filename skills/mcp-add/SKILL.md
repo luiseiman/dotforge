@@ -58,16 +58,16 @@ Check if the server is already configured:
 
 If already configured:
 ```
-⚠  {{server}} MCP ya está configurado en {{target}}.
+⚠  {{server}} MCP is already configured in {{target}}.
 
-   Opciones:
-   [a] Actualizar — reemplaza mcpServers.{{server}}, agrega permisos faltantes (no quita existentes)
-   [s] Salir — no hacer cambios
+   Options:
+   [u] Update — replace mcpServers.{{server}}, add missing permissions (does not remove existing ones)
+   [q] Quit — make no changes
 
-¿Qué hacemos? [a/S]
+What would you like to do? [u/Q]
 ```
-- `a` → continue with update flow (Step 3)
-- `S` or anything else → stop
+- `u` → continue with update flow (Step 3)
+- `Q` or anything else → stop
 
 ## Step 3: Show preview
 
@@ -80,27 +80,27 @@ mcpServers.{{server}}:
 {{pretty-print the server config block, replacing env var values like "${GITHUB_TOKEN}"
 with the literal placeholder strings — do not expand env vars}}
 
-Permisos nuevos:
-  allow (+{{N}} nuevos): {{list entries not already in target settings}}
-  deny  (+{{N}} nuevos): {{list entries not already in target settings}}
-  (Los permisos existentes no se modifican)
+New permissions:
+  allow (+{{N}} new): {{list entries not already in target settings}}
+  deny  (+{{N}} new): {{list entries not already in target settings}}
+  (Existing permissions are not modified)
 
 Rules:
   $CLAUDE_KIT_DIR/mcp/{{server}}/rules.md
   → {{rules destination}}
 
-Variables de entorno requeridas:
+Required environment variables:
   {{_install text from config.json}}
 
-¿Proceder? [S/n]
+Proceed? [Y/n]
 ```
 
-If all permissions are already present, show "Permisos: sin cambios (ya configurados)".
+If all permissions are already present, show "Permissions: no changes (already configured)".
 If no new denies to add, omit that line.
 
 ## Step 4: Apply changes
 
-Only proceed if user confirms (S, s, Enter, or "sí").
+Only proceed if user confirms (Y, y, Enter, or "yes").
 
 ### 4a. Merge mcpServers
 
@@ -140,20 +140,20 @@ Create the destination directory if it doesn't exist.
 ## Step 5: Confirm result
 
 ```
-✓ {{SERVER}} MCP configurado
+✓ {{SERVER}} MCP configured
 
-  Archivos actualizados:
-    {{target settings.json}} — mcpServers.{{server}} agregado
-    {{rules destination}} — reglas de comportamiento copiadas
-    {{"+N permisos" if any were added, else "permisos: sin cambios"}}
+  Updated files:
+    {{target settings.json}} — mcpServers.{{server}} added
+    {{rules destination}} — behavior rules copied
+    {{"+N permissions" if any were added, else "permissions: no changes"}}
 
-  Próximo paso:
+  Next step:
     {{_install text from config.json}}
-    Reiniciá Claude Code para activar el servidor MCP.
+    Restart Claude Code to activate the MCP server.
 ```
 
 If global install:
-  Add: "Instalado globalmente — activo en todos los proyectos."
+  Add: "Installed globally — active in all projects."
 
 If project-only install:
-  Add: "Instalado en el proyecto actual. Para uso global: /forge mcp add {{server}} --global"
+  Add: "Installed in the current project. For global use: /forge mcp add {{server}} --global"

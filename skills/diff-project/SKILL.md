@@ -1,90 +1,90 @@
 ---
 name: diff-project
-description: Muestra qué cambió en claude-kit desde el último sync del proyecto, para decidir si conviene ejecutar /forge sync.
+description: Shows what changed in claude-kit since the project's last sync, to decide whether running /forge sync is worthwhile.
 ---
 
-# Diff Proyecto
+# Diff Project
 
-Mostrar qué cambió en claude-kit desde la última sincronización del proyecto actual.
+Show what changed in claude-kit since the last synchronization of the current project.
 
-## Paso 1: Identificar baseline del proyecto
+## Step 1: Identify project baseline
 
-1. Leer `$CLAUDE_KIT_DIR/registry/projects.yml`
-2. Buscar el proyecto actual por `path` (comparar con `$PWD`)
-3. Obtener `claude_kit_version` y `last_sync`
-4. Si no hay `claude_kit_version` registrada (null), reportar:
+1. Read `$CLAUDE_KIT_DIR/registry/projects.yml`
+2. Find the current project by `path` (compare with `$PWD`)
+3. Get `claude_kit_version` and `last_sync`
+4. If no `claude_kit_version` is registered (null), report:
    ```
-   Proyecto no synceado — no hay baseline contra la cual comparar.
-   Ejecutar /forge sync para establecer baseline.
+   Project not synced — no baseline to compare against.
+   Run /forge sync to establish baseline.
    ```
-   Y terminar.
+   And stop.
 
-## Paso 2: Verificar manifest local
+## Step 2: Verify local manifest
 
-Si existe `.claude/.forge-manifest.json` en el proyecto actual:
-1. Leerlo y obtener la versión y los hashes de archivos
-2. Para cada archivo en el manifest, calcular `shasum -a 256 <file> | cut -d' ' -f1`
-3. Comparar contra el hash registrado
-4. Reportar archivos modificados localmente (hash difiere) y archivos eliminados
-5. Usar la version del manifest como baseline (más precisa que el registry)
+If `.claude/.forge-manifest.json` exists in the current project:
+1. Read it and get the version and file hashes
+2. For each file in the manifest, calculate `shasum -a 256 <file> | cut -d' ' -f1`
+3. Compare against the registered hash
+4. Report locally modified files (hash differs) and deleted files
+5. Use the manifest version as baseline (more precise than the registry)
 
-Si NO existe manifest, continuar con Paso 3 usando git log.
+If manifest does NOT exist, continue to Step 3 using git log.
 
-## Paso 3: Detectar cambios en claude-kit
+## Step 3: Detect changes in claude-kit
 
-Ejecutar en `$CLAUDE_KIT_DIR/`:
+Run in `$CLAUDE_KIT_DIR/`:
 
 ```bash
 git log --oneline v<version>..HEAD -- template/ stacks/
 ```
 
-Donde `<version>` es el tag correspondiente a `claude_kit_version` del proyecto.
+Where `<version>` is the tag corresponding to the project's `claude_kit_version`.
 
-Si el tag no existe, usar `last_sync` como referencia:
+If the tag does not exist, use `last_sync` as reference:
 ```bash
 git log --oneline --since="<last_sync>" -- template/ stacks/
 ```
 
-Si no hay commits relevantes, reportar:
+If there are no relevant commits, report:
 ```
-claude-kit no tiene cambios en template/stacks desde v<version>.
-El proyecto está al día.
-```
-
-## Paso 4: Mostrar resumen de cambios
-
-Para cada archivo modificado en template/ o stacks/ relevantes al proyecto:
-
-```
-═══ DIFF claude-kit: v<anterior> → v<actual> ═══
-Proyecto: <nombre> (último sync: <fecha>)
-
-Archivos modificados en claude-kit:
-  template/hooks/block-destructive.sh — <resumen del diff>
-  template/rules/_common.md — <resumen del diff>
-  stacks/python-fastapi/rules/backend.md — <resumen del diff>
-
-Archivos locales con modificaciones (vs manifest):
-  .claude/rules/_common.md — hash difiere del deployado
+claude-kit has no changes in template/stacks since v<version>.
+Project is up to date.
 ```
 
-Filtrar stacks/ para mostrar solo los stacks que el proyecto usa (leer del registry).
+## Step 4: Show change summary
 
-## Paso 5: Recomendar acción
+For each modified file in template/ or relevant stacks/ for the project:
 
-Si hay cambios relevantes:
 ```
-Recomendación: ejecutar /forge sync para incorporar estos cambios.
+═══ DIFF claude-kit: v<previous> → v<current> ═══
+Project: <name> (last sync: <date>)
+
+Files modified in claude-kit:
+  template/hooks/block-destructive.sh — <diff summary>
+  template/rules/_common.md — <diff summary>
+  stacks/python-fastapi/rules/backend.md — <diff summary>
+
+Local files with modifications (vs manifest):
+  .claude/rules/_common.md — hash differs from deployed
 ```
 
-Si solo hay cambios cosméticos o en stacks no usados:
+Filter stacks/ to show only the stacks used by the project (read from registry).
+
+## Step 5: Recommend action
+
+If there are relevant changes:
 ```
-Los cambios no afectan a este proyecto. No es necesario sync.
+Recommendation: run /forge sync to incorporate these changes.
 ```
 
-## Instalación
+If there are only cosmetic changes or changes in unused stacks:
+```
+Changes do not affect this project. Sync is not necessary.
+```
 
-Este skill se instala automáticamente si ya existe el symlink de `skills/` en `~/.claude/skills/`. Si no, crear el symlink:
+## Installation
+
+This skill is installed automatically if the `skills/` symlink already exists in `~/.claude/skills/`. If not, create the symlink:
 ```bash
 ln -sf $CLAUDE_KIT_DIR/skills ~/.claude/skills
 ```

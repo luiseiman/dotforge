@@ -1,125 +1,125 @@
 ---
 name: sync-template
-description: Actualiza la configuración de Claude Code de un proyecto existente contra la plantilla claude-kit actual, sin perder customizaciones locales.
+description: Update an existing project's Claude Code configuration against the current claude-kit template, without losing local customizations.
 ---
 
-# Sincronizar Template
+# Sync Template
 
-Actualizar la configuración de Claude Code del proyecto actual contra la versión más reciente de claude-kit.
+Update the current project's Claude Code configuration against the latest version of claude-kit.
 
-## Principio: merge, no overwrite
+## Principle: merge, not overwrite
 
-NUNCA sobrescribir archivos existentes sin confirmación. Comparar y proponer cambios.
-NUNCA tocar `settings.local.json` — es configuración personal del usuario.
-NUNCA modificar secciones marcadas con `<!-- forge:custom -->` en CLAUDE.md.
+NEVER overwrite existing files without confirmation. Compare and propose changes.
+NEVER touch `settings.local.json` — it is the user's personal configuration.
+NEVER modify sections marked with `<!-- forge:custom -->` in CLAUDE.md.
 
-## Paso 0: Verificar global
+## Step 0: Verify global
 
-Antes de sincronizar el proyecto, verificar que `~/.claude/CLAUDE.md` existe y tiene las reglas de comportamiento (comunicación, planificación, autonomía). Si las reglas de global están activas, `_common.md` del proyecto solo necesita reglas técnicas (git, naming, testing, seguridad). No duplicar lo que ya está en global.
+Before syncing the project, verify that `~/.claude/CLAUDE.md` exists and contains behavior rules (communication, planning, autonomy). If global rules are active, the project's `_common.md` only needs technical rules (git, naming, testing, security). Do not duplicate what is already in global.
 
-## Paso 1: Detectar estado actual
+## Step 1: Detect current state
 
-1. Leer `.claude/settings.json` actual
-2. Leer `CLAUDE.md` actual
-3. Leer `.claude/rules/` existentes
-4. Leer `.claude/hooks/` existentes
+1. Read the current `.claude/settings.json`
+2. Read the current `CLAUDE.md`
+3. Read existing `.claude/rules/`
+4. Read existing `.claude/hooks/`
 5. Detect stacks using `$CLAUDE_KIT_DIR/stacks/detect.md`
-6. Leer `~/.claude/CLAUDE.md` para saber qué reglas ya están cubiertas globalmente
+6. Read `~/.claude/CLAUDE.md` to know which rules are already covered globally
 
-## Paso 2: Comparar contra template
+## Step 2: Compare against template
 
-Para cada componente, comparar con la versión de claude-kit:
+For each component, compare with the claude-kit version:
 
-### settings.json — Merge inteligente
-- **allow**: unión de sets. Agregar permisos del template base + stacks que falten. NUNCA quitar permisos locales que el proyecto ya tiene.
-- **deny**: unión de sets. Agregar denys de seguridad que falten. NUNCA quitar denys locales.
-- **hooks**: agregar hooks faltantes del template. Preservar hooks custom del proyecto.
-- **Otros campos**: preservar todo lo que no sea allow/deny/hooks (ej: MCP configs).
+### settings.json — Smart merge
+- **allow**: union of sets. Add missing permissions from base template + stacks. NEVER remove local permissions the project already has.
+- **deny**: union of sets. Add missing security denies. NEVER remove local denies.
+- **hooks**: add missing hooks from template. Preserve custom project hooks.
+- **Other fields**: preserve everything that is not allow/deny/hooks (e.g., MCP configs).
 
 ### Rules
-- ¿Falta `_common.md`? → proponer agregar
-- ¿Faltan rules del stack detectado? → proponer agregar
-- ¿Rules existentes están desactualizadas? → mostrar diff, proponer update
-- Rules custom del proyecto (no en template) → NO TOCAR
+- Is `_common.md` missing? → propose adding it
+- Are rules for the detected stack missing? → propose adding them
+- Are existing rules outdated? → show diff, propose update
+- Custom project rules (not in template) → DO NOT TOUCH
 - `.claude/rules/domain/` → NEVER TOUCH. Domain rules are project-owned knowledge, not template-managed. Skip entirely during sync.
 
 ### Hooks
-- ¿Falta `block-destructive.sh`? → proponer agregar + chmod +x
-- ¿Falta hook de lint del stack? → proponer agregar + chmod +x
-- Hooks custom del proyecto → NO TOCAR
-- Verificar que hooks existentes son ejecutables (chmod +x)
+- Is `block-destructive.sh` missing? → propose adding + chmod +x
+- Is the stack's lint hook missing? → propose adding + chmod +x
+- Custom project hooks → DO NOT TOUCH
+- Verify that existing hooks are executable (chmod +x)
 
 ### CLAUDE.md
-- Comparar secciones estándar del template con las del proyecto
-- Secciones con `<!-- forge:custom -->` → SALTAR completamente
-- Secciones faltantes del template → proponer agregar
-- Secciones custom del proyecto → NO TOCAR
+- Compare standard template sections with the project's sections
+- Sections with `<!-- forge:custom -->` → SKIP entirely
+- Missing template sections → propose adding
+- Custom project sections → DO NOT TOUCH
 
-## Paso 3: Generar dry-run
+## Step 3: Generate dry-run
 
-Mostrar al usuario qué cambiaría ANTES de aplicar nada:
+Show the user what would change BEFORE applying anything:
 ```
-═══ SYNC DRY-RUN: {{proyecto}} ═══
-claude-kit: {{version}} (actual del proyecto: {{version_anterior o "desconocida"}})
+═══ SYNC DRY-RUN: {{project}} ═══
+claude-kit: {{version}} (current project: {{previous_version or "unknown"}})
 
-ARCHIVOS NUEVOS (se crearán):
+NEW FILES (will be created):
 + .claude/rules/_common.md
 + .claude/hooks/block-destructive.sh
 
-ARCHIVOS ACTUALIZADOS (merge):
+UPDATED FILES (merge):
 ~ .claude/settings.json
   + allow: "Bash(docker *)", "Bash(docker compose *)"
   + deny: "**/.env.local"
-  (permisos locales preservados: "Bash(custom-script *)")
+  (local permissions preserved: "Bash(custom-script *)")
 
 ~ .claude/rules/backend.md
-  diff: +3 líneas (nuevos errores comunes)
+  diff: +3 lines (new common errors)
 
-SIN CAMBIOS:
-= .claude/rules/frontend.md (ya actualizado)
-= .claude/hooks/lint-ts.sh (ya actualizado)
+NO CHANGES:
+= .claude/rules/frontend.md (already up to date)
+= .claude/hooks/lint-ts.sh (already up to date)
 
-IGNORADOS (custom):
-⊘ .claude/rules/strategies.md (no existe en template)
-⊘ CLAUDE.md sección "<!-- forge:custom -->"
+IGNORED (custom):
+⊘ .claude/rules/strategies.md (not in template)
+⊘ CLAUDE.md section "<!-- forge:custom -->"
 
-¿Aplicar cambios? (sí/no/seleccionar)
+Apply changes? (yes/no/select)
 ```
 
-## Paso 4: Aplicar con confirmación
+## Step 4: Apply with confirmation
 
-Solo aplicar los cambios que el usuario apruebe.
-- `sí` → aplicar todo
-- `no` → cancelar
-- `seleccionar` → mostrar cada cambio y pedir sí/no individual
+Only apply the changes the user approves.
+- `yes` → apply all
+- `no` → cancel
+- `select` → show each change and ask yes/no individually
 
-Para settings.json: construir el JSON final mergeado. Antes de escribir, validar que el JSON es válido:
+For settings.json: build the final merged JSON. Before writing, validate that the JSON is valid:
 
 ```bash
 echo '<json_content>' | python3 -c 'import json,sys; json.load(sys.stdin)'
 ```
 
-Si la validación falla, mostrar el error exacto y NO escribir el archivo. Corregir el JSON antes de continuar.
+If validation fails, show the exact error and DO NOT write the file. Fix the JSON before continuing.
 
-Para hooks: copiar + `chmod +x`.
+For hooks: copy + `chmod +x`.
 
-## Paso 4b: Actualizar manifest
+## Step 4b: Update manifest
 
-Después de aplicar cambios, actualizar (o crear) `.claude/.forge-manifest.json`:
+After applying changes, update (or create) `.claude/.forge-manifest.json`:
 
-1. Si existe el manifest, leerlo
-2. Para cada archivo creado o modificado durante el sync, recalcular hash:
+1. If manifest exists, read it
+2. For each file created or modified during sync, recalculate hash:
    ```bash
    shasum -a 256 <file> | cut -d' ' -f1
    ```
-3. Actualizar `claude_kit_version` y `synced_at`
-4. Escribir el manifest actualizado
+3. Update `claude_kit_version` and `synced_at`
+4. Write the updated manifest
 
-Formato:
+Format:
 ```json
 {
-  "claude_kit_version": "<version de $CLAUDE_KIT_DIR/VERSION>",
-  "synced_at": "<fecha actual YYYY-MM-DD>",
+  "claude_kit_version": "<version from $CLAUDE_KIT_DIR/VERSION>",
+  "synced_at": "<current date YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
     ".claude/rules/_common.md": {"hash": "sha256:<hash>", "source": "template"}
@@ -127,15 +127,15 @@ Formato:
 }
 ```
 
-Incluir TODOS los archivos en `.claude/` que son gestionados por claude-kit (no solo los que cambiaron en este sync).
+Include ALL files in `.claude/` that are managed by claude-kit (not only those that changed in this sync).
 
-## Paso 5: Actualizar registry
+## Step 5: Update registry
 
-Actualizar en `$CLAUDE_KIT_DIR/registry/projects.yml`:
-- `last_sync:` → fecha actual
-- `claude_kit_version:` → versión actual de claude-kit
+Update in `$CLAUDE_KIT_DIR/registry/projects.yml`:
+- `last_sync:` → current date
+- `claude_kit_version:` → current claude-kit version
 
-## Paso 6: Verificar
+## Step 6: Verify
 
-Ejecutar la lógica de `/audit-project` para confirmar que el score mejoró o se mantiene.
-Mostrar score antes y después.
+Run the `/audit-project` logic to confirm the score improved or held steady.
+Show score before and after.

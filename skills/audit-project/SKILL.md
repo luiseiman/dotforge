@@ -1,18 +1,18 @@
 ---
 name: audit-project
-description: Audita la configuración de Claude Code de un proyecto contra la plantilla claude-kit. Genera reporte con score y gaps.
+description: Audits the Claude Code configuration of a project against the claude-kit template. Generates a report with score and gaps.
 context: fork
 ---
 
-# Auditar Proyecto
+# Audit Project
 
-Ejecutá una auditoría completa de la configuración de Claude Code del proyecto actual.
+Run a full audit of the Claude Code configuration for the current project.
 
-## Paso 1: Detectar stack
+## Step 1: Detect stack
 
 Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
 
-## Paso 1b: Detect project tier
+## Step 1b: Detect project tier
 
 Auto-detect project tier based on signals:
 - **simple** (<5K LOC, 1 stack, no CI config): recommended items are relaxed (items 8-10 don't penalize)
@@ -27,7 +27,7 @@ Detection signals:
 
 Save tier in registry entry.
 
-## Paso 1c: Config coherence check
+## Step 1c: Config coherence check
 
 Before scoring, validate internal coherence. Run `$CLAUDE_KIT_DIR/tests/test-config.sh <project-dir>` or perform equivalent checks inline:
 
@@ -41,79 +41,79 @@ Before scoring, validate internal coherence. Run `$CLAUDE_KIT_DIR/tests/test-con
 
 If coherence check finds critical failures (missing hooks, invalid JSON), report them in a `── COHERENCE ──` section BEFORE the score. These are configuration bugs, not gaps.
 
-## Paso 2: Cargar checklist
+## Step 2: Load checklist
 
-Leer `$CLAUDE_KIT_DIR/audit/checklist.md` para los criterios de evaluación.
-Leer `$CLAUDE_KIT_DIR/audit/scoring.md` para los pesos y caps.
+Read `$CLAUDE_KIT_DIR/audit/checklist.md` for evaluation criteria.
+Read `$CLAUDE_KIT_DIR/audit/scoring.md` for weights and caps.
 
-## Paso 3: Evaluar
+## Step 3: Evaluate
 
-Para cada item del checklist, verificar existencia **y calidad**:
+For each checklist item, verify existence **and quality**:
 
-### Obligatorio (0-10 puntos)
-1. **CLAUDE.md** — ¿Existe? Verificar que tiene secciones clave:
-   - Stack/tecnologías mencionadas explícitamente
-   - Al menos 1 comando build/test exacto
-   - Estructura o arquitectura del proyecto
-   - NO contar solo líneas — un archivo de 50 líneas de boilerplate es score 1
-2. **settings.json** — ¿Existe en `.claude/`? ¿Tiene permisos explícitos? ¿Tiene deny list?
-3. **Rules** — ¿Hay al menos 1 rule en `.claude/rules/`? ¿Tiene frontmatter con `globs:` o `paths:`?
-4. **Hook block-destructive** — Verificar:
-   - ¿Existe el archivo `.claude/hooks/block-destructive.sh`?
-   - ¿Es ejecutable? (`test -x` o verificar permisos)
-   - ¿Está referenciado en `.claude/settings.json` bajo hooks?
-5. **Comandos build/test** — ¿Están en CLAUDE.md? ¿Corresponden al stack detectado?
+### Obligatory (0-10 points)
+1. **CLAUDE.md** — Does it exist? Verify it has key sections:
+   - Stack/technologies mentioned explicitly
+   - At least 1 exact build/test command
+   - Project structure or architecture
+   - Do NOT count only lines — a 50-line boilerplate file is score 1
+2. **settings.json** — Does it exist in `.claude/`? Does it have explicit permissions? Does it have a deny list?
+3. **Rules** — Is there at least 1 rule in `.claude/rules/`? Does it have frontmatter with `globs:` or `paths:`?
+4. **Hook block-destructive** — Verify:
+   - Does `.claude/hooks/block-destructive.sh` exist?
+   - Is it executable? (`test -x` or check permissions)
+   - Is it referenced in `.claude/settings.json` under hooks?
+5. **Build/test commands** — Are they in CLAUDE.md? Do they match the detected stack?
 
-### Recomendado (0-7 puntos bonus)
-6. **CLAUDE_ERRORS.md** — ¿Existe con formato de tabla con columna Type?
-7. **Hook lint** — ¿Existe? ¿Es ejecutable? (verificar `chmod +x`)
-8. **Comandos custom** — ¿Hay archivos en `.claude/commands/`?
-9. **Memory** — ¿Hay archivos de memoria del proyecto?
-10. **Agentes** — ¿Hay `.claude/agents/` + regla `agents.md` en rules?
-11. **.gitignore** — ¿Protege .env, *.key, *.pem, credentials?
-12. **Prompt injection scan** — ¿Rules/CLAUDE.md libres de patrones sospechosos?
+### Recommended (0-7 bonus points)
+6. **CLAUDE_ERRORS.md** — Does it exist with table format with Type column?
+7. **Hook lint** — Does it exist? Is it executable? (verify `chmod +x`)
+8. **Custom commands** — Are there files in `.claude/commands/`?
+9. **Memory** — Are there project memory files?
+10. **Agents** — Is there `.claude/agents/` + `agents.md` rule in rules?
+11. **.gitignore** — Does it protect .env, *.key, *.pem, credentials?
+12. **Prompt injection scan** — Are rules/CLAUDE.md free of suspicious patterns?
 
 **Tier adjustments:**
 - `simple`: items 8-10 score 0 don't penalize (treated as N/A)
 - `complex`: items 8-10 become semi-obligatory (each 0-2 instead of 0-1)
 
-## Paso 4: Calcular score
+## Step 4: Calculate score
 
-Usar los pesos de `$CLAUDE_KIT_DIR/audit/scoring.md`:
-1. `score_obligatorio = sum(items 1-5)` — máximo 10
-2. `score_recomendado = sum(items 6-12)` — máximo 7
-3. `score_total = score_obligatorio * 0.7 + score_recomendado * (3.0 / 7)` — max 7.0 + 3.0 = 10.0
-4. Apply tier adjustments before calculating (see Paso 1b)
-4. `score_normalizado = min(score_total, 10)`
+Use weights from `$CLAUDE_KIT_DIR/audit/scoring.md`:
+1. `score_obligatory = sum(items 1-5)` — maximum 10
+2. `score_recommended = sum(items 6-12)` — maximum 7
+3. `score_total = score_obligatory * 0.7 + score_recommended * (3.0 / 7)` — max 7.0 + 3.0 = 10.0
+4. Apply tier adjustments before calculating (see Step 1b)
+4. `score_normalized = min(score_total, 10)`
 
-**Cap de seguridad:** Si item 2 (settings.json) o item 4 (block-destructive) es 0, score máximo = 6.0.
+**Security cap:** If item 2 (settings.json) or item 4 (block-destructive) is 0, maximum score = 6.0.
 
-## Paso 5: Generar reporte
+## Step 5: Generate report
 
-Formato:
+Format:
 ```
-═══ AUDITORÍA claude-kit: {{proyecto}} ═══
-Fecha: {{YYYY-MM-DD}}
-Stack detectado: {{stacks}}
+═══ AUDIT claude-kit: {{project}} ═══
+Date: {{YYYY-MM-DD}}
+Detected stack: {{stacks}}
 Tier: {{simple|standard|complex}}
-claude-kit version: {{version del último bootstrap/sync si detectable}}
-Score: {{X.X}}/10 {{nivel}}
+claude-kit version: {{version from last bootstrap/sync if detectable}}
+Score: {{X.X}}/10 {{level}}
 
-── OBLIGATORIO ──
-{{✅|⚠️|❌}} CLAUDE.md ({{0-2}}) — {{detalle: qué secciones tiene/faltan}}
-{{✅|⚠️|❌}} settings.json ({{0-2}}) — {{detalle: deny list sí/no, permisos}}
-{{✅|⚠️|❌}} Rules ({{0-2}}) — {{detalle: N rules, globs sí/no}}
-{{✅|⚠️|❌}} Hook block-destructive ({{0-2}}) — {{detalle: ejecutable sí/no, wired sí/no}}
-{{✅|⚠️|❌}} Comandos build/test ({{0-2}}) — {{detalle: cuáles y si corresponden al stack}}
+── OBLIGATORY ──
+{{✅|⚠️|❌}} CLAUDE.md ({{0-2}}) — {{detail: which sections exist/missing}}
+{{✅|⚠️|❌}} settings.json ({{0-2}}) — {{detail: deny list yes/no, permissions}}
+{{✅|⚠️|❌}} Rules ({{0-2}}) — {{detail: N rules, globs yes/no}}
+{{✅|⚠️|❌}} Hook block-destructive ({{0-2}}) — {{detail: executable yes/no, wired yes/no}}
+{{✅|⚠️|❌}} Build/test commands ({{0-2}}) — {{detail: which ones and whether they match the stack}}
 
-── RECOMENDADO ──
-{{✅|⚠️}} CLAUDE_ERRORS.md — {{detalle}}
-{{✅|⚠️}} Hook lint — {{detalle: ejecutable sí/no}}
-{{✅|⚠️}} Comandos custom — {{detalle: N comandos}}
-{{✅|⚠️}} Memory — {{detalle}}
-{{✅|⚠️}} Agentes — {{detalle}}
-{{✅|⚠️}} .gitignore — {{detalle}}
-{{✅|⚠️}} Prompt injection scan — {{detalle}}
+── RECOMMENDED ──
+{{✅|⚠️}} CLAUDE_ERRORS.md — {{detail}}
+{{✅|⚠️}} Hook lint — {{detail: executable yes/no}}
+{{✅|⚠️}} Custom commands — {{detail: N commands}}
+{{✅|⚠️}} Memory — {{detail}}
+{{✅|⚠️}} Agents — {{detail}}
+{{✅|⚠️}} .gitignore — {{detail}}
+{{✅|⚠️}} Prompt injection scan — {{detail}}
 
 ── DOMAIN KNOWLEDGE ──
 Role defined:     {{✓ if ## Role exists in CLAUDE.md with content | ✗ otherwise}}
@@ -124,15 +124,15 @@ Coverage:         {{list glob patterns from domain rules → cross-reference wit
 Note: Domain knowledge is informational only — does not affect the audit score.
 If no domain rules exist and the project has business logic, suggest: /forge domain extract
 
-── GAPS CRÍTICOS ──
-1. {{qué falta}} → {{acción recomendada}}
+── CRITICAL GAPS ──
+1. {{what is missing}} → {{recommended action}}
 2. ...
 
-── SIGUIENTE PASO ──
-Ejecutar `/forge sync` para aplicar la plantilla claude-kit y cerrar los gaps.
+── NEXT STEP ──
+Run `/forge sync` to apply the claude-kit template and close the gaps.
 ```
 
-## Paso 6: Cross-project error promotion
+## Step 6: Cross-project error promotion
 
 If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
 1. Read `CLAUDE_ERRORS.md` and group errors by Area column
@@ -144,9 +144,9 @@ If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
    - Description: the recurring pattern and derived rule
 5. Report promotions in the audit output under `── ERROR PATTERNS ──`
 
-This closes the Memoria → Aprendizaje synergy: recurring project errors feed the practices pipeline.
+This closes the Memory → Learning synergy: recurring project errors feed the practices pipeline.
 
-## Paso 7: Audit gaps as practices
+## Step 7: Audit gaps as practices
 
 For each obligatory item scored 0 or 1, and each recommended item scored 0:
 1. Check if a practice already exists in `practices/inbox/` or `active/` for that gap
@@ -155,16 +155,16 @@ For each obligatory item scored 0 or 1, and each recommended item scored 0:
    - `tags: [audit-gap, <item-name>]`
    - Description: what's missing and recommended fix
 3. Only create practices for gaps that reflect a template/stack issue (not project-specific misconfigurations)
-4. Report in audit output under `── GAPS CAPTURADOS ──`
+4. Report in audit output under `── CAPTURED GAPS ──`
 
-This closes the Auditoría → Aprendizaje synergy: detected gaps feed back into the practices pipeline.
+This closes the Audit → Learning synergy: detected gaps feed back into the practices pipeline.
 
-## Paso 8: Actualizar registry
+## Step 8: Update registry
 
-Si `$CLAUDE_KIT_DIR/registry/projects.yml` existe, actualizar el entry del proyecto:
-- `score:` con el score calculado
-- `last_audit:` con la fecha actual
-- `claude_kit_version:` con la versión de VERSION si el proyecto fue bootstrapped
-- `last_sync:` preservar el valor existente (no modificar aquí)
-- `notes:` resumen breve de la auditoría
+If `$CLAUDE_KIT_DIR/registry/projects.yml` exists, update the project entry:
+- `score:` with the calculated score
+- `last_audit:` with the current date
+- `claude_kit_version:` with the VERSION version if the project was bootstrapped
+- `last_sync:` preserve the existing value (do not modify here)
+- `notes:` brief summary of the audit
 - `history:` append a new entry `{date: YYYY-MM-DD, score: X.X, version: <claude_kit_version>}`. Never overwrite previous entries — this enables score trending over time.
