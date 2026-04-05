@@ -1,6 +1,7 @@
 ---
 name: domain-extract
 description: Extract domain knowledge from existing project sources and generate domain rules. Also handles vault sync and domain listing.
+context: fork
 ---
 
 # Domain Extract

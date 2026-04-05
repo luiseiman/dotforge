@@ -12,7 +12,7 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 
 ---
 
-## P0 — Bugs y gaps de seguridad (fix inmediato)
+## P0 — Bugs y gaps de seguridad ✅ IMPLEMENTADO
 
 ### 1. BUG: `session-report.sh` produce JSON inválido
 
@@ -21,6 +21,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 **Fix**: Mover el bloque de cálculo de `DOMAIN_CHANGES` (líneas 129-131) antes del heredoc JSON.
 
 **Archivo**: `hooks/session-report.sh`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -32,6 +34,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 
 **Archivo**: `hooks/block-destructive.sh`
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 3. SECURITY: Missing deny patterns en template
@@ -41,6 +45,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 **Fix**: Agregar `"Bash(DROP TABLE*)"` y `"Bash(DROP DATABASE*)"` a la deny list. También agregar `"Bash(git checkout -- *)"` y `"Bash(git checkout .)"` (operaciones destructivas no cubiertas).
 
 **Archivo**: `template/settings.json.tmpl`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -54,6 +60,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 
 **Archivos**: `agents/*.md` (7 archivos)
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 5. BUG: Agent frontmatter usa `memory: project` (campo inválido)
@@ -63,6 +71,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 **Fix**: Eliminar `memory: project` del frontmatter. La instrucción de memoria en el prompt es suficiente y es la que realmente funciona. Elimina confusión sin perder funcionalidad.
 
 **Archivos**: `agents/architect.md`, `agents/implementer.md`, `agents/code-reviewer.md`, `agents/security-auditor.md`, `agents/session-reviewer.md`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -74,6 +84,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 
 **Archivo**: `stacks/redis/rules/redis.md`
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 7. `_common.md` excede 50 líneas (67 líneas)
@@ -83,6 +95,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 **Fix**: Extraer las secciones "Practice Capture" (14 líneas) y "Context Continuity" (6 líneas) a archivos separados con frontmatter propio.
 
 **Archivos**: `template/rules/_common.md` → split en `template/rules/practice-capture.md` + `template/rules/context-continuity.md`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -94,9 +108,11 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 
 **Archivo**: `template/settings.json.tmpl`
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
-## P1 — Conflictos con system prompt y eficiencia (alto impacto)
+## P1 — Conflictos con system prompt y eficiencia ⏳ EN PROGRESO
 
 ### 9. System prompt override patterns
 
@@ -111,6 +127,8 @@ Cada mejora explota conocimiento verificado del código fuente de Claude Code pa
 - Skills verbose (audit-project, session-insights, rule-effectiveness): agregar `OVERRIDE: produce complete structured output` en preamble
 
 **Archivos**: `stacks/python-fastapi/rules/backend.md`, `stacks/java-spring/rules/backend.md`, `stacks/go-api/rules/backend.md`, `global/commands/forge.md`, skills afectados
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -131,6 +149,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 
 **Archivos**: `stacks/*/plugin.json` (9 stacks), `docs/security-checklist.md`, `template/settings.json.tmpl`
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 11. `node-express` glob overlap con `react-vite-ts`
@@ -140,6 +160,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 **Fix**: Cambiar a `paths:` lazy con `alwaysApply: false` o narrowar a: `globs: "src/routes/**,src/services/**,src/middleware/**,src/controllers/**,**/*.{mjs,cjs}"`.
 
 **Archivo**: `stacks/node-express/rules/backend.md`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -151,6 +173,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 
 **Archivo**: `stacks/data-analysis/rules/data.md`
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 13. Deferred tools sin ToolSearch en skills
@@ -160,6 +184,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 **Fix**: Agregar Step 0 "Discover tools" con ToolSearch en ambos skills.
 
 **Archivos**: `skills/watch-upstream/SKILL.md`, `skills/scout-repos/SKILL.md`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -174,6 +200,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 
 **Archivos**: Skills con >150 líneas
 
+**Status: ✅ Partial — context: fork applied to 5 heavy skills**
+
 ---
 
 ### 15. Agent frontmatter enriquecido (`effort`, `allowed-tools`)
@@ -187,7 +215,7 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 | implementer | Read, Grep, Glob, Bash, Write, Edit, LS | (default) | sonnet | Agregar instrucción hasReadFile |
 | code-reviewer | Read, Grep, Glob, Bash, Write | (default) | sonnet | Agregar Write para agent-memory |
 | security-auditor | Read, Grep, Glob, Bash, LS, Write | max | opus | Usar Grep tool en vez de bash grep |
-| test-runner | Read, Grep, Glob, Bash, Write, Edit | (default) | haiku | Evaluar subir a sonnet (escribe tests) |
+| test-runner | Read, Grep, Glob, Bash, Write, Edit | (default) | sonnet | **Status:** test-runner upgraded to sonnet in v2.7.1 |
 | session-reviewer | Read, Grep, Glob, Bash, Write | (default) | sonnet | Agregar Write para practices/inbox/ |
 
 **Instrucciones comunes a agregar en TODOS los agentes**:
@@ -195,6 +223,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 - "If the caller needs follow-up, they will use SendMessage — do not start a new context"
 
 **Archivos**: `agents/*.md` (7 archivos)
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -207,6 +237,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 **Fix**: Además del bugfix (P0.1), considerar hacer el hook async (`"async": true` en settings.json.tmpl) para que no dependa del timeout.
 
 **Archivo**: `template/settings.json.tmpl`, `hooks/session-report.sh`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 
@@ -224,6 +256,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 
 **Archivos**: `stacks/hookify/plugin.json`, `stacks/hookify/rules/hookify.md`, `stacks/*/hooks/*.sh` (evaluar eliminación)
 
+**Status: ✅ Fixed in v2.7.1**
+
 ---
 
 ### 18. `detect.md` incompleto y detección imprecisa
@@ -239,6 +273,8 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 - Agregar sección de prioridad/conflicto
 
 **Archivo**: `stacks/detect.md`
+
+**Status: ✅ Fixed in v2.7.1**
 
 ---
 

@@ -4,6 +4,13 @@ globs: "**/*.py"
 
 # Python / FastAPI Rules
 
+## System Prompt Overrides
+- ALWAYS add docstrings to public functions and classes
+- ALWAYS include type hints on function signatures
+
+## Auto-mode Warning
+In auto/YOLO mode, `Bash(python3 *)` is silently stripped from allow list. Use specific tool commands (pytest, uvicorn, ruff) instead of bare interpreter calls.
+
 ## Stack
 Python 3.12+, FastAPI, async/await nativo. Type hints en funciones públicas. Ruff como linter/formatter.
 

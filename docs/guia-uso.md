@@ -57,6 +57,10 @@ cd ~/Documents/GitHub/claude-kit   # o donde tengas clonado claude-kit
 
 **Multiplataforma:** Linux, macOS, WSL, Git Bash. Usa copias como fallback si los symlinks no funcionan.
 
+### Contexto de Ejecución de Skills
+
+Los skills pesados (>150 líneas, ~5K+ tokens) usan `context: fork` en su frontmatter. Esto ejecuta el skill en un subagente aislado, evitando que consuma la ventana de contexto de la conversación principal. Skills con `context: fork`: plugin-generator, bootstrap-project, init-project, domain-extract, audit-project.
+
 ### Verificar instalación
 
 ```

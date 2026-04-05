@@ -114,3 +114,5 @@ For each pattern, know the safe alternative:
 - If `pip-audit` or `npm audit` aren't available, note it and move on
 - False positives: if something looks like a secret but is a test fixture, note it as INFO
 - Max 20 findings — prioritize by actual exploitability, not theoretical risk
+- Keep total output under 5K tokens — summarize findings, don't dump raw grep output
+- If the caller needs follow-up, they will use SendMessage — do not start a new context

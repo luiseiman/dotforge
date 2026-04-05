@@ -2,14 +2,12 @@
   "_comment": "Merge con template/settings.json.tmpl",
   "permissions": {
     "allow": [
-      "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(node *)",
       "Bash(tsx *)",
       "Bash(vitest *)",
       "Bash(jest *)",
       "Bash(eslint *)",
       "Bash(prettier *)",
+      "Bash(tsc *)",
       "Bash(make *)"
     ]
   }

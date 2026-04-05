@@ -103,3 +103,5 @@ Findings go to one of three destinations:
 - Don't report one-off mistakes — only patterns (2+ occurrences or high severity)
 - Don't duplicate findings already in agent memory as "incorporated"
 - Keep recommendations actionable: specify which file to change and how
+- Keep total output under 5K tokens — summarize patterns, don't dump raw transcripts
+- If the caller needs follow-up, they will use SendMessage — do not start a new context

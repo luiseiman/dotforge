@@ -1,6 +1,7 @@
 ---
 name: audit-project
 description: Audita la configuración de Claude Code de un proyecto contra la plantilla claude-kit. Genera reporte con score y gaps.
+context: fork
 ---
 
 # Auditar Proyecto

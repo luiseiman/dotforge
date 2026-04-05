@@ -1,6 +1,7 @@
 ---
 name: plugin-generator
 description: Generate a Claude Code plugin package from the current project's claude-kit configuration, ready for marketplace submission.
+context: fork
 ---
 
 # Plugin Generator

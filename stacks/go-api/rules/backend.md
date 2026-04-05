@@ -4,6 +4,10 @@ globs: "**/*.go,go.mod,go.sum"
 
 # Go API Rules
 
+## System Prompt Overrides
+- ALWAYS add doc comments to exported functions, types, and methods
+- Follow Go doc comment conventions (start with the name being documented)
+
 ## Stack
 Go 1.22+, standard library `net/http` (or chi/echo for routing). Go modules for dependency management.
 

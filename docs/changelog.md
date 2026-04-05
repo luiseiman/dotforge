@@ -6,9 +6,9 @@
 
 ## v2.8.0 (2026-04-05)
 
-### Claude Code Internals Analysis + P0 Fixes
+### Internals Analysis + P0 Fixes + P1 Alignment
 
-Deep reverse engineering of Claude Code internals from 5 repositories, verified against source code. All findings incorporated into domain rules and documentation.
+Deep reverse engineering of Claude Code internals from 5 repositories, verified against source code. All P0 bugs fixed, P1 alignment completed.
 
 #### P0 Bug Fixes
 - Fix: `session-report.sh` — `$DOMAIN_CHANGES` used before defined → invalid JSON output
@@ -20,6 +20,19 @@ Deep reverse engineering of Claude Code internals from 5 repositories, verified 
 - Fix: `_common.md` exceeded 50-line limit (67 lines) → split into separate files
 - Fix: removed `Bash(cat *)` from allow list (conflicts with Read tool)
 - Fix: added `Bash(make *)` to base template allow list
+
+#### P1 Internals Alignment
+- Fix: node-express glob narrowed to backend paths — avoids overlap with react-vite-ts
+- Fix: data-analysis glob removed `.py` — avoids overlap with python-fastapi
+- Fix: auto-mode safe permissions — replaced python3/node/npm/aws/gcloud with specific tool commands in 6 stacks
+- Nuevo: ToolSearch Step 0 in watch-upstream + scout-repos skills (deferred tools discovery)
+- Nuevo: `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000` env var in template settings
+- Nuevo: async hooks documentation in hookify (async flag, asyncRewake, streaming)
+- Mejora: detect.md — added hookify + trading stacks, pyproject.toml refined, priority rules
+- Cambio: test-runner model haiku → sonnet (writes tests, needs reasoning quality)
+- Nuevo: 5K token output budget in 6 agents + SendMessage continuation in all agents
+- Nuevo: system prompt override patterns in python-fastapi, java-spring, go-api
+- Nuevo: `context: fork` on 5 heavy skills for post-compaction safety
 
 #### Domain Rules — Source-Verified Updates
 - `hook-architecture.md`: 25 events (was 13), async hooks, timeouts, plugin env vars, event details

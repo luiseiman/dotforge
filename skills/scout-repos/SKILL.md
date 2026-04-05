@@ -7,6 +7,11 @@ description: Fetch .claude/ configs from curated repos in sources.yml, compare a
 
 Review curated public repos for Claude Code configuration patterns worth adopting.
 
+## Step 0: Discover tools
+
+WebFetch and WebSearch are deferred tools — they may not be loaded yet.
+Run `ToolSearch("WebFetch WebSearch")` to ensure both tools are available before proceeding.
+
 ## Step 1: Load sources
 
 Read `$CLAUDE_KIT_DIR/practices/sources.yml`. Build a list of repos with their focus areas.

@@ -57,6 +57,10 @@ cd ~/Documents/GitHub/claude-kit   # or wherever you cloned claude-kit
 
 **Cross-platform:** Linux, macOS, WSL, Git Bash. Uses copies as fallback if symlinks are not supported.
 
+### Skill Execution Context
+
+Heavy skills (>150 lines, ~5K+ tokens) use `context: fork` in their frontmatter. This executes the skill in an isolated subagent, preventing it from consuming the main conversation's context window. Skills with `context: fork`: plugin-generator, bootstrap-project, init-project, domain-extract, audit-project.
+
 ### Verify installation
 
 ```

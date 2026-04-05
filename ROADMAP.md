@@ -4,141 +4,129 @@ Estado actual: **v2.8.0** (2026-04-05)
 
 ---
 
-## v2.8.0 — Completado
+## Completado
 
-### Claude Code Internals Analysis + P0 Fixes
+### v2.8.0 — Internals Analysis + P0 Fixes + P1 Alignment (2026-04-05)
 
-Reverse engineering de 5 repositorios (source tree, analysis, reimplementaciones Python) para verificar y alinear claude-kit con los internals reales de Claude Code.
+Reverse engineering de 5 repositorios + alineación de claude-kit con internals verificados de Claude Code.
 
-- 8 bugs P0 corregidos: session-report.sh JSON corruption, block-destructive.sh regex, deny patterns faltantes, agent frontmatter (`allowed-tools:` vs `tools:`, campo `memory:` inválido), redis glob, _common.md excedido, `Bash(cat *)` removido
-- 6 domain rules actualizadas con hallazgos verificados: hook-architecture (25 eventos), permission-model (5-step cascade), context-window-optimization (5-tier compaction), rule-effectiveness (frontmatter completo), agent-orchestration (task types, cache sharing), prompting-patterns (system prompt conflicts)
-- Nuevo: `docs/internal/claude-code-internals-analysis.md` — análisis completo de internals
-- Nuevo: `docs/internal/improvement-plan-internals.md` — 36 items priorizados P0-P3
-- Nuevo: `docs/internal/feature-flags-reference.md` — referencia completa de feature flags (env vars, settings keys, flags internos, GrowthBook gates)
-- Nuevo: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` documentado en agent-orchestration
-- Nuevo: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` y `CLAUDE_CODE_DISABLE_AUTOCOMPACT` documentados en context-window-optimization
-- Análisis de reimplementaciones Python (nanocode 250 líneas, nano-claude-code 6.2K líneas) con 5 insights incorporables
+#### P0 — Bugs y Seguridad
+- Fix: session-report.sh JSON corruption, block-destructive.sh regex, deny patterns faltantes
+- Fix: agent frontmatter (`allowed-tools:` vs `tools:`, campo `memory:` inválido) en 7 agentes
+- Fix: redis glob `**/*stream*` → `**/*redis*`, `_common.md` excedido, `Bash(cat *)` removido
+- Nuevo: `Bash(make *)` en template base
 
----
+#### P1 — Internals Alignment
+- Fix: node-express glob narrowed a backend paths — elimina overlap con react-vite-ts
+- Fix: data-analysis glob removido `.py` — elimina overlap con python-fastapi
+- Fix: auto-mode safe permissions — reemplazados python3/node/npm/aws/gcloud con tool commands específicos en 6 stacks
+- Nuevo: ToolSearch Step 0 en watch-upstream + scout-repos (deferred tools discovery)
+- Nuevo: `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000` en template settings
+- Nuevo: async hooks documentados en hookify (async flag, asyncRewake, streaming)
+- Mejora: detect.md — hookify + trading stacks, pyproject.toml refinado, priority rules
+- Cambio: test-runner model haiku → sonnet (escribe tests, requiere razonamiento)
+- Nuevo: 5K token output budget en 6 agents + SendMessage continuation
+- Nuevo: system prompt override patterns en python-fastapi, java-spring, go-api
+- Nuevo: `context: fork` en 5 skills pesadas
 
-## v2.7.1 — Completado
+#### Domain Rules — Source-Verified
+- 6 domain rules actualizadas: hook-architecture (25 eventos), permission-model (5-step cascade), context-window-optimization (5-tier compaction), rule-effectiveness (frontmatter completo), agent-orchestration (task types, AGENT_TEAMS env var), prompting-patterns (system prompt conflicts)
 
-### Hook Architecture — Correcciones y expansión
+#### Documentation
+- `docs/internal/claude-code-internals-analysis.md` — cross-repo reverse engineering (5 repos)
+- `docs/internal/improvement-plan-internals.md` — 36 items priorizados P0-P3
+- `docs/internal/feature-flags-reference.md` — env vars, settings keys, flags internos, GrowthBook gates
+- Análisis de reimplementaciones Python (nanocode 250 líneas, nano-claude-code 6.2K líneas)
 
-- Corrección: `PreCompact` es non-blocking — exit code se ignora
-- Verificado: `PostCompact` recibe `compact_summary` y `trigger`
-- Nuevos hook types: `http`, `prompt`, `agent` documentados
-- 4 eventos nuevos: PermissionRequest, SubagentStart, CwdChanged, StopFailure
-- Corrección: eager loading (`globs:`) vs lazy loading (`paths:` CSV + `alwaysApply: false`)
+### v2.7.1 — Hook Architecture Corrections + Expansion (2026-03-30)
 
----
+- Corrección: PreCompact es non-blocking (exit code ignorado)
+- Verificado: PostCompact recibe `compact_summary` + `trigger`
+- 4 eventos de hook documentados: PermissionRequest, SubagentStart, CwdChanged, StopFailure
+- Hook types `http`, `prompt`, `agent` documentados en hookify
+- Corrección rule-effectiveness.md: eager loading (`globs:`) vs lazy loading (`paths:`)
 
-## v2.7.0 — Completado
+### v2.7.0 — Domain Knowledge Layer + Context Continuity (2026-03-30)
 
-### Domain Knowledge Layer + Context Continuity
+- `template/rules/domain-learning.md`: regla `globs:**/*` para persistir descubrimientos de dominio
+- `/forge domain extract|sync-vault|list`: skill de gestión de conocimiento de dominio
+- `template/hooks/post-compact.sh` + `session-restore.sh`: context continuity post-compaction
+- `/forge init` pregunta dominio/rol; `/forge sync` skipea `.claude/rules/domain/`
 
-- Domain Knowledge Layer: `domain-learning.md`, `/forge domain extract|sync-vault|list`, frontmatter extendido
-- Context Continuity: `post-compact.sh` (PostCompact hook), `session-restore.sh` (SessionStart hook)
-- `/forge init` pregunta 4 sobre dominio/rol
-- `/forge sync` skippea `.claude/rules/domain/`
-
----
-
-## v2.6.1 — Completado
-
-### Practices pipeline — Python debugging rules
+### v2.6.1 — Practices Pipeline + Python Debugging (2026-03-24)
 
 - 2 prácticas promovidas desde cotiza-api-cloud (root cause first, package naming)
 - 7 prácticas deprecadas
 
----
+### v2.6.0 — Audit CI + Stack Drift + MCP (2026-03-21)
 
-## v2.6.0 — Completado
-
-### Audit CI + Stack Drift + MCP Versioning + Orchestration
-
-- `audit/score.sh` — script standalone, 12 checks mecánicos, score 0-10
-- GitHub Action `audit.yml` — CI con score en PRs
-- `detect-stack-drift.sh` — PostToolUse hook para dependencias nuevas
-- `/forge mcp add <server>` — instalación de MCP templates
+- `audit/score.sh`: script standalone para PRs, 12 checks, score 0-10
+- `detect-stack-drift.sh`: PostToolUse hook para dependencias nuevas
+- `/forge mcp add <server>`: instala MCP server template en 1 comando
 - MCP version pinning + `mcp/update-versions.sh`
 - Model IDs explícitos en model-routing.md
-- Stop hook para session-report.sh
 
----
-
-## v2.5.0 — Completado
-
-### Learning Loop + MCP Templates + Model Routing
+### v2.5.0 — Capture + MCP + Model Routing (2026-03-21)
 
 - `/forge capture` auto-detección + `/cap` alias
-- MCP templates: github, postgres, supabase, redis, slack
-- `model-routing.md` con criterios haiku/sonnet/opus
+- MCP server templates: github, postgres, supabase, redis, slack
+- `template/rules/model-routing.md`: criterios haiku/sonnet/opus
 - 7 agents con modelo explícito
+
+### v2.4.0 — Init + Global Sync + Integrations (2026-03-21)
+
+- `/forge init`: quick-start con 3 preguntas, detección de idioma
+- `/forge global sync`: auto-pull + resync `~/.claude/`
+- OpenClaw integration, plugin marketplace, hook profiles, session report
 
 ---
 
-## v2.9.0 — Internals Alignment (próximo)
+## v2.9.0 — LLM Stack + Effectiveness (próximo)
 
-Foco: alinear claude-kit con los internals verificados de Claude Code. Items P1 del improvement plan.
+### Pendiente de v2.8.0 (movido)
+- **PermissionRequest hook**: auto-allow para operaciones known-safe
+- **SubagentStart hook**: inyectar contexto de dominio a subagentes
+- **CwdChanged hook**: recargar reglas de dominio al cambiar directorio
+- **StopFailure hook**: capturar errores de API, sugerir retry strategy
+- **`/forge doctor`**: diagnóstico de entorno con semáforo
+- **trading stack**: reglas domain-specific — test en proyecto real
 
-### System prompt conflict resolution
+### Stack `llm-python`
+- Para proyectos Python con LLM APIs (anthropic, openai, langchain, litellm)
+- Rules: API keys, retry con backoff, no loggear `content`, costeo antes de batch ops
 
-- Override patterns para hardcoded "no comments" y "4-line limit" en stacks de documentación
-- Template con instrucciones de override fuertes donde se necesite
+### Practice effectiveness validation
+- Completar recurrence checks de prácticas en monitoring
+- Promover prácticas validadas a reglas permanentes
 
-### Auto-mode permission fix
+### MCP templates nuevos
+- `mcp/filesystem/`: config con paths permitidos, deny `~/.ssh`, `~/.aws`
+- `mcp/brave-search/`: config read-only con `BRAVE_API_KEY`
 
-- Reemplazar 9 patrones que se borran silenciosamente en auto-mode (`Bash(python3 *)`, `Bash(node *)`, etc.) por paths específicos de scripts
-- Documentar workaround en best-practices.md
-
-### Glob overlap resolution
-
-- node-express: acotar `**/*.{js,ts}` para no cargar en proyectos React
-- data-analysis: diferenciar `**/*.py` de python-fastapi
-
-### Skills post-compaction budget
-
-- bootstrap-project (8K), domain-extract (6K), audit-project (6K) exceden presupuesto de 5K
-- Adelgazar skills para caber en restoration budget
-
-### Agent frontmatter enrichment
-
-- `allowed-tools` y `effort` para los 7 agentes
-- Deferred tools con ToolSearch en skills que usan WebFetch/WebSearch
-
-### detect.md completeness
-
-- Agregar hookify y trading stacks
-- Refinar detección de pyproject.toml
-- Priority resolution para stacks que se solapan
+### Audit v2
+- Domain knowledge como item scored (actualmente informacional)
+- Hook coverage score: % de eventos utilizados vs disponibles
 
 ---
 
 ## v3.0.0 — New Features (planificado)
 
 ### Nuevo stack: prompt-engineering
-
 - Para proyectos que configuran Claude Code (meta-configuración)
-- Rules para context window optimization, rule design, prompt patterns
 
 ### Nuevo skill: `/forge context-budget`
-
 - Estima costo en tokens de la configuración actual
-- Desglose por: CLAUDE.md, rules, agent prompts, skills, hooks
 
 ### Hooks para eventos no usados
-
 - PostToolUseFailure → error tracking automático
 - FileChanged → auto-reload patterns
 - TaskCreated/TaskCompleted → métricas de orquestación
 - PermissionDenied → audit trail
 
 ### Cleanup
-
 - Redis section redundancy entre python-fastapi y redis
-- go-api permisos redundantes (`Bash(go test *)` etc. con `Bash(go *)`)
-- forge.md: corregir "zero questions" (init hace 4)
+- go-api permisos redundantes
+- forge.md: corregir "zero questions"
 
 ---
 
@@ -153,6 +141,9 @@ Foco: alinear claude-kit con los internals verificados de Claude Code. Items P1 
 | CI GitLab template | Sin demanda concreta |
 | `@include` directive evaluation | Investigar si reemplaza modularización manual |
 | Custom compact instructions por stack | Investigar `/compact` con instrucciones específicas |
+| Badge dinámico de audit score | Requiere CI pipeline estable primero |
+| `/forge migrate` | Migración entre versiones mayores. Esperar breaking change real |
+| Hook `prompt` type en block-destructive | Dejar que Claude decida vs regex. Alto costo — evaluar ROI |
 
 ---
 
@@ -165,7 +156,7 @@ Foco: alinear claude-kit con los internals verificados de Claude Code. Items P1 
 | Real-time analytics | Requiere daemon, contradice "no app code" |
 | Stop hook B1 (grep-based) | Genera ruido sin semántica |
 | 500+ skills at scale | Calidad > cantidad |
-| Model routing automático en runtime | Over-engineering |
-| Auto-escalation por token count | Routing por tipo de tarea, no por tamaño |
+| Model routing automático en runtime | Over-engineering — reglas explícitas son más predecibles |
+| Auto-escalation por token count | Over-engineering — routing por tipo de tarea, no por tamaño |
 | MCP server self-hosting | claude-kit configura clientes, no servers |
 | `/forge export cursor\|windsurf` | Specs de terceros inestables |

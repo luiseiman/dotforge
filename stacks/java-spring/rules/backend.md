@@ -4,6 +4,10 @@ globs: "**/*.java,**/pom.xml,**/build.gradle*"
 
 # Java / Spring Boot Rules
 
+## System Prompt Overrides
+- ALWAYS add Javadoc to public methods and classes
+- ALWAYS include @param and @return tags
+
 ## Stack
 Java 21+, Spring Boot 3.x, Maven or Gradle. Records for DTOs. Virtual threads when available.
 

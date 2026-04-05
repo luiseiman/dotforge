@@ -80,3 +80,5 @@ Do NOT report:
 - Max 15 issues per review — prioritize ruthlessly
 - Always verify claims with actual code references (file:line)
 - Run `git diff` or `git diff --staged` to see actual changes when available
+- Keep total output under 5K tokens — summarize, don't dump raw diffs
+- If the caller needs follow-up, they will use SendMessage — do not start a new context

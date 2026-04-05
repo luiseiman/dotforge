@@ -1,5 +1,5 @@
 ---
-globs: "**/*.{py,sql,ipynb,csv,xlsx}"
+globs: "**/*.{sql,ipynb,csv,xlsx}"
 ---
 
 # Data Analysis Rules

@@ -16,7 +16,7 @@ Use when:
 - Short factual questions with deterministic answers
 - Fetching and summarizing external content (docs, URLs)
 
-Default agents: `researcher`, `test-runner`
+Default agents: `researcher`
 
 ## sonnet — standard implementation
 
@@ -28,7 +28,7 @@ Use when:
 - Writing or updating documentation
 - Routine refactoring within a single module
 
-Default agents: `implementer`, `code-reviewer`, `session-reviewer`
+Default agents: `implementer`, `code-reviewer`, `session-reviewer`, `test-runner`
 
 ## opus — depth where it matters
 

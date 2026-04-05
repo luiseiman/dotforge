@@ -2,12 +2,8 @@
   "_comment": "Merge con template/settings.json.tmpl",
   "permissions": {
     "allow": [
-      "Bash(aws *)",
-      "Bash(cdk *)",
-      "Bash(npx cdk *)",
       "Bash(sam *)",
-      "Bash(npm *)",
-      "Bash(npx *)"
+      "Bash(cdk *)"
     ],
     "deny": [
       "Bash(aws iam create-user*)",

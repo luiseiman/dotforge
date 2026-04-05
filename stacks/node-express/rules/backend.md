@@ -1,5 +1,5 @@
 ---
-globs: "**/*.{js,ts,mjs,cjs}"
+globs: "src/routes/**,src/services/**,src/middleware/**,src/controllers/**,src/models/**,server.{js,ts,mjs},app.{js,ts,mjs},**/*.{mjs,cjs}"
 ---
 
 # Node.js / Express Rules
