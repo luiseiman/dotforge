@@ -1,50 +1,28 @@
 {
   "name": "dotforge",
-  "version": "2.9.0",
-  "description": "Configuration governance for Claude Code — 18 skills, 7 agents, 16 stacks, 9 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
-  "author": {
+  "owner": {
     "name": "Luis Eiman",
-    "url": "https://github.com/luiseiman"
+    "email": "luiseiman@gmail.com"
   },
-  "repository": "https://github.com/luiseiman/dotforge",
-  "license": "MIT",
-  "category": "developer-tools",
-  "subcategory": "configuration-management",
-  "featured": false,
-  "pricing": "free",
-  "compatibility": {
-    "minClaudeCodeVersion": "2.0.0",
-    "platforms": ["darwin", "linux", "win32"],
-    "requiredTools": ["Bash", "Read", "Write", "Edit", "Glob", "Grep"]
+  "metadata": {
+    "description": "Configuration governance for Claude Code — bootstrap, audit, sync, and evolve .claude/ across projects",
+    "version": "2.9.0"
   },
-  "screenshots": [
+  "plugins": [
     {
-      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-init-demo.gif",
-      "caption": "/forge init — Zero to config in one command"
-    },
-    {
-      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-audit-demo.gif",
-      "caption": "/forge audit — Score your project configuration (0-10)"
-    },
-    {
-      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-status-demo.gif",
-      "caption": "/forge status — Multi-project registry dashboard"
-    },
-    {
-      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-bootstrap-demo.gif",
-      "caption": "/forge bootstrap — Full interactive setup"
+      "name": "dotforge",
+      "source": ".",
+      "description": "Configuration governance for Claude Code — 18 skills, 7 agents, 16 stacks, 9 hooks, audit scoring (0-10), and practices pipeline.",
+      "version": "2.9.0",
+      "author": {
+        "name": "Luis Eiman"
+      },
+      "homepage": "https://github.com/luiseiman/dotforge",
+      "repository": "https://github.com/luiseiman/dotforge",
+      "license": "MIT",
+      "keywords": ["configuration", "audit", "bootstrap", "sync", "hooks", "rules", "agents", "stacks", "practices"],
+      "category": "developer-tools",
+      "tags": ["configuration-management", "governance", "multi-project"]
     }
-  ],
-  "tags": [
-    "bootstrap",
-    "audit",
-    "sync",
-    "hooks",
-    "rules",
-    "agents",
-    "stacks",
-    "mcp",
-    "practices",
-    "configuration"
   ]
 }
