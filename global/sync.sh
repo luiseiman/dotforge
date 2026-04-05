@@ -189,7 +189,7 @@ action() {
   if $DRY_RUN; then
     echo "  [dry-run] $*"
   else
-    "$@"
+    eval "$*"
   fi
 }
 

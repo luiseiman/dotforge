@@ -54,41 +54,40 @@ If `sync.sh` detects the wrong home directory, override with:
 CLAUDE_HOME=/path/to/.claude ./global/sync.sh
 ```
 
-## Plugin Mode (lightweight)
+## Plugin Mode (marketplace)
+
+Install directly from the Claude Code plugin marketplace:
+
+```bash
+/install luiseiman/dotforge
+```
 
 Plugin mode installs a curated subset: hooks, rules, and commands.
-Skills, agents, and practices pipeline require the full repository.
+Skills, agents, and practices pipeline require Full Mode (git clone).
 
 ### What's included
 
-| Component | Included | Notes |
-|-----------|----------|-------|
-| block-destructive hook | yes | PreToolUse, blocks dangerous commands |
-| lint-on-save hook | yes | PostToolUse, auto-lint on file write |
-| warn-missing-test hook | yes | PostToolUse, strict profile only |
-| Common rules | yes | _common.md, memory.md, agents.md |
-| Commands | yes | audit, health, review, debug |
-| Skills (/forge) | no | Requires full repo |
-| Agents (6 subagents) | no | Requires full repo |
-| Practices pipeline | no | Requires full repo |
-| Stack rules | selectable | Pick stacks during install |
+| Component | Plugin Mode | Full Mode |
+|-----------|-------------|-----------|
+| block-destructive hook | yes | yes |
+| lint-on-save hook | yes | yes |
+| warn-missing-test hook | yes | yes |
+| Common rules | yes | yes |
+| Commands (audit, health, review, debug) | yes | yes |
+| Skills (/forge) | no | yes |
+| Agents (7 subagents) | no | yes |
+| Practices pipeline | no | yes |
+| Stack rules | no | yes (selectable) |
 
-### Installation
-
-```bash
-# Plugin system is not yet available in Claude Code.
-# Use git clone + sync.sh (see Full Mode above) for now.
-# This section will be updated when plugin support ships.
-```
+> For the full feature set (skills, agents, stacks, practices), use Full Mode above.
 
 ## Stack Plugins
 
-Individual stacks are also available as standalone plugins:
+Individual stacks will be available as standalone plugins:
 
 ```bash
-# When plugin system supports composition:
-claude plugin install dotforge-stack-python-fastapi
-claude plugin install dotforge-stack-react-vite-ts
+/install dotforge-stack-python-fastapi
+/install dotforge-stack-react-vite-ts
 ```
 
 Each stack plugin includes its `rules/*.md` and `settings.json.partial`.

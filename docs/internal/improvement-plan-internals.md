@@ -2,7 +2,7 @@
 
 **Fecha**: 2026-04-02
 **Base**: Análisis cruzado de 3 repos de reverse engineering + audit profundo de dotforge
-**Versión actual**: v2.7.1
+**Versión actual**: v2.8.1
 
 ---
 

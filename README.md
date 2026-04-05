@@ -92,7 +92,7 @@ dotforge/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Technology modules (15 stacks, additive)
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
-├── skills/         # 16 skills installed as ~/.claude/skills/ symlinks
+├── skills/         # 17 skills installed as ~/.claude/skills/ symlinks
 ├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
@@ -323,7 +323,7 @@ dotforge/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Módulos tecnológicos (15 stacks, aditivos)
 ├── agents/         # 7 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 16 skills instalados como symlinks en ~/.claude/skills/
+├── skills/         # 17 skills instalados como symlinks en ~/.claude/skills/
 ├── mcp/            # Templates de servidores MCP (github, postgres, supabase, redis, slack)
 ├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
@@ -436,7 +436,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.7.1)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.8.1)
 - [Roadmap](ROADMAP.md) — Features completadas + próximas
 
 ## Requisitos

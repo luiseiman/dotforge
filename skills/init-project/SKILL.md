@@ -79,26 +79,26 @@ Stack detected: {stacks or "none — generic config"}
 **Spanish version:**
 ```
 ═══ FORGE INIT ═══
-Stack detectado: {stacks o "ninguno — config genérica"}
+Stack detected: {stacks or "none — generic config"}
 
-4 preguntas rápidas para generar una config completa:
+4 quick questions to generate a complete config:
 
-1. ¿Qué hace y qué NO hace?
-   → Una oración: el problema que resuelve, y los límites explícitos del v0.1.
-   Ejemplo: "API REST de cotizaciones en tiempo real. Sin auth, sin frontend, sin datos históricos aún."
+1. What does it do and what does it NOT do?
+   → One sentence: the problem it solves, and the explicit limits of v0.1.
+   Example: "Real-time quotes REST API. No auth, no frontend, no historical data yet."
 
-2. ¿Con qué?
-   → Stack, lenguaje, DB, servicios externos, dónde corre.
-   Ejemplo: "Python 3.12, FastAPI, Supabase, deploy en GCP Cloud Run."
+2. Built with what?
+   → Stack, language, DB, external services, where it runs.
+   Example: "Python 3.12, FastAPI, Supabase, deploy on GCP Cloud Run."
 
-3. ¿Cómo trabajás?
-   → Solo o equipo, spec-first o prototype-first, nivel de testing desde el día uno.
-   Ejemplo: "Solo, prototype-first, tests solo para paths críticos."
+3. How do you work?
+   → Solo or team, spec-first or prototype-first, testing level from day one.
+   Example: "Solo, prototype-first, tests only for critical paths."
 
-4. ¿Qué dominio y qué rol?
-   → Qué expertise necesita Claude y qué conceptos del negocio son críticos.
-   Ejemplo: "Expert en Jira API v3, agile metrics, dashboard generation.
-   Conceptos clave: velocity, cycle time, sprint burndown, JQL."
+4. What domain and role?
+   → What expertise does Claude need? What business concepts are critical?
+   Example: "Expert in Jira API v3, agile metrics, dashboard generation.
+   Key concepts: velocity, cycle time, sprint burndown, JQL."
 ```
 
 Use the appropriate version based on detected language. For other languages, translate the questions following the same structure.
