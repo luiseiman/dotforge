@@ -42,8 +42,8 @@ dotforge manages your `.claude/` configuration. It complements, not replaces, ot
 
 | Tool | What it does | How dotforge helps |
 |------|-------------|-------------------|
-| [claude-skills](https://github.com/anthropics/claude-skills) | 248+ skills collection | dotforge manages the config around your skills |
-| [gstack](https://github.com/anthropics/gstack) | AI-native full-stack framework | dotforge audits and syncs the `.claude/` config gstack generates |
+| [claude-skills](https://github.com/alirezarezvani/claude-skills) | 248+ skills collection | dotforge manages the config around your skills |
+| [gstack](https://github.com/garrytan/gstack) | AI-native full-stack framework | dotforge audits and syncs the `.claude/` config gstack generates |
 | [duthaho/claudekit](https://github.com/duthaho/claudekit) | Behavioral modes | dotforge adds lifecycle: audit, sync, practices, registry |
 
 > **New here?** Read the **[Usage Guide](docs/usage-guide.md)** for a complete walkthrough with examples.
@@ -222,7 +222,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.8.1)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.9.0)
 - [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
@@ -453,7 +453,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.8.1)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.9.0)
 - [Roadmap](ROADMAP.md) — Features completadas + próximas
 
 ## Requisitos

@@ -22,16 +22,16 @@
 
 ---
 
-## Problemas de confiabilidad verificados (P1)
+## Problemas de confiabilidad verificados (P1) — TODOS RESUELTOS
 
-Estos problemas existen hoy en el repo y deben resolverse ANTES de cualquier push de lanzamiento:
-
-| Archivo | Problema | Linea(s) |
+| Archivo | Problema | Estado |
 |---|---|---|
-| `audit/score.sh` | JSON roto: triple quotes `"""${n1}"""` en heredoc bash rompe con newlines/chars especiales | 249-260 |
-| `template/hooks/check-updates.sh` | Path incorrecto: apunta a `.forge-manifest.json`, deberia ser `.claude/.forge-manifest.json` | 17 |
-| `template/hooks/detect-stack-drift.sh` | Schema mismatch: busca array `stacks` en manifest que no existe; mensaje sugiere `/forge mcp add` incorrecto | 20-33, 50 |
-| `stacks/hookify/` | Sin directorio `rules/`, violando convencion de stacks; usa `$DOTFORGE_DIR` no disponible en contexto de proyecto | settings.json.partial |
+| `audit/score.sh` | JSON roto: triple quotes + true/false Python | ✓ Sanitizado + True/False |
+| `template/hooks/check-updates.sh` | Path incorrecto del manifest | ✓ Corregido a `.claude/.forge-manifest.json` |
+| `template/hooks/detect-stack-drift.sh` | Schema mismatch + mensaje incorrecto | ✓ Lee stacks de file sources + mensaje corregido |
+| `stacks/hookify/` | `$DOTFORGE_DIR` no disponible en runtime | ✓ Paths relativos `.claude/hooks/hookify/` |
+| `tests/test-config.sh` | Falso positivo injection scan | ✓ `<instructions>` requiere closing tag |
+| Manifest schema | Campo `stacks` ausente | ✓ Agregado en bootstrap + sync skills |
 
 ---
 

@@ -1,6 +1,6 @@
 # Usage Guide — dotforge
 
-**Version:** 2.8.1
+**Version:** 2.9.0
 **Date:** 2026-04-05
 
 dotforge is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
