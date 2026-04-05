@@ -1,4 +1,4 @@
-# claude-kit Installation
+# dotforge Installation
 
 ## Full Mode (recommended)
 
@@ -7,15 +7,15 @@ Full mode gives access to all features including `/forge` commands, agents, and 
 ### Linux
 
 ```bash
-git clone https://github.com/luiseiman/claude-kit.git ~/claude-kit
-cd ~/claude-kit && ./global/sync.sh
+git clone https://github.com/luiseiman/dotforge.git ~/dotforge
+cd ~/dotforge && ./global/sync.sh
 ```
 
 ### macOS
 
 ```bash
-git clone https://github.com/luiseiman/claude-kit.git ~/claude-kit
-cd ~/claude-kit && ./global/sync.sh
+git clone https://github.com/luiseiman/dotforge.git ~/dotforge
+cd ~/dotforge && ./global/sync.sh
 ```
 
 > Requires bash 3.2+ (pre-installed on macOS). If using Homebrew bash, both work.
@@ -24,16 +24,16 @@ cd ~/claude-kit && ./global/sync.sh
 
 ```bash
 # From WSL terminal:
-git clone https://github.com/luiseiman/claude-kit.git ~/claude-kit
-cd ~/claude-kit && ./global/sync.sh
+git clone https://github.com/luiseiman/dotforge.git ~/dotforge
+cd ~/dotforge && ./global/sync.sh
 ```
 
 ### Windows (Git Bash)
 
 ```bash
 # From Git Bash:
-git clone https://github.com/luiseiman/claude-kit.git ~/claude-kit
-cd ~/claude-kit && ./global/sync.sh
+git clone https://github.com/luiseiman/dotforge.git ~/dotforge
+cd ~/dotforge && ./global/sync.sh
 ```
 
 > Symlinks require Developer Mode enabled in Windows Settings > Privacy & Security > For Developers. If symlinks are not available, `sync.sh` automatically falls back to file copies.
@@ -87,8 +87,8 @@ Individual stacks are also available as standalone plugins:
 
 ```bash
 # When plugin system supports composition:
-claude plugin install claude-kit-stack-python-fastapi
-claude plugin install claude-kit-stack-react-vite-ts
+claude plugin install dotforge-stack-python-fastapi
+claude plugin install dotforge-stack-react-vite-ts
 ```
 
 Each stack plugin includes its `rules/*.md` and `settings.json.partial`.

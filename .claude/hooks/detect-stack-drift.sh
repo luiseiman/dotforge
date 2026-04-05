@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# PostToolUse hook: detect new stack dependencies and warn about uninstalled claude-kit stacks
+# PostToolUse hook: detect new stack dependencies and warn about uninstalled dotforge stacks
 # Matcher: Write|Edit
 # Exit: always 0 (warning only — never blocks)
 #
 # When Claude writes to a dependency file (package.json, pyproject.toml, go.mod, etc.),
 # this hook reads the file, extracts package names, and checks whether any imply a
-# claude-kit stack that isn't installed in the project. Emits a warning to stderr.
+# dotforge stack that isn't installed in the project. Emits a warning to stderr.
 
 FILE_PATH=$(echo "$TOOL_INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('file_path', d.get('path', '')))" 2>/dev/null || echo "")
 

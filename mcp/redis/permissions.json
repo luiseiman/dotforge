@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/redis",
+  "_template": "dotforge/mcp/redis",
   "_warning": "Tool names vary by community implementation. Verify against your installed package before applying. These names follow the most common convention.",
   "_comment": "Read operations auto-allowed. Write operations (SET, DEL, XADD) require user prompt. FLUSHDB/FLUSHALL always denied.",
   "allow": [

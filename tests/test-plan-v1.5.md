@@ -1,4 +1,4 @@
-# Plan de Prueba — claude-kit v1.5.0
+# Plan de Prueba — dotforge v1.5.0
 
 > Fecha: 2026-03-21
 > Scope: validación completa de v1.2.3 → v1.5.0
@@ -8,7 +8,7 @@
 
 ## 1. Validación estructural (sin Claude Code)
 
-Ejecutar desde la raíz de claude-kit. Todos deben pasar sin errores.
+Ejecutar desde la raíz de dotforge. Todos deben pasar sin errores.
 
 ### 1.1 Hooks — syntax y permisos
 
@@ -154,7 +154,7 @@ Crear proyecto temporal y testear cada profile.
 mkdir -p /tmp/test-bootstrap && cd /tmp/test-bootstrap
 git init
 echo '{"dependencies":{"express":"^4.18.0"}}' > package.json
-export CLAUDE_KIT_DIR="$HOME/claude-kit"
+export DOTFORGE_DIR="$HOME/dotforge"
 ```
 
 ### 4.2 Test bootstrap standard (en Claude Code)
@@ -399,7 +399,7 @@ bash template/hooks/session-report.sh 2>&1; echo "exit: $?"
 ```bash
 cd /tmp/test-bootstrap
 git add -A && git commit -m "test"
-FORGE_SESSION_REPORT=true bash $CLAUDE_KIT_DIR/template/hooks/session-report.sh 2>&1
+FORGE_SESSION_REPORT=true bash $DOTFORGE_DIR/template/hooks/session-report.sh 2>&1
 cat SESSION_REPORT.md
 # Esperado: archivo creado con sección "## Session: YYYY-MM-DD HH:MM"
 ```

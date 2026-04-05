@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/github",
+  "_template": "dotforge/mcp/github",
   "_comment": "Merge allow/deny into permissions in .claude/settings.json. Operations not listed here will prompt the user each time (recommended for write ops).",
   "allow": [
     "mcp__github__get_file_contents",

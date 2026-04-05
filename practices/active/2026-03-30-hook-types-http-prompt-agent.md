@@ -1,6 +1,6 @@
 ---
 id: practice-2026-03-30-hook-types-http-prompt-agent
-title: "Hook types http/prompt/agent not documented in claude-kit — only 'command' covered"
+title: "Hook types http/prompt/agent not documented in dotforge — only 'command' covered"
 source: "watch-upstream — code.claude.com/docs/en/hooks"
 source_type: research
 discovered: 2026-03-30
@@ -15,7 +15,7 @@ error_type: null
 
 ## Description
 
-Claude Code supports 4 hook handler types. claude-kit only documented `command`.
+Claude Code supports 4 hook handler types. dotforge only documented `command`.
 
 | Type | Description |
 |------|-------------|

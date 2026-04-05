@@ -13,12 +13,12 @@
 
 > Daily (run once, morning)
 
-- [ ] Pull latest on monitored repos (SOMA, Cotiza-Api-Cloud, InviSight, claude-kit)
+- [ ] Pull latest on monitored repos (SOMA, Cotiza-Api-Cloud, InviSight, dotforge)
 - [ ] Check if any Supabase migrations are pending
 - [ ] Review Obsidian vault for unprocessed decisions or postmortems
 
 > Weekly (Monday morning)
 
 - [ ] Run `/forge audit` on registered projects — flag score drops
-- [ ] Check claude-kit practices inbox for unprocessed items
+- [ ] Check dotforge practices inbox for unprocessed items
 - [ ] Review trading bot performance logs if available

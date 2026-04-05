@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-react-vite-ts",
+  "name": "dotforge-stack-react-vite-ts",
   "version": "1.4.0",
   "description": "React 18+ with Vite, TypeScript strict mode, Tailwind CSS, and Zustand rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/frontend.md"],
     "settings": "settings.json.partial",

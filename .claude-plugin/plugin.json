@@ -1,13 +1,13 @@
 {
-  "name": "claude-kit",
+  "name": "dotforge",
   "version": "2.8.1",
   "description": "Configuration factory for Claude Code — 17 skills, 7 agents, 15 stacks, 8 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
   "author": {
     "name": "Luis Eiman",
     "url": "https://github.com/luiseiman"
   },
-  "homepage": "https://github.com/luiseiman/claude-kit",
-  "repository": "https://github.com/luiseiman/claude-kit",
+  "homepage": "https://github.com/luiseiman/dotforge",
+  "repository": "https://github.com/luiseiman/dotforge",
   "license": "MIT",
   "keywords": [
     "claude-code",

@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/postgres",
+  "_template": "dotforge/mcp/postgres",
   "_verified_with": "@modelcontextprotocol/server-postgres@0.6.2",
   "_install": "Merge the 'postgres' key into mcpServers in ~/.claude/settings.json. Set DATABASE_URL env var (format: postgresql://user:pass@host:5432/dbname).",
   "postgres": {

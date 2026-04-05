@@ -1,9 +1,9 @@
-# Guía de Uso — claude-kit
+# Guía de Uso — dotforge
 
 **Versión:** 2.8.1
 **Fecha:** 2026-04-05
 
-claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene la carpeta `.claude/` de tus proyectos: reglas, hooks, permisos, agentes y comandos. Todo es markdown + shell scripts — no hay código de aplicación.
+dotforge es una fábrica de configuración para Claude Code. Genera y mantiene la carpeta `.claude/` de tus proyectos: reglas, hooks, permisos, agentes y comandos. Todo es markdown + shell scripts — no hay código de aplicación.
 
 ---
 
@@ -11,8 +11,8 @@ claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene
 
 1. [Instalación (paso cero)](#1-instalación-paso-cero)
 2. [Proyecto nuevo (desde cero)](#2-proyecto-nuevo-desde-cero)
-3. [Proyecto existente (sin claude-kit)](#3-proyecto-existente-sin-claude-kit)
-4. [Proyecto ya usando claude-kit (mantenimiento)](#4-proyecto-ya-usando-claude-kit-mantenimiento)
+3. [Proyecto existente (sin dotforge)](#3-proyecto-existente-sin-dotforge)
+4. [Proyecto ya usando dotforge (mantenimiento)](#4-proyecto-ya-usando-dotforge-mantenimiento)
 5. [Referencia de comandos](#5-referencia-de-comandos)
 6. [Stacks disponibles](#6-stacks-disponibles)
 7. [Sistema de auditoría](#7-sistema-de-auditoría)
@@ -35,7 +35,7 @@ Antes de usar cualquier comando `/forge`, necesitás instalar la infraestructura
 ### Opción A: Script directo
 
 ```bash
-cd ~/Documents/GitHub/claude-kit   # o donde tengas clonado claude-kit
+cd ~/Documents/GitHub/dotforge   # o donde tengas clonado dotforge
 ./global/sync.sh
 ```
 
@@ -132,7 +132,7 @@ claude
 
 ---
 
-## 3. Proyecto existente (sin claude-kit)
+## 3. Proyecto existente (sin dotforge)
 
 El proceso es **idéntico** al proyecto nuevo. Bootstrap detecta los archivos que ya existen para elegir stacks automáticamente.
 
@@ -167,19 +167,19 @@ Si el score es < 9, el reporte te dice exactamente qué falta.
 
 ---
 
-## 4. Proyecto ya usando claude-kit (mantenimiento)
+## 4. Proyecto ya usando dotforge (mantenimiento)
 
 ### Ciclo regular de actualización
 
 ```
-/forge diff     # ¿cambió algo en claude-kit desde mi último sync?
+/forge diff     # ¿cambió algo en dotforge desde mi último sync?
 /forge sync     # aplicar actualizaciones
 /forge audit    # verificar score post-sync
 ```
 
 #### `/forge diff` — ver qué cambió
 
-Compara tu `.forge-manifest.json` local contra la versión actual de claude-kit. Muestra:
+Compara tu `.forge-manifest.json` local contra la versión actual de dotforge. Muestra:
 - Archivos nuevos en la plantilla que no tenés
 - Archivos que cambiaron en la plantilla (reglas, hooks, settings)
 - Archivos que **vos** modificaste localmente (para no perderlos)
@@ -209,7 +209,7 @@ Score 0-10 normalizado contra un checklist de 12 items.
 ```
 
 ```
-═══ REGISTRO claude-kit ═══
+═══ REGISTRO dotforge ═══
 Proyecto         Stack                    Score   Trend     Última auditoría
 ──────────────────────────────────────────────────────────────────────────
 my-api           python-fastapi, docker   9.5     ▁▃▇ ↑    2026-03-19
@@ -218,7 +218,7 @@ my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 
 Alertas automáticas:
 - Score que baja >1.5 puntos
-- Proyectos con versión vieja de claude-kit
+- Proyectos con versión vieja de dotforge
 
 ### Análisis de sesiones
 
@@ -282,7 +282,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge global sync` | Instalar/actualizar `~/.claude/` |
 | `/forge global status` | Estado de `~/.claude/` vs plantilla |
 | `/forge status` | Dashboard multi-proyecto con scores |
-| `/forge version` | Mostrar versión de claude-kit |
+| `/forge version` | Mostrar versión de dotforge |
 
 ### Pipeline de prácticas
 
@@ -381,7 +381,7 @@ Si falta **settings.json** (item 2) o **hook block-destructive** (item 4), el sc
 
 ## 8. Pipeline de prácticas
 
-Las prácticas son insights, patterns y lecciones aprendidas que alimentan la evolución de claude-kit.
+Las prácticas son insights, patterns y lecciones aprendidas que alimentan la evolución de dotforge.
 
 ### Ciclo de vida
 
@@ -408,7 +408,7 @@ inbox/ → evaluating/ → active/ → deprecated/
 
 Ejecuta 3 fases:
 1. **Evaluar** — clasifica inbox en aceptar/rechazar/posponer (criterios: actionable, nueva, generalizable)
-2. **Incorporar** — aplica cambios aceptados a template/stacks/rules de claude-kit, bump version
+2. **Incorporar** — aplica cambios aceptados a template/stacks/rules de dotforge, bump version
 3. **Propagar** — lista proyectos que necesitan sync (NO auto-propaga, solo informa)
 
 ### Monitoreo
@@ -509,7 +509,7 @@ mi-proyecto/
 
 ## 11. Validación de configuración
 
-claude-kit no solo verifica si la configuración existe — mide si es efectiva.
+dotforge no solo verifica si la configuración existe — mide si es efectiva.
 
 ### Métricas de sesión (automático)
 
@@ -577,7 +577,7 @@ bash tests/test-config.sh
 
 ## 12. FAQ
 
-### ¿Puedo usar claude-kit sin el CLAUDE.md global?
+### ¿Puedo usar dotforge sin el CLAUDE.md global?
 
 Sí, pero perdés las reglas de comportamiento (comunicación, planificación, partner crítico). El CLAUDE.md global define **cómo** trabaja Claude. El de proyecto define **en qué** trabaja.
 
@@ -587,7 +587,7 @@ Sí, pero perdés las reglas de comportamiento (comunicación, planificación, p
 
 ### ¿Cómo agrego un stack que no existe?
 
-Crear directorio en `claude-kit/stacks/<nombre>/` con:
+Crear directorio en `dotforge/stacks/<nombre>/` con:
 - `rules/*.md` — reglas con frontmatter `globs:` (eager) o `paths:` + `alwaysApply: false` (lazy)
 - `settings.json.partial` — permisos y hooks
 
@@ -604,10 +604,10 @@ Ver `docs/creating-stacks.md` para detalles.
 
 Los hooks se convierten a instrucciones textuales (sin enforcement fuera de Claude Code).
 
-### ¿Cómo actualizo claude-kit en sí?
+### ¿Cómo actualizo dotforge en sí?
 
 ```bash
-cd ~/Documents/GitHub/claude-kit
+cd ~/Documents/GitHub/dotforge
 git pull
 ./global/sync.sh              # actualiza ~/.claude/
 ```
@@ -641,7 +641,7 @@ No. Con perfil `minimal` no se instalan. Con `standard` y `full` sí, pero Claud
           ▼                         ▼
 ┌──────────────────┐     ┌──────────────────────┐
 │  PROYECTO NUEVO  │     │  PROYECTO EXISTENTE  │
-│  o SIN claude-kit│     │  CON claude-kit      │
+│  o SIN dotforge│     │  CON dotforge      │
 ├──────────────────┤     ├──────────────────────┤
 │ /forge bootstrap │     │ /forge diff          │
 │ /forge audit     │     │ /forge sync          │
@@ -677,7 +677,7 @@ No. Con perfil `minimal` no se instalan. Con `standard` y `full` sí, pero Claud
 
 ## 13. Templates MCP
 
-Los servidores MCP extienden Claude Code con herramientas para servicios externos. claude-kit provee templates listos en `mcp/` con configuración, permisos y reglas de uso.
+Los servidores MCP extienden Claude Code con herramientas para servicios externos. dotforge provee templates listos en `mcp/` con configuración, permisos y reglas de uso.
 
 ### Templates disponibles
 
@@ -712,7 +712,7 @@ Cada template define tres niveles:
 
 ## 14. Model routing
 
-claude-kit incluye criterios explícitos de selección de modelo en `template/rules/model-routing.md`.
+dotforge incluye criterios explícitos de selección de modelo en `template/rules/model-routing.md`.
 
 ### Criterios
 

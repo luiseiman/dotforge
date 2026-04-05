@@ -6,7 +6,7 @@ source_type: research
 discovered: 2026-03-30
 status: active
 tags: [rules, frontmatter, path-scoping, verified]
-tested_in: [claude-kit]
+tested_in: [dotforge]
 incorporated_in: [.claude/rules/domain/rule-effectiveness.md, docs/best-practices.md, docs/usage-guide.md, docs/guia-uso.md]
 replaced_by: null
 effectiveness: not-applicable
@@ -35,9 +35,9 @@ Key insight: `globs:` alone does NOT lazy-load. `alwaysApply: false` is required
 
 Related bugs: #21858 (paths: ignored in ~/.claude/rules/), #16299 (paths: loads globally), #23569 (paths: ignored in worktrees).
 
-## Implication for claude-kit
+## Implication for dotforge
 
-**claude-kit's use of `globs:` is CORRECT for eager loading.** For projects with many rules where context optimization matters, `paths:` as unquoted CSV + `alwaysApply: false` enables lazy loading.
+**dotforge's use of `globs:` is CORRECT for eager loading.** For projects with many rules where context optimization matters, `paths:` as unquoted CSV + `alwaysApply: false` enables lazy loading.
 
 ## Working patterns
 

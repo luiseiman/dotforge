@@ -1,6 +1,6 @@
 ---
 name: scout-repos
-description: Fetch .claude/ configs from curated repos in sources.yml, compare against claude-kit template, report novel patterns.
+description: Fetch .claude/ configs from curated repos in sources.yml, compare against dotforge template, report novel patterns.
 ---
 
 # Scout Repos
@@ -14,7 +14,7 @@ Run `ToolSearch("WebFetch WebSearch")` to ensure both tools are available before
 
 ## Step 1: Load sources
 
-Read `$CLAUDE_KIT_DIR/practices/sources.yml`. Build a list of repos with their focus areas.
+Read `$DOTFORGE_DIR/practices/sources.yml`. Build a list of repos with their focus areas.
 
 ## Step 2: Fetch each repo's config
 
@@ -45,7 +45,7 @@ If both fail, skip the repo and note it in the report.
 For each repo's config, extract patterns in the source's `focus` areas:
 
 ### Hooks
-- New hook event/matcher combinations not in claude-kit
+- New hook event/matcher combinations not in dotforge
 - Novel blocking logic (different from block-destructive or lint-on-save)
 - Hook chaining patterns
 
@@ -68,15 +68,15 @@ For each repo's config, extract patterns in the source's `focus` areas:
 - Custom commands we could generalize
 - Skill structures with novel step patterns
 
-## Step 4: Compare against claude-kit
+## Step 4: Compare against dotforge
 
 For each discovered pattern, classify:
 
-- **Novel**: not in claude-kit → high interest, describe what it does and where it would go
+- **Novel**: not in dotforge → high interest, describe what it does and where it would go
 - **Variant**: similar approach but different implementation → medium interest, note tradeoffs
-- **Superior**: does what claude-kit does but better → high interest, describe improvement
-- **Covered**: claude-kit already has this → skip
-- **Incompatible**: conflicts with claude-kit philosophy (e.g., too complex, too opinionated) → skip with note
+- **Superior**: does what dotforge does but better → high interest, describe improvement
+- **Covered**: dotforge already has this → skip
+- **Incompatible**: conflicts with dotforge philosophy (e.g., too complex, too opinionated) → skip with note
 
 ## Step 5: Report
 
@@ -92,7 +92,7 @@ Repos skipped: {{list of inaccessible repos}}
   🆕 {{pattern name}}
      What: {{description}}
      Where: {{file in their repo}}
-     Impact on claude-kit: {{which files would change}}
+     Impact on dotforge: {{which files would change}}
      Effort: {{low|medium|high}}
 
 ── SUPERIOR PATTERNS ──
@@ -122,7 +122,7 @@ Then: /forge update to evaluate and incorporate.
 
 ## Constraints
 
-- DO NOT modify any claude-kit files. Report only.
+- DO NOT modify any dotforge files. Report only.
 - DO NOT clone repos locally. Use `gh api` or WebFetch for read-only access.
 - Respect rate limits — fetch only files relevant to the source's `focus` areas.
 - If a repo has no `.claude/` directory, check for `CLAUDE.md` only. Skip if neither exists.

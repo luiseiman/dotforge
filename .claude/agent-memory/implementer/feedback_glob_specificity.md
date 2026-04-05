@@ -14,6 +14,6 @@ Using `**/*.md` as a glob in domain rules defeats the purpose: the rule loads on
 - If a glob includes `**/*.md` alongside more specific patterns, the specific patterns are redundant — remove the broad one
 - Prefer listing specific files (`core/pipeline.py,core/data_bus.py`) over directory wildcards (`core/**`) when only a subset of files is relevant
 
-## 2026-03-25 — claude-kit + TRADINGBOT glob audit
-- **Learned:** `**/*.md` appeared in two claude-kit domain rules, making them load on every markdown file. The TRADINGBOT data-flow rule covered `strategies/**` even though strategies don't participate in the data pipeline.
+## 2026-03-25 — dotforge + TRADINGBOT glob audit
+- **Learned:** `**/*.md` appeared in two dotforge domain rules, making them load on every markdown file. The TRADINGBOT data-flow rule covered `strategies/**` even though strategies don't participate in the data pipeline.
 - **Avoid:** Mixing broad extension globs with specific path globs — the broad one makes the specific ones meaningless.

@@ -4,7 +4,7 @@ Sistema de 4 capas para medir y mejorar la efectividad de la configuración de C
 
 ## Problema
 
-claude-kit valida **presencia** de configuración (audit score 0-10) pero no **efectividad**. No hay forma de saber si una regla mejora el output de Claude o solo consume tokens del contexto.
+dotforge valida **presencia** de configuración (audit score 0-10) pero no **efectividad**. No hay forma de saber si una regla mejora el output de Claude o solo consume tokens del contexto.
 
 ## Arquitectura
 

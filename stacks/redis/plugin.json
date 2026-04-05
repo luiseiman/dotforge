@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-redis",
+  "name": "dotforge-stack-redis",
   "version": "1.4.0",
   "description": "Redis Streams, caching patterns, and pub/sub rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/redis.md"],
     "settings": "settings.json.partial"

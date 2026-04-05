@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# audit/score.sh — Standalone mechanical audit of claude-kit configuration
+# audit/score.sh — Standalone mechanical audit of dotforge configuration
 # Requires: bash 3.2+, python3 (for JSON output and JSON validation)
 #
 # Usage: ./audit/score.sh [PROJECT_DIR] [--json] [--threshold N]

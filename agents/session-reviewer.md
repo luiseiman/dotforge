@@ -93,7 +93,7 @@ Scan conversation history and project files for these signal categories:
 ## Outputs
 
 Findings go to one of three destinations:
-1. **practices/inbox/** — if the pattern suggests a new rule or workflow improvement for claude-kit
+1. **practices/inbox/** — if the pattern suggests a new rule or workflow improvement for dotforge
 2. **CLAUDE_ERRORS.md** — if it's a recurring error with a specific root cause and fix
 3. **Agent memory only** — if it needs more observation before acting
 

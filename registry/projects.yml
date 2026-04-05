@@ -1,6 +1,6 @@
-# Registry of projects managed by claude-kit
+# Registry of projects managed by dotforge
 # Updated by /forge audit and /forge sync
-# Schema: name, path, stacks, last_audit, last_sync, claude_kit_version, score, history, metrics_summary, notes
+# Schema: name, path, stacks, last_audit, last_sync, dotforge_version, score, history, metrics_summary, notes
 # Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
 # history: array of {date, score, version} entries — appended by /forge audit, never overwritten
 # metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
@@ -16,7 +16,7 @@
 #     stacks: [python-fastapi, docker-deploy]
 #     last_audit: 2026-03-19
 #     last_sync: 2026-03-19
-#     claude_kit_version: 2.3.0
+#     dotforge_version: 2.3.0
 #     score: 9.5
 #     history:
 #       - {date: 2026-03-01, score: 7.0, version: 1.0.0}

@@ -1,6 +1,6 @@
 ---
 name: forge-version
-description: Show current claude-kit version
+description: Show current dotforge version
 ---
 
-Read and display the contents of `$CLAUDE_KIT_DIR/VERSION`.
+Read and display the contents of `$DOTFORGE_DIR/VERSION`.

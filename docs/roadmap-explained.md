@@ -1,4 +1,4 @@
-# Roadmap Explicado — claude-kit
+# Roadmap Explicado — dotforge
 
 > ⚠️ **Archivo histórico.** Este documento explica las decisiones de diseño de versiones anteriores (v1.x–v2.4.x). Ya no refleja el estado actual del proyecto.
 > Para el roadmap activo, ver [ROADMAP.md](../ROADMAP.md).
@@ -57,7 +57,7 @@
 
 ### 6. Cuatro stacks nuevos (node-express, java-spring, aws-deploy, go-api)
 
-**El problema:** Hoy claude-kit soporta 8 stacks: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis. Si tu proyecto es en Node con Express, Java con Spring Boot, Go, o usa AWS, el bootstrap no detecta tu stack y no te genera rules ni permisos específicos. Te queda una configuración genérica.
+**El problema:** Hoy dotforge soporta 8 stacks: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis. Si tu proyecto es en Node con Express, Java con Spring Boot, Go, o usa AWS, el bootstrap no detecta tu stack y no te genera rules ni permisos específicos. Te queda una configuración genérica.
 
 **El beneficio:** Con estos 4 stacks nuevos, cubrís la mayoría de backends web del mercado. Si trabajás con Express, el bootstrap te genera rules de Node (no usar `var`, preferir async/await, estructura de middleware). Si trabajás con Spring Boot, te genera rules de Java (inyección de dependencias, patrones de repository). Para AWS, reglas de CloudFormation y permisos de CLI. Para Go, convenciones de error handling y estructura de paquetes. En lugar de una config genérica, tenés una que entiende tu tecnología.
 
@@ -65,7 +65,7 @@
 
 ### 7. Cross-tool export (`/forge export cursor|codex|windsurf`)
 
-**El problema:** Todo el trabajo que hacés configurando claude-kit (rules, convenciones, permisos) solo funciona en Claude Code. Si mañana probás Cursor, Windsurf, o Codex, tenés que reescribir todo desde cero en el formato de cada herramienta. Tu inversión en configuración está atrapada en un solo tool.
+**El problema:** Todo el trabajo que hacés configurando dotforge (rules, convenciones, permisos) solo funciona en Claude Code. Si mañana probás Cursor, Windsurf, o Codex, tenés que reescribir todo desde cero en el formato de cada herramienta. Tu inversión en configuración está atrapada en un solo tool.
 
 **El beneficio:** Con `/forge export cursor` tomás todas tus rules y CLAUDE.md y generás un `.cursorrules` listo para usar. Lo mismo con Codex y Windsurf. Tu configuración se vuelve portable. Esto es valioso en dos sentidos: (1) si cambiás de herramienta no perdés nada, y (2) si trabajás en un equipo donde otros usan Cursor, podés compartirles una versión traducida de tus mismas reglas. El trabajo de configuración lo hacés una vez, lo usás en todos lados.
 
@@ -99,17 +99,17 @@
 
 ### 11. Plugin packaging para marketplace
 
-**El problema:** Hoy para instalar claude-kit tenés que clonar el repo, correr `global/sync.sh`, y mantenerlo actualizado manualmente. Si querés que un compañero lo use, tiene que hacer lo mismo. Es artesanal.
+**El problema:** Hoy para instalar dotforge tenés que clonar el repo, correr `global/sync.sh`, y mantenerlo actualizado manualmente. Si querés que un compañero lo use, tiene que hacer lo mismo. Es artesanal.
 
-**El beneficio:** Empaquetando claude-kit como plugin oficial, cualquiera puede instalarlo con un comando (`/plugin install claude-kit`). Las actualizaciones llegarían automáticamente. Aparecería en el marketplace donde otros devs lo descubren sin que vos se lo tengas que mostrar. Es la diferencia entre repartir tu app como un .zip por WhatsApp vs publicarla en la App Store.
+**El beneficio:** Empaquetando dotforge como plugin oficial, cualquiera puede instalarlo con un comando (`/plugin install dotforge`). Las actualizaciones llegarían automáticamente. Aparecería en el marketplace donde otros devs lo descubren sin que vos se lo tengas que mostrar. Es la diferencia entre repartir tu app como un .zip por WhatsApp vs publicarla en la App Store.
 
 ---
 
 ### 12. Stacks como plugins independientes
 
-**El problema:** Si alguien solo quiere las rules de Python/FastAPI, tiene que instalar todo claude-kit (9 skills, 6 agents, 8 stacks, el sistema de auditoría completo). Es todo o nada.
+**El problema:** Si alguien solo quiere las rules de Python/FastAPI, tiene que instalar todo dotforge (9 skills, 6 agents, 8 stacks, el sistema de auditoría completo). Es todo o nada.
 
-**El beneficio:** Cada stack se vuelve un plugin independiente que podés instalar por separado. ¿Solo trabajás con React? Instalás `claude-kit-stack-react-vite-ts` y listo — te llegan las rules de React, los permisos de npm/vite, y el hook de lint de TypeScript. Sin la auditoría, sin los agents, sin el sistema de prácticas. Adopción granular: la gente puede empezar con un stack y después, si le gusta, instalar el kit completo.
+**El beneficio:** Cada stack se vuelve un plugin independiente que podés instalar por separado. ¿Solo trabajás con React? Instalás `dotforge-stack-react-vite-ts` y listo — te llegan las rules de React, los permisos de npm/vite, y el hook de lint de TypeScript. Sin la auditoría, sin los agents, sin el sistema de prácticas. Adopción granular: la gente puede empezar con un stack y después, si le gusta, instalar el kit completo.
 
 ---
 
@@ -135,7 +135,7 @@
 
 **El problema:** El registry ya guarda el historial de scores de cada proyecto, pero nadie lo mira. Tenés datos de que tu proyecto pasó de 8.5 a 7.0 a 6.5 en tres audits, pero no hay nada que te avise que estás empeorando.
 
-**El beneficio:** Tres cosas concretas. Primero, si tu score baja más de 1.5 puntos entre dos audits, te salta una alerta: "ojo, tu proyecto se está degradando". Segundo, `/forge status` te muestra un sparkline en ASCII (una mini-gráfica en la terminal) de cómo evolucionó el score de cada proyecto. Tercero, si tu score está abajo de 7.0 y hay una versión nueva de claude-kit disponible, te recomienda correr `/forge sync` porque probablemente las mejoras nuevas te suban el score. Es pasar de "datos que se acumulan" a "datos que te hablan".
+**El beneficio:** Tres cosas concretas. Primero, si tu score baja más de 1.5 puntos entre dos audits, te salta una alerta: "ojo, tu proyecto se está degradando". Segundo, `/forge status` te muestra un sparkline en ASCII (una mini-gráfica en la terminal) de cómo evolucionó el score de cada proyecto. Tercero, si tu score está abajo de 7.0 y hay una versión nueva de dotforge disponible, te recomienda correr `/forge sync` porque probablemente las mejoras nuevas te suban el score. Es pasar de "datos que se acumulan" a "datos que te hablan".
 
 ---
 
@@ -145,13 +145,13 @@
 Plantillas pre-armadas para conectar Claude con GitHub, Slack, bases de datos, etc. via MCP. Hoy si querés conectar un MCP lo tenés que configurar a mano. Con templates sería: "quiero GitHub" → configuración lista.
 
 ### Team mode
-Configuración en capas: base (company) → team → individual. Cada nivel hereda del anterior y puede sobreescribir. Útil si claude-kit lo usan 10 personas y querés consistencia sin quitar flexibilidad individual.
+Configuración en capas: base (company) → team → individual. Cada nivel hereda del anterior y puede sobreescribir. Útil si dotforge lo usan 10 personas y querés consistencia sin quitar flexibilidad individual.
 
 ### CI integration
 Un GitHub Action que corre `/forge audit` automáticamente en cada PR y comenta el score. Así nadie mergea un PR que degrade la configuración de Claude. Quality gate automático.
 
 ### Stack auto-update
-Si cambiás tus dependencias (agregás React a un proyecto Python), claude-kit detecta el cambio y te sugiere agregar el stack correspondiente. Hoy solo detecta stacks en bootstrap, después se olvida.
+Si cambiás tus dependencias (agregás React a un proyecto Python), dotforge detecta el cambio y te sugiere agregar el stack correspondiente. Hoy solo detecta stacks en bootstrap, después se olvida.
 
 ### Model routing rules
 Reglas para cuándo usar cada modelo. El test-runner ya usa Sonnet (más rápido y barato para correr tests). Generalizar eso: researcher con Haiku para búsquedas rápidas, implementer con Opus para código complejo, etc.

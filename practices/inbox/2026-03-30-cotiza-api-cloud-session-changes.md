@@ -22,7 +22,7 @@ replaced_by: null
 .claude/settings.json
 
 ## Evaluation needed
-Review if these changes contain patterns, rules, or configurations that should be generalized to claude-kit.
+Review if these changes contain patterns, rules, or configurations that should be generalized to dotforge.
 
 ## Decision
 Pending — evaluate in next /forge update

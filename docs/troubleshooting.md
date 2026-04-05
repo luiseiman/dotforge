@@ -52,7 +52,7 @@ chmod +x .claude/hooks/*.sh
 1. Is the hook installed globally?
    - Check `~/.claude/settings.json` has a reference to `detect-claude-changes.sh` under `hooks.Stop`
 2. Is the script executable?
-   - `chmod +x $CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh`
+   - `chmod +x $DOTFORGE_DIR/hooks/detect-claude-changes.sh`
 3. Were files modified less than 2 hours ago?
    - The hook looks for changes in the last 2 hours
 4. Does a note already exist for this project today?
@@ -114,7 +114,7 @@ chmod +x .claude/hooks/*.sh
 1. ¿El hook está instalado globalmente?
    - Verificar `~/.claude/settings.json` tiene referencia a `detect-claude-changes.sh` bajo `hooks.Stop`
 2. ¿El script es ejecutable?
-   - `chmod +x $CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh`
+   - `chmod +x $DOTFORGE_DIR/hooks/detect-claude-changes.sh`
 3. ¿Los archivos se modificaron hace <2 horas?
    - El hook busca cambios en las últimas 2 horas
 4. ¿Ya existe una nota de hoy para ese proyecto?

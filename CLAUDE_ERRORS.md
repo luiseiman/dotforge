@@ -1,6 +1,6 @@
-> **[English](#known-errors--claude-kit)** | **[Español](#errores-conocidos--claude-kit)**
+> **[English](#known-errors--dotforge)** | **[Español](#errores-conocidos--dotforge)**
 
-# Known Errors — claude-kit
+# Known Errors — dotforge
 
 Error log and lessons learned to avoid repeating mistakes.
 
@@ -15,7 +15,7 @@ Error log and lessons learned to avoid repeating mistakes.
 
 ---
 
-# Errores Conocidos — claude-kit
+# Errores Conocidos — dotforge
 
 Registro de errores y lecciones aprendidas para no repetir los mismos fallos.
 

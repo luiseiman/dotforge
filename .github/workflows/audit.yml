@@ -1,4 +1,4 @@
-name: claude-kit audit score
+name: dotforge audit score
 
 on:
   pull_request:
@@ -55,7 +55,7 @@ jobs:
             }).join('\n');
 
             const body = [
-              `## ${emoji} claude-kit Audit Score: **${score}/10** (${level})${cap}`,
+              `## ${emoji} dotforge Audit Score: **${score}/10** (${level})${cap}`,
               '',
               `| Obligatorio | ${result.score_obligatorio}/10 | Recomendado | ${result.score_recomendado}/7 |`,
               '|---|---|---|---|',
@@ -76,7 +76,7 @@ jobs:
 
             const existing = comments.find(c =>
               c.user.login === 'github-actions[bot]' &&
-              c.body.includes('claude-kit Audit Score')
+              c.body.includes('dotforge Audit Score')
             );
 
             if (existing) {

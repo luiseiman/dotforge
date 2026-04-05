@@ -25,7 +25,7 @@ For each detected server without installed rules:
 ```
 Found MCP server: <name> (<package>)
 No usage rules installed for this project.
-Install rules from claude-kit template? [Y/n]
+Install rules from dotforge template? [Y/n]
   → Copies mcp/<name>/rules.md to .claude/rules/mcp-<name>.md
   → Merges mcp/<name>/permissions.json into .claude/settings.json
 ```

@@ -21,5 +21,5 @@
 
 Una vez generado el GIF, agregar después de los badges en README.md:
 ```markdown
-![claude-kit demo](demo/demo.gif)
+![dotforge demo](demo/demo.gif)
 ```

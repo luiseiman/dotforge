@@ -13,7 +13,7 @@ globs: ".devcontainer/**,devcontainer.json"
 ## Claude Code in Containers
 - Ensure `bash`, `git`, `jq`, `curl` are available (required by hooks)
 - Mount `.claude/` directory if persisting config across rebuilds
-- Set `CLAUDE_KIT_DIR` env var if using /forge commands
+- Set `DOTFORGE_DIR` env var if using /forge commands
 - File watchers: increase `fs.inotify.max_user_watches` if needed
 
 ## Security

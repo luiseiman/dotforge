@@ -1,11 +1,11 @@
 ---
 name: update-practices
-description: Process the practices inbox, evaluate, incorporate into claude-kit, and suggest propagation to projects.
+description: Process the practices inbox, evaluate, incorporate into dotforge, and suggest propagation to projects.
 ---
 
 # Update Practices
 
-3-phase pipeline to keep claude-kit up to date with discovered practices.
+3-phase pipeline to keep dotforge up to date with discovered practices.
 
 **Practice sources:**
 - Post-session hook (`detect-claude-changes.sh`) → automatic
@@ -16,12 +16,12 @@ description: Process the practices inbox, evaluate, incorporate into claude-kit,
 
 ## Phase 1: EVALUATE — Process inbox
 
-Read all files in `$CLAUDE_KIT_DIR/practices/inbox/`.
+Read all files in `$DOTFORGE_DIR/practices/inbox/`.
 
 For each practice:
 
 ### Acceptance criteria
-1. **Is it actionable?** — Can be translated into a concrete change in claude-kit
+1. **Is it actionable?** — Can be translated into a concrete change in dotforge
 2. **Is it new?** — Does not duplicate something already in `practices/active/`
 3. **Is it generalizable?** — Applies to >1 project (not project-specific)
 4. **Does it prevent a specific error?** — If yes, annotate `error_type` and error description for tracking in metrics.yml
@@ -52,7 +52,7 @@ Proceed with accepted? (yes/no/select)
 
 ---
 
-## Phase 2: INCORPORATE — Apply changes to claude-kit
+## Phase 2: INCORPORATE — Apply changes to dotforge
 
 For each accepted practice in `evaluating/`:
 
@@ -67,11 +67,11 @@ For each accepted practice in `evaluating/`:
 
 ### Apply
 1. Show proposed diff to the user and ask for confirmation
-2. Modify the corresponding claude-kit files
+2. Modify the corresponding dotforge files
 3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` (eager) or `paths:` + `alwaysApply: false` (lazy) frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
 4. Move practice from `evaluating/` to `active/` with `incorporated_in:` updated
 5. Set frontmatter fields: `effectiveness: monitoring` (or `not-applicable` if no error targeted), `error_type` matching CLAUDE_ERRORS.md types
-6. Register in `$CLAUDE_KIT_DIR/practices/metrics.yml`:
+6. Register in `$DOTFORGE_DIR/practices/metrics.yml`:
    - `error_targeted`: description of the error this practice prevents (null if not error-targeted)
    - `error_type`: syntax | logic | integration | config | security | null
    - `activated`: today's date
@@ -85,7 +85,7 @@ For each accepted practice in `evaluating/`:
 
 ## Phase 3: PROPAGATE — Suggest project updates
 
-1. Read `$CLAUDE_KIT_DIR/registry/projects.yml`
+1. Read `$DOTFORGE_DIR/registry/projects.yml`
 2. For each project, show what changed since its last sync:
 
 ```
@@ -106,7 +106,7 @@ DO NOT propagate automatically. Inform only.
 
 ## Phase 4: VERIFY — Recurrence check for active practices
 
-For each entry in `$CLAUDE_KIT_DIR/practices/metrics.yml` where `status: monitoring`:
+For each entry in `$DOTFORGE_DIR/practices/metrics.yml` where `status: monitoring`:
 
 1. Read `CLAUDE_ERRORS.md` from each project in registry where the practice is applied
 2. Check if any error matching `error_type` + `error_targeted` description was logged AFTER the `activated` date
@@ -135,7 +135,7 @@ Skip practices with `status: not-applicable` or `status: validated`.
 Date: {{YYYY-MM-DD}}
 
 Evaluated: {{N}} ({{accepted}} accepted, {{rejected}} rejected, {{deferred}} deferred)
-Incorporated: {{N}} into claude-kit
+Incorporated: {{N}} into dotforge
 Propagation suggested: {{N}} projects
 
 ── EFFECTIVENESS ──

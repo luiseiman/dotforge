@@ -1,12 +1,12 @@
 # Architecture Components
 
-Internal reference for claude-kit contributors. Maps all components and their interactions.
+Internal reference for dotforge contributors. Maps all components and their interactions.
 
 ## Component Map
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         claude-kit                               │
+│                         dotforge                               │
 ├──────────┬──────────┬──────────┬──────────┬──────────┬──────────┤
 │ template │  stacks  │  skills  │  agents  │practices │  audit   │
 │          │  (15)    │  (16)    │  (7)     │          │          │
@@ -137,7 +137,7 @@ audit/checklist.md          audit/scoring.md
 
 ## Global Layer (~/.claude/)
 
-`global/sync.sh` manages symlinks from claude-kit into the user's global config:
+`global/sync.sh` manages symlinks from dotforge into the user's global config:
 
 ```
 ~/.claude/
@@ -154,7 +154,7 @@ audit/checklist.md          audit/scoring.md
 `registry/projects.yml` tracks all managed projects:
 - Audit scores with history (append-only)
 - Stack assignments
-- Sync timestamps and claude-kit version
+- Sync timestamps and dotforge version
 - Session metrics summary (from `~/.claude/metrics/`)
 
 ## Config Validation (v1.6.0)
@@ -170,7 +170,7 @@ See `docs/config-validation.md` for full documentation. Four layers:
 
 ## Integrations
 
-`integrations/` contains cross-tool bridges that let other platforms use claude-kit.
+`integrations/` contains cross-tool bridges that let other platforms use dotforge.
 
 ### OpenClaw (`integrations/openclaw/`)
 

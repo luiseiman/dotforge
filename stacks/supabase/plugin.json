@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-supabase",
+  "name": "dotforge-stack-supabase",
   "version": "1.4.0",
   "description": "Supabase migrations, RLS policies, Edge Functions, and database rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/database.md"],
     "settings": "settings.json.partial"

@@ -1,6 +1,6 @@
 ---
 name: audit-project
-description: Audits the Claude Code configuration of a project against the claude-kit template. Generates a report with score and gaps.
+description: Audits the Claude Code configuration of a project against the dotforge template. Generates a report with score and gaps.
 context: fork
 ---
 
@@ -10,7 +10,7 @@ Run a full audit of the Claude Code configuration for the current project.
 
 ## Step 1: Detect stack
 
-Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
+Use detection rules from `$DOTFORGE_DIR/stacks/detect.md`.
 
 ## Step 1b: Detect project tier
 
@@ -29,7 +29,7 @@ Save tier in registry entry.
 
 ## Step 1c: Config coherence check
 
-Before scoring, validate internal coherence. Run `$CLAUDE_KIT_DIR/tests/test-config.sh <project-dir>` or perform equivalent checks inline:
+Before scoring, validate internal coherence. Run `$DOTFORGE_DIR/tests/test-config.sh <project-dir>` or perform equivalent checks inline:
 
 1. Hooks referenced in settings.json exist and are executable
 2. Rules have valid `globs:` or `paths:` frontmatter (with `alwaysApply: false` for lazy loading)
@@ -43,8 +43,8 @@ If coherence check finds critical failures (missing hooks, invalid JSON), report
 
 ## Step 2: Load checklist
 
-Read `$CLAUDE_KIT_DIR/audit/checklist.md` for evaluation criteria.
-Read `$CLAUDE_KIT_DIR/audit/scoring.md` for weights and caps.
+Read `$DOTFORGE_DIR/audit/checklist.md` for evaluation criteria.
+Read `$DOTFORGE_DIR/audit/scoring.md` for weights and caps.
 
 ## Step 3: Evaluate
 
@@ -79,7 +79,7 @@ For each checklist item, verify existence **and quality**:
 
 ## Step 4: Calculate score
 
-Use weights from `$CLAUDE_KIT_DIR/audit/scoring.md`:
+Use weights from `$DOTFORGE_DIR/audit/scoring.md`:
 1. `score_obligatory = sum(items 1-5)` — maximum 10
 2. `score_recommended = sum(items 6-12)` — maximum 7
 3. `score_total = score_obligatory * 0.7 + score_recommended * (3.0 / 7)` — max 7.0 + 3.0 = 10.0
@@ -92,11 +92,11 @@ Use weights from `$CLAUDE_KIT_DIR/audit/scoring.md`:
 
 Format:
 ```
-═══ AUDIT claude-kit: {{project}} ═══
+═══ AUDIT dotforge: {{project}} ═══
 Date: {{YYYY-MM-DD}}
 Detected stack: {{stacks}}
 Tier: {{simple|standard|complex}}
-claude-kit version: {{version from last bootstrap/sync if detectable}}
+dotforge version: {{version from last bootstrap/sync if detectable}}
 Score: {{X.X}}/10 {{level}}
 
 ── OBLIGATORY ──
@@ -129,7 +129,7 @@ If no domain rules exist and the project has business logic, suggest: /forge dom
 2. ...
 
 ── NEXT STEP ──
-Run `/forge sync` to apply the claude-kit template and close the gaps.
+Run `/forge sync` to apply the dotforge template and close the gaps.
 ```
 
 ## Step 6: Cross-project error promotion
@@ -137,7 +137,7 @@ Run `/forge sync` to apply the claude-kit template and close the gaps.
 If the project has `CLAUDE_ERRORS.md`, scan it for recurring patterns:
 1. Read `CLAUDE_ERRORS.md` and group errors by Area column
 2. If any Area has 3+ entries with similar root causes, it's a candidate for promotion
-3. Check `$CLAUDE_KIT_DIR/practices/inbox/` and `active/` for existing practices covering that pattern
+3. Check `$DOTFORGE_DIR/practices/inbox/` and `active/` for existing practices covering that pattern
 4. If no existing practice covers it, create a new practice in `practices/inbox/` using the capture format:
    - `source_type: cross-project`
    - `tags: [error-promotion, <area>]`
@@ -161,10 +161,10 @@ This closes the Audit → Learning synergy: detected gaps feed back into the pra
 
 ## Step 8: Update registry
 
-If `$CLAUDE_KIT_DIR/registry/projects.yml` exists, update the project entry:
+If `$DOTFORGE_DIR/registry/projects.yml` exists, update the project entry:
 - `score:` with the calculated score
 - `last_audit:` with the current date
-- `claude_kit_version:` with the VERSION version if the project was bootstrapped
+- `dotforge_version:` with the VERSION version if the project was bootstrapped
 - `last_sync:` preserve the existing value (do not modify here)
 - `notes:` brief summary of the audit
-- `history:` append a new entry `{date: YYYY-MM-DD, score: X.X, version: <claude_kit_version>}`. Never overwrite previous entries — this enables score trending over time.
+- `history:` append a new entry `{date: YYYY-MM-DD, score: X.X, version: <dotforge_version>}`. Never overwrite previous entries — this enables score trending over time.

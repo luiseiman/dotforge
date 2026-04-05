@@ -1,12 +1,12 @@
 #!/bin/bash
-# claude-kit global sync
+# dotforge global sync
 # Installs/updates skills, agents, and commands into ~/.claude/
 # Works on Linux, macOS, and Windows (WSL/Git Bash)
 # Usage: ./global/sync.sh [--dry-run]
 
 set -euo pipefail
 
-CLAUDE_KIT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+DOTFORGE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DRY_RUN=false
 
 # --- Platform detection ---
@@ -79,7 +79,7 @@ is_current_link() {
     }
   else
     # For copies, check a marker file we leave behind
-    [[ -f "${dst}/.claude-kit-source" ]] && [[ "$(cat "${dst}/.claude-kit-source" 2>/dev/null)" == "$src" ]]
+    [[ -f "${dst}/.dotforge-source" ]] && [[ "$(cat "${dst}/.dotforge-source" 2>/dev/null)" == "$src" ]]
   fi
 }
 
@@ -102,7 +102,7 @@ install_item() {
   link_item "$src" "$dst"
   # For copies, leave a marker so we can detect updates
   if ! $USE_SYMLINKS && [[ -d "$dst" ]]; then
-    echo "$src" > "${dst}/.claude-kit-source"
+    echo "$src" > "${dst}/.dotforge-source"
   fi
 }
 
@@ -141,7 +141,7 @@ elif [[ "$(id -u)" == "0" ]]; then
 
   # Method 2: repo owner differs from root
   if ! $resolved; then
-    repo_owner=$(get_file_owner "$CLAUDE_KIT_DIR")
+    repo_owner=$(get_file_owner "$DOTFORGE_DIR")
     if [[ -n "$repo_owner" && "$repo_owner" != "root" ]]; then
       owner_home=$(eval echo "~${repo_owner}")
       CLAUDE_HOME="${owner_home}/.claude"
@@ -154,12 +154,12 @@ elif [[ "$(id -u)" == "0" ]]; then
   if ! $resolved; then
     # Linux/WSL: /home/<user>/...
     # macOS: /Users/<user>/...
-    if [[ "$CLAUDE_KIT_DIR" =~ ^/home/([^/]+)/ ]]; then
+    if [[ "$DOTFORGE_DIR" =~ ^/home/([^/]+)/ ]]; then
       inferred_user="${BASH_REMATCH[1]}"
       CLAUDE_HOME="/home/${inferred_user}/.claude"
       echo "⚠ Running as root — inferred target from repo path: /home/${inferred_user}"
       resolved=true
-    elif [[ "$CLAUDE_KIT_DIR" =~ ^/Users/([^/]+)/ ]]; then
+    elif [[ "$DOTFORGE_DIR" =~ ^/Users/([^/]+)/ ]]; then
       inferred_user="${BASH_REMATCH[1]}"
       CLAUDE_HOME="/Users/${inferred_user}/.claude"
       echo "⚠ Running as root — inferred target from repo path: /Users/${inferred_user}"
@@ -193,8 +193,8 @@ action() {
   fi
 }
 
-echo "═══ claude-kit global sync ═══"
-echo "source:   ${CLAUDE_KIT_DIR}"
+echo "═══ dotforge global sync ═══"
+echo "source:   ${DOTFORGE_DIR}"
 echo "target:   ${CLAUDE_HOME}"
 echo "platform: ${PLATFORM}"
 echo "method:   $( $USE_SYMLINKS && echo "symlinks" || echo "file copies" )"
@@ -203,7 +203,7 @@ echo ""
 # --- Skills ---
 echo "── Skills ──"
 action "mkdir -p '${CLAUDE_HOME}/skills'"
-for skill_dir in "${CLAUDE_KIT_DIR}/skills"/*/; do
+for skill_dir in "${DOTFORGE_DIR}/skills"/*/; do
   skill_name=$(basename "$skill_dir")
   link="${CLAUDE_HOME}/skills/${skill_name}"
   src="${skill_dir%/}"
@@ -222,7 +222,7 @@ done
 echo ""
 echo "── Agents ──"
 action "mkdir -p '${CLAUDE_HOME}/agents'"
-for agent_file in "${CLAUDE_KIT_DIR}/agents"/*.md; do
+for agent_file in "${DOTFORGE_DIR}/agents"/*.md; do
   agent_name=$(basename "$agent_file")
   link="${CLAUDE_HOME}/agents/${agent_name}"
   if is_current_link "$agent_file" "$link" 2>/dev/null; then
@@ -242,7 +242,7 @@ done
 echo ""
 echo "── Commands ──"
 action "mkdir -p '${CLAUDE_HOME}/commands'"
-for cmd_file in "${CLAUDE_KIT_DIR}/global/commands"/*.md; do
+for cmd_file in "${DOTFORGE_DIR}/global/commands"/*.md; do
   [[ -f "$cmd_file" ]] || continue
   cmd_name=$(basename "$cmd_file")
   cmd_dst="${CLAUDE_HOME}/commands/${cmd_name}"
@@ -256,7 +256,7 @@ for cmd_file in "${CLAUDE_KIT_DIR}/global/commands"/*.md; do
     action "cp '$cmd_file' '$cmd_dst'"
   fi
 done
-# Preserve other commands not from claude-kit (vault.md, etc.)
+# Preserve other commands not from dotforge (vault.md, etc.)
 
 # --- Settings.json deny list ---
 echo ""

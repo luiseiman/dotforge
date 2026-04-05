@@ -16,7 +16,7 @@ A clear description of what's broken.
 What should have happened.
 
 **Environment**
-- claude-kit version: (check `cat VERSION`)
+- dotforge version: (check `cat VERSION`)
 - Claude Code version:
 - OS:
 - Shell: bash / zsh

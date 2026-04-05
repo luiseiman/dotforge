@@ -103,7 +103,7 @@ El sistema de feature flags remoto usa keys con patrón `tengu_<adjective>_<noun
 
 ---
 
-## Acciones para claude-kit
+## Acciones para dotforge
 
 ### Incorporar inmediatamente
 
@@ -121,7 +121,7 @@ El sistema de feature flags remoto usa keys con patrón `tengu_<adjective>_<noun
 
 ### Monitorear para futuro
 
-7. **`tengu_speculation`** — cuando se active para externos, claude-kit debería documentar el patrón Tab/Enter y cómo las prompt suggestions interactúan con hooks
+7. **`tengu_speculation`** — cuando se active para externos, dotforge debería documentar el patrón Tab/Enter y cómo las prompt suggestions interactúan con hooks
 
 8. **COORDINATOR_MODE** — cuando ship, reemplaza nuestra orquestación manual de Agent Teams. Preparar stack `coordinator` con rules optimizadas
 

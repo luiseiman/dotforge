@@ -1,12 +1,12 @@
 ---
 name: bootstrap-project
-description: Initializes the Claude Code configuration in a new or existing project using the claude-kit template.
+description: Initializes the Claude Code configuration in a new or existing project using the dotforge template.
 context: fork
 ---
 
 # Bootstrap Project
 
-Initialize a complete `.claude/` in the current project using the claude-kit template.
+Initialize a complete `.claude/` in the current project using the dotforge template.
 
 ## Step 0: Determine profile
 
@@ -34,7 +34,7 @@ Save the profile in `.claude/settings.local.json` under `env.FORGE_BOOTSTRAP_PRO
 
 ## Step 1: Detect stack
 
-Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
+Use detection rules from `$DOTFORGE_DIR/stacks/detect.md`.
 
 ## Step 2: Confirm with user
 
@@ -58,7 +58,7 @@ Adapt the list shown based on the profile (hide components that won't be install
 
 ## Step 3: Generate CLAUDE.md
 
-Use `$CLAUDE_KIT_DIR/template/CLAUDE.md.tmpl` as the base.
+Use `$DOTFORGE_DIR/template/CLAUDE.md.tmpl` as the base.
 Replace markers:
 - `{{PROJECT_NAME}}` → name of the current directory
 - `<!-- forge:stack -->` → detected technologies
@@ -66,8 +66,8 @@ Replace markers:
 
 ## Step 4: Generate settings.json
 
-1. Load `$CLAUDE_KIT_DIR/template/settings.json.tmpl` as the base
-2. For **each** detected stack, read `$CLAUDE_KIT_DIR/stacks/{stack}/settings.json.partial`
+1. Load `$DOTFORGE_DIR/template/settings.json.tmpl` as the base
+2. For **each** detected stack, read `$DOTFORGE_DIR/stacks/{stack}/settings.json.partial`
 3. Merge: combine the `allow` arrays from **all** partials with the base (union of sets, no duplicates)
 4. Merge: combine the `deny` arrays the same way
 5. Write to `.claude/settings.json`
@@ -91,17 +91,17 @@ If validation fails, show the exact error and DO NOT write the file. Fix the JSO
 
 ## Step 5: Copy hooks
 
-1. Copy `$CLAUDE_KIT_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/` (ALL profiles)
-2. If profile is `standard` or `full`: copy `$CLAUDE_KIT_DIR/template/hooks/lint-on-save.sh`
-3. If profile is `standard` or `full`: copy `$CLAUDE_KIT_DIR/template/hooks/session-report.sh`
-4. If profile is `standard` or `full`: copy `$CLAUDE_KIT_DIR/template/hooks/detect-stack-drift.sh`
-5. If profile is `full`: copy `$CLAUDE_KIT_DIR/template/hooks/warn-missing-test.sh`
+1. Copy `$DOTFORGE_DIR/template/hooks/block-destructive.sh` → `.claude/hooks/` (ALL profiles)
+2. If profile is `standard` or `full`: copy `$DOTFORGE_DIR/template/hooks/lint-on-save.sh`
+3. If profile is `standard` or `full`: copy `$DOTFORGE_DIR/template/hooks/session-report.sh`
+4. If profile is `standard` or `full`: copy `$DOTFORGE_DIR/template/hooks/detect-stack-drift.sh`
+5. If profile is `full`: copy `$DOTFORGE_DIR/template/hooks/warn-missing-test.sh`
 5. `chmod +x` all copied hooks
 
 ## Step 6: Copy rules
 
-1. Copy `$CLAUDE_KIT_DIR/template/rules/_common.md` → `.claude/rules/`
-2. For each detected stack, copy rules from `$CLAUDE_KIT_DIR/stacks/{stack}/rules/` → `.claude/rules/`
+1. Copy `$DOTFORGE_DIR/template/rules/_common.md` → `.claude/rules/`
+2. For each detected stack, copy rules from `$DOTFORGE_DIR/stacks/{stack}/rules/` → `.claude/rules/`
 
 ## Step 6b: Domain knowledge scaffolding
 
@@ -128,14 +128,14 @@ If neither condition is met, skip this step entirely — no noise for projects w
 
 **Skip if profile is `minimal`.**
 
-Copy `$CLAUDE_KIT_DIR/template/commands/` → `.claude/commands/`
+Copy `$DOTFORGE_DIR/template/commands/` → `.claude/commands/`
 
 ## Step 8: Copy agents and orchestration rule
 
 **Skip if profile is `minimal`.**
 
-1. Copy `$CLAUDE_KIT_DIR/agents/*.md` → `.claude/agents/`
-2. Copy `$CLAUDE_KIT_DIR/template/rules/agents.md` → `.claude/rules/agents.md`
+1. Copy `$DOTFORGE_DIR/agents/*.md` → `.claude/agents/`
+2. Copy `$DOTFORGE_DIR/template/rules/agents.md` → `.claude/rules/agents.md`
 
 This gives the project access to the 6 specialized subagents (researcher, architect, implementer, code-reviewer, security-auditor, test-runner) and the orchestration rule that defines when to delegate.
 
@@ -201,7 +201,7 @@ shasum -a 256 <file> | cut -d' ' -f1
 Format:
 ```json
 {
-  "claude_kit_version": "<version from $CLAUDE_KIT_DIR/VERSION>",
+  "dotforge_version": "<version from $DOTFORGE_DIR/VERSION>",
   "synced_at": "<current date YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},

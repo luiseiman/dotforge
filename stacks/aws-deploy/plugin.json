@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-aws-deploy",
+  "name": "dotforge-stack-aws-deploy",
   "version": "1.4.0",
   "description": "AWS CDK/SAM/CloudFormation infrastructure-as-code rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/aws.md"],
     "settings": "settings.json.partial"

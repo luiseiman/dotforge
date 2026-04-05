@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/slack",
+  "_template": "dotforge/mcp/slack",
   "_comment": "Read operations auto-allowed. Sending, editing, and reacting to messages requires user prompt — actions are visible to other users. Destructive and administrative operations always denied.",
   "allow": [
     "mcp__slack__list_channels",

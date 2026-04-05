@@ -374,7 +374,7 @@ replaced_by: null
 .claude/shell-snapshots/snapshot-zsh-1774302639330-q0453t.sh
 
 ## Evaluation needed
-Review if these changes contain patterns, rules, or configurations that should be generalized to claude-kit.
+Review if these changes contain patterns, rules, or configurations that should be generalized to dotforge.
 
 ## Decision
 Pending — evaluate in next /forge update

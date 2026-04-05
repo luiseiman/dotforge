@@ -1,11 +1,11 @@
 ---
 name: mcp-add
-description: Install an MCP server template from claude-kit into a project or global Claude Code config with a single command.
+description: Install an MCP server template from dotforge into a project or global Claude Code config with a single command.
 ---
 
 # MCP Add
 
-Install a claude-kit MCP server template into the current project's or global Claude Code configuration.
+Install a dotforge MCP server template into the current project's or global Claude Code configuration.
 
 ## Input parsing
 
@@ -15,7 +15,7 @@ From `$ARGUMENTS` (format: `mcp add <server> [--global]`):
 
 ## Step 0: Validate
 
-1. Verify the server template exists: `$CLAUDE_KIT_DIR/mcp/<server>/`
+1. Verify the server template exists: `$DOTFORGE_DIR/mcp/<server>/`
    - If directory not found:
      ```
      ✗ Unknown server '{{server}}'.
@@ -33,9 +33,9 @@ From `$ARGUMENTS` (format: `mcp add <server> [--global]`):
 ## Step 1: Load template files
 
 Read all three template files:
-- `$CLAUDE_KIT_DIR/mcp/<server>/config.json`
-- `$CLAUDE_KIT_DIR/mcp/<server>/permissions.json`
-- `$CLAUDE_KIT_DIR/mcp/<server>/rules.md`
+- `$DOTFORGE_DIR/mcp/<server>/config.json`
+- `$DOTFORGE_DIR/mcp/<server>/permissions.json`
+- `$DOTFORGE_DIR/mcp/<server>/rules.md`
 
 From `config.json`:
 - **Server key**: the non-metadata top-level key (e.g., `"github"`, `"postgres"`)
@@ -86,7 +86,7 @@ New permissions:
   (Existing permissions are not modified)
 
 Rules:
-  $CLAUDE_KIT_DIR/mcp/{{server}}/rules.md
+  $DOTFORGE_DIR/mcp/{{server}}/rules.md
   → {{rules destination}}
 
 Required environment variables:
@@ -131,7 +131,7 @@ Determine rules destination:
 - Project mode: `.claude/rules/mcp-{{server}}.md`
 - Global mode: `~/.claude/rules/mcp-{{server}}.md`
 
-Copy `$CLAUDE_KIT_DIR/mcp/{{server}}/rules.md` to the destination.
+Copy `$DOTFORGE_DIR/mcp/{{server}}/rules.md` to the destination.
 If the file already exists: overwrite — it's a managed template file. Any project-specific
 customizations should live in a separate rule file, not in `mcp-{{server}}.md`.
 

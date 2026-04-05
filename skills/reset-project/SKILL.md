@@ -1,11 +1,11 @@
 ---
 name: reset-project
-description: Restore a project's .claude/ directory to the claude-kit template from scratch, with backup and rollback option.
+description: Restore a project's .claude/ directory to the dotforge template from scratch, with backup and rollback option.
 ---
 
 # Reset Project
 
-Restore the current project's `.claude/` directory completely to the claude-kit template, from scratch.
+Restore the current project's `.claude/` directory completely to the dotforge template, from scratch.
 
 ## Step 1: Confirm with the user (MANDATORY)
 
@@ -36,7 +36,7 @@ If the user says "no", cancel immediately. DO NOT proceed without explicit confi
 
 ## Step 2: Detect stacks
 
-Use detection rules from `$CLAUDE_KIT_DIR/stacks/detect.md`.
+Use detection rules from `$DOTFORGE_DIR/stacks/detect.md`.
 Confirm detected stacks with the user.
 
 ## Step 3: Create backup
@@ -96,5 +96,5 @@ If the user does not decide, leave the backup (it can be cleaned up manually lat
 
 This skill is installed automatically if the symlink from `skills/` already exists in `~/.claude/skills/`. If not, create the symlink:
 ```bash
-ln -sf $CLAUDE_KIT_DIR/skills ~/.claude/skills
+ln -sf $DOTFORGE_DIR/skills ~/.claude/skills
 ```

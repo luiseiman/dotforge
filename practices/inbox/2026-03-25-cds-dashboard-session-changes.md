@@ -19,7 +19,7 @@ replaced_by: null
 .claude/agent-memory/implementer/project_stack.md
 
 ## Evaluation needed
-Review if these changes contain patterns, rules, or configurations that should be generalized to claude-kit.
+Review if these changes contain patterns, rules, or configurations that should be generalized to dotforge.
 
 ## Decision
 Pending — evaluate in next /forge update

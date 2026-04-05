@@ -6,7 +6,7 @@ source_type: research
 discovered: 2026-03-30
 status: active
 tags: [hooks, postcompact, context-continuity, verified]
-tested_in: [claude-kit]
+tested_in: [dotforge]
 incorporated_in: [.claude/rules/domain/hook-architecture.md]
 replaced_by: null
 effectiveness: not-applicable
@@ -18,7 +18,7 @@ verification_result: "compact_summary AND trigger ARE present in PostCompact pay
 ## Description
 
 Official docs say PostCompact receives "Common fields only" (session_id, transcript_path, cwd, etc.).
-claude-kit's `post-compact.sh` reads `compact_summary` and `trigger` — both undocumented.
+dotforge's `post-compact.sh` reads `compact_summary` and `trigger` — both undocumented.
 
 ## Verification
 

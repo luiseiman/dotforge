@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-hookify",
+  "name": "dotforge-stack-hookify",
   "version": "2.0.0",
   "description": "Dynamic hook rules from natural language. Create .claude/hookify.*.local.md files that act as warn/block rules without editing hooks.json.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/hookify.md"],
     "settings": "settings.json.partial",

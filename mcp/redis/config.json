@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/redis",
+  "_template": "dotforge/mcp/redis",
   "_verified_with": "@modelcontextprotocol/server-redis@2025.4.25",
   "_install": "Merge the 'redis' key into mcpServers in ~/.claude/settings.json. Set REDIS_URL env var (format: redis://[:password@]host:6379[/db]).",
   "redis": {

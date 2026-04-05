@@ -5,7 +5,7 @@ source: "post-session hook — InviSight-iOS"
 source_type: experience
 discovered: 2026-03-23
 status: deprecated
-deprecated_reason: "only agent-memory modified — not generalizable to claude-kit template or stacks"
+deprecated_reason: "only agent-memory modified — not generalizable to dotforge template or stacks"
 deprecated_date: 2026-03-24
 tags: [auto-detected, InviSight-iOS]
 tested_in: InviSight-iOS
@@ -20,4 +20,4 @@ replaced_by: null
 .claude/agent-memory/implementer/implementer.md
 
 ## Decision
-Deprecated 2026-03-24 — only agent-memory modified. Not generalizable to claude-kit template or stacks.
+Deprecated 2026-03-24 — only agent-memory modified. Not generalizable to dotforge template or stacks.

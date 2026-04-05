@@ -2,7 +2,7 @@
 
 # Best Practices — Claude Code (March 2026)
 
-Source of truth for claude-kit. Compiled from official documentation, community, and hands-on experience.
+Source of truth for dotforge. Compiled from official documentation, community, and hands-on experience.
 
 ---
 
@@ -146,7 +146,7 @@ Auto-discovery: loaded automatically without restart.
 | Implementer | Write, Edit, Bash | Code + tests |
 | Auditor | Read, Grep, Glob | Read-only |
 
-### Available agents (claude-kit)
+### Available agents (dotforge)
 
 | Agent | Role | Permissions | Color |
 |-------|------|-------------|-------|
@@ -279,7 +279,7 @@ When users activate auto/YOLO mode, these allow patterns are **silently removed*
 
 # Mejores Prácticas — Claude Code (Marzo 2026)
 
-Fuente de verdad para claude-kit. Compilado de documentación oficial, comunidad, y experiencia propia.
+Fuente de verdad para dotforge. Compilado de documentación oficial, comunidad, y experiencia propia.
 
 ---
 
@@ -423,7 +423,7 @@ Auto-discovery: se cargan automáticamente sin restart.
 | Implementer | Write, Edit, Bash | Código + tests |
 | Auditor | Read, Grep, Glob | Solo lectura |
 
-### Agentes disponibles (claude-kit)
+### Agentes disponibles (dotforge)
 
 | Agente | Rol | Permisos | Color |
 |--------|-----|----------|-------|

@@ -53,7 +53,7 @@ What the practice states.
 ## Evidence
 Why it works / source.
 
-## Impact on claude-kit
+## Impact on dotforge
 Which files would need to be modified.
 
 ## Decision
@@ -115,7 +115,7 @@ Qué dice la práctica.
 ## Evidencia
 Por qué funciona / fuente.
 
-## Impacto en claude-kit
+## Impacto en dotforge
 Qué archivos habría que modificar.
 
 ## Decisión

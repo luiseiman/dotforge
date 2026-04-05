@@ -1,4 +1,4 @@
-# Changelog — claude-kit
+# Changelog — dotforge
 
 > Version history. Entries use mixed Spanish/English as the project evolved. Technical terms are universal.
 >
@@ -158,7 +158,7 @@ Deep reverse engineering of Claude Code internals from 5 repositories, verified 
 ### Init, Unregister, Auto-update, Privacy
 - Nuevo: `/forge init` — setup rápido con detección de stack + 3 preguntas (qué hace/no hace, con qué, cómo trabajo). Detecta idioma del usuario. Genera CLAUDE.md personalizado
 - Nuevo: `/forge unregister <project>` — elimina proyecto del registry sin borrar config
-- Cambio: `/forge global sync` ahora hace `git pull --ff-only` automático de claude-kit antes de sincronizar
+- Cambio: `/forge global sync` ahora hace `git pull --ff-only` automático de dotforge antes de sincronizar
 - Fix: registry ships vacío (`projects: []`). Datos locales en `projects.local.yml` (gitignored). No más paths privados en el repo público
 - Fix: limpieza de datos personales en practices y evaluating
 - Nuevo: `demo/README.md` con instrucciones para grabar demo GIF manualmente (vhs no funciona con CLIs interactivos)
@@ -306,14 +306,14 @@ Deep reverse engineering of Claude Code internals from 5 repositories, verified 
 - Nuevo: `practices/sources.yml` — repos curados para scout
 - Nuevo: agent memory operativo — 4 agentes (implementer, architect, code-reviewer, security-auditor) leen/escriben `.claude/agent-memory/`
 - Nuevo: score trending — audit appends `history` entries al registry (nunca sobreescribe)
-- Fix: `{{CLAUDE_KIT_PATH}}` placeholder resuelto en instrucciones de global sync
+- Fix: `{{DOTFORGE_PATH}}` placeholder resuelto en instrucciones de global sync
 
 ---
 
 ## v1.2.0 (2026-03-19)
 
 ### Tooling defensivo
-- Nuevo: `/forge diff` — muestra qué cambió en claude-kit desde el último sync del proyecto
+- Nuevo: `/forge diff` — muestra qué cambió en dotforge desde el último sync del proyecto
 - Nuevo: `/forge reset` — restaura `.claude/` a la plantilla con backup y rollback
 - Nuevo: Validación JSON obligatoria en bootstrap y sync antes de escribir settings.json
 - Nuevo: Hook testing framework (`tests/test-hooks.sh`) — 10 tests para block-destructive y lint-on-save
@@ -392,7 +392,7 @@ Deep reverse engineering of Claude Code internals from 5 repositories, verified 
 - Sync reescrito con merge inteligente: unión de sets para allow/deny, preserva hooks y permisos custom
 - Dry-run obligatorio antes de aplicar (muestra diff exacto)
 - Nunca toca settings.local.json ni secciones `<!-- forge:custom -->`
-- Actualiza registry con last_sync y claude_kit_version post-sync
+- Actualiza registry con last_sync y dotforge_version post-sync
 - Score antes/después para verificar mejora
 - Template CLAUDE.md.tmpl: nuevo marker `<!-- forge:custom -->` para secciones protegidas
 
@@ -414,8 +414,8 @@ Deep reverse engineering of Claude Code internals from 5 repositories, verified 
 - Checklist: CLAUDE.md ahora verifica secciones clave (stack, build, arquitectura), no solo líneas
 - Checklist: hooks verifican chmod +x y wiring en settings.json
 - Scoring: cap de 6.0 si falta settings.json o block-destructive (seguridad crítica)
-- Skill audit-project: verifica ejecutabilidad de hooks, reporta claude_kit_version
-- Registry: nuevos campos `claude_kit_version` y `last_sync` por proyecto
+- Skill audit-project: verifica ejecutabilidad de hooks, reporta dotforge_version
+- Registry: nuevos campos `dotforge_version` y `last_sync` por proyecto
 - Detección de stacks nuevos: gcp-cloud-run y redis
 
 ---

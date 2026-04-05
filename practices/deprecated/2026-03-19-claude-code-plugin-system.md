@@ -3,7 +3,7 @@ title: "Claude Code tiene sistema formal de plugins"
 date: 2026-03-19
 source_type: upstream
 status: deprecated
-reason: "Not applicable — claude-kit is single-user. Revisit if distributing to teams."
+reason: "Not applicable — dotforge is single-user. Revisit if distributing to teams."
 effectiveness: not-applicable
 error_type: null
 tags: [plugins, architecture, distribution]
@@ -23,17 +23,17 @@ plugin-name/
 └── .mcp.json
 ```
 
-## Relevancia para claude-kit
+## Relevancia para dotforge
 
-claude-kit hace manualmente (bootstrap, sync, symlinks) lo que los plugins formalizan
-en un paquete instalable vía `/plugin`. Si se quisiera distribuir claude-kit a un equipo,
+dotforge hace manualmente (bootstrap, sync, symlinks) lo que los plugins formalizan
+en un paquete instalable vía `/plugin`. Si se quisiera distribuir dotforge a un equipo,
 el formato plugin sería el camino.
 
 ## Decisión
 
-**No migrar ahora.** claude-kit es para un solo usuario. Los plugins resuelven
+**No migrar ahora.** dotforge es para un solo usuario. Los plugins resuelven
 distribución a equipos, que no es el caso actual. Migrar cuando:
-- Se comparta claude-kit con otros devs
+- Se comparta dotforge con otros devs
 - El plugin system madure (aún en evolución)
 - Se necesite instalación vía marketplace
 

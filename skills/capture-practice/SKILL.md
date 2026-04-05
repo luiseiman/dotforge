@@ -1,11 +1,11 @@
 ---
 name: capture-practice
-description: Captures an insight or practice discovered during work and registers it in the claude-kit practices/inbox.
+description: Captures an insight or practice discovered during work and registers it in the dotforge practices/inbox.
 ---
 
 # Capture Practice
 
-Register an insight, pattern, or lesson learned in the claude-kit inbox.
+Register an insight, pattern, or lesson learned in the dotforge inbox.
 
 ## Input routing
 
@@ -63,19 +63,19 @@ Save this? [Y/n/edit]
 From $ARGUMENTS (provided or confirmed from Step 0), extract:
 - **What**: the practice or pattern
 - **Why**: evidence or context (current project, error that motivated it)
-- **Impact**: which claude-kit files could change
+- **Impact**: which dotforge files could change
 - **Tags**: categorization (hooks, rules, prompting, security, stack-specific, etc.)
 
 ## Step 2: Validate duplicates
 
 Before creating, check for existing similar practices:
-1. Search `$CLAUDE_KIT_DIR/practices/active/` by title or similar tags
-2. Search `$CLAUDE_KIT_DIR/practices/inbox/` by similar title
+1. Search `$DOTFORGE_DIR/practices/active/` by title or similar tags
+2. Search `$DOTFORGE_DIR/practices/inbox/` by similar title
 3. If duplicate found → inform the user and ask: update existing or create new?
 
 ## Step 3: Generate file
 
-Create file in `$CLAUDE_KIT_DIR/practices/inbox/` with format:
+Create file in `$DOTFORGE_DIR/practices/inbox/` with format:
 
 ```yaml
 ---
@@ -97,7 +97,7 @@ replaced_by: null
 ## Evidence
 {{why it works, discovery context}}
 
-## Impact on claude-kit
+## Impact on dotforge
 {{which files would need to change}}
 
 ## Decision

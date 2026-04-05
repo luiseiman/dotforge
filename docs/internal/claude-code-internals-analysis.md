@@ -8,7 +8,7 @@
 - 1rgs/nanocode (Minimal Python reimplementation, ~250 lines, 2.2K stars)
 - SafeRL-Lab/nano-claude-code (Full Python reimplementation, ~6,200 lines, multi-model)
 
-**Purpose**: Extract verified internals to improve claude-kit's configuration effectiveness.
+**Purpose**: Extract verified internals to improve dotforge's configuration effectiveness.
 
 ---
 
@@ -32,7 +32,7 @@ The system prompt is NOT a single static block. It is assembled dynamically:
 - "Use TodoWrite/TodoRead VERY frequently"
 - File security warning injected after EVERY Read tool call (costs tokens)
 
-**Implication for claude-kit**: Rules that want verbose output or code comments must use strong override language ("ALWAYS provide detailed explanations", "ALWAYS add docstrings") to counteract hardcoded defaults.
+**Implication for dotforge**: Rules that want verbose output or code comments must use strong override language ("ALWAYS provide detailed explanations", "ALWAYS add docstrings") to counteract hardcoded defaults.
 
 ### CLAUDE.md Discovery Order
 Later-loaded = higher model attention priority:
@@ -191,7 +191,7 @@ MCP tools default to `passthrough` behavior (always ask) — a distinct fourth p
 
 ### Full Event List (Source-Verified)
 
-**Currently documented in claude-kit (13)**:
+**Currently documented in dotforge (13)**:
 SessionStart, PreToolUse, PostToolUse, UserPromptSubmit, Stop, SubagentStop, PreCompact, PostCompact, PermissionRequest, SubagentStart, CwdChanged, StopFailure, SessionEnd
 
 **Newly discovered (12)**:
@@ -247,7 +247,7 @@ Hooks can declare `async: true` or `asyncRewake` in config, or stream `{"async":
 ### Slash Command Priority
 `bundledSkills > builtinPluginSkills > skillDirCommands > workflowCommands > pluginCommands > pluginSkills > COMMANDS()`
 
-Skills installed via claude-kit can shadow built-in commands if names collide — be intentional about naming.
+Skills installed via dotforge can shadow built-in commands if names collide — be intentional about naming.
 
 ---
 
@@ -311,7 +311,7 @@ Beyond `globs:` and `paths:`, rules support:
 
 ---
 
-## 11. Actionable Improvements for claude-kit
+## 11. Actionable Improvements for dotforge
 
 ### High Priority
 
@@ -352,7 +352,7 @@ Proves the minimal viable agentic architecture: **a while loop feeding tool resu
 - **Minimal system prompt works**: `"Concise coding assistant. cwd: {cwd}"` (7 words) produces productive coding behavior. Claude's coding ability is intrinsic — our CLAUDE.md rules must focus on behavior modification, not teaching
 - **Tool descriptions ARE the instructions**: well-named tools with good descriptions are self-documenting. No system prompt guidance needed for basic tool use
 - **Zero-dependency API**: raw `urllib.request` with JSON is sufficient — the Anthropic tool-use API is clean enough to use directly
-- **Total absence of safety**: `rm -rf /` executes, credentials readable, no deny lists. Validates claude-kit's audit score cap at 6.0 for missing safety config
+- **Total absence of safety**: `rm -rf /` executes, credentials readable, no deny lists. Validates dotforge's audit score cap at 6.0 for missing safety config
 
 ### 12.2 nano-claude-code (SafeRL-Lab) — 6,200 lines, multi-model
 
@@ -379,9 +379,9 @@ Most complete Python reimplementation. Correctly replicates core patterns AND ad
 **Dangerous patterns to avoid**:
 - Safe-prefix list includes `python`, `node`, `ruby` — real Claude Code explicitly strips these in auto-mode because `python -c "import os; os.system('rm -rf /')"` bypasses the prefix check. Validates our `permission-model.md` warning
 
-### 12.3 Combined Insights for claude-kit
+### 12.3 Combined Insights for dotforge
 
-| Finding | Source | Impact on claude-kit |
+| Finding | Source | Impact on dotforge |
 |---------|--------|---------------------|
 | Agentic loop is just a while loop + tool results | nanocode | Confirms our value-add is configuration, not architecture |
 | Tool descriptions are self-documenting | nanocode | Hook descriptions in settings.json should be clear standalone |
@@ -389,8 +389,8 @@ Most complete Python reimplementation. Correctly replicates core patterns AND ad
 | `read_only`/`concurrent_safe` tool annotations | nano-claude | Add to permission model for granular auto-permission |
 | 70% compaction threshold for smaller models | nano-claude | Relevant for users on non-Anthropic providers |
 | Interpreter prefix bypass vulnerability | nano-claude | Validates our auto-mode stripping documentation |
-| Neutral message format enables multi-provider | nano-claude | Relevant if claude-kit ever supports non-Anthropic |
-| Skill `context: fork` for heavy skills | nano-claude | Add frontmatter option to claude-kit skills |
+| Neutral message format enables multi-provider | nano-claude | Relevant if dotforge ever supports non-Anthropic |
+| Skill `context: fork` for heavy skills | nano-claude | Add frontmatter option to dotforge skills |
 
 ## Hardcoded System Prompt Rules (Reference Only)
 

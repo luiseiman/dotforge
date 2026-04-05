@@ -1,14 +1,14 @@
-# Plan de Mejoras claude-kit — Refinado Post-Audit
+# Plan de Mejoras dotforge — Refinado Post-Audit
 
 **Fecha**: 2026-04-02
-**Base**: Análisis cruzado de 3 repos de reverse engineering + audit profundo de claude-kit
+**Base**: Análisis cruzado de 3 repos de reverse engineering + audit profundo de dotforge
 **Versión actual**: v2.7.1
 
 ---
 
 ## Principio rector
 
-Cada mejora explota conocimiento verificado del código fuente de Claude Code para que claude-kit produzca configuraciones que trabajen **con** los mecanismos internos en vez de contra ellos. Priorización por: bugs confirmados > gaps de seguridad > eficiencia de tokens > features nuevos.
+Cada mejora explota conocimiento verificado del código fuente de Claude Code para que dotforge produzca configuraciones que trabajen **con** los mecanismos internos en vez de contra ellos. Priorización por: bugs confirmados > gaps de seguridad > eficiencia de tokens > features nuevos.
 
 ---
 
@@ -417,7 +417,7 @@ Agregar sección `## Compact Instructions` en CLAUDE.md template que le diga al 
 
 **Descubrimiento**: Skills pueden ejecutarse `inline` (misma conversación) o `fork` (sub-agente aislado con estado independiente). Fork previene que skills pesados contaminen el context window principal.
 
-**Acción**: Agregar `context: fork` como opción de frontmatter en skills de claude-kit. Skills candidates para fork: `watch-upstream`, `scout-repos`, `session-insights`, `benchmark`.
+**Acción**: Agregar `context: fork` como opción de frontmatter en skills de dotforge. Skills candidates para fork: `watch-upstream`, `scout-repos`, `session-insights`, `benchmark`.
 
 **Archivos**: Skills con `model:` + `context: fork` en frontmatter
 

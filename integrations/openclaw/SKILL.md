@@ -1,22 +1,22 @@
 ---
 name: forge
-description: "claude-kit configuration factory — audit, sync, status, insights across projects from any channel"
+description: "dotforge configuration factory — audit, sync, status, insights across projects from any channel"
 user-invocable: true
-metadata: {"openclaw":{"requires":{"bins":["claude"],"env":["CLAUDE_KIT_DIR"]}}}
+metadata: {"openclaw":{"requires":{"bins":["claude"],"env":["DOTFORGE_DIR"]}}}
 ---
 
-# /forge — claude-kit bridge for OpenClaw
+# /forge — dotforge bridge for OpenClaw
 
-Execute claude-kit configuration management commands from any OpenClaw channel (WhatsApp, Telegram, Slack, etc.).
+Execute dotforge configuration management commands from any OpenClaw channel (WhatsApp, Telegram, Slack, etc.).
 
 ## How it works
 
-This skill bridges OpenClaw to claude-kit by running `claude` CLI in the target project directory. All `/forge` subcommands are available.
+This skill bridges OpenClaw to dotforge by running `claude` CLI in the target project directory. All `/forge` subcommands are available.
 
 ## Environment
 
-- `CLAUDE_KIT_DIR` — path to claude-kit repo (required)
-- Default project: uses `CLAUDE_KIT_DIR` itself if no project specified
+- `DOTFORGE_DIR` — path to dotforge repo (required)
+- Default project: uses `DOTFORGE_DIR` itself if no project specified
 
 ## Command format
 
@@ -24,7 +24,7 @@ This skill bridges OpenClaw to claude-kit by running `claude` CLI in the target 
 /forge <command> [project:<name>]
 ```
 
-If `project:<name>` is provided, look up the project path from `$CLAUDE_KIT_DIR/registry/projects.yml` and execute in that directory.
+If `project:<name>` is provided, look up the project path from `$DOTFORGE_DIR/registry/projects.yml` and execute in that directory.
 If no project specified, use current context or ask the user.
 
 ## Available commands
@@ -34,7 +34,7 @@ If no project specified, use current context or ask the user.
 | Command | What it does |
 |---------|-------------|
 | `status` | Multi-project dashboard with scores and trends |
-| `version` | Show claude-kit version |
+| `version` | Show dotforge version |
 | `pipeline` | Practices lifecycle status |
 | `inbox` | List pending practices |
 
@@ -77,7 +77,7 @@ If a project name is provided:
 # Look up path from registry
 python3 -c "
 import yaml
-reg = yaml.safe_load(open('$CLAUDE_KIT_DIR/registry/projects.yml'))
+reg = yaml.safe_load(open('$DOTFORGE_DIR/registry/projects.yml'))
 for p in reg['projects']:
     if p['name'].lower() == '<project_name>'.lower():
         print(p['path'])
@@ -109,7 +109,7 @@ Keep responses concise for mobile channels:
 ## Examples
 
 User: `/forge status`
-→ Execute `claude --print "/forge status"` in CLAUDE_KIT_DIR
+→ Execute `claude --print "/forge status"` in DOTFORGE_DIR
 → Return the multi-project dashboard
 
 User: `/forge audit project:SOMA`
@@ -118,7 +118,7 @@ User: `/forge audit project:SOMA`
 → Return score + gaps
 
 User: `/forge capture "hooks should validate JSON before writing settings.json"`
-→ Execute `claude --print '/forge capture "hooks should validate JSON before writing settings.json"'` in CLAUDE_KIT_DIR
+→ Execute `claude --print '/forge capture "hooks should validate JSON before writing settings.json"'` in DOTFORGE_DIR
 → Confirm: "Practice captured in inbox"
 
 ## Constraints
@@ -126,5 +126,5 @@ User: `/forge capture "hooks should validate JSON before writing settings.json"`
 - NEVER run `sync`, `reset`, or `bootstrap` without explicit user confirmation
 - NEVER expose file paths or system details in channel responses (security)
 - If `claude` CLI is not available, respond: "Claude Code CLI not found. Install from https://docs.anthropic.com/en/docs/claude-code"
-- If `CLAUDE_KIT_DIR` is not set, respond: "Set CLAUDE_KIT_DIR to your claude-kit directory"
+- If `DOTFORGE_DIR` is not set, respond: "Set DOTFORGE_DIR to your dotforge directory"
 - Timeout: 60 seconds per command. If exceeded, report partial output.

@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-devcontainer",
+  "name": "dotforge-stack-devcontainer",
   "version": "1.4.0",
   "description": "Dev Container configuration, image pinning, and features rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/devcontainer.md"],
     "settings": "settings.json.partial"

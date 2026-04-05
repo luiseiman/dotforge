@@ -1,25 +1,25 @@
-> **[English](#claude-kit)** | **[Español](#claude-kit-español)**
+> **[English](#dotforge)** | **[Español](#dotforge-español)**
 
-# claude-kit
+# dotforge
 
-[![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
-[![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
+[![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.8.1-blue)](VERSION)
-[![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
+[![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
 
-Bootstrap any project with a complete `.claude/` setup in seconds. Audit it. Keep it in sync as claude-kit evolves.
+Bootstrap any project with a complete `.claude/` setup in seconds. Audit it. Keep it in sync as dotforge evolves.
 
 ## Quick Start
 
 ```bash
 # 1. Clone
-git clone https://github.com/luiseiman/claude-kit.git
-cd claude-kit
+git clone https://github.com/luiseiman/dotforge.git
+cd dotforge
 
 # 2. Install globally (symlinks skills, agents, commands into ~/.claude/)
-export CLAUDE_KIT_DIR="$(pwd)"
+export DOTFORGE_DIR="$(pwd)"
 ./global/sync.sh
 
 # 3. In any project directory:
@@ -48,9 +48,9 @@ export CLAUDE_KIT_DIR="$(pwd)"
 
 ![forge status demo](docs/assets/forge-status-demo.gif)
 
-## Why claude-kit
+## Why dotforge
 
-There are many Claude Code starter kits, skills collections, and CLAUDE.md generators. claude-kit is different because it's the only **end-to-end configuration management system** — not a one-shot bootstrap or a static collection.
+There are many Claude Code starter kits, skills collections, and CLAUDE.md generators. dotforge is different because it's the only **end-to-end configuration management system** — not a one-shot bootstrap or a static collection.
 
 ### What makes it unique
 
@@ -66,10 +66,10 @@ There are many Claude Code starter kits, skills collections, and CLAUDE.md gener
 
 ### How it compares
 
-- **Skills collections** (superpowers, claude-skills) give you components — claude-kit gives you the system that manages them
-- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrap once — claude-kit bootstraps, syncs, audits, and evolves
-- **CLAUDE.md generators** generate one file — claude-kit generates and maintains the entire `.claude/` directory
-- **Audit tools** (claude-health) check once — claude-kit checks, scores, tracks over time, and feeds gaps back into the practices pipeline
+- **Skills collections** (superpowers, claude-skills) give you components — dotforge gives you the system that manages them
+- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrap once — dotforge bootstraps, syncs, audits, and evolves
+- **CLAUDE.md generators** generate one file — dotforge generates and maintains the entire `.claude/` directory
+- **Audit tools** (claude-health) check once — dotforge checks, scores, tracks over time, and feeds gaps back into the practices pipeline
 
 ## What it does
 
@@ -88,7 +88,7 @@ Multi-stack projects get all matching stack configs merged automatically.
 ## Architecture
 
 ```
-claude-kit/
+dotforge/
 ├── template/       # Base scaffold (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Technology modules (15 stacks, additive)
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
@@ -140,7 +140,7 @@ All skills are invoked through the `/forge` command:
 | `/forge bootstrap` | Full interactive bootstrap with preview and confirmation |
 | `/forge sync` | Update config against current template (merge, not overwrite) |
 | `/forge audit` | Audit configuration + calculate score (0-10) |
-| `/forge diff` | Show what changed in claude-kit since last sync |
+| `/forge diff` | Show what changed in dotforge since last sync |
 | `/forge reset` | Restore `.claude/` from template with backup |
 | `/forge capture` | Register a practice in `practices/inbox/` (with args) or auto-detect from session context (no args) |
 | `/cap` | Shorthand alias for `/forge capture` — same behavior, 4 chars |
@@ -153,7 +153,7 @@ All skills are invoked through the `/forge` command:
 | `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
 | `/forge plugin` | Generate Claude Code plugin package for marketplace submission |
 | `/forge unregister` | Remove a project from the registry |
-| `/forge global sync` | Auto-update claude-kit + sync global `~/.claude/` config |
+| `/forge global sync` | Auto-update dotforge + sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
 
 ## Agents
@@ -218,10 +218,10 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 
 ## Configuration
 
-claude-kit uses a single environment variable:
+dotforge uses a single environment variable:
 
 ```bash
-export CLAUDE_KIT_DIR="/path/to/claude-kit"
+export DOTFORGE_DIR="/path/to/dotforge"
 ```
 
 This is set automatically by `global/sync.sh`. All skills and hooks resolve paths through this variable.
@@ -236,21 +236,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-# claude-kit (Español)
+# dotforge (Español)
 
 Fábrica de configuración para [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Plantillas, stacks, skills, agentes, sistema de auditoría y un pipeline de prácticas — todo en markdown + shell scripts.
 
-Inicializá cualquier proyecto con una configuración `.claude/` completa en segundos. Auditalo. Mantenelo sincronizado a medida que claude-kit evoluciona.
+Inicializá cualquier proyecto con una configuración `.claude/` completa en segundos. Auditalo. Mantenelo sincronizado a medida que dotforge evoluciona.
 
 ## Inicio Rápido
 
 ```bash
 # 1. Clonar
-git clone https://github.com/luiseiman/claude-kit.git
-cd claude-kit
+git clone https://github.com/luiseiman/dotforge.git
+cd dotforge
 
 # 2. Instalar globalmente (crea symlinks de skills, agentes y comandos en ~/.claude/)
-export CLAUDE_KIT_DIR="$(pwd)"
+export DOTFORGE_DIR="$(pwd)"
 ./global/sync.sh
 
 # 3. En cualquier directorio de proyecto:
@@ -279,9 +279,9 @@ export CLAUDE_KIT_DIR="$(pwd)"
 
 ![forge status demo](docs/assets/forge-status-demo.gif)
 
-## Por qué claude-kit
+## Por qué dotforge
 
-Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para Claude Code. claude-kit es diferente porque es el único **sistema de gestión de configuración end-to-end** — no un bootstrap one-shot ni una colección estática.
+Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para Claude Code. dotforge es diferente porque es el único **sistema de gestión de configuración end-to-end** — no un bootstrap one-shot ni una colección estática.
 
 ### Qué lo hace único
 
@@ -297,10 +297,10 @@ Hay muchos starter kits, colecciones de skills y generadores de CLAUDE.md para C
 
 ### Cómo se compara
 
-- **Colecciones de skills** (superpowers, claude-skills) te dan componentes — claude-kit te da el sistema que los gestiona
-- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrapean una vez — claude-kit bootstrapea, sincroniza, audita y evoluciona
-- **Generadores de CLAUDE.md** generan un archivo — claude-kit genera y mantiene todo el directorio `.claude/`
-- **Herramientas de auditoría** (claude-health) revisan una vez — claude-kit revisa, puntúa, trackea en el tiempo y alimenta los gaps al pipeline de prácticas
+- **Colecciones de skills** (superpowers, claude-skills) te dan componentes — dotforge te da el sistema que los gestiona
+- **Starter kits** (claude-bootstrap, claude-starter-kit) bootstrapean una vez — dotforge bootstrapea, sincroniza, audita y evoluciona
+- **Generadores de CLAUDE.md** generan un archivo — dotforge genera y mantiene todo el directorio `.claude/`
+- **Herramientas de auditoría** (claude-health) revisan una vez — dotforge revisa, puntúa, trackea en el tiempo y alimenta los gaps al pipeline de prácticas
 
 ## Qué hace
 
@@ -319,7 +319,7 @@ Los proyectos multi-stack reciben todas las configuraciones de stacks coincident
 ## Arquitectura
 
 ```
-claude-kit/
+dotforge/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
 ├── stacks/         # Módulos tecnológicos (15 stacks, aditivos)
 ├── agents/         # 7 subagentes (researcher, architect, implementer, ...)
@@ -371,7 +371,7 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge bootstrap` | Bootstrap completo con preview y confirmación |
 | `/forge sync` | Actualizar configuración contra la plantilla actual (merge, no sobreescritura) |
 | `/forge audit` | Auditar configuración + calcular puntaje (0-10) |
-| `/forge diff` | Mostrar qué cambió en claude-kit desde la última sincronización |
+| `/forge diff` | Mostrar qué cambió en dotforge desde la última sincronización |
 | `/forge reset` | Restaurar `.claude/` desde la plantilla con backup |
 | `/forge capture` | Registrar una práctica (con args) o auto-detectar desde el contexto de sesión (sin args) |
 | `/cap` | Alias corto para `/forge capture` — mismo comportamiento, 4 chars |
@@ -384,7 +384,7 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |
 | `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
 | `/forge unregister` | Eliminar proyecto del registro |
-| `/forge global sync` | Auto-actualizar claude-kit + sincronizar `~/.claude/` |
+| `/forge global sync` | Auto-actualizar dotforge + sincronizar `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |
 
 ## Agentes
@@ -447,10 +447,10 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 
 ## Configuración
 
-claude-kit usa una única variable de entorno:
+dotforge usa una única variable de entorno:
 
 ```bash
-export CLAUDE_KIT_DIR="/path/to/claude-kit"
+export DOTFORGE_DIR="/path/to/dotforge"
 ```
 
 Se configura automáticamente con `global/sync.sh`. Todos los skills y hooks resuelven rutas a través de esta variable.

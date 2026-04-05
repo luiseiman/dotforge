@@ -3,7 +3,7 @@ id: cotiza-security-critical
 title: "cotiza-api-cloud: 5 CRITICAL security vulnerabilities require dedicated session"
 source_type: forge-insights
 status: deprecated
-deprecated_reason: "project-specific action item — not a generalizable claude-kit rule; handle in cotiza-api-cloud session"
+deprecated_reason: "project-specific action item — not a generalizable dotforge rule; handle in cotiza-api-cloud session"
 deprecated_date: 2026-03-24
 tags: [security, cotiza-api-cloud, critical]
 date: 2026-03-24

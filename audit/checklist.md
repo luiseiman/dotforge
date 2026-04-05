@@ -1,4 +1,4 @@
-# Checklist de Auditoría claude-kit
+# Checklist de Auditoría dotforge
 
 ## Obligatorio (cada item: 0-2 puntos, total máximo: 10)
 

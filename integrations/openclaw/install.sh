@@ -1,16 +1,16 @@
 #!/bin/bash
-# Install claude-kit forge skill into OpenClaw
+# Install dotforge forge skill into OpenClaw
 # Usage: bash integrations/openclaw/install.sh
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CLAUDE_KIT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-INTEGRATIONS_DIR="$CLAUDE_KIT_DIR/integrations"
+DOTFORGE_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+INTEGRATIONS_DIR="$DOTFORGE_DIR/integrations"
 OPENCLAW_CONFIG="$HOME/.openclaw/openclaw.json"
 OPENCLAW_ENV="$HOME/.openclaw/.env"
 
-echo "═══ claude-kit → OpenClaw install ═══"
+echo "═══ dotforge → OpenClaw install ═══"
 echo ""
 
 # Check prerequisites
@@ -67,18 +67,18 @@ else
   echo "  Run 'openclaw onboard' first, then re-run this script."
 fi
 
-# Step 2: Set CLAUDE_KIT_DIR in OpenClaw's .env
+# Step 2: Set DOTFORGE_DIR in OpenClaw's .env
 # OpenClaw doesn't inherit shell environment — use its own .env file.
 echo ""
-echo "── Step 2: Set CLAUDE_KIT_DIR ──"
+echo "── Step 2: Set DOTFORGE_DIR ──"
 
 mkdir -p "$(dirname "$OPENCLAW_ENV")"
 
-if [ -f "$OPENCLAW_ENV" ] && grep -q "CLAUDE_KIT_DIR" "$OPENCLAW_ENV" 2>/dev/null; then
-  echo "✓ CLAUDE_KIT_DIR already set in $OPENCLAW_ENV"
+if [ -f "$OPENCLAW_ENV" ] && grep -q "DOTFORGE_DIR" "$OPENCLAW_ENV" 2>/dev/null; then
+  echo "✓ DOTFORGE_DIR already set in $OPENCLAW_ENV"
 else
-  echo "CLAUDE_KIT_DIR=$CLAUDE_KIT_DIR" >> "$OPENCLAW_ENV"
-  echo "✓ Added CLAUDE_KIT_DIR=$CLAUDE_KIT_DIR to $OPENCLAW_ENV"
+  echo "DOTFORGE_DIR=$DOTFORGE_DIR" >> "$OPENCLAW_ENV"
+  echo "✓ Added DOTFORGE_DIR=$DOTFORGE_DIR to $OPENCLAW_ENV"
 fi
 
 # Step 3: Clean up legacy symlinks (from older install.sh versions)
@@ -98,7 +98,7 @@ echo ""
 echo "── Verification ──"
 echo "Skill file:     $([ -f "$INTEGRATIONS_DIR/openclaw/SKILL.md" ] && echo '✓' || echo '✗')"
 echo "Config entry:   $(python3 -c "import json; cfg=json.load(open('$OPENCLAW_CONFIG')); dirs=cfg.get('skills',{}).get('load',{}).get('extraDirs',[]); print('✓' if '$INTEGRATIONS_DIR' in dirs else '✗')" 2>/dev/null || echo '?')"
-echo "CLAUDE_KIT_DIR: $(grep -q 'CLAUDE_KIT_DIR' "$OPENCLAW_ENV" 2>/dev/null && echo "✓ $(grep CLAUDE_KIT_DIR "$OPENCLAW_ENV" | head -1)" || echo '✗')"
+echo "DOTFORGE_DIR: $(grep -q 'DOTFORGE_DIR' "$OPENCLAW_ENV" 2>/dev/null && echo "✓ $(grep DOTFORGE_DIR "$OPENCLAW_ENV" | head -1)" || echo '✗')"
 echo "Claude CLI:     $(command -v claude &>/dev/null && echo '✓' || echo '⚠ not found (bridge commands disabled)')"
 
 echo ""

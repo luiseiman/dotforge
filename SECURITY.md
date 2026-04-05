@@ -2,17 +2,17 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in claude-kit, please report it responsibly:
+If you discover a security vulnerability in dotforge, please report it responsibly:
 
 1. **Do NOT open a public issue**
-2. Email: Open a private security advisory on [GitHub](https://github.com/luiseiman/claude-kit/security/advisories/new)
+2. Email: Open a private security advisory on [GitHub](https://github.com/luiseiman/dotforge/security/advisories/new)
 3. Include: description, reproduction steps, and impact assessment
 
 You should receive a response within 48 hours.
 
 ## Scope
 
-claude-kit generates configuration files for Claude Code. Security concerns include:
+dotforge generates configuration files for Claude Code. Security concerns include:
 
 - **Hook scripts** (`template/hooks/`, `stacks/*/hooks/`) — shell scripts that execute during Claude Code sessions
 - **Deny lists** (`settings.json`) — files that should be blocked from reading

@@ -1,4 +1,4 @@
-# Análisis de Impacto — Roadmap claude-kit
+# Análisis de Impacto — Roadmap dotforge
 
 > Mapeo detallado de qué archivos y componentes se ven afectados por cada item del roadmap.
 > Complemento de [roadmap-explained.md](roadmap-explained.md) (beneficios) y [roadmap.md](roadmap.md) (técnico).
@@ -26,7 +26,7 @@
 - `template/hooks/block-destructive.sh` — Reescritura significativa. Hoy es lista fija de 12 patrones con `grep -qiE`. Agregar lectura de `$FORGE_HOOK_PROFILE` y condicionar patrones por perfil.
 - `template/settings.json.tmpl` — Agregar `FORGE_HOOK_PROFILE` como variable de entorno.
 - `skills/bootstrap-project/SKILL.md` — Agregar paso que pregunta qué profile usar y lo guarda en `settings.local.json`.
-- `.claude/hooks/block-destructive.sh` (propio de claude-kit) — Mantener sincronizado con template.
+- `.claude/hooks/block-destructive.sh` (propio de dotforge) — Mantener sincronizado con template.
 - `skills/sync-template/SKILL.md` — Respetar la variable de profile del proyecto destino, no sobreescribirla.
 - `tests/test-hooks.sh` — Expandir para cubrir los 3 profiles.
 

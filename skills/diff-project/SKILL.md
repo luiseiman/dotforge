@@ -1,18 +1,18 @@
 ---
 name: diff-project
-description: Shows what changed in claude-kit since the project's last sync, to decide whether running /forge sync is worthwhile.
+description: Shows what changed in dotforge since the project's last sync, to decide whether running /forge sync is worthwhile.
 ---
 
 # Diff Project
 
-Show what changed in claude-kit since the last synchronization of the current project.
+Show what changed in dotforge since the last synchronization of the current project.
 
 ## Step 1: Identify project baseline
 
-1. Read `$CLAUDE_KIT_DIR/registry/projects.yml`
+1. Read `$DOTFORGE_DIR/registry/projects.yml`
 2. Find the current project by `path` (compare with `$PWD`)
-3. Get `claude_kit_version` and `last_sync`
-4. If no `claude_kit_version` is registered (null), report:
+3. Get `dotforge_version` and `last_sync`
+4. If no `dotforge_version` is registered (null), report:
    ```
    Project not synced — no baseline to compare against.
    Run /forge sync to establish baseline.
@@ -30,15 +30,15 @@ If `.claude/.forge-manifest.json` exists in the current project:
 
 If manifest does NOT exist, continue to Step 3 using git log.
 
-## Step 3: Detect changes in claude-kit
+## Step 3: Detect changes in dotforge
 
-Run in `$CLAUDE_KIT_DIR/`:
+Run in `$DOTFORGE_DIR/`:
 
 ```bash
 git log --oneline v<version>..HEAD -- template/ stacks/
 ```
 
-Where `<version>` is the tag corresponding to the project's `claude_kit_version`.
+Where `<version>` is the tag corresponding to the project's `dotforge_version`.
 
 If the tag does not exist, use `last_sync` as reference:
 ```bash
@@ -47,7 +47,7 @@ git log --oneline --since="<last_sync>" -- template/ stacks/
 
 If there are no relevant commits, report:
 ```
-claude-kit has no changes in template/stacks since v<version>.
+dotforge has no changes in template/stacks since v<version>.
 Project is up to date.
 ```
 
@@ -56,10 +56,10 @@ Project is up to date.
 For each modified file in template/ or relevant stacks/ for the project:
 
 ```
-═══ DIFF claude-kit: v<previous> → v<current> ═══
+═══ DIFF dotforge: v<previous> → v<current> ═══
 Project: <name> (last sync: <date>)
 
-Files modified in claude-kit:
+Files modified in dotforge:
   template/hooks/block-destructive.sh — <diff summary>
   template/rules/_common.md — <diff summary>
   stacks/python-fastapi/rules/backend.md — <diff summary>
@@ -86,5 +86,5 @@ Changes do not affect this project. Sync is not necessary.
 
 This skill is installed automatically if the `skills/` symlink already exists in `~/.claude/skills/`. If not, create the symlink:
 ```bash
-ln -sf $CLAUDE_KIT_DIR/skills ~/.claude/skills
+ln -sf $DOTFORGE_DIR/skills ~/.claude/skills
 ```

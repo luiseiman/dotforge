@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test suite for claude-kit hooks
+# Test suite for dotforge hooks
 # Run: ./tests/test-hooks.sh
 # Exit 0 if all pass, exit 1 if any fail
 
@@ -18,7 +18,7 @@ fail() {
   FAILED=$((FAILED + 1))
 }
 
-echo "═══ claude-kit hook tests ═══"
+echo "═══ dotforge hook tests ═══"
 
 # ─── block-destructive.sh ───
 

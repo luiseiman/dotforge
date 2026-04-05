@@ -1,11 +1,11 @@
 ---
 name: sync-template
-description: Update an existing project's Claude Code configuration against the current claude-kit template, without losing local customizations.
+description: Update an existing project's Claude Code configuration against the current dotforge template, without losing local customizations.
 ---
 
 # Sync Template
 
-Update the current project's Claude Code configuration against the latest version of claude-kit.
+Update the current project's Claude Code configuration against the latest version of dotforge.
 
 ## Principle: merge, not overwrite
 
@@ -23,12 +23,12 @@ Before syncing the project, verify that `~/.claude/CLAUDE.md` exists and contain
 2. Read the current `CLAUDE.md`
 3. Read existing `.claude/rules/`
 4. Read existing `.claude/hooks/`
-5. Detect stacks using `$CLAUDE_KIT_DIR/stacks/detect.md`
+5. Detect stacks using `$DOTFORGE_DIR/stacks/detect.md`
 6. Read `~/.claude/CLAUDE.md` to know which rules are already covered globally
 
 ## Step 2: Compare against template
 
-For each component, compare with the claude-kit version:
+For each component, compare with the dotforge version:
 
 ### settings.json — Smart merge
 - **allow**: union of sets. Add missing permissions from base template + stacks. NEVER remove local permissions the project already has.
@@ -60,7 +60,7 @@ For each component, compare with the claude-kit version:
 Show the user what would change BEFORE applying anything:
 ```
 ═══ SYNC DRY-RUN: {{project}} ═══
-claude-kit: {{version}} (current project: {{previous_version or "unknown"}})
+dotforge: {{version}} (current project: {{previous_version or "unknown"}})
 
 NEW FILES (will be created):
 + .claude/rules/_common.md
@@ -112,13 +112,13 @@ After applying changes, update (or create) `.claude/.forge-manifest.json`:
    ```bash
    shasum -a 256 <file> | cut -d' ' -f1
    ```
-3. Update `claude_kit_version` and `synced_at`
+3. Update `dotforge_version` and `synced_at`
 4. Write the updated manifest
 
 Format:
 ```json
 {
-  "claude_kit_version": "<version from $CLAUDE_KIT_DIR/VERSION>",
+  "dotforge_version": "<version from $DOTFORGE_DIR/VERSION>",
   "synced_at": "<current date YYYY-MM-DD>",
   "files": {
     ".claude/settings.json": {"hash": "sha256:<hash>", "source": "template+stacks"},
@@ -127,13 +127,13 @@ Format:
 }
 ```
 
-Include ALL files in `.claude/` that are managed by claude-kit (not only those that changed in this sync).
+Include ALL files in `.claude/` that are managed by dotforge (not only those that changed in this sync).
 
 ## Step 5: Update registry
 
-Update in `$CLAUDE_KIT_DIR/registry/projects.yml`:
+Update in `$DOTFORGE_DIR/registry/projects.yml`:
 - `last_sync:` → current date
-- `claude_kit_version:` → current claude-kit version
+- `dotforge_version:` → current dotforge version
 
 ## Step 6: Verify
 

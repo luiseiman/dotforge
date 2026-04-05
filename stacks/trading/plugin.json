@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-trading",
+  "name": "dotforge-stack-trading",
   "version": "2.0.0",
   "description": "Trading & investment analysis — thesis tracking, earnings watch, screening, catalyst calendar. AR + US markets.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/trading.md"],
     "settings": "settings.json.partial",

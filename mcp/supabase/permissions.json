@@ -1,5 +1,5 @@
 {
-  "_template": "claude-kit/mcp/supabase",
+  "_template": "dotforge/mcp/supabase",
   "_comment": "Read operations are auto-allowed. Write/mutation operations are NOT listed (user prompted each time). Destructive project operations are denied.",
   "allow": [
     "mcp__supabase__list_projects",

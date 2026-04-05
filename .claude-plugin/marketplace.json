@@ -10,19 +10,19 @@
   },
   "screenshots": [
     {
-      "url": "https://raw.githubusercontent.com/luiseiman/claude-kit/main/docs/assets/forge-init-demo.gif",
+      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-init-demo.gif",
       "caption": "/forge init — Zero to config in one command"
     },
     {
-      "url": "https://raw.githubusercontent.com/luiseiman/claude-kit/main/docs/assets/forge-audit-demo.gif",
+      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-audit-demo.gif",
       "caption": "/forge audit — Score your project configuration (0-10)"
     },
     {
-      "url": "https://raw.githubusercontent.com/luiseiman/claude-kit/main/docs/assets/forge-status-demo.gif",
+      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-status-demo.gif",
       "caption": "/forge status — Multi-project registry dashboard"
     },
     {
-      "url": "https://raw.githubusercontent.com/luiseiman/claude-kit/main/docs/assets/forge-bootstrap-demo.gif",
+      "url": "https://raw.githubusercontent.com/luiseiman/dotforge/main/docs/assets/forge-bootstrap-demo.gif",
       "caption": "/forge bootstrap — Full interactive setup"
     }
   ],

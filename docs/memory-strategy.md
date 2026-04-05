@@ -2,7 +2,7 @@
 
 # Memory Strategy
 
-How claude-kit manages memory across projects. Five layers, each with a distinct purpose.
+How dotforge manages memory across projects. Five layers, each with a distinct purpose.
 
 ## The 5 Layers
 
@@ -105,7 +105,7 @@ Claude also updates `last-compact.md` proactively after significant tasks (defin
 
 # Estrategia de Memoria
 
-Cómo claude-kit gestiona la memoria entre proyectos. Cinco capas, cada una con un propósito distinto.
+Cómo dotforge gestiona la memoria entre proyectos. Cinco capas, cada una con un propósito distinto.
 
 ## Las 5 Capas
 

@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-docker-deploy",
+  "name": "dotforge-stack-docker-deploy",
   "version": "1.4.0",
   "description": "Docker Compose and Dockerfile best practices, health checks, and deployment rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/infra.md"],
     "settings": "settings.json.partial"

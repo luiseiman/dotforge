@@ -4,7 +4,7 @@
 # note in practices/inbox/ for /forge update to process.
 #
 # === INSTALLATION ===
-# 1. Set CLAUDE_KIT_DIR to your clone location (global/sync.sh does this)
+# 1. Set DOTFORGE_DIR to your clone location (global/sync.sh does this)
 # 2. Make executable: chmod +x hooks/detect-claude-changes.sh
 # 3. Add to ~/.claude/settings.json:
 #    {
@@ -15,7 +15,7 @@
 #            "hooks": [
 #              {
 #                "type": "command",
-#                "command": "$CLAUDE_KIT_DIR/hooks/detect-claude-changes.sh"
+#                "command": "$DOTFORGE_DIR/hooks/detect-claude-changes.sh"
 #              }
 #            ]
 #          }
@@ -24,15 +24,15 @@
 #    }
 # ========================
 
-# Resolve CLAUDE_KIT_DIR: use env var if set, otherwise default to script's parent
-CLAUDE_KIT_DIR="${CLAUDE_KIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
-INBOX_DIR="$CLAUDE_KIT_DIR/practices/inbox"
+# Resolve DOTFORGE_DIR: use env var if set, otherwise default to script's parent
+DOTFORGE_DIR="${DOTFORGE_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+INBOX_DIR="$DOTFORGE_DIR/practices/inbox"
 PROJECT_DIR="$(pwd)"
 PROJECT_NAME="$(basename "$PROJECT_DIR")"
 TODAY="$(date +%Y-%m-%d)"
 
-# Skip when running inside claude-kit itself
-if [[ "$PROJECT_DIR" == "$CLAUDE_KIT_DIR"* ]]; then
+# Skip when running inside dotforge itself
+if [[ "$PROJECT_DIR" == "$DOTFORGE_DIR"* ]]; then
   exit 0
 fi
 
@@ -83,7 +83,7 @@ ${FILE_COUNT} file(s) modified in .claude/ of project ${PROJECT_NAME} during the
 ${FILE_LIST}
 
 ## Evaluation needed
-Review if these changes contain patterns, rules, or configurations that should be generalized to claude-kit.
+Review if these changes contain patterns, rules, or configurations that should be generalized to dotforge.
 
 ## Decision
 Pending — evaluate in next /forge update

@@ -1,11 +1,11 @@
 ---
 name: watch-upstream
-description: Fetch official Anthropic/Claude Code docs, detect changes relevant to claude-kit, report deltas.
+description: Fetch official Anthropic/Claude Code docs, detect changes relevant to dotforge, report deltas.
 ---
 
 # Watch Upstream
 
-Detect changes in official Claude Code documentation that may require updates to claude-kit.
+Detect changes in official Claude Code documentation that may require updates to dotforge.
 
 ## Step 0: Discover tools
 
@@ -33,9 +33,9 @@ Then search for recent announcements:
 
 ## Step 2: Extract and classify changes
 
-For each finding, check if it affects claude-kit:
+For each finding, check if it affects dotforge:
 
-| What to look for | Where it impacts claude-kit |
+| What to look for | Where it impacts dotforge |
 |-------------------|---------------------------|
 | New hook event types (beyond PreToolUse/PostToolUse/Stop) | `template/hooks/`, `stacks/*/hooks/` |
 | New settings.json fields or changed schema | `template/settings.json.tmpl`, `global/settings.json.tmpl` |
@@ -49,7 +49,7 @@ For each finding, check if it affects claude-kit:
 
 Ignore: pricing, model releases (unless affecting tool use), marketing.
 
-## Step 3: Compare against claude-kit
+## Step 3: Compare against dotforge
 
 For each relevant finding, check the current state:
 
@@ -59,10 +59,10 @@ grep -r "<keyword>" template/ stacks/ global/ agents/ skills/
 ```
 
 Classify each finding:
-- **Gap**: claude-kit doesn't cover this at all
-- **Partial**: claude-kit covers this but is outdated or incomplete
-- **Covered**: claude-kit already handles this correctly
-- **Breaking**: claude-kit does something that conflicts with the new behavior
+- **Gap**: dotforge doesn't cover this at all
+- **Partial**: dotforge covers this but is outdated or incomplete
+- **Covered**: dotforge already handles this correctly
+- **Breaking**: dotforge does something that conflicts with the new behavior
 
 ## Step 4: Report
 
@@ -75,12 +75,12 @@ Sources fetched: {{N}} docs, {{N}} search results
 
 🆕 NEW: {{title}}
    Source: {{url}}
-   Impact: {{which claude-kit files would change}}
+   Impact: {{which dotforge files would change}}
    Priority: {{high|medium|low}}
 
 ⚠️ BREAKING: {{title}}
    Source: {{url}}
-   Current claude-kit behavior: {{what we do now}}
+   Current dotforge behavior: {{what we do now}}
    Required change: {{what needs to change}}
 
 📝 PARTIAL: {{title}}
@@ -99,7 +99,7 @@ Then: /forge update to evaluate and incorporate.
 
 ## Constraints
 
-- DO NOT modify any claude-kit files. Report only.
+- DO NOT modify any dotforge files. Report only.
 - DO NOT auto-create practices. Suggest `/forge capture` commands for the user.
 - If web fetch fails, report clearly — don't guess or hallucinate features.
 - If no changes detected, report "No relevant changes found" — this is a valid outcome.

@@ -20,7 +20,7 @@ Exit without changes.
 
 ## Step 2: Detect stacks
 
-Scan project files silently using `$CLAUDE_KIT_DIR/stacks/detect.md` as reference:
+Scan project files silently using `$DOTFORGE_DIR/stacks/detect.md` as reference:
 
 ```
 python-fastapi: pyproject.toml, requirements.txt with fastapi
@@ -172,7 +172,7 @@ Show a concise summary:
 ═══ FORGE INIT — DONE ═══
 Project:  {name}
 Stacks:   {detected stacks}
-Config:   claude-kit v2.3.0 standard
+Config:   dotforge v2.3.0 standard
 
 Generated:
   CLAUDE.md          → project context (personalized)

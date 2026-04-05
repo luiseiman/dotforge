@@ -16,13 +16,13 @@ GitHub: luiseiman
 - **Trading**: AR markets (BYMA, CEDEARs, sovereign bonds, crypto, CCL/MEP arbitrage) + US (equities, options). Builds trading bots and agents.
 - **Stack**: Python/FastAPI, Swift/SwiftUI, React/Vite/TS, Supabase, Redis Streams, GCP, Docker
 - **Infra**: Oracle ARM64 VPS, Cloud Run, Vercel, Obsidian vault (git auto-sync)
-- **Active projects**: SOMA (Agent OS), InviSight (trading iOS), Cotiza-Api-Cloud (WebSocket API), derup (multi-AI ER modeler), claude-kit (Claude Code config factory)
+- **Active projects**: SOMA (Agent OS), InviSight (trading iOS), Cotiza-Api-Cloud (WebSocket API), derup (multi-AI ER modeler), dotforge (Claude Code config factory)
 
 ## Active Interests
 
 - Multi-agent orchestration (OpenClaw, Claude Code agents, MCP)
 - Operations automation (call center, omnichannel, Odoo)
-- Configuration architecture (claude-kit)
+- Configuration architecture (dotforge)
 - WebSockets, real-time data, market feeds
 
 ## Working Style

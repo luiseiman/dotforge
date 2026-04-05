@@ -5,7 +5,7 @@ description: Compare Claude Code output with full config vs minimal config using
 
 # Benchmark
 
-Compare the effectiveness of a project's full claude-kit configuration against a minimal baseline by executing the same standardized task in two isolated worktrees.
+Compare the effectiveness of a project's full dotforge configuration against a minimal baseline by executing the same standardized task in two isolated worktrees.
 
 **Cost warning:** Each benchmark runs Claude Code twice (full + minimal). Use sparingly and only after Fases 0-2 are working.
 
@@ -13,12 +13,12 @@ Compare the effectiveness of a project's full claude-kit configuration against a
 
 - Project must have `.claude/settings.json` and `CLAUDE.md`
 - Project must be a git repository with a clean working tree
-- Task definitions must exist in `$CLAUDE_KIT_DIR/tests/benchmark-tasks/`
+- Task definitions must exist in `$DOTFORGE_DIR/tests/benchmark-tasks/`
 
 ## Step 1: Select task
 
 1. Detect project stacks from `.claude/.forge-manifest.json` or infer from project files
-2. Load matching task from `$CLAUDE_KIT_DIR/tests/benchmark-tasks/{stack}.yml`
+2. Load matching task from `$DOTFORGE_DIR/tests/benchmark-tasks/{stack}.yml`
 3. If multiple stacks match, let user choose or run the first match
 4. If no stack matches, use `generic.yml`
 

@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-gcp-cloud-run",
+  "name": "dotforge-stack-gcp-cloud-run",
   "version": "1.4.0",
   "description": "GCP Cloud Run container deployment, Cloud Build, and health check rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/gcp.md"],
     "settings": "settings.json.partial"

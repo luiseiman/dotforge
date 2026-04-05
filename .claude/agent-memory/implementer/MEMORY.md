@@ -8,3 +8,4 @@
 - [derup-domain-extract](project_derup_domain_extract.md) — derup ER modeler: 5 domain rule files created, Role section added. CLAUDE_ERRORS.md was richest source. Custom SVG canvas (not React Flow). lint has known violations — use build.
 - [openclaw-domain-extract](project_openclaw_domain_extract.md) — openclaw/openclaw: 6 domain rule files created, Role section added. CLAUDE.md (260+ lines) was the only real source; no auto-memory existed. Key: Oxlint+Oxfmt, Bun for TS, 4-point bug-fix merge gate, GHSA PATCH footgun.
 - [glob-specificity-fix](feedback_glob_specificity.md) — Wildcard `**/*.md` in domain rule globs defeats purpose; always verify real paths with ls before writing globs.
+- [project-rename-pattern](project_rename_pattern.md) — Bulk project rename via grep -rln + sed -i '' with multiple -e; order: GitHub URL → ENV VAR → snake_version → snake → kebab

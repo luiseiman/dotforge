@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-data-analysis",
+  "name": "dotforge-stack-data-analysis",
   "version": "1.4.0",
   "description": "SQLite/PostgreSQL, pandas/polars, and Jupyter notebook rules for data analysis with Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/data.md"],
     "settings": "settings.json.partial"

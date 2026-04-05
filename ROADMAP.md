@@ -1,4 +1,4 @@
-# Roadmap claude-kit
+# Roadmap dotforge
 
 Estado actual: **v2.8.1** (2026-04-05)
 
@@ -8,7 +8,7 @@ Estado actual: **v2.8.1** (2026-04-05)
 
 ### v2.8.0 — Internals Analysis + P0 Fixes + P1 Alignment (2026-04-05)
 
-Reverse engineering de 5 repositorios + alineación de claude-kit con internals verificados de Claude Code.
+Reverse engineering de 5 repositorios + alineación de dotforge con internals verificados de Claude Code.
 
 #### P0 — Bugs y Seguridad
 - Fix: session-report.sh JSON corruption, block-destructive.sh regex, deny patterns faltantes
@@ -158,5 +158,5 @@ Reverse engineering de 5 repositorios + alineación de claude-kit con internals 
 | 500+ skills at scale | Calidad > cantidad |
 | Model routing automático en runtime | Over-engineering — reglas explícitas son más predecibles |
 | Auto-escalation por token count | Over-engineering — routing por tipo de tarea, no por tamaño |
-| MCP server self-hosting | claude-kit configura clientes, no servers |
+| MCP server self-hosting | dotforge configura clientes, no servers |
 | `/forge export cursor\|windsurf` | Specs de terceros inestables |

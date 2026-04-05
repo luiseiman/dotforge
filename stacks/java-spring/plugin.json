@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-java-spring",
+  "name": "dotforge-stack-java-spring",
   "version": "1.4.0",
   "description": "Java 21+ with Spring Boot 3.x, Maven/Gradle, records, and virtual threads rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/backend.md"],
     "settings": "settings.json.partial"

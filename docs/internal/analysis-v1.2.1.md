@@ -1,4 +1,4 @@
-# Análisis Integral / Comprehensive Analysis — claude-kit v1.2.1
+# Análisis Integral / Comprehensive Analysis — dotforge v1.2.1
 
 > Internal analysis of 7 dimensions across 83 files and 49 rules. Mixed Spanish/English.
 >
@@ -108,7 +108,7 @@
 - No hay git tags → `/forge diff` no funciona
 - Changelog sin entry v1.2.1
 - bootstrap no crea agent-memory/ ni specs/in-progress/
-- `{{CLAUDE_KIT_PATH}}` placeholder no resuelto por sync.sh
+- `{{DOTFORGE_PATH}}` placeholder no resuelto por sync.sh
 
 ## Mapa de sinergia
 
@@ -147,6 +147,6 @@ Propagación     Todas (distribuye)         Aprendizaje (qué propagar)
 
 ## Veredicto
 
-claude-kit es sólido en las dimensiones que importan operacionalmente (Seguridad, Contexto, Propagación) y débil en las aspiracionales (Aprendizaje, agent memory). La sinergia más fuerte es Seguridad → Contexto → Agentes. La más débil es Aprendizaje → todo lo demás (pipeline vacío).
+dotforge es sólido en las dimensiones que importan operacionalmente (Seguridad, Contexto, Propagación) y débil en las aspiracionales (Aprendizaje, agent memory). La sinergia más fuerte es Seguridad → Contexto → Agentes. La más débil es Aprendizaje → todo lo demás (pipeline vacío).
 
 **Prioridad**: corregir los 10 issues (30 min), crear git tags (5 min), ajustar fórmula de scoring. El aprendizaje se arregla con hábito, no con más código.

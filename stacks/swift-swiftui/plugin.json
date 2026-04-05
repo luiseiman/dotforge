@@ -1,8 +1,8 @@
 {
-  "name": "claude-kit-stack-swift-swiftui",
+  "name": "dotforge-stack-swift-swiftui",
   "version": "1.4.0",
   "description": "Swift 5.9+ with SwiftUI, iOS 17+, @Observable, async/await, and SPM rules for Claude Code.",
-  "parent": "claude-kit",
+  "parent": "dotforge",
   "components": {
     "rules": ["rules/ios.md"],
     "settings": "settings.json.partial",

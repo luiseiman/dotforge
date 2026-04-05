@@ -44,4 +44,4 @@ last_verified: 2026-04-02
 
 bundledSkills > builtinPluginSkills > skillDirCommands > workflowCommands > pluginCommands > pluginSkills > COMMANDS()
 
-Skills installed via claude-kit can shadow built-in commands if names collide — be intentional about naming.
+Skills installed via dotforge can shadow built-in commands if names collide — be intentional about naming.

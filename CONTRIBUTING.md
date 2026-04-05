@@ -1,8 +1,8 @@
-> **[English](#contributing-to-claude-kit)** | **[Español](#contribuir-a-claude-kit)**
+> **[English](#contributing-to-dotforge)** | **[Español](#contribuir-a-dotforge)**
 
-# Contributing to claude-kit
+# Contributing to dotforge
 
-Thanks for your interest in contributing! claude-kit is the only end-to-end configuration management system for Claude Code — not a one-shot bootstrap or a static collection. It uniquely combines additive stack layering, intelligent template sync, normalized audit scoring (0-10), a practices pipeline for continuous improvement, and cross-project registry tracking. Everything is markdown + shell scripts, no application code.
+Thanks for your interest in contributing! dotforge is the only end-to-end configuration management system for Claude Code — not a one-shot bootstrap or a static collection. It uniquely combines additive stack layering, intelligent template sync, normalized audit scoring (0-10), a practices pipeline for continuous improvement, and cross-project registry tracking. Everything is markdown + shell scripts, no application code.
 
 ## How to contribute
 
@@ -40,11 +40,11 @@ Use `/forge capture "description"` to create a practice in `practices/inbox/`. P
 
 ```bash
 # Clone
-git clone https://github.com/luiseiman/claude-kit.git
-cd claude-kit
+git clone https://github.com/luiseiman/dotforge.git
+cd dotforge
 
-# Set CLAUDE_KIT_DIR (used by skills and hooks)
-export CLAUDE_KIT_DIR="$(pwd)"
+# Set DOTFORGE_DIR (used by skills and hooks)
+export DOTFORGE_DIR="$(pwd)"
 
 # Install globally (symlinks skills, agents, commands into ~/.claude/)
 ./global/sync.sh
@@ -65,7 +65,7 @@ python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
 
 ## What NOT to contribute
 
-- Application code — claude-kit only generates Claude Code configuration
+- Application code — dotforge only generates Claude Code configuration
 - Rules that aren't derived from real project experience
 - Features that add complexity without clear value
 
@@ -79,9 +79,9 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 ---
 
-# Contribuir a claude-kit
+# Contribuir a dotforge
 
-Gracias por tu interés en contribuir. claude-kit es el único sistema de gestión de configuración end-to-end para Claude Code — no un bootstrap one-shot ni una colección estática. Combina de forma única stack layering aditivo, sync inteligente de plantillas, audit scoring normalizado (0-10), un pipeline de prácticas para mejora continua y registry cross-proyecto con tracking. Todo es markdown + shell scripts, sin código de aplicación.
+Gracias por tu interés en contribuir. dotforge es el único sistema de gestión de configuración end-to-end para Claude Code — no un bootstrap one-shot ni una colección estática. Combina de forma única stack layering aditivo, sync inteligente de plantillas, audit scoring normalizado (0-10), un pipeline de prácticas para mejora continua y registry cross-proyecto con tracking. Todo es markdown + shell scripts, sin código de aplicación.
 
 ## Cómo contribuir
 
@@ -119,11 +119,11 @@ Usá `/forge capture "descripción"` para crear una práctica en `practices/inbo
 
 ```bash
 # Clonar
-git clone https://github.com/luiseiman/claude-kit.git
-cd claude-kit
+git clone https://github.com/luiseiman/dotforge.git
+cd dotforge
 
-# Configurar CLAUDE_KIT_DIR (usado por skills y hooks)
-export CLAUDE_KIT_DIR="$(pwd)"
+# Configurar DOTFORGE_DIR (usado por skills y hooks)
+export DOTFORGE_DIR="$(pwd)"
 
 # Instalar globalmente (symlinks de skills, agents, commands en ~/.claude/)
 ./global/sync.sh
@@ -144,7 +144,7 @@ python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
 
 ## Qué NO contribuir
 
-- Código de aplicación — claude-kit solo genera configuración para Claude Code
+- Código de aplicación — dotforge solo genera configuración para Claude Code
 - Reglas que no provengan de experiencia en proyectos reales
 - Features que agreguen complejidad sin valor claro
 

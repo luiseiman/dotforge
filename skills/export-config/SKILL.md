@@ -1,11 +1,11 @@
 ---
 name: export-config
-description: Export claude-kit configuration to other AI code editors (Cursor, Codex, Windsurf, OpenClaw).
+description: Export dotforge configuration to other AI code editors (Cursor, Codex, Windsurf, OpenClaw).
 ---
 
 # Export Configuration
 
-Convert the current project's claude-kit configuration into formats compatible with other AI coding tools.
+Convert the current project's dotforge configuration into formats compatible with other AI coding tools.
 
 ## Input
 $ARGUMENTS contains the target format: `cursor`, `codex`, `windsurf`, or `openclaw`.
@@ -19,7 +19,7 @@ Read these files from the current project:
 - `.claude/rules/*.md` — contextual rules (strip YAML frontmatter)
 - `.claude/settings.json` — permissions and hooks
 
-If none exist, error: "No claude-kit configuration found. Run `/forge bootstrap` first."
+If none exist, error: "No dotforge configuration found. Run `/forge bootstrap` first."
 
 ## Step 2: Transform based on target
 
@@ -98,7 +98,7 @@ Additionally, if the project has specific commands (`.claude/commands/*.md`), li
 | Hook logic | ⚠️ Partial | Text instructions (no enforcement) |
 | Agent orchestration | ⚠️ Partial | Summarized as behavioral guidance |
 | Audit scoring | ✅ | Via `claude --print "/forge audit"` bridge |
-| Session metrics | ❌ | OpenClaw sessions don't generate claude-kit metrics |
+| Session metrics | ❌ | OpenClaw sessions don't generate dotforge metrics |
 | Stack-specific auto-loading | ❌ | All rules flattened into single skill |
 
 ## Step 3: Handle conflicts
@@ -106,7 +106,7 @@ Additionally, if the project has specific commands (`.claude/commands/*.md`), li
 Before writing:
 1. Check if target file already exists
 2. If exists: show diff preview and ask user to confirm overwrite
-3. If user declines: suggest alternative filename (e.g., `.cursorrules.claude-kit`)
+3. If user declines: suggest alternative filename (e.g., `.cursorrules.dotforge`)
 
 ## Step 4: Report
 
