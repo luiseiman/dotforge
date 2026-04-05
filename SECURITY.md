@@ -29,5 +29,5 @@ claude-kit generates configuration files for Claude Code. Security concerns incl
 
 | Version | Supported |
 |---------|-----------|
-| 2.0.x   | Yes       |
+| 2.x     | Yes       |
 | < 2.0   | No        |

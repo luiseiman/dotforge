@@ -4,6 +4,42 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.8.0 (2026-04-05)
+
+### Claude Code Internals Analysis + P0 Fixes
+
+Deep reverse engineering of Claude Code internals from 5 repositories, verified against source code. All findings incorporated into domain rules and documentation.
+
+#### P0 Bug Fixes
+- Fix: `session-report.sh` — `$DOMAIN_CHANGES` used before defined → invalid JSON output
+- Fix: `block-destructive.sh` — regex `\*` in ERE mode didn't match literal `*` → switched to `grep -qiF`
+- Fix: missing deny patterns — `DROP TABLE`, `DROP DATABASE`, `git checkout --`, `git checkout .` added
+- Fix: agent frontmatter — `tools:` → `allowed-tools:` in 7 agents (was silently ignored)
+- Fix: agent frontmatter — removed invalid `memory: project` field from 5 agents
+- Fix: redis glob — `**/*stream*` matched unrelated files → narrowed to `**/*redis*`
+- Fix: `_common.md` exceeded 50-line limit (67 lines) → split into separate files
+- Fix: removed `Bash(cat *)` from allow list (conflicts with Read tool)
+- Fix: added `Bash(make *)` to base template allow list
+
+#### Domain Rules — Source-Verified Updates
+- `hook-architecture.md`: 25 events (was 13), async hooks, timeouts, plugin env vars, event details
+- `permission-model.md`: 5-step evaluation cascade, bash prefix detection, auto-mode stripping
+- `context-window-optimization.md`: 5-tier compaction hierarchy, token budgets, env vars for control
+- `rule-effectiveness.md`: complete frontmatter fields (model, effort, context, agent, allowed-tools)
+- `agent-orchestration.md`: task types, slash command priority, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- `prompting-patterns.md`: system prompt conflicts, override patterns, language rules
+
+#### New Documentation
+- `docs/internal/claude-code-internals-analysis.md` — comprehensive cross-repo analysis (system prompt, context window, 41 tools, permissions, hooks, agents, sessions, undocumented features)
+- `docs/internal/improvement-plan-internals.md` — 36 prioritized items (P0-P3) with execution plan
+- `docs/internal/feature-flags-reference.md` — complete feature flags: 9 env vars, 4 settings keys, 7 internal flags (KAIROS, Coordinator, ULTRAPLAN, Voice, Vim, Undercover, Anti-Distillation), 25+ GrowthBook gates, 10 gated slash commands
+
+#### Python Reimplementation Insights
+- Analysis of nanocode (250 lines, minimal viable loop) and nano-claude-code (6.2K lines, full reimplementation)
+- 5 insights: pre-compaction tool-result snipping, read_only/concurrent_safe annotations, skill context:fork, minimal system prompt sufficiency, self-documenting tool descriptions
+
+---
+
 ## v2.7.1 (2026-03-30)
 
 ### Hook Architecture — Correcciones y expansión

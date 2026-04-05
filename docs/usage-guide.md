@@ -1,7 +1,7 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.7.1
-**Date:** 2026-03-30
+**Version:** 2.8.0
+**Date:** 2026-04-05
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
 

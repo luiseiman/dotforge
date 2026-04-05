@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.7.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.8.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -207,7 +207,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.7.1)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.8.0)
 - [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
