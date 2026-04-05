@@ -1,6 +1,6 @@
 # Guía de Uso — claude-kit
 
-**Versión:** 2.8.0
+**Versión:** 2.8.1
 **Fecha:** 2026-04-05
 
 claude-kit es una fábrica de configuración para Claude Code. Genera y mantiene la carpeta `.claude/` de tus proyectos: reglas, hooks, permisos, agentes y comandos. Todo es markdown + shell scripts — no hay código de aplicación.
@@ -727,7 +727,7 @@ claude-kit incluye criterios explícitos de selección de modelo en `template/ru
 | Agente | Modelo | Razón |
 |--------|--------|-------|
 | researcher | haiku | Exploración — velocidad sobre profundidad |
-| test-runner | haiku | Ejecutar y reportar — no requiere razonamiento |
+| test-runner | sonnet | Escribe tests — necesita calidad de razonamiento |
 | implementer | sonnet | Trabajo de implementación estándar |
 | code-reviewer | sonnet | Review enfocado |
 | session-reviewer | sonnet | Análisis de patrones |

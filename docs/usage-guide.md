@@ -1,6 +1,6 @@
 # Usage Guide — claude-kit
 
-**Version:** 2.8.0
+**Version:** 2.8.1
 **Date:** 2026-04-05
 
 claude-kit is a configuration factory for Claude Code. It generates and maintains the `.claude/` folder of your projects: rules, hooks, permissions, agents, and commands. Everything is markdown + shell scripts — no application code.
@@ -684,7 +684,7 @@ claude-kit includes explicit model selection criteria in `template/rules/model-r
 | Agent | Model | Reason |
 |-------|-------|--------|
 | researcher | haiku | Exploration — speed over depth |
-| test-runner | haiku | Execute and report — no reasoning needed |
+| test-runner | sonnet | Writes tests — needs reasoning quality |
 | implementer | sonnet | Standard implementation work |
 | code-reviewer | sonnet | Focused review, single concern |
 | session-reviewer | sonnet | Pattern analysis, not architecture |

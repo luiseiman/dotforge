@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/claude-kit)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.8.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-2.8.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/claude-kit)](https://github.com/luiseiman/claude-kit/commits/main)
 
 Configuration factory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Templates, stacks, skills, agents, audit system, and a practices pipeline — all markdown + shell scripts.
@@ -167,7 +167,7 @@ Seven specialized subagents, deployed to every bootstrapped project:
 | **implementer** | Code + tests | sonnet | persistent |
 | **code-reviewer** | Review by severity (critical/warning/suggestion) | sonnet | persistent |
 | **security-auditor** | Vulnerability scanning | opus | persistent |
-| **test-runner** | Run tests + report coverage | haiku | transactional |
+| **test-runner** | Run tests + report coverage | sonnet | transactional |
 | **session-reviewer** | Post-session analysis and pattern detection | sonnet | transactional |
 
 Model routing rules are defined in `template/rules/model-routing.md` — criteria for haiku/sonnet/opus selection by task type.
@@ -207,7 +207,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.8.0)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.8.1)
 - [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
@@ -398,7 +398,7 @@ Siete subagentes especializados, desplegados en cada proyecto inicializado:
 | **implementer** | Código + tests | sonnet | persistente |
 | **code-reviewer** | Revisión por severidad (crítico/advertencia/sugerencia) | sonnet | persistente |
 | **security-auditor** | Escaneo de vulnerabilidades | opus | persistente |
-| **test-runner** | Ejecución de tests + reporte de cobertura | haiku | transaccional |
+| **test-runner** | Ejecución de tests + reporte de cobertura | sonnet | transaccional |
 | **session-reviewer** | Análisis post-sesión y detección de patrones | sonnet | transaccional |
 
 La orquestación sigue un árbol de decisión: researcher → architect → implementer → test-runner → code-reviewer. Las reglas de routing de modelos están en `template/rules/model-routing.md`. Ver [agents/](agents/) para las definiciones.
