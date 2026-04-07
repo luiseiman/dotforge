@@ -140,11 +140,14 @@ else
   s6=1; n6="Present but missing Type column"
 fi
 
-# 7. Lint hook
-HOOK_LINT=".claude/hooks/lint-on-save.sh"
-if   [[ -f "$HOOK_LINT" && -x "$HOOK_LINT" ]]; then s7=1; n7="lint-on-save.sh present and executable"
-elif [[ -f "$HOOK_LINT" ]];                        then s7=1; n7="lint-on-save.sh present but not executable"
-else                                                    s7=0; n7="lint-on-save.sh not found"
+# 7. Lint hook (any lint hook: lint-on-save, lint-python, lint-ts, lint-swift, etc.)
+LINT_FOUND=""
+for lf in .claude/hooks/lint-*.sh; do
+  [[ -f "$lf" ]] && LINT_FOUND="$lf" && break
+done
+if   [[ -n "$LINT_FOUND" && -x "$LINT_FOUND" ]]; then s7=1; n7="$(basename "$LINT_FOUND") present and executable"
+elif [[ -n "$LINT_FOUND" ]];                        then s7=1; n7="$(basename "$LINT_FOUND") present but not executable"
+else                                                     s7=0; n7="No lint hook found (lint-*.sh)"
 fi
 
 # 8. Custom commands
@@ -156,9 +159,12 @@ else
   s8=0; n8=".claude/commands/ absent or empty"
 fi
 
-# 9. Project memory
-if   [[ -d ".claude/agent-memory" ]] && [[ -n "$(ls ".claude/agent-memory" 2>/dev/null)" ]]; then
-  s9=1; n9="agent-memory/ present"
+# 9. Project memory (agent-memory with real content, or MEMORY.md)
+MEM_FILES=$(find .claude/agent-memory -name "*.md" -not -name ".gitkeep" 2>/dev/null | wc -l | tr -d ' ')
+if   [[ "$MEM_FILES" -gt 0 ]]; then
+  s9=1; n9="agent-memory/ with ${MEM_FILES} file(s)"
+elif [[ -d ".claude/agent-memory" ]]; then
+  s9=1; n9="agent-memory/ initialized (no content yet)"
 elif [[ -f ".claude/MEMORY.md" ]]; then
   s9=1; n9="MEMORY.md present"
 else
