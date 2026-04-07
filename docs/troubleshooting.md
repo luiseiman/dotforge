@@ -122,6 +122,21 @@ chmod +x .claude/hooks/*.sh
 
 **Fix:** Instalar manualmente el hook global siguiendo las instrucciones en el script.
 
+## Hook falla en macOS / Git Bash / Windows
+
+**Síntoma:** El hook lanza `timeout: command not found`, `md5sum: command not found`, o `/bin/bash: No such file or directory`.
+
+**Causa:** Los scripts de hook dependían de comandos Linux-específicos no disponibles en macOS o Git Bash.
+
+**Fix (desde v2.9.0):** Todos los hooks fueron actualizados para portabilidad:
+- `timeout` → fallback a `gtimeout` (macOS brew coreutils) → skip si ninguno disponible
+- `md5sum` → fallback a `md5` (macOS) → `cksum` (Git Bash/POSIX)
+- Shebangs normalizados a `#!/usr/bin/env bash` (funciona en macOS, Linux, WSL, Git Bash)
+
+Si tenés hooks de antes de v2.9.0, ejecutar `/forge sync` para obtener las versiones portables.
+
+**Nota WSL:** Git Bash funciona pero en Windows se recomienda WSL para soporte completo de hooks.
+
 ## MCP server tools not available
 
 **Symptom:** Claude can't use GitHub/Postgres/Supabase tools even though the MCP server is configured.
@@ -148,3 +163,18 @@ chmod +x .claude/hooks/*.sh
 **Cause:** The skill looks for specific signals (workaround, multi-attempt bug, arch decision, non-obvious API behavior). Routine sessions with clean first-attempt solutions won't trigger.
 
 **Fix:** Use `/cap "description"` with explicit text. Auto-detect is for non-trivial sessions only.
+
+## Hook fails on macOS / Git Bash / Windows
+
+**Symptom:** Hook throws `timeout: command not found`, `md5sum: command not found`, or `/bin/bash: No such file or directory`.
+
+**Cause:** Hook scripts relied on Linux-specific commands not available on macOS or Git Bash.
+
+**Fix (since v2.9.0):** All hooks have been updated for portability:
+- `timeout` → falls back to `gtimeout` (macOS brew coreutils) → skip if neither found
+- `md5sum` → falls back to `md5` (macOS) → `cksum` (Git Bash/POSIX)
+- Shebangs normalized to `#!/usr/bin/env bash` (works on macOS, Linux, WSL, Git Bash)
+
+If you have hooks from before v2.9.0, run `/forge sync` to get the portable versions.
+
+**WSL note:** Git Bash works but WSL is recommended on Windows for full hook support.

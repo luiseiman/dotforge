@@ -13,7 +13,7 @@ Consolidación de confiabilidad basada en Codex review + alineación con Claude 
 - Fix: score.sh --json (heredoc Python roto), check-updates.sh (path), detect-stack-drift.sh (schema + mensaje), hookify (paths), injection scan (falso positivo)
 - Portabilidad: timeout/md5sum/shebangs portables a macOS + Linux + WSL + Git Bash
 - Nuevo: install.sh one-liner con detección de plataforma
-- Upstream: 26 hook events, 6 permission modes, 1M context GA, paths: YAML list, Claude 3 Haiku deprecated
+- Upstream: 27 hook events, 6 permission modes, 1M context GA, paths: YAML list, Claude 3 Haiku deprecated
 - Nuevas domain rules: auto-mode.md, hook-events.md
 - Manifest: campo `stacks` agregado al schema
 - README: tagline "governance", lifecycle hero, Works with, Requirements con WSL
@@ -97,9 +97,9 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ---
 
-## v2.9.0 — LLM Stack + Effectiveness (próximo)
+## v3.0.0 — LLM Stack + Effectiveness (próximo)
 
-### Pendiente de v2.8.0 (movido)
+### Pendiente (movido de v2.8.0)
 - **PermissionRequest hook**: auto-allow para operaciones known-safe
 - **SubagentStart hook**: inyectar contexto de dominio a subagentes
 - **CwdChanged hook**: recargar reglas de dominio al cambiar directorio
@@ -125,7 +125,7 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ---
 
-## v3.0.0 — New Features (planificado)
+## v3.1.0 — New Features (planificado)
 
 ### Nuevo stack: prompt-engineering
 - Para proyectos que configuran Claude Code (meta-configuración)

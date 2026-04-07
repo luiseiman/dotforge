@@ -9,7 +9,7 @@
 ### Hardening + Portability + Upstream Alignment + E2E Validated
 
 #### Reliability Fixes (Codex Review)
-- Fix: `audit/score.sh --json` — triple-quote Python heredoc + true/false → sanitized strings + True/False
+- Fix: `audit/score.sh --json` — triple-quote Python heredoc + true/false → sanitized strings + True/False; lint-*.sh detection fixed; agent-memory .gitkeep accepted as valid presence check; JSON output sanitized
 - Fix: `check-updates.sh` — manifest path `.forge-manifest.json` → `.claude/.forge-manifest.json`
 - Fix: `detect-stack-drift.sh` — reads stacks from manifest file sources (was reading nonexistent `stacks` field)
 - Fix: `detect-stack-drift.sh` — react/vite message `/forge mcp add` → `/forge sync`
@@ -24,12 +24,15 @@
 - New: `install.sh` — one-liner installer with platform detection (macOS/Linux/WSL/Git Bash)
 
 #### Upstream Alignment (Claude Code v2.1.84–v2.1.92)
-- Update: 26 hook events (Setup removed), `if` conditional field, `defer` decision documented
+- Update: 27 hook events (PermissionDenied correctly counted), `if` conditional field, `defer` decision documented
 - Update: 6 permission modes (added auto, dontAsk) with classifier details
 - Update: 1M context window GA for Opus 4.6 / Sonnet 4.6, auto-compact buffers recalculated
 - Update: MCP tools can override result cap to 500K via `_meta` annotation
 - Update: `paths:` frontmatter now accepts YAML list syntax
 - Update: Claude 3 Haiku deprecated (retiring April 19, 2026)
+- Update: Removed built-in commands `/tag` and `/vim` from Claude Code (upstream removal)
+- New settings: `showThinkingSummaries` (false default), `disableSkillShellExecution`, `forceRemoteSettingsRefresh`
+- New: plugin bin/ executable support (v2.1.91)
 - New domain rules: `auto-mode.md`, `hook-events.md`
 - Split: `hook-architecture.md` → `hook-architecture.md` + `hook-events.md` (50-line constraint)
 - Split: `permission-model.md` → `permission-model.md` + `auto-mode.md`

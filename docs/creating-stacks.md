@@ -116,6 +116,19 @@ stacks/redis/
 
 Detection in bootstrap: `redis` appears in `requirements.txt` or `pyproject.toml`.
 
+## Example with hook: "tdd" stack
+
+The `tdd` stack demonstrates how to combine a rule file with a hook:
+
+```
+stacks/tdd/
+├── rules/tdd-workflow.md     ← TDD workflow rules (red-green-refactor)
+├── hooks/test-on-edit.sh     ← PostToolUse hook: run tests on file edit
+└── settings.json.partial     ← Permissions for test runners
+```
+
+Detection: `pytest.ini`, `vitest.config.*`, or `jest.config.*` present.
+
 ---
 
 # Cómo crear un stack nuevo
@@ -233,6 +246,19 @@ stacks/redis/
 ```
 
 Detección en bootstrap: `redis` aparece en `requirements.txt` o `pyproject.toml`.
+
+## Ejemplo con hook: stack "tdd"
+
+El stack `tdd` demuestra cómo combinar una rule con un hook:
+
+```
+stacks/tdd/
+├── rules/tdd-workflow.md     ← Reglas de workflow TDD (red-green-refactor)
+├── hooks/test-on-edit.sh     ← Hook PostToolUse: corre tests al editar
+└── settings.json.partial     ← Permisos para test runners
+```
+
+Detección: `pytest.ini`, `vitest.config.*`, o `jest.config.*` presentes.
 
 ## Stacks vs MCP templates
 

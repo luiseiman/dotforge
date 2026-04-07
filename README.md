@@ -92,7 +92,7 @@ dotforge manages your `.claude/` configuration. It complements, not replaces, ot
 1. **Cross-project registry with audit history** — track scores across all your projects, spot regressions, compare configurations over time
 2. **Practices pipeline** — continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Discoveries propagate across projects
 3. **Template sync with customization preservation** — `<!-- forge:section -->` markers let `/forge sync` update managed sections without touching your customizations
-4. **Audit scoring with security cap** — 12-item checklist normalized to 10 points. Missing security essentials caps score at 6.0 regardless of other items
+4. **Audit scoring with security cap** — 13-item checklist normalized to 10 points. Missing security essentials caps score at 6.0 regardless of other items
 
 Other tools bootstrap once. dotforge bootstraps, audits, syncs, and evolves.
 
@@ -128,7 +128,7 @@ dotforge/
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
 ├── skills/         # 18 skills installed as ~/.claude/skills/ symlinks
 ├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
-├── audit/          # Checklist (12 items) + scoring normalized to 10
+├── audit/          # Checklist (13 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Project tracking with scores and history
@@ -215,7 +215,7 @@ Orchestration follows a decision tree: researcher → architect → implementer 
 `/forge audit` scores your project's Claude Code configuration on a 10-point scale:
 
 - **5 obligatory items** (scored 0-2): settings.json, block-destructive hook, CLAUDE.md, rules, deny list
-- **7 recommended items** (scored 0-1): lint hook, commands, error log, agents, manifest, global hook, prompt injection scan
+- **8 recommended items** (scored 0-1): lint hook, commands, error log, agents, manifest, global hook, prompt injection scan, auto-mode safety
 - **Project tier**: simple/standard/complex adjusts scoring expectations
 - **Security cap**: missing settings.json or block-destructive hook caps score at 6.0
 
@@ -356,7 +356,7 @@ $DOTFORGE_DIR/global/sync.sh
 1. **Registry cross-proyecto con historial de auditoría** — seguí scores en todos tus proyectos, detectá regresiones, compará configuraciones
 2. **Pipeline de prácticas** — ciclo de mejora continua: `inbox/ → evaluating/ → active/ → deprecated/`. Los descubrimientos se propagan entre proyectos
 3. **Template sync con preservación de customizaciones** — markers `<!-- forge:section -->` permiten que `/forge sync` actualice sin tocar lo tuyo
-4. **Audit scoring con security cap** — checklist de 12 ítems normalizado a 10. Faltar seguridad esencial capea el score a 6.0
+4. **Audit scoring con security cap** — checklist de 13 ítems normalizado a 10. Faltar seguridad esencial capea el score a 6.0
 
 Otras herramientas bootstrapean una vez. dotforge bootstrapea, audita, sincroniza y evoluciona.
 
@@ -388,11 +388,11 @@ Los proyectos multi-stack reciben todas las configuraciones de stacks coincident
 ```
 dotforge/
 ├── template/       # Scaffold base (CLAUDE.md.tmpl, settings, hooks, rules, commands)
-├── stacks/         # Módulos tecnológicos (15 stacks, aditivos)
+├── stacks/         # Módulos tecnológicos (16 stacks, aditivos)
 ├── agents/         # 7 subagentes (researcher, architect, implementer, ...)
-├── skills/         # 17 skills instalados como symlinks en ~/.claude/skills/
+├── skills/         # 18 skills instalados como symlinks en ~/.claude/skills/
 ├── mcp/            # Templates de servidores MCP (github, postgres, supabase, redis, slack)
-├── audit/          # Checklist (12 ítems) + puntaje normalizado a 10
+├── audit/          # Checklist (13 ítems) + puntaje normalizado a 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Gestión global de ~/.claude/ (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Seguimiento de proyectos con puntajes e historial
@@ -477,7 +477,7 @@ La orquestación sigue un árbol de decisión: researcher → architect → impl
 `/forge audit` puntúa la configuración de Claude Code de tu proyecto en una escala de 10 puntos:
 
 - **5 ítems obligatorios** (puntaje 0-2): settings.json, hook de bloqueo destructivo, CLAUDE.md, rules, lista de denegación
-- **7 ítems recomendados** (puntaje 0-1): hook de lint, commands, registro de errores, agentes, manifiesto, hook global, scan de prompt injection
+- **8 ítems recomendados** (puntaje 0-1): hook de lint, commands, registro de errores, agentes, manifiesto, hook global, scan de prompt injection, auto-mode safety
 - **Tier de proyecto**: simple/standard/complex ajusta expectations de scoring
 - **Tope de seguridad**: si falta settings.json o el hook de bloqueo destructivo, el puntaje máximo es 6.0
 

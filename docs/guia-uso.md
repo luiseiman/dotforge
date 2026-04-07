@@ -32,14 +32,20 @@ dotforge es una fábrica de configuración para Claude Code. Genera y mantiene l
 
 Antes de usar cualquier comando `/forge`, necesitás instalar la infraestructura global en `~/.claude/`. Esto se hace **una sola vez** por máquina.
 
-### Opción A: Script directo
+### Opción A: One-liner (recomendado)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
+```
+
+### Opción B: Script directo
 
 ```bash
 cd ~/Documents/GitHub/dotforge   # o donde tengas clonado dotforge
 ./global/sync.sh
 ```
 
-### Opción B: Desde Claude Code
+### Opción C: Desde Claude Code
 
 ```
 /forge global sync
@@ -49,7 +55,7 @@ cd ~/Documents/GitHub/dotforge   # o donde tengas clonado dotforge
 
 | Componente | Ubicación | Método |
 |-----------|-----------|--------|
-| Skills (15) | `~/.claude/skills/` | Symlinks |
+| Skills (18) | `~/.claude/skills/` | Symlinks |
 | Agents (7) | `~/.claude/agents/` | Symlinks |
 | Comando `/forge` | `~/.claude/commands/forge.md` | Copia (Claude Code no sigue symlinks para commands) |
 | CLAUDE.md global | `~/.claude/CLAUDE.md` | Merge con preservación de `<!-- forge:custom -->` |
@@ -72,7 +78,7 @@ Muestra:
 ═══ GLOBAL STATUS ═══
 CLAUDE.md:     ✓ sincronizado
 settings.json: deny list 9 items (plantilla: 9)
-Skills:        15/15 instalados
+Skills:        18/18 instalados
 Agents:        7/7 instalados
 Commands:      forge.md (archivo)
 ```
@@ -200,7 +206,7 @@ Principio fundamental: **merge, no overwrite**. Nunca sobrescribe sin confirmaci
 
 #### `/forge audit` — verificar estado
 
-Score 0-10 normalizado contra un checklist de 12 items.
+Score 0-10 normalizado contra un checklist de 13 items.
 
 ### Dashboard multi-proyecto
 
@@ -274,6 +280,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | `/forge domain extract` | Extraer domain rules del código del proyecto |
 | `/forge domain sync-vault` | Sincronizar domain rules al vault de Obsidian |
 | `/forge domain list` | Listar domain rules con cobertura |
+| `/forge learn` | Escanear código para detectar patrones y proponer domain rules |
 
 ### Comandos globales
 
@@ -301,7 +308,7 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 
 ## 6. Stacks disponibles
 
-15 stacks que se detectan automáticamente y se pueden combinar (multi-stack):
+16 stacks que se detectan automáticamente y se pueden combinar (multi-stack):
 
 | Stack | Indicadores de detección |
 |-------|-------------------------|
@@ -318,6 +325,9 @@ Borra `.claude/` y re-ejecuta bootstrap completo. Pero:
 | **redis** | `redis` en requirements.txt/pyproject.toml |
 | **data-analysis** | `*.ipynb`, `*.csv`, `*.xlsx` prominentes |
 | **devcontainer** | `.devcontainer/`, `devcontainer.json` |
+| **tdd** | `pytest.ini`, `vitest.config.*`, `jest.config.*` |
+| **hookify** | Indicador de framework de hooks custom |
+| **trading** | Indicador de stack custom |
 
 Cada stack aporta:
 - `rules/*.md` — reglas contextuales con `globs:` frontmatter (eager loading). Para lazy loading, usar `paths:` como CSV sin quotes con `alwaysApply: false`
@@ -330,7 +340,7 @@ Cada stack aporta:
 
 ## 7. Sistema de auditoría
 
-### Checklist (12 items)
+### Checklist (13 items)
 
 #### Obligatorios (0-2 puntos cada uno, peso 70%)
 
@@ -353,15 +363,16 @@ Cada stack aporta:
 | 10 | Agentes | Instalados + regla de orquestación activa |
 | 11 | .gitignore | Protege .env, *.key, *.pem, credentials |
 | 12 | Prompt injection scan | Sin patrones sospechosos en rules/CLAUDE.md |
+| 13 | Auto-mode safety | Allow rules usan comandos específicos, no patrones de intérprete |
 
 ### Fórmula de scoring
 
 ```
-score = obligatorio × 0.7 + recomendado × (3.0 / 7)
+score = obligatorio × 0.7 + recomendado × (3.0 / 8)
 ```
 
 - Obligatorios perfectos sin recomendados = **7.0** (Bueno)
-- Para llegar a 9+ necesitás al menos 4 recomendados
+- Para llegar a 9+ necesitás al menos 5 recomendados
 
 ### Cap de seguridad
 

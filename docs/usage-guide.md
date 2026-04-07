@@ -32,14 +32,20 @@ dotforge is a configuration factory for Claude Code. It generates and maintains 
 
 Before using any `/forge` command, you need to install the global infrastructure in `~/.claude/`. This is done **once** per machine.
 
-### Option A: Direct script
+### Option A: One-liner (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
+```
+
+### Option B: Direct script
 
 ```bash
 cd ~/Documents/GitHub/dotforge   # or wherever you cloned dotforge
 ./global/sync.sh
 ```
 
-### Option B: From Claude Code
+### Option C: From Claude Code
 
 ```
 /forge global sync
@@ -49,7 +55,7 @@ cd ~/Documents/GitHub/dotforge   # or wherever you cloned dotforge
 
 | Component | Location | Method |
 |-----------|----------|--------|
-| Skills (15) | `~/.claude/skills/` | Symlinks |
+| Skills (18) | `~/.claude/skills/` | Symlinks |
 | Agents (7) | `~/.claude/agents/` | Symlinks |
 | `/forge` command | `~/.claude/commands/forge.md` | Copy (Claude Code does not follow symlinks for commands) |
 | Global CLAUDE.md | `~/.claude/CLAUDE.md` | Merge with `<!-- forge:custom -->` preservation |
@@ -72,7 +78,7 @@ Output:
 === GLOBAL STATUS ===
 CLAUDE.md:     OK synced
 settings.json: deny list 9 items (template: 9)
-Skills:        15/15 installed
+Skills:        18/18 installed
 Agents:        7/7 installed
 Commands:      forge.md (file)
 ```
@@ -200,7 +206,7 @@ Fundamental principle: **merge, not overwrite**. Never overwrites without confir
 
 #### `/forge audit` — verify state
 
-Score 0-10 normalized against a 12-item checklist.
+Score 0-10 normalized against a 13-item checklist.
 
 ### Multi-project dashboard
 
@@ -274,6 +280,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge domain extract` | Extract domain rules from project code |
 | `/forge domain sync-vault` | Sync domain rules to Obsidian vault |
 | `/forge domain list` | List current domain rules with coverage |
+| `/forge learn` | Scan code to detect patterns and propose domain rules |
 
 ### Global commands
 
@@ -301,7 +308,7 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 
 ## 6. Available stacks
 
-15 stacks that are detected automatically and can be combined (multi-stack):
+16 stacks that are detected automatically and can be combined (multi-stack):
 
 | Stack | Detection indicators |
 |-------|---------------------|
@@ -318,6 +325,9 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | **redis** | `redis` in requirements.txt/pyproject.toml |
 | **data-analysis** | `*.ipynb`, `*.csv`, `*.xlsx` prominent |
 | **devcontainer** | `.devcontainer/`, `devcontainer.json` |
+| **tdd** | `pytest.ini`, `vitest.config.*`, `jest.config.*` |
+| **hookify** | Custom hook framework indicator |
+| **trading** | Custom stack indicator |
 
 Each stack provides:
 - `rules/*.md` — contextual rules with `globs:` frontmatter (eager loading). For lazy loading, use `paths:` as unquoted CSV with `alwaysApply: false`
@@ -330,7 +340,7 @@ Each stack provides:
 
 ## 7. Audit system
 
-### Checklist (12 items)
+### Checklist (13 items)
 
 #### Required (0-2 points each, 70% weight)
 
@@ -353,15 +363,16 @@ Each stack provides:
 | 10 | Agents | Installed + active orchestration rule |
 | 11 | .gitignore | Protects .env, *.key, *.pem, credentials |
 | 12 | Prompt injection scan | No suspicious patterns in rules/CLAUDE.md |
+| 13 | Auto-mode safety | Allow rules use specific tool commands, not interpreter patterns |
 
 ### Scoring formula
 
 ```
-score = required x 0.7 + recommended x (3.0 / 7)
+score = required x 0.7 + recommended x (3.0 / 8)
 ```
 
 - Perfect required items without recommended = **7.0** (Good)
-- To reach 9+ you need at least 4 recommended items
+- To reach 9+ you need at least 5 recommended items
 
 ### Security cap
 

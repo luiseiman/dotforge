@@ -47,6 +47,9 @@ cd dotforge
 export DOTFORGE_DIR="$(pwd)"
 
 # Install globally (symlinks skills, agents, commands into ~/.claude/)
+# Option A: one-liner (end users)
+# curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
+# Option B: direct (contributors, after cloning)
 ./global/sync.sh
 
 # Validate
@@ -126,6 +129,9 @@ cd dotforge
 export DOTFORGE_DIR="$(pwd)"
 
 # Instalar globalmente (symlinks de skills, agents, commands en ~/.claude/)
+# Opción A: one-liner (usuarios finales)
+# curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
+# Opción B: directo (contributors, después del clone)
 ./global/sync.sh
 
 # Validar
