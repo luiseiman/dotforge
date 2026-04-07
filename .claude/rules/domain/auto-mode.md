@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json"
 description: "Auto mode classifier, permission stripping, tool concurrency"
 domain: claude-code-engineering
-last_verified: 2026-04-05
+last_verified: 2026-04-07
 ---
 
 # Auto Mode & Tool Safety
@@ -15,6 +15,9 @@ last_verified: 2026-04-05
 - Subagent evaluation: auto mode applies to subagent tool calls too
 - Enable: `permissions.defaultMode: "auto"` in settings.json
 - Disable (managed): `permissions.disableAutoMode: "disable"`
+- `showThinkingSummaries`: defaults to false since v2.1.89 — set true to restore
+- `disableSkillShellExecution`: blocks inline shell in skills/commands (managed)
+- `forceRemoteSettingsRefresh`: fail-closed — blocks startup until remote settings fetched (v2.1.92)
 
 ## Permission stripping in auto mode
 

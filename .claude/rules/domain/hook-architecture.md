@@ -2,12 +2,12 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-05
+last_verified: 2026-04-07
 ---
 
 # Hook Architecture
 
-## Events (26 total, verified v2.1.90+)
+## Events (27 total, verified v2.1.92)
 
 Core: SessionStart, SessionEnd, Stop, StopFailure
 Tool lifecycle: PreToolUse, PostToolUse, PostToolUseFailure
