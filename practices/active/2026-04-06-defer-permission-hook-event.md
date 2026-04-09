@@ -4,11 +4,12 @@ title: "Hooks can defer permission decisions (new event type)"
 source: https://code.claude.com/docs/en/changelog
 source_type: changelog
 discovered: 2026-04-06
-status: inbox
+status: active
 tags: [hooks, permissions, security]
 tested_in: null
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/hook-events.md", ".claude/rules/domain/hook-architecture.md"]
 replaced_by: null
+effectiveness: not-applicable
 ---
 
 ## Descripción
@@ -23,4 +24,4 @@ Official changelog v2.1.89 (April 1, 2026): "Faster resume flows, new hook event
 - `hooks/` — add example defer hook for mobile-approval workflow
 
 ## Decisión
-Pendiente
+Incorporado en hook-events.md (defer detail) y hook-architecture.md. v2.9.0 + update 2026-04-08.

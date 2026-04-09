@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md"
 description: "Agent delegation patterns and team coordination"
 domain: claude-code-engineering
-last_verified: 2026-04-02
+last_verified: 2026-04-08
 ---
 
 # Agent Orchestration

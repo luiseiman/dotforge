@@ -27,6 +27,7 @@ last_verified: 2026-04-07
 
 - PermissionRequest: intercept permission dialog, auto-allow/deny with exit 2
 - PermissionDenied: fires on auto mode classifier denials only (not manual deny or PreToolUse block). Input: tool_name, tool_input, tool_use_id, reason. Return `{retry: true}` to allow retry
+- PreToolUse `defer`: pause execution for async external approval (Slack, mobile notification). Combine with `asyncRewake: true` for human-in-the-loop flows (v2.1.89+)
 
 ## Agent events
 

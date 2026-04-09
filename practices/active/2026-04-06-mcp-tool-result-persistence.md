@@ -4,11 +4,12 @@ title: "MCP tool result size override via _meta"
 source: https://code.claude.com/docs/en/changelog
 source_type: changelog
 discovered: 2026-04-06
-status: inbox
+status: active
 tags: [mcp, performance, settings]
 tested_in: null
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/context-window-optimization.md"]
 replaced_by: null
+effectiveness: not-applicable
 ---
 
 ## Descripción
@@ -22,4 +23,4 @@ Official changelog v2.1.91 (April 2, 2026): "Added MCP tool result persistence o
 - Any MCP server templates in `integrations/` or `mcp/` that deal with large payloads (DB query results, file reads) should document this override
 
 ## Decisión
-Pendiente
+Incorporado en context-window-optimization.md durante v2.9.0 upstream alignment.

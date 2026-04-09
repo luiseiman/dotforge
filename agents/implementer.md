@@ -34,8 +34,18 @@ Only record non-obvious learnings. Skip if nothing new was discovered.
 ## Workflow
 
 ```
-READ spec/context → IMPLEMENT changes → RUN tests → FIX failures → LINT check → SUMMARIZE
+READ spec/context → IMPLEMENT changes → RUN tests → FIX failures → LINT check → DOCS check → SUMMARIZE
 ```
+
+## Post-Implementation Docs Check
+
+After code passes tests/lint, verify:
+1. **VERSION bump?** — if yes, changelog entry exists and README badge matches
+2. **New rule/skill/stack?** — frontmatter is valid (globs/paths, name, description)
+3. **Bilingual docs?** — if usage-guide.md was touched, flag guia-uso.md for sync (don't auto-translate)
+4. **CLAUDE.md counts** — if agents/skills/stacks were added/removed, verify CLAUDE.md reflects it
+
+Skip if no docs-impacting changes were made.
 
 ## Output Format
 

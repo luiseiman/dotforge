@@ -44,7 +44,8 @@ Worktree: WorktreeCreate, WorktreeRemove
 - session-report.sh: Stop event; JSON metrics to ~/.claude/metrics/
 - All hooks: chmod +x, validate with `bash -n`, shellcheck if available
 
-## Plugin env vars
+## Plugin system
 
-- `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.X}`
+- Env vars: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.X}`
 - Plugin options exposed as `CLAUDE_PLUGIN_OPTION_*` env vars
+- `bin/` directory: executables added to PATH during skill/hook execution (v2.1.91+). Ship compiled helpers, scripts, CLIs alongside markdown instructions

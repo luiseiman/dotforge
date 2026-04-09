@@ -4,11 +4,12 @@ title: "forceRemoteSettingsRefresh — fail-closed policy for managed CLIs"
 source: https://code.claude.com/docs/en/changelog
 source_type: changelog
 discovered: 2026-04-06
-status: inbox
+status: active
 tags: [settings, enterprise, policy, security]
 tested_in: null
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/auto-mode.md"]
 replaced_by: null
+effectiveness: not-applicable
 ---
 
 ## Descripción
@@ -23,4 +24,4 @@ Official changelog v2.1.92 (April 4, 2026): "Added `forceRemoteSettingsRefresh` 
 - Low priority for individual developer setups
 
 ## Decisión
-Pendiente
+Incorporado en auto-mode.md durante v2.9.0 upstream alignment.

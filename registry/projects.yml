@@ -1,32 +1,130 @@
 # Registry of projects managed by dotforge
 # Updated by /forge audit and /forge sync
 # Schema: name, path, stacks, last_audit, last_sync, dotforge_version, score, history, metrics_summary, notes
-# Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/7) (max 10.0)
+# Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/8) (max 10.0)
 # history: array of {date, score, version} entries — appended by /forge audit, never overwritten
 # metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
 #
 # This file ships empty. /forge bootstrap and /forge audit populate it with your projects.
 # Your local registry is gitignored after first use — see .gitignore.
-#
-# Example entry:
-#
-# projects:
-#   - name: my-api
-#     path: /home/user/projects/my-api
-#     stacks: [python-fastapi, docker-deploy]
-#     last_audit: 2026-03-19
-#     last_sync: 2026-03-19
-#     dotforge_version: 2.3.0
-#     score: 9.5
-#     history:
-#       - {date: 2026-03-01, score: 7.0, version: 1.0.0}
-#       - {date: 2026-03-19, score: 9.5, version: 2.3.0}
-#     metrics_summary:
-#       sessions: 15
-#       avg_errors: 0.3
-#       avg_hook_blocks: 0.8
-#       avg_rule_coverage: 0.72
-#       last_updated: 2026-03-19
-#     notes: "8 rules, 2 hooks, 4 commands, deny complete."
 
-projects: []
+projects:
+  - name: dotforge
+    path: /Users/luiseiman/Documents/GitHub/dotforge
+    stacks: []
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "14 rules, 6 hooks, 4 commands, 7 agents. Reference config."
+
+  - name: cds-dashboard
+    path: /Users/luiseiman/Documents/jira nbch/cds-dashboard
+    stacks: [react-vite-ts]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Next.js 15 + Jira Cloud. 6 errors tracked. Domain rule: issue-hierarchy."
+
+  - name: jira-nbch
+    path: /Users/luiseiman/Documents/jira nbch
+    stacks: [data-analysis]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Data analysis + Jira MCP. Custom analyst agent. 7 rules."
+
+  - name: openclaw
+    path: /Users/luiseiman/Documents/GitHub/openclaw
+    stacks: [node-express]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "TS/Python multi-platform CLI. 15 rules, 5 domain rules."
+
+  - name: cotiza-api-cloud
+    path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
+    stacks: [python-fastapi, gcp-cloud-run, trading]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Python WebSocket API. 8 errors tracked. 17 commands. Rich agent memory."
+
+  - name: SOMA2
+    path: /Users/luiseiman/Documents/GitHub/SOMA2
+    stacks: [python-fastapi, redis, docker-deploy]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Agent OS v2. 23 rules, 8 domain rules, 7 hooks. Reference config."
+
+  - name: SOMA
+    path: /Users/luiseiman/Documents/GitHub/SOMA
+    stacks: [python-fastapi, redis, docker-deploy]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Agent OS v1. 8 contextual rules, 5 custom commands, multi-service arch."
+
+  - name: vault-bot
+    path: /Users/luiseiman/Documents/GitHub/vault-bot
+    stacks: [python-fastapi, gcp-cloud-run]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 9.6
+    history:
+      - {date: 2026-04-08, score: 9.6, version: 2.9.1}
+    notes: "Telegram bot + Obsidian vault. Agent memory empty (-0.4)."
+
+  - name: InviSight-iOS
+    path: /Users/luiseiman/Documents/GitHub/InviSight-iOS
+    stacks: [swift-swiftui, supabase, trading]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Trading iOS. 12 rules, 11 commands, 3 errors tracked. CLAUDE_ERRORS active."
+
+  - name: TRADINGBOT
+    path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
+    stacks: [python-fastapi, react-vite-ts, supabase, trading]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "Fullstack trading. 13 rules, 2 lint hooks. settings.local.json needs review."
+
+  - name: derup
+    path: /Users/luiseiman/Documents/GitHub/derup
+    stacks: [react-vite-ts]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 10.0
+    history:
+      - {date: 2026-04-08, score: 10.0, version: 2.9.1}
+    notes: "ER modeler. 23 errors tracked, rich implementer memory. Reference config."
+
+  - name: crm
+    path: /Users/luiseiman/Documents/crm
+    stacks: [react-vite-ts, supabase]
+    last_audit: 2026-04-08
+    dotforge_version: 2.9.1
+    score: 9.6
+    history:
+      - {date: 2026-04-08, score: 9.6, version: 2.9.1}
+    notes: "ISP/Contact Center fullstack. Agent memory empty (-0.4)."

@@ -4,6 +4,20 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v2.9.1 (2026-04-08)
+
+### Practices Pipeline Update
+
+- Evaluated 17 inbox practices: 5 accepted, 12 rejected (session-changes not generalizable)
+- Incorporated: `defer` permission hook detail → hook-events.md
+- Incorporated: plugin `bin/` executable convention → hook-architecture.md
+- Confirmed already-incorporated: `disableSkillShellExecution`, `forceRemoteSettingsRefresh`, MCP 500K override
+- Inbox cleared: 0 pending (was 17)
+- Active practices: 13 (was 8)
+- Metrics: 13 tracked practices in metrics.yml (was 8)
+
+---
+
 ## v2.9.0 (2026-04-05) — RELEASED
 
 ### Hardening + Portability + Upstream Alignment + E2E Validated

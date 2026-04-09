@@ -4,11 +4,12 @@ title: "Plugins can ship executables under bin/"
 source: https://code.claude.com/docs/en/changelog
 source_type: changelog
 discovered: 2026-04-06
-status: inbox
+status: active
 tags: [plugins, distribution, extensibility]
 tested_in: null
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/hook-architecture.md"]
 replaced_by: null
+effectiveness: not-applicable
 ---
 
 ## Descripción
@@ -23,4 +24,4 @@ Official changelog v2.1.91: "Plugins can ship executables under `bin/` directory
 - `plugin-generator` skill — should scaffold bin/ directory when relevant
 
 ## Decisión
-Pendiente
+Incorporado en hook-architecture.md (plugin system section). v2.9.0 + update 2026-04-08.

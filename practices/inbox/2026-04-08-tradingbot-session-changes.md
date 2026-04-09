@@ -1,18 +1,18 @@
 ---
-id: practice-2026-03-25-jira-nbch-session-changes
-title: "Changes detected in .claude/ of jira nbch"
-source: "post-session hook — jira nbch"
+id: practice-2026-04-08-tradingbot-session-changes
+title: "Changes detected in .claude/ of TRADINGBOT"
+source: "post-session hook — TRADINGBOT"
 source_type: experience
-discovered: 2026-03-25
+discovered: 2026-04-08
 status: inbox
-tags: [auto-detected, jira nbch]
-tested_in: jira nbch
+tags: [auto-detected, TRADINGBOT]
+tested_in: TRADINGBOT
 incorporated_in: []
 replaced_by: null
 ---
 
 ## Description
-1 file(s) modified in .claude/ of project jira nbch during the session.
+1 file(s) modified in .claude/ of project TRADINGBOT during the session.
 
 ## Modified files
 .claude/settings.local.json

@@ -236,6 +236,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 ## Documentation
 
 - **[Usage Guide](docs/usage-guide.md)** — Complete step-by-step guide: install, bootstrap, sync, audit, practices ([Español](docs/guia-uso.md))
+- [Claude Code vs /forge](docs/claude-vs-forge.md) — Command comparison: what overlaps, what's exclusive, when to use each ([Español](docs/claude-vs-forge.md#claude-code-vs-forge--comparativa-de-comandos))
 - [Best Practices](docs/best-practices.md) — Claude Code configuration patterns
 - [Security Checklist](docs/security-checklist.md) — 34 items for pre-deploy review
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 reproducible patterns
@@ -498,6 +499,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 ## Documentación
 
 - **[Guía de Uso](docs/guia-uso.md)** — Guía completa paso a paso: instalación, bootstrap, sync, auditoría, prácticas ([English](docs/usage-guide.md))
+- [Claude Code vs /forge](docs/claude-vs-forge.md#claude-code-vs-forge--comparativa-de-comandos) — Comparativa de comandos: qué se solapa, qué es exclusivo, cuándo usar cada uno ([English](docs/claude-vs-forge.md))
 - [Best Practices](docs/best-practices.md) — Patrones de configuración de Claude Code
 - [Security Checklist](docs/security-checklist.md) — 34 ítems para revisión pre-deploy
 - [Prompting Patterns](docs/prompting-patterns.md) — 10 patrones reproducibles
