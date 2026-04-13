@@ -4,7 +4,7 @@
 #
 # Usage: ./audit/score.sh [PROJECT_DIR] [--json] [--threshold N]
 #
-# Computes the 13-item checklist mechanically without Claude.
+# Computes the 15-item checklist mechanically without Claude.
 # Semantic checks (CLAUDE.md quality, rule content) are approximated with heuristics.
 # Score is indicative — /forge audit provides authoritative semantic evaluation.
 #
@@ -36,10 +36,10 @@ fi
 
 cd "$PROJECT_DIR"
 
-# --- Score variables (s1..s14) and notes (n1..n14) ---
+# --- Score variables (s1..s15) and notes (n1..n15) ---
 s1=0; n1=""; s2=0; n2=""; s3=0; n3=""; s4=0; n4=""; s5=0; n5=""
 s6=0; n6=""; s7=0; n7=""; s8=0; n8=""; s9=0; n9=""; s10=0; n10=""
-s11=0; n11=""; s12=0; n12=""; s13=0; n13=""; s14=0; n14=""
+s11=0; n11=""; s12=0; n12=""; s13=0; n13=""; s14=0; n14=""; s15=0; n15=""
 
 # ─────────────────────────────────────────────────────────────────────────────
 # OBLIGATORIO (each 0-2)
@@ -256,13 +256,59 @@ elif [[ -f "$SETTINGS" ]] && grep -qE '(behaviors|__pretooluse__)' "$SETTINGS" 2
   s14=1; n14="behavior hook references present in settings.json"
 fi
 
+# 15. OS-level sandboxing
+SANDBOX_STATE="off"
+if [[ -f "$SETTINGS" ]]; then
+  SANDBOX_STATE=$(python3 -c "
+import json
+try:
+    d = json.load(open('$SETTINGS'))
+    sb = d.get('sandbox') or {}
+    if sb.get('enabled') is True:
+        fs = sb.get('filesystem') or {}
+        net = sb.get('network') or {}
+        if fs.get('denyRead') or fs.get('denyWrite') or net.get('allowedDomains'):
+            print('on_restricted')
+        else:
+            print('on_permissive')
+    else:
+        print('off')
+except Exception:
+    print('off')
+" 2>/dev/null)
+fi
+
+HANDLES_SECRETS=0
+SECRET_REASON=""
+if ls .env .env.* 2>/dev/null | grep -vE '\.(example|sample|template)$' >/dev/null 2>&1; then
+  HANDLES_SECRETS=1; SECRET_REASON=".env files present"
+elif find . -maxdepth 3 -type f \( -name '*.key' -o -name '*.pem' -o -name 'credentials*' \) -not -path './node_modules/*' -not -path './.git/*' 2>/dev/null | head -1 | grep -q .; then
+  HANDLES_SECRETS=1; SECRET_REASON="key/pem/credentials files detected"
+elif grep -rqE '(gcloud|aws configure|kubectl apply|firebase login|openai|anthropic|supabase)' --include='*.sh' --include='*.md' --include='*.env' --include='*.yaml' . 2>/dev/null; then
+  HANDLES_SECRETS=1; SECRET_REASON="cloud/API refs in scripts or docs"
+fi
+
+case "$SANDBOX_STATE" in
+  on_restricted)
+    s15=1; n15="sandbox.enabled with filesystem/network restrictions" ;;
+  on_permissive)
+    s15=0; n15="sandbox.enabled but no filesystem/network restrictions configured" ;;
+  off)
+    if [[ $HANDLES_SECRETS -eq 0 ]]; then
+      s15=1; n15="No secrets detected — sandboxing not required (auto-pass)"
+    else
+      s15=0; n15="Project handles secrets (${SECRET_REASON}) but sandbox.enabled is not true"
+    fi
+    ;;
+esac
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Calculate score
 # ─────────────────────────────────────────────────────────────────────────────
 SCORE_OBL=$((s1 + s2 + s3 + s4 + s5))
-SCORE_REC=$((s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14))
+SCORE_REC=$((s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15))
 
-SCORE_TOTAL=$(awk "BEGIN { printf \"%.2f\", ${SCORE_OBL} * 0.7 + ${SCORE_REC} * (3.0 / 9) }")
+SCORE_TOTAL=$(awk "BEGIN { printf \"%.2f\", ${SCORE_OBL} * 0.7 + ${SCORE_REC} * (3.0 / 10) }")
 
 SECURITY_CAP=false
 if [[ $s2 -eq 0 || $s4 -eq 0 ]]; then
@@ -311,7 +357,8 @@ data = {
     "11_gitignore":        {"score": ${s11}, "note": "$(_san "$n11")"},
     "12_injection":        {"score": ${s12}, "note": "$(_san "$n12")"},
     "13_auto_mode":        {"score": ${s13}, "note": "$(_san "$n13")"},
-    "14_behaviors":        {"score": ${s14}, "note": "$(_san "$n14")"}
+    "14_behaviors":        {"score": ${s14}, "note": "$(_san "$n14")"},
+    "15_sandboxing":       {"score": ${s15}, "note": "$(_san "$n15")"}
   }
 }
 print(json.dumps(data, indent=2))
@@ -329,7 +376,7 @@ else
   printf "  [%s] 4.  block-destructive    %s\n" "$s4"  "$n4"
   printf "  [%s] 5.  Build/test commands  %s\n" "$s5"  "$n5"
   echo ""
-  echo "── RECOMENDADO (${SCORE_REC}/9) ──"
+  echo "── RECOMENDADO (${SCORE_REC}/10) ──"
   printf "  [%s] 6.  CLAUDE_ERRORS.md     %s\n" "$s6"  "$n6"
   printf "  [%s] 7.  Lint hook            %s\n" "$s7"  "$n7"
   printf "  [%s] 8.  Custom commands      %s\n" "$s8"  "$n8"
@@ -339,6 +386,7 @@ else
   printf "  [%s] 12. Injection scan       %s\n" "$s12" "$n12"
   printf "  [%s] 13. Auto mode safety     %s\n" "$s13" "$n13"
   printf "  [%s] 14. Behaviors coverage   %s\n" "$s14" "$n14"
+  printf "  [%s] 15. Sandboxing           %s\n" "$s15" "$n15"
 fi
 
 # CI threshold gate

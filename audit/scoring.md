@@ -3,13 +3,13 @@
 ## Cálculo
 
 ```
-score_obligatorio = sum(items 1-5)  # máximo 10
-score_recomendado = sum(items 6-13) # máximo 8
-score_total = score_obligatorio * 0.7 + score_recomendado * (3.0 / 8)  # max = 7.0 + 3.0 = 10.0
+score_obligatorio = sum(items 1-5)   # máximo 10
+score_recomendado = sum(items 6-15)  # máximo 10
+score_total = score_obligatorio * 0.7 + score_recomendado * (3.0 / 10)  # max = 7.0 + 3.0 = 10.0
 score_normalizado = min(score_total, 10)
 ```
 
-**Efecto:** obligatorios perfectos sin recomendados = 7.0 (Bueno). Para llegar a 9+ se necesitan al menos 4 recomendados.
+**Efecto:** obligatorios perfectos sin recomendados = 7.0 (Bueno). Cada recomendado aporta 0.3 — para llegar a 9+ se necesitan al menos 7 recomendados.
 
 ## Cap por seguridad crítica
 

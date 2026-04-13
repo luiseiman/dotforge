@@ -48,3 +48,4 @@ Managed (enterprise) > Local (.claude/settings.local.json) > Project (.claude/se
 - NEVER touch skipDangerousModePermissionPrompt — user decision only
 - MCP tools default to `passthrough` (always ask)
 - Audit: if settings.json OR block-destructive hook missing → max score 6.0
+- For OS-level defense-in-depth (kernel-enforced filesystem/network isolation), see `sandboxing.md`

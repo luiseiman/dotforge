@@ -31,7 +31,7 @@
 - 1: Están en README pero no en CLAUDE.md, o están en CLAUDE.md pero son incorrectos
 - 2: Documentados en CLAUDE.md con comandos exactos que corresponden al stack detectado
 
-## Recomendado (cada item: 0-1 punto, total máximo: 9)
+## Recomendado (cada item: 0-1 punto, total máximo: 10)
 
 ### 6. CLAUDE_ERRORS.md
 - 0: No existe
@@ -74,3 +74,9 @@
 - 1: At least one v3 behavior enabled via `behaviors/index.yaml`, compiled hooks under `.claude/hooks/generated/`, or behavior hook references in `settings.json`
 
 **Verification:** Check `behaviors/index.yaml` for entries with `enabled: true`, or count generated behavior hooks matching `*__pretooluse__*.sh`. A project that has not opted into the v3 behavior governance layer scores 0 — this does not apply the security cap.
+
+### 15. OS-level sandboxing (0-1)
+- 0: Project handles secrets (env vars, credentials, API keys, cloud configs) with no `sandbox.enabled` in settings.json
+- 1: `sandbox.enabled: true` with at least `network.allowedDomains` OR `filesystem.denyRead` covering the project's sensitive paths — OR project demonstrably handles no secrets (automatic pass)
+
+**Verification:** Parse `settings.json` for `sandbox.enabled`. If true, verify at least one filesystem or network restriction is configured. If false, scan project for indicators of secret handling: presence of `.env*`, `credentials*`, `*.key`, `*.pem`, or references to cloud CLIs (`gcloud`, `aws`, `kubectl`) in scripts. Projects without secrets auto-pass. Not applicable on Windows native (WSL2 only). See `.claude/rules/domain/sandboxing.md`.
