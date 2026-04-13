@@ -1,0 +1,58 @@
+schema_version: "1"
+id: respect-todo-state
+name: Respect Todo State
+description: >
+  Remind the agent to interleave TaskUpdate with TaskCreate. Each TaskCreate
+  without a prior TaskUpdate nudges; repeated neglect escalates.
+category: core
+scope: session
+enabled: true
+
+policy:
+  triggers:
+    # 1. TaskUpdate sets the "recently updated" flag.
+    - event: PreToolUse
+      matcher: "TaskUpdate"
+      action: set_flag
+      flag: todo_recently_updated
+
+    # 2. TaskCreate consumes it. Absent → violation (nudge/warning/soft_block).
+    - event: PreToolUse
+      matcher: "TaskCreate"
+      action: check_flag
+      flag: todo_recently_updated
+      on_present: consume
+      on_absent: violate
+
+  enforcement:
+    default_level: silent
+    escalation:
+      - after: 1
+        level: nudge
+      - after: 3
+        level: warning
+      - after: 5
+        level: soft_block
+
+  recovery:
+    hint: >
+      Before creating new todos, mark existing ones with TaskUpdate (completed,
+      in_progress, or deleted). Keeps the task list honest.
+    suggested_tool: TaskUpdate
+    suggested_action: "TaskUpdate(taskId, status: completed)"
+
+rendering:
+  nudge_template: "{behavior_name}: TaskCreate without recent TaskUpdate ({counter})"
+  warning_template: "[{behavior_id}] create/update imbalance: counter={counter}. Run TaskUpdate on existing tasks before adding more."
+  block_reason: "[{behavior_id}] BLOCKED: update existing tasks before creating new ones."
+  override_prompt: "Call TaskUpdate on an existing task, then retry TaskCreate."
+
+applies_to:
+  tools: [TaskCreate, TaskUpdate]
+  agents: []
+  profiles: [standard, strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [todo, workflow, core]

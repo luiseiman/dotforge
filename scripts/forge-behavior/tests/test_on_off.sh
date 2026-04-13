@@ -9,22 +9,22 @@ cli_test_init
 # ---------- Project scope ----------
 
 # Verify initial state
-initial=$(yaml_get "${FORGE_BEHAVIORS_DIR}/index.yaml" "behaviors.0.enabled")
+initial=$(yaml_enabled_by_id "${FORGE_BEHAVIORS_DIR}/index.yaml" "search-first")
 assert_eq "true" "$initial" "initial enabled in index.yaml" || exit 1
 
 # Disable at project scope
 bash "$CLI" off search-first --project >/dev/null || { printf 'FAIL: off project\n' >&2; exit 1; }
-after_off=$(yaml_get "${FORGE_BEHAVIORS_DIR}/index.yaml" "behaviors.0.enabled")
+after_off=$(yaml_enabled_by_id "${FORGE_BEHAVIORS_DIR}/index.yaml" "search-first")
 assert_eq "false" "$after_off" "project off → index.yaml enabled=false" || exit 1
 
 # Re-enable
 bash "$CLI" on search-first --project >/dev/null || { printf 'FAIL: on project\n' >&2; exit 1; }
-after_on=$(yaml_get "${FORGE_BEHAVIORS_DIR}/index.yaml" "behaviors.0.enabled")
+after_on=$(yaml_enabled_by_id "${FORGE_BEHAVIORS_DIR}/index.yaml" "search-first")
 assert_eq "true" "$after_on" "project on → index.yaml enabled=true" || exit 1
 
 # Default scope is project
 bash "$CLI" off search-first >/dev/null
-default_scope=$(yaml_get "${FORGE_BEHAVIORS_DIR}/index.yaml" "behaviors.0.enabled")
+default_scope=$(yaml_enabled_by_id "${FORGE_BEHAVIORS_DIR}/index.yaml" "search-first")
 assert_eq "false" "$default_scope" "default scope is project" || exit 1
 bash "$CLI" on search-first >/dev/null  # restore
 

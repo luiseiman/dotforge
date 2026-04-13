@@ -2,8 +2,21 @@ schema_version: "1"
 
 # Active behaviors, evaluated in declaration order.
 # Each entry's `enabled` field overrides the behavior file's own enabled field.
-# Phase 1: only search-first is catalogued. Phase 2 adds the rest of the core set.
+# Phase 2: core set + opinionated (opt-in). Safety-critical evaluated first.
 
 behaviors:
+  # Core — enabled by default
+  - id: no-destructive-git
+    enabled: true
   - id: search-first
     enabled: true
+  - id: verify-before-done
+    enabled: true
+  - id: respect-todo-state
+    enabled: true
+
+  # Opinionated — opt-in
+  - id: plan-before-code
+    enabled: false
+  - id: objection-format
+    enabled: false

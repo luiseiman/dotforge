@@ -8,68 +8,63 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.0.0--alpha.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
-Configuration governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Bootstrap, audit, sync, and evolve your `.claude/` configuration across projects — all markdown + shell scripts, zero required dependencies.
+**Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block, with a permanent override audit trail.
 
 ```
-bootstrap → audit → sync → capture → propagate
-    ↑                                    │
-    └────────────────────────────────────┘
+behaviors/no-destructive-git/behavior.yaml  # declarative policy
+  ↓ (compile)
+.claude/hooks/generated/*.sh                # runtime enforcement
+  ↓ (observe)
+.forge/runtime/state.json                   # counters, flags, per-session
+.forge/audit/overrides.log                  # override audit (git-tracked)
+```
+
+Other tools stop at configuration. dotforge governs behavior — and keeps auditing, syncing, and evolving your `.claude/` setup across every repo you manage.
+
+```
+bootstrap → audit → sync → capture → propagate → behaviors
+    ↑                                                 │
+    └─────────────────────────────────────────────────┘
 ```
 
 For people and teams managing more than one Claude Code project.
 
-Use dotforge if:
+## v3.0 — what's new
 
+- **Behavior catalogue** (`behaviors/`): `no-destructive-git`, `search-first`, `verify-before-done`, `respect-todo-state` (core, on by default) + `plan-before-code`, `objection-format` (opinionated, opt-in)
+- **Declarative DSL**: `behavior.yaml` with closed field/operator set, 5-level escalation, flag-based temporal gating, template rendering
+- **Compiler**: YAML → bash hooks + `settings.json` snippet. Conditions enforced at runtime via `regex_match`, `contains`, `starts_with`, …
+- **Runtime**: mkdir-based locking, TTL 24h, counters, flags, pending_block reinvocation detection for override audit
+- **CLI**: `/forge behavior list | describe | status | on | off | strict | relaxed` with project and session scopes
+- **Audit dimension 14**: `/forge audit` now scores v3 behavior coverage (0-1)
+- **33 tests green** across runtime, compiler, CLI, and per-behavior scenarios
+- **Spec of record**: [`docs/v3/SPEC.md`](docs/v3/SPEC.md) · [`SCHEMA.md`](docs/v3/SCHEMA.md) · [`RUNTIME.md`](docs/v3/RUNTIME.md) · [`MIGRATION.md`](docs/v3/MIGRATION.md)
+
+**v3 behaviors are opt-in and non-breaking.** If you don't create `behaviors/` or register generated hooks in your `settings.json`, your v2.9 workflow is untouched. See [`docs/v3/MIGRATION.md`](docs/v3/MIGRATION.md) for the upgrade path.
+
+What it looks like when you break a rule during a real Claude Code session:
+
+```
+Bash(git push origin main --force)
+  PreToolUse:Bash hook returned blocking error
+  PreToolUse:Bash says: Destructive git operation blocked: force push, hard reset,
+                        clean -f, and forced branch delete are not allowed.
+  Error: Hook PreToolUse:Bash denied this tool
+```
+
+Use dotforge if:
 - your `.claude/` configuration drifts across repos
 - you want to audit configuration quality, not just generate files once
+- you want to enforce runtime policies on agent behavior, not just document them
 - you want to propagate improvements discovered in one project to others
-- you want a repeatable system, not a loose collection of prompts
 
 Do not use dotforge if:
-
 - you only have one small repo
 - you only want a `CLAUDE.md` generator
 - you do not care about sync, audit history, or cross-project consistency
-
-## v3.0 Behavior Governance (alpha preview)
-
-As of `v3.0.0-alpha.1`, dotforge ships an **optional** behavior governance layer that runs alongside the v2.9 configuration layer. It lets you declare runtime policies on tool calls — like "search before writing" or "no destructive git" — and enforces them via compiled `PreToolUse` hooks that share a session-scoped state file.
-
-```
-behaviors/search-first/behavior.yaml        # declarative policy
-  ↓ (compile)
-.claude/hooks/generated/search-first__*.sh  # runtime enforcement
-  ↓ (observe)
-.forge/runtime/state.json                   # per-session counters, flags
-.forge/audit/overrides.log                  # permanent override audit trail
-```
-
-What it looks like when you break the rule during a real Claude Code session:
-
-```
-Write(src/metrics.py)
-  PreToolUse:Write says: [search-first] repeated write without search: counter=3
-Write(src/http.py)
-  PreToolUse:Write hook returned blocking error
-  PreToolUse:Write says: [search-first] BLOCKED: search the codebase before writing.
-  Error: Hook PreToolUse:Write denied this tool
-```
-
-Phase 1 (alpha) ships:
-- Runtime: mkdir-based lock, TTL 24h, counters, flags, pending_block reinvocation detection
-- Compiler: `behavior.yaml` → bash hook + `settings.json` snippet
-- Catalogue: `search-first` end-to-end (silent → nudge → warning → soft_block escalation)
-- `/forge behavior status | on | off | strict | relaxed` CLI with project and session scopes
-- 18 tests green + live smoke test in a real Claude Code session
-
-Phase 2 (in progress) adds the core behavior catalogue (verify-before-done, no-destructive-git, respect-todo-state) and a `scope: project` option for behaviors that must survive `/clear`. Phase 3 is the release (README rewrite, migration guide, `v3.0.0` tag).
-
-**v2.9.1 remains the stable rail** — v3 behaviors are opt-in. You only get them if you explicitly add `behaviors/` to your project and register the generated hooks in your `settings.json`. Everything in this README below applies to v2.9 as before.
-
-Spec of record: [`docs/v3/SPEC.md`](docs/v3/SPEC.md), [`docs/v3/SCHEMA.md`](docs/v3/SCHEMA.md), [`docs/v3/RUNTIME.md`](docs/v3/RUNTIME.md).
 
 ## Quick Start
 

@@ -1,0 +1,68 @@
+schema_version: "1"
+id: verify-before-done
+name: Verify Before Shipping
+description: >
+  Require that a test or build command has run before pushing code.
+  Prevents shipping unverified changes.
+category: core
+scope: session
+enabled: true
+
+policy:
+  triggers:
+    # 1. Any test/build command grants verification credit.
+    - event: PreToolUse
+      matcher: "Bash"
+      conditions:
+        - field: command
+          operator: regex_match
+          value: '(^|[;&|\s])(pytest|npm\s+(test|run\s+build)|yarn\s+(test|build)|pnpm\s+(test|build)|bun\s+test|go\s+test|cargo\s+test|cargo\s+build|mvn\s+(test|package|verify)|gradle\s+(test|build)|swift\s+test|make\s+(test|check|build)|vitest(\s|$)|jest(\s|$)|ruff\s+check|mypy\s+|tsc(\s|$)|eslint\s+)'
+      logic: all
+      action: set_flag
+      flag: verification_done
+
+    # 2. git push consumes the flag; absent = violation.
+    - event: PreToolUse
+      matcher: "Bash"
+      conditions:
+        - field: command
+          operator: regex_match
+          value: '(^|[;&|\s])git\s+push(\s|$)'
+      logic: all
+      action: check_flag
+      flag: verification_done
+      on_present: consume
+      on_absent: violate
+
+  enforcement:
+    default_level: silent
+    escalation:
+      - after: 1
+        level: nudge
+      - after: 2
+        level: warning
+      - after: 3
+        level: soft_block
+
+  recovery:
+    hint: >
+      Run your test or build command (pytest, npm test, go test, etc.) before
+      pushing. A single test run grants the push.
+    suggested_tool: Bash
+    suggested_action: "pytest  # or: npm test / go test / cargo test"
+
+rendering:
+  nudge_template: "{behavior_name}: push without prior tests (violation {counter})"
+  warning_template: "[{behavior_id}] pushing unverified code — run tests first. counter={counter}"
+  block_reason: "[{behavior_id}] BLOCKED: run tests/build before pushing."
+  override_prompt: "Run a test command (pytest, npm test, go test) then retry the push."
+
+applies_to:
+  tools: [Bash]
+  agents: []
+  profiles: [standard, strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [verify, tests, core]

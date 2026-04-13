@@ -3,6 +3,8 @@
 #
 # Usage:
 #   forge-behavior status [--session SESSION_ID]
+#   forge-behavior list [--category core|opinionated|experimental]
+#   forge-behavior describe <behavior_id>
 #   forge-behavior on  <behavior_id> [--session SESSION_ID | --project]
 #   forge-behavior off <behavior_id> [--session SESSION_ID | --project]
 #   forge-behavior strict  <behavior_id>        # project scope only in v1
@@ -234,6 +236,99 @@ PY
 }
 
 # ---------------------------------------------------------------------------
+# Action: list
+# ---------------------------------------------------------------------------
+
+cmd_list() {
+    local filter_category="${1:-}"
+    _require_index
+    local index_json
+    index_json=$(_yaml_to_json "$INDEX_FILE")
+
+    printf '%-22s  %-6s  %-12s  %-s\n' "ID" "STATE" "CATEGORY" "NAME"
+    printf '%-22s  %-6s  %-12s  %-s\n' "----------------------" "------" "------------" "------------------------"
+
+    # Iterate through index entries, loading each behavior.yaml for metadata.
+    local ids_enabled
+    ids_enabled=$(printf '%s' "$index_json" | jq -r '.behaviors[]? | "\(.id)\t\(.enabled)"')
+
+    while IFS=$'\t' read -r bid enabled; do
+        [ -z "$bid" ] && continue
+        local ypath
+        ypath=$(_behavior_yaml_path "$bid")
+        local name="(missing)" category="?"
+        if [ -f "$ypath" ]; then
+            local yjson
+            yjson=$(_yaml_to_json "$ypath")
+            name=$(printf '%s' "$yjson" | jq -r '.name // .id')
+            category=$(printf '%s' "$yjson" | jq -r '.category // "experimental"')
+        fi
+        if [ -n "$filter_category" ] && [ "$category" != "$filter_category" ]; then
+            continue
+        fi
+        local state_label
+        if [ "$enabled" = "true" ]; then state_label="on"; else state_label="off"; fi
+        printf '%-22s  %-6s  %-12s  %-s\n' "$bid" "$state_label" "$category" "$name"
+    done <<< "$ids_enabled"
+}
+
+# ---------------------------------------------------------------------------
+# Action: describe
+# ---------------------------------------------------------------------------
+
+cmd_describe() {
+    local bid="$1"
+    local ypath
+    ypath=$(_behavior_yaml_path "$bid")
+    [ -f "$ypath" ] || _die "behavior yaml not found: $ypath"
+    local yjson
+    yjson=$(_yaml_to_json "$ypath")
+
+    printf 'Behavior: %s\n' "$bid"
+    printf '  name:        %s\n' "$(printf '%s' "$yjson" | jq -r '.name // .id')"
+    printf '  category:    %s\n' "$(printf '%s' "$yjson" | jq -r '.category // "experimental"')"
+    printf '  scope:       %s\n' "$(printf '%s' "$yjson" | jq -r '.scope // "session"')"
+    printf '  enabled:     %s\n' "$(printf '%s' "$yjson" | jq -r '.enabled // true')"
+    printf '  version:     %s\n' "$(printf '%s' "$yjson" | jq -r '.metadata.version // "—"')"
+    printf '  tags:        %s\n' "$(printf '%s' "$yjson" | jq -r '(.metadata.tags // []) | join(", ")')"
+    printf '  description:\n'
+    printf '%s' "$yjson" | jq -r '.description // ""' | sed 's/^/    /'
+
+    printf '\n  triggers:\n'
+    printf '%s' "$yjson" | jq -r '
+        .policy.triggers[]? |
+        "    - event:   \(.event // "PreToolUse")\n      matcher: \(.matcher // "*")\n      action:  \(.action // "evaluate")\(if .flag then "\n      flag:    \(.flag)" else "" end)"
+    '
+
+    printf '\n  enforcement:\n'
+    printf '    default_level: %s\n' "$(printf '%s' "$yjson" | jq -r '.policy.enforcement.default_level // "silent"')"
+    local esc_count
+    esc_count=$(printf '%s' "$yjson" | jq '(.policy.enforcement.escalation // []) | length')
+    if [ "$esc_count" -gt 0 ]; then
+        printf '    escalation:\n'
+        printf '%s' "$yjson" | jq -r '
+            .policy.enforcement.escalation[]? |
+            "      after \(.after): \(.level)"
+        '
+    fi
+
+    printf '\n  recovery hint:\n'
+    printf '%s' "$yjson" | jq -r '.policy.recovery.hint // "(none)"' | sed 's/^/    /'
+
+    printf '\n  runtime status:\n'
+    if [ -f "$INDEX_FILE" ]; then
+        local idx_enabled
+        idx_enabled=$(_yaml_to_json "$INDEX_FILE" | jq -r --arg bid "$bid" \
+            '.behaviors[] | select(.id == $bid) | .enabled // empty')
+        if [ -n "$idx_enabled" ]; then
+            printf '    index.yaml enabled: %s\n' "$idx_enabled"
+        else
+            printf '    not listed in index.yaml\n'
+        fi
+    fi
+}
+
+# ---------------------------------------------------------------------------
 # Dispatcher
 # ---------------------------------------------------------------------------
 
@@ -243,6 +338,24 @@ main() {
     shift
 
     case "$cmd" in
+        list)
+            local filter=""
+            while [ $# -gt 0 ]; do
+                case "$1" in
+                    --category)
+                        [ $# -ge 2 ] || _die "--category requires an argument"
+                        filter="$2"; shift 2
+                        ;;
+                    *) shift ;;
+                esac
+            done
+            cmd_list "$filter"
+            ;;
+        describe)
+            local bid="${1:-}"
+            [ -n "$bid" ] || _die "usage: $0 describe <behavior_id>"
+            cmd_describe "$bid"
+            ;;
         status)
             local sid=""
             while [ $# -gt 0 ]; do
@@ -281,7 +394,7 @@ main() {
             cmd_strictness "$direction" "$bid"
             ;;
         *)
-            _die "unknown command: $cmd (expected status|on|off|strict|relaxed)"
+            _die "unknown command: $cmd (expected list|describe|status|on|off|strict|relaxed)"
             ;;
     esac
 }

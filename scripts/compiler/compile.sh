@@ -78,9 +78,11 @@ SETTINGS_SNIPPET='{"hooks":{}}'
 
 # Escape a value so it can live inside bash single-quoted strings.
 # Closes the quote, inserts an escaped single quote, reopens — the classic pattern.
+# Replaces each ' with the 4-char sequence: '\''
 _bash_sq_escape() {
-    local value="$1"
-    printf "%s" "${value//\'/\'\\\'\'}"
+    # Use python3 for correctness — bash parameter expansion backslash handling
+    # is treacherous enough inside double quotes that we bypass it.
+    python3 -c 'import sys; print(sys.argv[1].replace("\x27", "\x27\\\x27\x27"), end="")' "$1"
 }
 
 # Slugify a matcher (e.g. "Write|Edit" → "write-edit", "*" → "all")
@@ -105,6 +107,9 @@ for idx in $(seq 0 $((TRIGGER_COUNT - 1))); do
     FLAG=$(printf '%s' "$TRIGGER" | jq -r '.flag // empty')
     ON_PRESENT=$(printf '%s' "$TRIGGER" | jq -r '.on_present // empty')
     ON_ABSENT=$(printf '%s' "$TRIGGER" | jq -r '.on_absent // empty')
+    CONDITIONS_JSON=$(printf '%s' "$TRIGGER" | jq -c '.conditions // []')
+    CONDITIONS_COUNT=$(printf '%s' "$CONDITIONS_JSON" | jq 'length')
+    CONDITIONS_LOGIC=$(printf '%s' "$TRIGGER" | jq -r '.logic // "all"')
 
     case "$ACTION" in
         evaluate) ;;
@@ -172,7 +177,10 @@ EVENT_NAME='${EVENT}'
 PAYLOAD=\$(cat)
 SESSION_ID=\$(printf '%s' "\$PAYLOAD" | forge_session_id)
 TOOL_NAME=\$(printf '%s' "\$PAYLOAD" | jq -r '.tool_name // empty')
-TOOL_INPUT_JSON=\$(printf '%s' "\$PAYLOAD" | jq -c '.tool_input // {}')
+# For PreToolUse/PostToolUse, conditions see tool_input.
+# For UserPromptSubmit/Stop, merge top-level payload fields (e.g., .prompt)
+# into the condition context so DSL fields like \`prompt\` resolve.
+TOOL_INPUT_JSON=\$(printf '%s' "\$PAYLOAD" | jq -c '(.tool_input // {}) + (del(.session_id, .tool_name, .tool_input, .transcript_path, .cwd, .hook_event_name))')
 TOOL_INPUT_HASH=\$(printf '%s' "\$TOOL_INPUT_JSON" | forge_tool_input_hash)
 TOOL_INPUT_SUMMARY=\$(printf '%s' "\$TOOL_INPUT_JSON" | cut -c1-100 | tr -d '\\n')
 
@@ -181,6 +189,65 @@ if forge_behavior_session_is_disabled "\$SESSION_ID" "\$BEHAVIOR_ID"; then
     exit 0
 fi
 HOOK_HEADER
+
+    # Condition evaluation block (only when conditions exist).
+    # Uses python3 re module for full regex support (\s, \b, etc.).
+    if [ "$CONDITIONS_COUNT" -gt 0 ]; then
+        ESC_CONDITIONS=$(_bash_sq_escape "$CONDITIONS_JSON")
+        cat <<HOOK_CONDITIONS
+
+# Conditions (logic: ${CONDITIONS_LOGIC})
+CONDITIONS_JSON='${ESC_CONDITIONS}'
+if ! python3 - "\$CONDITIONS_JSON" '${CONDITIONS_LOGIC}' "\$TOOL_INPUT_JSON" <<'PYCOND'
+import sys, json, re
+conditions = json.loads(sys.argv[1])
+logic = sys.argv[2]
+tool_input = json.loads(sys.argv[3] or '{}')
+
+def get_field(f):
+    return tool_input.get(f, '') or ''
+
+def check(c):
+    field = c.get('field', '')
+    op = c.get('operator', '')
+    val = c.get('value', '')
+    v = get_field(field)
+    sv = str(v) if v is not None else ''
+    if op == 'regex_match':
+        try:
+            return bool(re.search(val, sv))
+        except re.error:
+            return False
+    if op == 'contains':     return val in sv
+    if op == 'not_contains': return val not in sv
+    if op == 'equals':       return sv == str(val)
+    if op == 'starts_with':  return sv.startswith(val)
+    if op == 'ends_with':    return sv.endswith(val)
+    if op == 'exists':       return bool(sv)
+    if op == 'not_exists':   return not sv
+    try:
+        nv = float(sv) if sv != '' else 0.0
+        nval = float(val)
+    except (TypeError, ValueError):
+        return False
+    if op == 'gt':     return nv >  nval
+    if op == 'lt':     return nv <  nval
+    if op == 'gte':    return nv >= nval
+    if op == 'lte':    return nv <= nval
+    return False
+
+results = [check(c) for c in conditions]
+if logic == 'any':
+    ok = any(results) if results else True
+else:
+    ok = all(results) if results else True
+sys.exit(0 if ok else 1)
+PYCOND
+then
+    exit 0
+fi
+HOOK_CONDITIONS
+    fi
 
     # The evaluate helpers (render_template, emit_output, run_evaluate) are only
     # needed when the hook takes the evaluate path. Pure set_flag hooks emit

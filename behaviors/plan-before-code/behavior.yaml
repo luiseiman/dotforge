@@ -1,0 +1,63 @@
+schema_version: "1"
+id: plan-before-code
+name: Plan Before Code
+description: >
+  Opinionated: require a plan approval (ExitPlanMode) before writes on source
+  files. Non-source writes (docs, configs, tests) are exempt.
+category: opinionated
+scope: session
+enabled: false
+
+policy:
+  triggers:
+    # 1. ExitPlanMode grants "plan approved" credit that persists for the session.
+    - event: PreToolUse
+      matcher: "ExitPlanMode"
+      action: set_flag
+      flag: plan_approved
+
+    # 2. Writes to source files check the flag.
+    - event: PreToolUse
+      matcher: "Write|Edit"
+      conditions:
+        - field: file_path
+          operator: regex_match
+          value: '\.(py|ts|tsx|js|jsx|swift|go|rs|java|kt|rb|php|cs|cpp|c|h)$'
+      logic: all
+      action: check_flag
+      flag: plan_approved
+      on_present: keep
+      on_absent: violate
+
+  enforcement:
+    default_level: silent
+    escalation:
+      - after: 1
+        level: nudge
+      - after: 3
+        level: warning
+      - after: 6
+        level: soft_block
+
+  recovery:
+    hint: >
+      Enter plan mode and exit with an approved plan before modifying source
+      code. Non-source files (markdown, json, yaml) are exempt.
+    suggested_tool: ExitPlanMode
+    suggested_action: "Present a plan, get user approval, then write code."
+
+rendering:
+  nudge_template: "{behavior_name}: writing code without approved plan ({counter})"
+  warning_template: "[{behavior_id}] {counter} source edits without a plan. Consider entering plan mode first."
+  block_reason: "[{behavior_id}] BLOCKED: present a plan before writing more source code."
+  override_prompt: "Present a plan for user approval, then retry."
+
+applies_to:
+  tools: [Write, Edit, ExitPlanMode]
+  agents: []
+  profiles: [strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [plan, discipline, opinionated]

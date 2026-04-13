@@ -7,6 +7,7 @@ tests=(
     test_on_off.sh
     test_strict_relaxed.sh
     test_hook_respects_session_disable.sh
+    test_list_describe.sh
 )
 
 pass=0

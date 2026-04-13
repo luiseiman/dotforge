@@ -1,0 +1,43 @@
+schema_version: "1"
+id: no-destructive-git
+name: No Destructive Git Operations
+description: >
+  Block force pushes, hard resets, clean -f, and forced branch deletions.
+  Safety-critical — no override allowed.
+category: core
+scope: session
+enabled: true
+
+policy:
+  triggers:
+    - event: PreToolUse
+      matcher: "Bash"
+      conditions:
+        - field: command
+          operator: regex_match
+          value: 'git\s+(push\s+[^|;&]*(--force\b|--force-with-lease\b|-f\b)|reset\s+--hard\b|clean\s+-[a-z]*f[a-z]*\b|branch\s+-[a-zA-Z]*D[a-zA-Z]*\b)'
+      logic: all
+      action: evaluate
+
+  enforcement:
+    default_level: hard_block
+
+  recovery:
+    hint: >
+      Destructive git operations are blocked. Use safe alternatives: git revert,
+      git stash, git reset --soft, or create a new branch.
+    suggested_tool: Bash
+    suggested_action: "git revert <commit>  # or: git stash"
+
+rendering:
+  block_reason: "Destructive git operation blocked: force push, hard reset, clean -f, and forced branch delete are not allowed."
+
+applies_to:
+  tools: [Bash]
+  agents: []
+  profiles: [minimal, standard, strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [git, safety, core]

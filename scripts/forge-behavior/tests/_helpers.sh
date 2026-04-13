@@ -75,3 +75,17 @@ except (KeyError, IndexError, ValueError):
 print(json.dumps(v))
 PY
 }
+
+# yaml_enabled_by_id <yaml_file> <behavior_id> — looks up behaviors[].enabled by id
+yaml_enabled_by_id() {
+    python3 - "$1" "$2" <<'PY'
+import sys, yaml
+with open(sys.argv[1]) as f:
+    data = yaml.safe_load(f) or {}
+for b in (data.get('behaviors') or []):
+    if b.get('id') == sys.argv[2]:
+        print('true' if b.get('enabled', True) else 'false')
+        sys.exit(0)
+print('missing')
+PY
+}

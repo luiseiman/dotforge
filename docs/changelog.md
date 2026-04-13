@@ -4,6 +4,88 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.0.0 (2026-04-13) — RELEASE
+
+### Behavior Governance (v3 new layer)
+
+dotforge v3 ships a runtime behavior governance layer on top of the existing v2.9 configuration layer. Behaviors are declarative policies on tool calls, compiled to `PreToolUse` hooks that share a session-scoped state file. Opt-in and non-breaking: existing v2.9 projects are untouched unless they create `behaviors/` and wire the generated hooks into `settings.json`. See [`docs/v3/MIGRATION.md`](v3/MIGRATION.md).
+
+#### Spec of record
+
+- `docs/v3/SPEC.md` — evaluation algorithm, 5-level enforcement table (silent, nudge, warning, soft_block, hard_block)
+- `docs/v3/SCHEMA.md` — `behavior.yaml v1` shape, closed DSL, validation rules
+- `docs/v3/RUNTIME.md` — `state.json` format, mkdir-based locking, TTL, flag semantics, reinvocation override detection
+- `docs/v3/AUDIT.md` — `overrides.log` format and exposed metrics
+- `docs/v3/COMPILER.md` — behavior → hook generation rules
+- `docs/v3/SCOPE.md` — Phase 0–3 milestones
+- `docs/v3/DECISIONS.md`, `docs/v3/COMPETITIVE.md` — design rationale
+- `docs/v3/MIGRATION.md` — v2.9 → v3 upgrade path (new in 3.0.0)
+
+#### Runtime (Phase 1)
+
+- `scripts/runtime/lib.sh`: session counter, flags (set/consume/keep), level resolution, mkdir-based lock, TTL 24h, pending_block reinvocation detection, per-session behavior override, audit log append
+- `.forge/runtime/state.json`: per-session counters, flags, effective_level, behavior_overrides, pending_block. Gitignored, machine-local
+- `.forge/audit/overrides.log`: permanent JSONL audit trail of soft_block overrides. Committed to git
+- 8 runtime unit tests green (locking, TTL, counter, flags, corruption recovery, stale lock, pending_block)
+
+#### Compiler (Phase 1 + 2)
+
+- `scripts/compiler/compile.sh`: reads `behavior.yaml`, emits one bash hook per trigger into an output dir, plus a `settings.json` snippet for registration
+- Supported actions: `evaluate`, `set_flag`, `check_flag` with `on_present: consume|keep` and `on_absent: skip|violate`
+- **Phase 2**: conditions enforced at runtime via embedded python regex. Supported operators: `regex_match`, `contains`, `not_contains`, `equals`, `starts_with`, `ends_with`, `exists`, `not_exists`, numeric `gt/lt/gte/lte/equals`
+- **Phase 2**: UserPromptSubmit and Stop triggers can read top-level payload fields (e.g., `.prompt`) in conditions — compiler merges them into the condition context
+- **Phase 2**: `_bash_sq_escape` reimplemented via `python3` — previous bash parameter-expansion version produced 7 chars per apostrophe instead of 4
+
+#### Behavior catalogue (Phase 2)
+
+**Core** (enabled by default in `behaviors/index.yaml`):
+
+- `no-destructive-git` — hard_block on `git push --force`, `git reset --hard`, `git clean -f`, `git branch -D`. No override.
+- `search-first` — flag-based: `Grep|Glob|Read` sets the flag, `Write|Edit` consumes it. Absence escalates silent → nudge → warning → soft_block.
+- `verify-before-done` — flag-based: test/build commands (pytest, npm test, go test, cargo test, vitest, jest, ruff, mypy, tsc, eslint, …) set verification credit; `git push` consumes it. Unverified pushes escalate.
+- `respect-todo-state` — flag-based: `TaskUpdate` grants credit, `TaskCreate` consumes it. Each create without prior update escalates.
+
+**Opinionated** (opt-in via `enabled: false`):
+
+- `plan-before-code` — requires an `ExitPlanMode` call before writing source files (regex on `file_path`). Non-source files exempt.
+- `objection-format` — detects friction markers in user prompts ("no", "stop", "don't", "revert", "wait", …) and nudges the agent to reflect before continuing.
+
+Each behavior directory contains `behavior.yaml` + `tests/` with per-scenario integration tests.
+
+#### CLI (Phase 1 + 2)
+
+- `/forge behavior status [--session SID]` — show project index + per-session counters, effective levels, overrides
+- `/forge behavior on|off <id> [--project | --session SID]` — toggle in index.yaml (persistent) or state.json (ephemeral, per-session, survives `/clear` via `scope: session`)
+- `/forge behavior strict|relaxed <id>` — halve or double escalation thresholds in `behavior.yaml`
+- **Phase 2**: `/forge behavior list [--category core|opinionated|experimental]` — tabular catalogue with on/off state, category, name
+- **Phase 2**: `/forge behavior describe <id>` — full policy dump: triggers, enforcement, escalation, recovery hint, runtime status
+
+#### Audit integration (Phase 2)
+
+- `audit/score.sh` item 14 "Behaviors coverage" (0-1): scores 1 when `behaviors/index.yaml` has ≥1 enabled behavior, OR compiled hooks exist under `.claude/hooks/generated/`, OR `settings.json` references behavior hooks
+- `audit/checklist.md` updated: recomendado section now sums to 9 (was 7); weight rebalanced in the normalization step to `REC * (3 / 9)`
+- Dimension does NOT apply the security cap — absence is neutral, not penalized
+
+#### Testing
+
+Phase 2 suite: **33 tests green** (up from 18 in Phase 1 alpha).
+
+- runtime: 8
+- compiler: 1
+- CLI: 5 (adds `test_list_describe.sh`)
+- search-first: 5
+- no-destructive-git: 2
+- verify-before-done: 3
+- respect-todo-state: 2
+- plan-before-code: 3
+- objection-format: 2
+
+#### Breaking changes
+
+**None.** v3 is purely additive. A v2.9.1 project upgraded to v3.0.0 continues to work with zero changes until the user explicitly creates `behaviors/` and wires the compiled hooks into `settings.json`.
+
+---
+
 ## v2.9.1 (2026-04-08)
 
 ### Practices Pipeline Update

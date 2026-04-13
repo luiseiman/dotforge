@@ -1,0 +1,49 @@
+schema_version: "1"
+id: objection-format
+name: Objection Awareness
+description: >
+  Opinionated: detect friction markers in user prompts ("no", "stop",
+  "don't do that") and nudge the agent to reflect before continuing.
+category: opinionated
+scope: session
+enabled: false
+
+policy:
+  triggers:
+    - event: UserPromptSubmit
+      conditions:
+        - field: prompt
+          operator: regex_match
+          value: '(?i)(^|\b)(no[,.\s]|stop|don''?t|do not|wait[,.\s]|that''?s wrong|that is wrong|incorrect|rollback|revert that|undo)'
+      logic: all
+      action: evaluate
+
+  enforcement:
+    default_level: nudge
+    escalation:
+      - after: 1
+        level: nudge
+      - after: 3
+        level: warning
+      - after: 5
+        level: warning
+
+  recovery:
+    hint: >
+      The user pushed back. Before continuing, reread their last message, state
+      what you understood, and ask before reimplementing.
+
+rendering:
+  nudge_template: "{behavior_name}: user objection detected — restate understanding before acting ({counter})"
+  warning_template: "[{behavior_id}] {counter} objections this session. Slow down, ask a clarifying question before implementing."
+  block_reason: "[{behavior_id}] repeated objections — pause and realign."
+
+applies_to:
+  tools: []
+  agents: []
+  profiles: [strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [feedback, reflection, opinionated]

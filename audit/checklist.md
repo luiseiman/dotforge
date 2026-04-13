@@ -31,7 +31,7 @@
 - 1: Están en README pero no en CLAUDE.md, o están en CLAUDE.md pero son incorrectos
 - 2: Documentados en CLAUDE.md con comandos exactos que corresponden al stack detectado
 
-## Recomendado (cada item: 0-1 punto, total máximo: 7)
+## Recomendado (cada item: 0-1 punto, total máximo: 9)
 
 ### 6. CLAUDE_ERRORS.md
 - 0: No existe
@@ -68,3 +68,9 @@
 - 1: Auto mode enabled WITH complete deny list OR auto mode not enabled
 
 **Verification:** Check if `permissions.defaultMode` is set to `"auto"` in settings.json. If yes, verify deny list covers secrets. If auto mode is not enabled (default), automatic pass.
+
+### 14. Behaviors coverage (v3) (0-1)
+- 0: No v3 behaviors enabled in the project
+- 1: At least one v3 behavior enabled via `behaviors/index.yaml`, compiled hooks under `.claude/hooks/generated/`, or behavior hook references in `settings.json`
+
+**Verification:** Check `behaviors/index.yaml` for entries with `enabled: true`, or count generated behavior hooks matching `*__pretooluse__*.sh`. A project that has not opted into the v3 behavior governance layer scores 0 — this does not apply the security cap.
