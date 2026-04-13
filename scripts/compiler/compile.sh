@@ -175,6 +175,11 @@ TOOL_NAME=\$(printf '%s' "\$PAYLOAD" | jq -r '.tool_name // empty')
 TOOL_INPUT_JSON=\$(printf '%s' "\$PAYLOAD" | jq -c '.tool_input // {}')
 TOOL_INPUT_HASH=\$(printf '%s' "\$TOOL_INPUT_JSON" | forge_tool_input_hash)
 TOOL_INPUT_SUMMARY=\$(printf '%s' "\$TOOL_INPUT_JSON" | cut -c1-100 | tr -d '\\n')
+
+# Session-scope disable (set via /forge behavior off --session)
+if forge_behavior_session_is_disabled "\$SESSION_ID" "\$BEHAVIOR_ID"; then
+    exit 0
+fi
 HOOK_HEADER
 
     # The evaluate helpers (render_template, emit_output, run_evaluate) are only

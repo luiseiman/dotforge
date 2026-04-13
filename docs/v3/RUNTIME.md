@@ -42,6 +42,11 @@ Directory layout:
           "set_at": "2026-04-13T14:29:30Z"
         }
       },
+      "behavior_overrides": {
+        "plan-before-code": {
+          "enabled": false
+        }
+      },
       "behaviors": {
         "search-first": {
           "counter": 4,
@@ -89,6 +94,7 @@ Directory layout:
 | `last_accessed_at` | ISO 8601 | Updated on every hook invocation. TTL applies to this field. |
 | `flags` | object | Map of `flag_name → flag entry`. Session-scoped, shared across behaviors. See [Section 4.1](#41-flags). |
 | `flags.<name>.set_at` | ISO 8601 | Timestamp when the flag was set or last re-set. |
+| `behavior_overrides` | object | Per-session user overrides of behavior enablement. Shape: `{<behavior_id>: {enabled: bool}}`. Absent key or `enabled: true` means "inherit from index.yaml". `enabled: false` forces the compiled hook to short-circuit. Written by `/forge behavior on\|off --session`. |
 | `behaviors` | object | Map of `behavior_id → behavior state`. |
 | `counter` | integer | Violation count. Increments before level resolution. Never negative. |
 | `effective_level` | string | Monotonic level: silent \| nudge \| warning \| soft_block \| hard_block |

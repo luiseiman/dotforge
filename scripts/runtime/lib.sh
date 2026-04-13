@@ -409,6 +409,57 @@ forge_level_max() {
 }
 
 # ---------------------------------------------------------------------------
+# Behavior session overrides (user-invoked enable/disable for this session)
+# ---------------------------------------------------------------------------
+
+# forge_behavior_session_disable — force-disable a behavior for one session.
+# Args: session_id behavior_id
+forge_behavior_session_disable() {
+    local sid="$1" bid="$2"
+    local now
+    now=$(_forge_now_iso8601)
+    local filter='
+        .sessions[$sid] //= {
+            "created_at": $now,
+            "last_accessed_at": $now,
+            "flags": {},
+            "behavior_overrides": {},
+            "behaviors": {}
+        }
+        | .sessions[$sid].last_accessed_at = $now
+        | (.sessions[$sid].behavior_overrides //= {})
+        | .sessions[$sid].behavior_overrides[$bid] = {"enabled": false}
+    '
+    _forge_run_mutation "$filter" --arg sid "$sid" --arg bid "$bid" --arg now "$now"
+}
+
+# forge_behavior_session_enable — clear a session-scope disable.
+# Args: session_id behavior_id
+forge_behavior_session_enable() {
+    local sid="$1" bid="$2"
+    local filter='
+        if .sessions[$sid].behavior_overrides[$bid] != null then
+            del(.sessions[$sid].behavior_overrides[$bid])
+        else . end
+    '
+    _forge_run_mutation "$filter" --arg sid "$sid" --arg bid "$bid"
+}
+
+# forge_behavior_session_is_disabled — returns 0 if the behavior is disabled
+# for the current session, 1 otherwise. Read-only, no lock.
+#
+# Note: uses jq -e with a direct boolean expression rather than jq's `//`
+# alternative operator, because `//` treats `false` as "missing" and would
+# collapse the disabled-state check to the default branch.
+forge_behavior_session_is_disabled() {
+    local sid="$1" bid="$2"
+    forge_init || return 1
+    _forge_state_read | jq -e --arg sid "$sid" --arg bid "$bid" \
+        '.sessions[$sid].behavior_overrides[$bid].enabled == false' \
+        >/dev/null 2>&1
+}
+
+# ---------------------------------------------------------------------------
 # Pending block / override detection via reinvocation (RUNTIME.md §12)
 # ---------------------------------------------------------------------------
 
