@@ -12,7 +12,7 @@ Cinco piezas inseparables:
 2. **Runtime state mínimo**
    - `.forge/runtime/state.json`
    - Contadores por sesión y por behavior
-   - flock para concurrencia
+   - mkdir-based locking para concurrencia (ver RUNTIME.md §7)
    - TTL 24h sobre último acceso
 
 3. **Enforcement escalonado de 5 niveles**
@@ -68,7 +68,7 @@ Fase 1 sin preguntas.
 
 ## Entregables de Fase 1 (2-3 semanas post-spec)
 
-- Runtime funcionando con flock y TTL
+- Runtime funcionando con mkdir-based lock y TTL
 - Compilador `behaviors/<id>.yaml → .claude/hooks/<id>.sh`
 - `search-first` funcional end-to-end (nudge → warning → soft_block)
 - Override registry funcionando en los 3 lugares
