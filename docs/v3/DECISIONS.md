@@ -12,7 +12,7 @@ Cinco niveles en escalación de severidad:
 |-------|-----------|--------------|----------|
 | silent | exit 0 | Nada | No aplica |
 | nudge | exit 0 + stdout breve (1 línea) | Recordatorio neutral | No aplica |
-| warning | exit 0 + stderr firme (2-4 líneas) | Advertencia clara: behavior, expectativa, corrección | No aplica |
+| warning | exit 0 + stdout JSON `systemMessage` (2-4 líneas) | Advertencia clara: behavior, expectativa, corrección | No aplica |
 | soft_block | JSON `permissionDecision: "deny"` + `override_allowed: true` | Bloqueo con instrucción de corrección u override | Sí, auditado |
 | hard_block | JSON `permissionDecision: "deny"` + `override_allowed: false` | Bloqueo definitivo | No en 3.0 |
 
@@ -50,7 +50,7 @@ reason corta si existe, contador acumulado al momento del override.
 - Archivo único `.forge/runtime/state.json`
 - Sesiones como keys por session_id
 - TTL 24h sobre último acceso (no sobre creación)
-- flock para concurrencia (caso real: multi-agente con VPS + local + Telegram)
+- Locking atómico para concurrencia: mkdir-based (POSIX-portable, macOS-compatible). Caso real: multi-agente con VPS + local + Telegram
 
 ## Evaluación múltiple
 
