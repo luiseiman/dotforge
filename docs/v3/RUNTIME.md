@@ -104,13 +104,10 @@ Session ID comes from the hook's JSON stdin payload field `session_id` — Claud
 If `session_id` is absent (older Claude Code versions), use this portable fallback:
 
 ```bash
-SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" \
-  | md5sum 2>/dev/null | cut -c1-8 \
-  || echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5 -q 2>/dev/null | cut -c1-8 \
-  || echo "${PWD}:${PPID}:$(date +%Y%m%d)" | cksum | cut -d' ' -f1)
+SESSION_ID=$(echo "$$-$PWD-$(date +%s)" | shasum | cut -d' ' -f1 | cut -c1-12)
 ```
 
-This fallback is stable within a process tree on a given day, deterministic across hooks in the same session, and portable across Linux (md5sum), macOS (md5), and minimal POSIX (cksum).
+`shasum` is available on both Linux and macOS (part of Perl core). The fallback produces a 12-char hex ID, stable within a process for the same second. Uses `$$` (PID), `$PWD`, and epoch seconds for uniqueness.
 
 ### Access
 
@@ -212,31 +209,23 @@ LOCK_DIR=".forge/runtime/state.lock"
 LOCK_TIMEOUT=2  # seconds
 
 acquire_lock() {
-  local deadline=$(($(date +%s) + LOCK_TIMEOUT))
-  while ! mkdir "$LOCK_DIR" 2>/dev/null; do
-    # Check for stale lock
-    if [ -f "$LOCK_DIR/pid" ]; then
-      local pid
-      pid=$(cat "$LOCK_DIR/pid" 2>/dev/null)
-      if [ -n "$pid" ] && ! kill -0 "$pid" 2>/dev/null; then
-        # Process is dead — remove stale lock and retry once
-        rm -rf "$LOCK_DIR"
-        mkdir "$LOCK_DIR" 2>/dev/null && break
-      fi
-    fi
-    if [ "$(date +%s)" -ge "$deadline" ]; then
-      return 1  # timeout
+  local i
+  for i in $(seq 1 20); do
+    if mkdir "$LOCK_DIR" 2>/dev/null; then
+      return 0
     fi
     sleep 0.1
   done
-  echo $$ > "$LOCK_DIR/pid"
-  return 0
+  return 1  # timeout after ~2s
 }
 
 release_lock() {
-  rm -rf "$LOCK_DIR"
+  rmdir "$LOCK_DIR" 2>/dev/null
 }
 ```
+
+No PID file inside the lock directory — `rmdir` requires an empty directory and is atomic.
+Stale lock recovery: if a process crashes without calling `release_lock`, the next invocation's 2s timeout will expire. The hook then proceeds with `default_level` (see below). On next successful acquisition, the stale lock will have been cleaned up by the crashing process's shell trap or by manual intervention.
 
 ### Lock timeout behavior
 
@@ -246,10 +235,15 @@ On timeout (2 seconds elapsed without acquiring lock):
 - Warning logged to stderr: `[forge] state lock timeout — using default levels`
 - Tool call is not blocked.
 
-### Stale lock detection
+### Stale lock recovery
 
-If `state.lock/` exists and the PID in `state.lock/pid` is not running (`! kill -0 $pid`),
-the lock is stale. Remove it and retry lock acquisition once.
+No PID tracking. If a process crashes without releasing the lock, the lock directory persists. Next invocation's 2s timeout expires → hook proceeds with `default_level`. The generated hook should register a shell EXIT trap to clean up:
+
+```bash
+trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
+```
+
+This covers normal exits, Ctrl+C (SIGINT), and SIGTERM. SIGKILL is untrappable — the lock persists until timeout handles it.
 
 ---
 
@@ -283,7 +277,7 @@ Both cases are valid. The runtime handles both without special logic.
 | Corrupted `state.json` (JSON parse failure) | Replace with `{"schema_version": "1", "sessions": {}}`. Log warning to stderr. All counters reset. |
 | Missing `.forge/` directory | `mkdir -p .forge/runtime .forge/audit` on first access. |
 | Missing `state.json` | Create with `{"schema_version": "1", "sessions": {}}`. |
-| Stale lock directory | Check PID, `rm -rf` if process dead, retry once. |
+| Stale lock directory | 2s timeout expires, hook proceeds with default_level. Cleaned by shell EXIT trap or manually (`rmdir .forge/runtime/state.lock`). |
 | Disk full on write | Log warning to stderr, proceed with `default_level`. Do not crash. |
 | `jq` not available | Emit warning to stderr, exit 0 (allow). All behaviors degrade to silent pass-through. SessionStart hook must check for `jq`. |
 | Hook timeout (10 min default) | Claude Code kills the process. Tool call proceeds. Lock must be cleaned by next invocation via stale lock detection. |

@@ -86,9 +86,7 @@ HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // empty')
 
 # Fallback session ID if not provided (see RUNTIME.md Section 3)
 if [ -z "$SESSION_ID" ]; then
-  SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5sum 2>/dev/null | cut -c1-8 \
-    || echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5 -q 2>/dev/null | cut -c1-8 \
-    || echo "fallback")
+  SESSION_ID=$(echo "$$-$PWD-$(date +%s)" | shasum | cut -d' ' -f1 | cut -c1-12)
 fi
 
 # Initialize state (lock + read + TTL purge per RUNTIME.md Section 10)
