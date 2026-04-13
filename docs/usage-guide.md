@@ -206,7 +206,7 @@ Fundamental principle: **merge, not overwrite**. Never overwrites without confir
 
 #### `/forge audit` — verify state
 
-Score 0-10 normalized against a 13-item checklist.
+Score 0-10 normalized against a 15-item checklist.
 
 ### Multi-project dashboard
 
@@ -340,7 +340,7 @@ Each stack provides:
 
 ## 7. Audit system
 
-### Checklist (13 items)
+### Checklist (15 items)
 
 #### Required (0-2 points each, 70% weight)
 
@@ -364,15 +364,17 @@ Each stack provides:
 | 11 | .gitignore | Protects .env, *.key, *.pem, credentials |
 | 12 | Prompt injection scan | No suspicious patterns in rules/CLAUDE.md |
 | 13 | Auto-mode safety | Allow rules use specific tool commands, not interpreter patterns |
+| 14 | Behaviors coverage (v3) | At least 1 behavior enabled in `behaviors/index.yaml` or compiled hook under `.claude/hooks/generated/` |
+| 15 | OS-level sandboxing | `sandbox.enabled` with filesystem/network restrictions, or project handles no secrets (auto-pass) |
 
 ### Scoring formula
 
 ```
-score = required x 0.7 + recommended x (3.0 / 8)
+score = required x 0.7 + recommended x (3.0 / 10)
 ```
 
 - Perfect required items without recommended = **7.0** (Good)
-- To reach 9+ you need at least 5 recommended items
+- Each recommended item contributes 0.3 — to reach 9+ you need at least 7 recommended items
 
 ### Security cap
 

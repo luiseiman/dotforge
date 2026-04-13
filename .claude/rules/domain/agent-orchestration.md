@@ -40,6 +40,10 @@ last_verified: 2026-04-08
 - Subagent output must not exceed 30% of main context — always structured summaries
 - Always verify subagent output (run tests/lint) before declaring task done
 
+## Related: top-level parallelism
+
+Subagents share the main session's working tree. For independent top-level Claude instances (worktrees, `--fork-session`, `--teleport`, `--bare`, `--add-dir`, `--agents` inline JSON), see `parallel-sessions.md`.
+
 ## Slash command priority (collision risk)
 
 bundledSkills > builtinPluginSkills > skillDirCommands > workflowCommands > pluginCommands > pluginSkills > COMMANDS()

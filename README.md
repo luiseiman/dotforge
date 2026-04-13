@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.0.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.0.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 **Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block, with a permanent override audit trail.
@@ -124,7 +124,7 @@ dotforge manages your `.claude/` configuration. It complements, not replaces, ot
 1. **Cross-project registry with audit history** — track scores across all your projects, spot regressions, compare configurations over time
 2. **Practices pipeline** — continuous improvement lifecycle: `inbox/ → evaluating/ → active/ → deprecated/`. Discoveries propagate across projects
 3. **Template sync with customization preservation** — `<!-- forge:section -->` markers let `/forge sync` update managed sections without touching your customizations
-4. **Audit scoring with security cap** — 13-item checklist normalized to 10 points. Missing security essentials caps score at 6.0 regardless of other items
+4. **Audit scoring with security cap** — 15-item checklist normalized to 10 points. Missing security essentials caps score at 6.0 regardless of other items
 
 Other tools bootstrap once. dotforge bootstraps, audits, syncs, and evolves.
 

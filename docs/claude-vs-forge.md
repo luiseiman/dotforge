@@ -88,7 +88,7 @@ These commands exist in both systems but serve different purposes:
 
 | | Claude Code `/security-review` | dotforge `/forge audit` |
 |---|---|---|
-| **Reviews** | Code changes for vulnerabilities (injection, auth, data exposure) | Configuration quality: 13-item checklist, 10-point score |
+| **Reviews** | Code changes for vulnerabilities (injection, auth, data exposure) | Configuration quality: 15-item checklist, 10-point score |
 | **Focus** | Application security | Configuration security + completeness |
 | **Scoring** | Findings by severity | Numeric score (0-10) with security cap at 6.0 |
 
@@ -119,7 +119,7 @@ These have no dotforge equivalent — they manage the runtime session:
 | `/model`, `/effort`, `/fast` | Model selection |
 | `/cost`, `/usage`, `/stats` | Usage metrics |
 | `/remote-control`, `/remote-env` | Remote execution |
-| `/voice`, `/copy`, `/btw` | Productivity |
+| `/copy`, `/btw` | Productivity (voice input is `Hold Space` push-to-talk, not a slash command) |
 | `/doctor`, `/login`, `/logout` | System management |
 
 ## Exclusive to dotforge
@@ -131,7 +131,7 @@ These have no Claude Code equivalent — they manage configuration governance:
 | `/forge bootstrap` | Full scaffold with profiles and stack detection |
 | `/forge sync` | Template sync preserving customizations |
 | `/forge reset` | Restore config from template with backup |
-| `/forge audit` | 13-item scored configuration audit |
+| `/forge audit` | 15-item scored configuration audit |
 | `/forge rule-check` | Detect and prune inert rules |
 | `/forge benchmark` | Compare full vs minimal config performance |
 | `/forge capture` / `/cap` | Register practices in improvement pipeline |

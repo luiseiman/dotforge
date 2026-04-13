@@ -1,11 +1,11 @@
 ---
 globs: "template/**/*.md,docs/memory-strategy.md,**/CLAUDE.md,**/rules/memory.md,**/MEMORY.md"
-description: "Context window management and token optimization patterns"
+description: "Context window runtime — compaction tiers, size budgets, tool result limits"
 domain: claude-code-engineering
-last_verified: 2026-04-05
+last_verified: 2026-04-13
 ---
 
-# Context Window Optimization
+# Context Window Runtime
 
 ## Compaction hierarchy (5 tiers)
 
@@ -41,10 +41,4 @@ last_verified: 2026-04-05
 - Per-tool: 50K chars. MCP override: 500K via `_meta["anthropic/maxResultSizeChars"]`
 - Per-turn aggregate: 200K chars. Bash truncation: 30K chars
 - Oversized results: persisted to disk, preview sent to Claude
-
-## Optimization patterns
-
-- Globs in rules prevent loading unnecessary context
-- Subagents get independent context windows — use for research-heavy work
-- Deferred tools: hidden from prompt, discovered via ToolSearch — saves tokens
-- `hasReadFile` does NOT survive compaction — re-reads may be needed
+- See `context-control-patterns.md` for user-facing context management (/btw, skill budget, Esc+Esc)

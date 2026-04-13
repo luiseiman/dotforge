@@ -4,6 +4,50 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.0.1 (2026-04-13)
+
+### Domain knowledge expansion — scout against official docs
+
+Non-breaking, docs + audit + domain-rules only. No runtime behavior changes, no template changes to existing projects. Driven by `/forge watch` against `code.claude.com/docs/en` on 2026-04-13, seeded by a scout of `shanraisshan/claude-code-best-practice`.
+
+#### New domain rules
+
+- `.claude/rules/domain/sandboxing.md` — OS-level bash sandbox (`sandbox.*` in settings.json). Filesystem/network kernel-enforced isolation on macOS/Linux/WSL2. Complementary to `allow`/`deny`/`ask` and `block-destructive.sh`. Interaction with `autoAllowBashIfSandboxed` documented.
+- `.claude/rules/domain/parallel-sessions.md` — top-level session parallelism, distinct from subagent delegation. Worktrees (`-w`, `--tmux`), session handoff (`--fork-session`, `--teleport`, `--remote`, `--from-pr`), fast-start flags (`--bare`, `--add-dir` with the `.claude/skills/` exception, `--agent`, `--agents` inline JSON, `--setting-sources`, `--teammate-mode`).
+- `.claude/rules/domain/workflow-automation.md` — decision patterns for `/loop`, `/schedule`, `/batch`. Cache-aware cadence heuristics (<5min stays cached, 20–30min sweet spot idle). Anti-patterns: no `sleep N` polling, no stop-less loops.
+- `.claude/rules/domain/context-control-patterns.md` — user-facing context hygiene: `/btw` ephemeral side queries, skill re-attachment budget (25K combined, 5K per skill post-compaction), `SLASH_COMMAND_TOOL_CHAR_BUDGET`, manual pruning (`Esc+Esc`, `Ctrl+X Ctrl+K`, `Ctrl+O`).
+
+#### Domain rule refactors
+
+- `context-window-optimization.md` — split to stay under the 40-line soft budget. Runtime details (compaction tiers, window sizes, tool result limits) stay here; user patterns moved to `context-control-patterns.md`. Cross-ref added.
+- `agent-orchestration.md` — new "Related: top-level parallelism" section pointing to `parallel-sessions.md`.
+- `permission-model.md` — cross-ref to `sandboxing.md` for OS-level defense-in-depth.
+
+#### Audit
+
+- New item **15. OS-level sandboxing** (recommended, 0-1): detects `sandbox.enabled` with `filesystem.*` or `network.allowedDomains` restrictions. Auto-passes projects with no secret indicators (`.env*`, `*.key`, `*.pem`, `credentials*`, cloud CLI refs). Not applicable on Windows native.
+- `audit/checklist.md` recomendado total: 9 → 10 items.
+- `audit/scoring.md` formula updated: `score_recomendado = sum(items 6-15)`, divisor `3.0 / 10`. Each recommended item contributes 0.3 — 7+ needed to reach score 9.
+- `audit/score.sh`: adds `s15` computation via python3 JSON parse + secret-indicator scan. Validated end-to-end against dotforge itself (scores 9.00 — item 15 correctly flags the repo as handling secrets without sandbox enabled).
+- `CLAUDE.md`: audit description updated — 12 → 15 items.
+
+#### Verified against official docs (2026-04-13)
+
+CLI flags and settings confirmed in `code.claude.com/docs/en/cli-reference`, `/settings`, `/interactive-mode`, `/skills`:
+
+- **CLI flags:** `--bare`, `--add-dir`, `--agent`, `--agents`, `--worktree`/`-w`, `--fork-session`, `--teleport`, `--remote`, `--chrome`, `--effort`, `--tmux`, `--teammate-mode`, `--setting-sources`, `--from-pr`
+- **Slash commands:** `/btw` (side queries, ephemeral, no tools, reuses parent cache), `/batch` and `/loop` (bundled skills alongside `/simplify`, `/debug`, `/claude-api`)
+- **Settings:** full `sandbox.*` block with filesystem/network subkeys, `enableWeakerNetworkIsolation`, `enableWeakerNestedSandbox`
+- **Env vars:** `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_TASK_LIST_ID`, `SLASH_COMMAND_TOOL_CHAR_BUDGET`, `CLAUDE_CODE_SIMPLE` (set by `--bare`)
+- **Corrected misattribution:** `/voice` is NOT a slash command — voice input is push-to-talk via `Hold Space`. The scout digest had this wrong; captured in the inbox.
+
+#### Practices inbox
+
+- Added `2026-04-13-granular-ask-permissions.md` — captures the granular `ask:` permission pattern from shanraisshan's settings.json for future evaluation as a `strict` profile option.
+- Added `2026-04-13-boris-cherny-tips-scout.md` — digest of 54 Boris Cherny tips across 6 posts, with verification trail. 5 gaps (G1, G2, G3, G4, G5) incorporated into domain rules; G7 (Chrome extension stack notes) remains for future sessions.
+
+---
+
 ## v3.0.0 (2026-04-13) — RELEASE
 
 ### Behavior Governance (v3 new layer)
