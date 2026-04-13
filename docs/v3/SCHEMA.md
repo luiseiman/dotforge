@@ -141,8 +141,57 @@ Available in all trigger evaluations:
 | Field | Type | Description |
 |-------|------|-------------|
 | `counter` | integer | Current violation count for this behavior in the current session |
+| `flags` | object | Key-value flags set by PostToolUse triggers. Used for temporal behaviors (e.g., "did the agent search before writing?"). See **Session Flags** below. |
 
-Only `counter` is available in 3.0. Additional session_state fields deferred to 3.1.
+### Session Flags
+
+Session flags solve the **temporal behavior problem**: detecting whether the agent did X before doing Y.
+
+**Mechanism:**
+- A behavior can define `policy.flag_on_match` (string) in its trigger. When the trigger matches, the flag is SET in `session_state.flags[behavior_id]`.
+- A behavior can define `policy.reset_flag_on_match: true`. When the trigger matches AND a flag was set, the flag is CLEARED (violation detected — agent did Y without flag being cleared by Z).
+- A behavior can reference `session_state.flags.<behavior_id>` in conditions using the `exists`/`not_exists` operators.
+
+**Example: search-first**
+
+The search-first behavior uses TWO triggers:
+1. **PostToolUse on Grep|Glob:** sets flag `"searched"` — the agent searched.
+2. **PreToolUse on Write|Edit (code files):** checks if flag `"searched"` exists. If NOT → violation. If yes → clear flag (consumed).
+
+This way, writing after searching is allowed (flag exists → cleared, no violation). Writing without searching triggers the violation (flag absent → counter increment → escalation).
+
+**Lifecycle:**
+- Flags are stored in `state.json` under `sessions[sid].behaviors[bid].flags`
+- Flags persist within the session (TTL 24h like everything else)
+- Flags are per-behavior, per-session
+- A flag is a simple string key → boolean value
+
+**Schema additions for triggers:**
+
+```yaml
+policy:
+  triggers:
+    - event: PostToolUse
+      matcher: "Grep|Glob"
+      flag_on_match: "searched"     # SET flag when this trigger matches
+    - event: PreToolUse
+      matcher: "Write|Edit"
+      conditions:
+        - field: file_path
+          operator: regex_match
+          value: "\\.(py|ts|js|tsx|jsx|swift|go|rs|java|kt)$"
+        - field: session_state.flags.search-first
+          operator: not_exists
+          value: ""                  # flag absent → agent didn't search
+      consume_flag: "searched"       # CLEAR flag after evaluation (whether or not triggered)
+```
+
+**Fields added to trigger schema:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `flag_on_match` | string | optional | Flag name to SET when this trigger matches. Stored in `session_state.flags[behavior_id]`. |
+| `consume_flag` | string | optional | Flag name to CLEAR after this trigger is evaluated (regardless of match). Implements "consume on check" semantics. |
 
 ### Operators
 
@@ -237,6 +286,8 @@ Compile-time checks that must pass before hook generation:
 - `warning_template` length must be <= 500 chars.
 - `block_reason` length must be <= 200 chars.
 - Every `id` listed in `behaviors/index.yaml` must have a file at `behaviors/<id>/behavior.yaml`.
+- Triggers with `event: PostToolUse`, `UserPromptSubmit`, or `Stop` must not have escalation paths reaching `soft_block` or `hard_block`. Blocking levels only apply to `PreToolUse` (see SPEC.md Section 5.7).
+- `flag_on_match` is only valid on triggers with `event: PostToolUse`. `consume_flag` is only valid on triggers with `event: PreToolUse`.
 
 ---
 
@@ -249,19 +300,32 @@ name: Search Before Writing
 description: >
   Require the agent to search existing code before writing new implementations.
   Prevents duplicate code and enforces codebase familiarity before modification.
+  Uses session flags: a PostToolUse trigger on Grep/Glob sets a "searched" flag,
+  and the PreToolUse trigger on Write/Edit checks for that flag.
 category: core
 scope: session
 enabled: true
 
 policy:
   triggers:
+    # Trigger 1: SET flag when agent searches (PostToolUse on Grep/Glob)
+    - event: PostToolUse
+      matcher: "Grep|Glob"
+      flag_on_match: "searched"
+
+    # Trigger 2: CHECK flag when agent writes code (PreToolUse on Write/Edit)
+    # Violation fires only if "searched" flag is absent (agent didn't search first)
     - event: PreToolUse
       matcher: "Write|Edit"
       conditions:
         - field: file_path
           operator: regex_match
           value: '\.(py|ts|js|tsx|jsx|swift|go|rs|java|kt|rb|php|cs)$'
+        - field: session_state.flags.search-first
+          operator: not_exists
+          value: ""
       logic: all
+      consume_flag: "searched"
 
   enforcement:
     default_level: silent
@@ -298,6 +362,8 @@ metadata:
   version: "1.0.0"
   tags: [search, quality, core]
 ```
+
+> **How it works:** The agent searches (Grep) → PostToolUse fires → flag "searched" is SET. Then the agent writes (Write) → PreToolUse fires → flag exists → condition `not_exists` is false → NO violation → flag is consumed (cleared by `consume_flag`). If the agent writes WITHOUT searching → flag is absent → condition `not_exists` is true → violation → counter increments → escalation applies.
 
 ---
 

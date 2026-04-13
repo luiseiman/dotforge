@@ -43,6 +43,8 @@ Directory layout:
           "effective_level": "warning",
           "last_violation_at": "2026-04-13T14:28:00Z",
           "last_violation_tool": "Write",
+          "flags": {},
+          "pending_block": null,
           "overrides": [
             {
               "timestamp": "2026-04-13T12:15:00Z",
@@ -58,6 +60,8 @@ Directory layout:
           "effective_level": "silent",
           "last_violation_at": null,
           "last_violation_tool": null,
+          "flags": {},
+          "pending_block": null,
           "overrides": []
         }
       }
@@ -84,6 +88,8 @@ Directory layout:
 | `effective_level` | string | Monotonic level: silent \| nudge \| warning \| soft_block \| hard_block |
 | `last_violation_at` | ISO 8601 \| null | Timestamp of last violation. Null until first violation. |
 | `last_violation_tool` | string \| null | Tool name that caused last violation. Null until first violation. |
+| `flags` | object | Key-value session flags set by PostToolUse `flag_on_match` triggers and cleared by PreToolUse `consume_flag`. Used for temporal behaviors (e.g., search-first). See SCHEMA.md Section 3. |
+| `pending_block` | object \| null | Set when soft_block fires. Contains `tool_name`, `timestamp`, `counter_at_block`. Cleared on override detection or after 30s expiry. See SPEC.md Section 6.2. |
 | `overrides` | array | Audit records for soft_block overrides in this session. Subset of `.forge/audit/overrides.log`. |
 
 ---
@@ -95,13 +101,16 @@ Directory layout:
 A session entry is created on first hook invocation for a given `session_id`.
 Session ID comes from the hook's JSON stdin payload field `session_id` — Claude Code generates a UUID at init and includes it in all hook payloads (confirmed: present in PostCompact, PreToolUse, and all other hook events).
 
-If `session_id` is absent (older Claude Code versions):
+If `session_id` is absent (older Claude Code versions), use this portable fallback:
 
 ```bash
-SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5sum | cut -c1-36)
+SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" \
+  | md5sum 2>/dev/null | cut -c1-8 \
+  || echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5 -q 2>/dev/null | cut -c1-8 \
+  || echo "${PWD}:${PPID}:$(date +%Y%m%d)" | cksum | cut -d' ' -f1)
 ```
 
-This fallback is stable within a process tree on a given day, and deterministic across hooks in the same session.
+This fallback is stable within a process tree on a given day, deterministic across hooks in the same session, and portable across Linux (md5sum), macOS (md5), and minimal POSIX (cksum).
 
 ### Access
 

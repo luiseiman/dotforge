@@ -47,18 +47,28 @@ FUNCTION evaluate_behaviors(tool_call, hook_event, behaviors_index):
     IF NOT matches_applies_to(behavior, tool_call):
       CONTINUE
 
-    # 3. Evaluate trigger conditions
-    triggered = evaluate_triggers(behavior.policy.triggers, tool_call)
+    # 3. Handle session flags (see SCHEMA.md Section 3 — Session Flags)
+    # If trigger has flag_on_match: SET the flag and SKIP violation logic
+    IF trigger.flag_on_match:
+      session.behaviors[behavior.id].flags[trigger.flag_on_match] = true
+      CONTINUE  # flag-setting triggers do not produce violations
+
+    # 4. Evaluate trigger conditions (including flag checks via session_state.flags.*)
+    triggered = evaluate_triggers(behavior.policy.triggers, tool_call, session)
+
+    # 5. Consume flag if specified (regardless of whether triggered)
+    IF trigger.consume_flag:
+      DELETE session.behaviors[behavior.id].flags[trigger.consume_flag]
 
     IF NOT triggered:
       CONTINUE
 
-    # 4. Increment counter BEFORE level calculation
+    # 6. Increment counter BEFORE level calculation
     session.behaviors[behavior.id].counter += 1
     session.behaviors[behavior.id].last_violation_at = NOW()
     session.behaviors[behavior.id].last_violation_tool = tool_call.tool_name
 
-    # 5. Calculate effective level (monotonic)
+    # 7. Calculate effective level (monotonic)
     calculated_level = resolve_level(
       behavior.policy.enforcement,
       session.behaviors[behavior.id].counter
@@ -67,21 +77,27 @@ FUNCTION evaluate_behaviors(tool_call, hook_event, behaviors_index):
     effective_level = max_level(previous_level, calculated_level)
     session.behaviors[behavior.id].effective_level = effective_level
 
-    # 6. Generate output for this behavior
+    # 8. Generate output for this behavior
     output = render_output(behavior, effective_level)
     accumulated_outputs.append(output)
 
-    # 7. First block cuts chain
+    # 9. First block cuts chain; set pending_block for override detection
     IF effective_level IN [soft_block, hard_block]:
+      IF effective_level == soft_block:
+        session.behaviors[behavior.id].pending_block = {
+          tool_name: tool_call.tool_name,
+          timestamp: NOW(),
+          counter_at_block: session.behaviors[behavior.id].counter
+        }
       block_hit = true
       BREAK
 
-  # 8. Write state and release lock
+  # 10. Write state and release lock
   update_last_accessed(session)
   purge_expired_sessions(state)  # inline TTL cleanup
   write_and_unlock(state)
 
-  # 9. Merge and emit output
+  # 11. Merge and emit output
   RETURN merge_outputs(accumulated_outputs, block_hit)
 ```
 
@@ -258,7 +274,17 @@ No override is possible in v3.0.
 
 > **Note:** The `override_allowed` field is included explicitly in both soft_block (`true` implied by absence) and hard_block (`false`). Soft_block omits `override_allowed` because Claude Code's default behavior when `permissionDecision: "deny"` is to show the override prompt. Hard_block sets `override_allowed: false` to signal that the denial is final.
 
-### 5.7 Multiple non-blocking outputs
+### 5.7 PostToolUse and non-PreToolUse events
+
+`permissionDecision: "deny"` only works for `PreToolUse` events — the tool hasn't executed yet, so denial prevents it.
+
+For **PostToolUse**, **UserPromptSubmit**, and **Stop** events, blocking levels (`soft_block`, `hard_block`) are **not supported**. The tool already executed; denial is meaningless.
+
+Behaviors with PostToolUse/UserPromptSubmit/Stop triggers are limited to `silent`, `nudge`, and `warning` levels. The compiler validates this: if an escalation path for a non-PreToolUse trigger reaches `soft_block` or `hard_block`, compilation fails with an error.
+
+PostToolUse behaviors can still set session flags (via `flag_on_match`) — this is their primary use case (e.g., recording that a search happened for the search-first behavior).
+
+### 5.8 Multiple non-blocking outputs
 
 When multiple behaviors produce nudge/warning on the same tool call:
 
@@ -281,14 +307,37 @@ Overrides apply only to `soft_block` level.
 1. Behavior hook emits `permissionDecision: "deny"` + `systemMessage`
 2. Claude Code's native permission system presents the denial to the user
 3. User chooses to allow (override) or deny (respect block)
-4. If overridden, Claude Code re-invokes the tool — the hook fires again
-5. The hook detects the override via the PermissionDenied→allow flow and records the audit trail
+4. If overridden, Claude Code re-invokes the tool — the PreToolUse hook fires again
+5. The hook detects this is a re-invocation (override) and writes the audit trail
 
-### 6.2 Override detection
+### 6.2 Override detection via re-invocation
 
-The compiled hook does NOT need to detect overrides in real-time.
-Claude Code handles the override flow natively.
-The override audit trail is written by a separate `PermissionDenied` event hook that fires when a permission denial is overridden.
+When a user overrides a `soft_block`, Claude Code re-invokes the tool. The PreToolUse hook fires again for the same tool call. The hook detects the override by checking state.json:
+
+```
+IF behavior has pending_block in state.json:
+  IF pending_block.tool_name == current tool_name
+  AND pending_block.timestamp is within last 30 seconds:
+    → This is an override (user allowed the blocked tool call)
+    → Write audit trail to all 3 locations
+    → Clear pending_block
+    → Allow the tool call (do not re-evaluate triggers)
+    → EXIT
+```
+
+The `pending_block` field is set by the hook when it emits a `soft_block`:
+
+```
+state.sessions[sid].behaviors[bid].pending_block = {
+  "tool_name": "Write",
+  "timestamp": "2026-04-13T14:30:00Z",
+  "counter_at_block": 5
+}
+```
+
+The 30-second window prevents stale pending_blocks from false-matching unrelated tool calls. Pending_blocks older than 30 seconds are ignored and cleared during the next state access.
+
+> **Note:** `PermissionDenied` event fires only for auto-mode classifier denials, NOT for PreToolUse hook denials. Override detection must use the re-invocation pattern described above.
 
 ### 6.3 Triple-write audit
 
