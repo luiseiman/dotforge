@@ -120,6 +120,22 @@ SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5sum | cut -c1-36)
 
 This fallback is stable within a process tree on a given day, and deterministic across hooks in the same session.
 
+### Session boundaries (empirical, from Phase 1 live testing)
+
+`session_id` is **not** stable across the full lifetime of a Claude Code process. It changes at the following events:
+
+- **Process start** — new UUID on `claude` invocation (expected).
+- **`/clear`** — new UUID when the user clears conversation context. Verified in Phase 1 live test: running `/clear` mid-conversation and continuing produced a new session entry in `state.json` alongside the old one, with counter=0 and no inherited state.
+- **`/compact` (assumed)** — not yet verified. SessionStart hook payload distinguishes `source=compact` from `source=clear`, suggesting separate treatment.
+- **Subagents** — may receive the parent session_id (shared state) or a new one (isolated state); runtime handles both without special logic, see Section 9.
+
+Implications for behaviors:
+
+- A session-scoped counter is bounded by the shortest of: conversation length, last `/clear`, last `/compact`, 24h TTL.
+- Soft_blocks and pending_blocks are **not** carried across `/clear`. A user can effectively reset counters by clearing. This is a known escape hatch in Phase 1.
+- Audit evidence for abandoned-mid-block sessions is limited to the state entry itself, which lingers until TTL purge.
+- Cross-session persistence (project scope) is not in Phase 1. Phase 2 may introduce a project-scope counter for behaviors that cannot tolerate clear-based reset.
+
 ### Access
 
 Every hook invocation updates `last_accessed_at` to the current UTC timestamp before releasing the lock.
