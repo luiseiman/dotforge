@@ -37,6 +37,11 @@ Directory layout:
     "a1b2c3d4-e5f6-7890-abcd-ef1234567890": {
       "created_at": "2026-04-13T10:00:00Z",
       "last_accessed_at": "2026-04-13T14:30:00Z",
+      "flags": {
+        "search_context_ready": {
+          "set_at": "2026-04-13T14:29:30Z"
+        }
+      },
       "behaviors": {
         "search-first": {
           "counter": 4,
@@ -65,6 +70,7 @@ Directory layout:
     "e5f6g7h8-1234-5678-abcd-000000000001": {
       "created_at": "2026-04-12T08:00:00Z",
       "last_accessed_at": "2026-04-12T16:00:00Z",
+      "flags": {},
       "behaviors": {}
     }
   }
@@ -79,6 +85,8 @@ Directory layout:
 | `sessions` | object | Map of `session_id → session entry`. |
 | `created_at` | ISO 8601 | When the session entry was first created. |
 | `last_accessed_at` | ISO 8601 | Updated on every hook invocation. TTL applies to this field. |
+| `flags` | object | Map of `flag_name → flag entry`. Session-scoped, shared across behaviors. See [Section 4.1](#41-flags). |
+| `flags.<name>.set_at` | ISO 8601 | Timestamp when the flag was set or last re-set. |
 | `behaviors` | object | Map of `behavior_id → behavior state`. |
 | `counter` | integer | Violation count. Increments before level resolution. Never negative. |
 | `effective_level` | string | Monotonic level: silent \| nudge \| warning \| soft_block \| hard_block |
@@ -116,7 +124,43 @@ Purge runs inline on every state access — no background job required.
 
 ---
 
-## 4. Counter Mechanics
+## 4. Flags
+
+Flags are session-scoped boolean markers that enable temporal behaviors — behaviors that need to remember that something happened earlier in the same session (e.g., "a search tool was used before this write"). They exist alongside counters in the session state but are independent of any single behavior.
+
+### 4.1 Lifecycle
+
+- **Creation:** a trigger with `action: set_flag` creates or re-sets the named flag. Idempotent — re-setting updates `set_at`.
+- **Consumption:** a trigger with `action: check_flag` and `on_present: consume` deletes the flag after reading it.
+- **Persistence:** a trigger with `action: check_flag` and `on_present: keep` leaves the flag in place.
+- **Expiry:** flags live until consumed or until the session is purged by TTL. No per-flag TTL in v1.
+
+### 4.2 Shape
+
+```json
+"flags": {
+  "search_context_ready": {
+    "set_at": "2026-04-13T14:29:30Z"
+  }
+}
+```
+
+Only `set_at` is stored in v1. `set_by_tool`, `consumed_at`, and `consumed_by_tool` are reserved for future versions.
+
+### 4.3 Properties
+
+- **Session-scoped, not behavior-scoped.** Any behavior can set or check any flag. Sharing by convention: flag names should be descriptive (e.g., `search_context_ready`, not `flag1`).
+- **No effect on counters.** Setting or checking a flag never increments a counter and never changes `effective_level`.
+- **No effect on chain evaluation.** Flag triggers do not cut the chain even when another behavior produces a block on the same tool call.
+- **Shape is closed.** DSL cannot read arbitrary flag fields. Flags are manipulated only via `set_flag` and `check_flag` actions. See SCHEMA.md for allowed trigger syntax.
+
+### 4.4 Concurrency
+
+Flag mutations go through the same lock as counter mutations — serialized by `acquire_lock`. Parallel tool calls that both attempt to set the same flag produce a single entry with the latest `set_at`. Parallel consume operations are race-safe: at most one sees the flag.
+
+---
+
+## 5. Counter Mechanics
 
 - Counter is per-behavior, per-session.
 - Increments by 1 on each violation (triggered tool call). See SPEC.md Section 3.1.
@@ -137,7 +181,7 @@ Example sequence for `search-first` with `default_level: silent`, escalation `af
 
 ---
 
-## 5. Effective Level Calculation
+## 6. Effective Level Calculation
 
 Implements SPEC.md Section 2.1 (`resolve_level`) plus monotonic enforcement (Section 3.2).
 
@@ -160,7 +204,7 @@ Level ordering for `max_level`: `silent < nudge < warning < soft_block < hard_bl
 
 ---
 
-## 6. TTL Purge Protocol
+## 7. TTL Purge Protocol
 
 Runs **inline on every state.json access**, after lock acquisition, before business logic.
 Not a background job. Idempotent.
@@ -192,7 +236,7 @@ If all sessions have expired, the result is:
 
 ---
 
-## 7. Locking Protocol
+## 8. Locking Protocol
 
 Uses mkdir-based locking — POSIX-portable, works on macOS and Linux without flock.
 
@@ -244,7 +288,7 @@ the lock is stale. Remove it and retry lock acquisition once.
 
 ---
 
-## 8. Concurrency Scenarios
+## 9. Concurrency Scenarios
 
 ### Multi-agent (VPS + local + Telegram)
 
@@ -267,7 +311,7 @@ Both cases are valid. The runtime handles both without special logic.
 
 ---
 
-## 9. Error Recovery
+## 10. Error Recovery
 
 | Condition | Action |
 |-----------|--------|
@@ -281,7 +325,7 @@ Both cases are valid. The runtime handles both without special logic.
 
 ---
 
-## 10. Full Access Sequence
+## 11. Full Access Sequence
 
 Every hook invocation follows this sequence:
 
