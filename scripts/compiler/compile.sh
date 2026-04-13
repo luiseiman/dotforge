@@ -149,10 +149,15 @@ for idx in $(seq 0 $((TRIGGER_COUNT - 1))); do
 # Trigger:  index ${idx}
 set -u
 
-HOOK_SCRIPT_DIR=\$(cd "\$(dirname "\$0")" && pwd)
-REPO_ROOT=\$(cd "\${HOOK_SCRIPT_DIR}/../../.." && pwd)
-# shellcheck source=/dev/null
-. "\${REPO_ROOT}/scripts/runtime/lib.sh"
+if [ -n "\${FORGE_LIB_PATH:-}" ]; then
+    # shellcheck source=/dev/null
+    . "\${FORGE_LIB_PATH}"
+else
+    HOOK_SCRIPT_DIR=\$(cd "\$(dirname "\$0")" && pwd)
+    REPO_ROOT=\$(cd "\${HOOK_SCRIPT_DIR}/../../.." && pwd)
+    # shellcheck source=/dev/null
+    . "\${REPO_ROOT}/scripts/runtime/lib.sh"
+fi
 
 BEHAVIOR_ID='${ESC_BID}'
 BEHAVIOR_NAME='${ESC_NAME}'
