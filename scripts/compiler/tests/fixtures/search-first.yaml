@@ -1,0 +1,50 @@
+schema_version: "1"
+id: search-first
+name: Search Before Writing
+description: >
+  Require the agent to search existing code before writing new implementations.
+category: core
+scope: session
+enabled: true
+
+policy:
+  triggers:
+    - event: PreToolUse
+      matcher: "Grep|Glob|Read"
+      action: set_flag
+      flag: search_context_ready
+
+    - event: PreToolUse
+      matcher: "Write|Edit"
+      action: check_flag
+      flag: search_context_ready
+      on_present: consume
+      on_absent: violate
+
+  enforcement:
+    default_level: silent
+    escalation:
+      - after: 1
+        level: nudge
+      - after: 3
+        level: warning
+      - after: 5
+        level: soft_block
+
+  recovery:
+    hint: "Use Grep or Glob to search for existing patterns before writing new code."
+
+rendering:
+  nudge_template: "{behavior_name}: consider searching first (violation {counter})"
+  warning_template: "[{behavior_id}] repeated write without search: counter={counter}"
+  block_reason: "[{behavior_id}] BLOCKED: search the codebase before writing."
+
+applies_to:
+  tools: []
+  agents: []
+  profiles: [standard, strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [search, core]

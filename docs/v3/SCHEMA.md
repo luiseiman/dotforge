@@ -46,6 +46,9 @@ policy:
           operator: regex_match  # enum, from closed DSL operator set (Section 3).
           value: '\.(py|ts|js|swift|go|rs|java|kt)$'
       logic: all             # enum [all, any], default "all". How conditions are combined.
+      action: evaluate       # enum [evaluate, set_flag, check_flag], default "evaluate".
+                             # "evaluate" = increment counter + resolve level + emit output (standard path).
+                             # "set_flag" / "check_flag" = flag-based temporal behaviors (Section 3.5).
 
   enforcement:
     default_level: silent    # enum [silent, nudge, warning, soft_block, hard_block], required.
@@ -106,6 +109,10 @@ metadata:
 | `triggers[].matcher` | string | conditional | — | Required for `PreToolUse`/`PostToolUse` |
 | `triggers[].conditions` | array | no | [] | Each item needs `field`, `operator`, `value` |
 | `triggers[].logic` | enum | no | `all` | `all`, `any` |
+| `triggers[].action` | enum | no | `evaluate` | `evaluate`, `set_flag`, `check_flag` |
+| `triggers[].flag` | string | conditional | — | Required when `action` is `set_flag` or `check_flag`. Kebab-case or snake_case. |
+| `triggers[].on_present` | enum | conditional | — | Required when `action` is `check_flag`. `consume` or `keep`. |
+| `triggers[].on_absent` | enum | conditional | — | Required when `action` is `check_flag`. `skip` or `violate`. |
 | `enforcement.default_level` | enum | yes | — | One of 5 levels |
 | `escalation[].after` | integer | yes | — | >= 1 |
 | `recovery.hint` | string | yes | — | Shown to agent on violation |
@@ -174,6 +181,38 @@ Only `counter` is available in 3.0. Additional session_state fields deferred to 
 | `exists` | Field is present and non-empty |
 | `not_exists` | Field is absent or empty |
 
+### 3.5 Trigger Actions
+
+Every trigger has an `action` that determines what happens when its `matcher` + `conditions` match. Default is `evaluate`. Only three actions exist in v1 — no composite actions.
+
+| Action | Effect on counter | Effect on level | Effect on flags | Use case |
+|--------|-------------------|-----------------|-----------------|----------|
+| `evaluate` | increment by 1 | resolve from counter (SPEC.md §2) | none | Standard violation path (the only path in pre-flag behaviors) |
+| `set_flag` | none | none | creates or re-sets `flag` with current `set_at` | Mark that a precondition was met (e.g., "a search happened") |
+| `check_flag` | conditional — see `on_absent` | conditional | consumed or kept — see `on_present` | Gate a subsequent action on a prior flag |
+
+#### set_flag
+
+Required fields:
+- `flag` — name of the flag to set
+
+Semantics: on matcher+conditions match, the named flag is created (or its `set_at` updated) in `sessions.<id>.flags`. No counter increment. No output. Does not cut the chain.
+
+#### check_flag
+
+Required fields:
+- `flag` — name of the flag to check
+- `on_present` — `consume` (delete after reading) or `keep` (leave in place)
+- `on_absent` — `skip` (pass through as no-op) or `violate` (increment counter + resolve level as if this were an `evaluate` action)
+
+Both `on_present` and `on_absent` are mandatory — there is no default. Declaring them explicitly makes the behavior's semantics auditable from the YAML alone.
+
+#### Restrictions (v1)
+
+- `action` is always a scalar string. Lists are not allowed. A single trigger cannot both set and check a flag — declare two separate triggers.
+- Flag names are free-form strings but should be descriptive. The compiler does not enforce a schema on flag names.
+- Flags are runtime-internal. The DSL cannot read flag state through `conditions` — flags are manipulated only via `action: set_flag` and `action: check_flag`.
+
 ---
 
 ## 4. Template Variables
@@ -232,6 +271,11 @@ Compile-time checks that must pass before hook generation:
 - `matcher` is required when `event` is `PreToolUse` or `PostToolUse`.
 - All `field` values in conditions must be from the closed DSL field set (Section 3).
 - All `operator` values must be from the closed DSL operator set (Section 3).
+- `action` must be one of `evaluate`, `set_flag`, `check_flag`. Default is `evaluate`.
+- When `action` is `set_flag`, `flag` is required.
+- When `action` is `check_flag`, `flag`, `on_present`, and `on_absent` are all required.
+- `on_present` must be `consume` or `keep`. `on_absent` must be `skip` or `violate`.
+- Triggers with `action: set_flag` or `action: check_flag` must not declare `escalation`-dependent rendering (nudge/warning templates are ignored for these actions — they produce no output except via `on_absent: violate`, which routes through the normal `evaluate` rendering path).
 - Escalation `after` values must be non-decreasing when sorted: each successive entry must have `after >= previous after`. Levels must be non-decreasing in severity.
 - `nudge_template` length must be <= 120 chars.
 - `warning_template` length must be <= 500 chars.
@@ -255,6 +299,14 @@ enabled: true
 
 policy:
   triggers:
+    # 1. Any search-like tool sets the flag — no violation, no counter.
+    - event: PreToolUse
+      matcher: "Grep|Glob|Read"
+      action: set_flag
+      flag: search_context_ready
+
+    # 2. A write on a source file checks the flag.
+    #    Present → consume and pass. Absent → violate (counter + escalation).
     - event: PreToolUse
       matcher: "Write|Edit"
       conditions:
@@ -262,6 +314,10 @@ policy:
           operator: regex_match
           value: '\.(py|ts|js|tsx|jsx|swift|go|rs|java|kt|rb|php|cs)$'
       logic: all
+      action: check_flag
+      flag: search_context_ready
+      on_present: consume
+      on_absent: violate
 
   enforcement:
     default_level: silent

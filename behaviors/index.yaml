@@ -1,0 +1,9 @@
+schema_version: "1"
+
+# Active behaviors, evaluated in declaration order.
+# Each entry's `enabled` field overrides the behavior file's own enabled field.
+# Phase 1: only search-first is catalogued. Phase 2 adds the rest of the core set.
+
+behaviors:
+  - id: search-first
+    enabled: true

@@ -1,10 +1,66 @@
 # Roadmap dotforge
 
-Estado actual: **v2.9.0** (2026-04-05)
+Estado actual: **v3.0.0-alpha.1** (2026-04-13) — Behavior governance Phase 1. v2.9.1 sigue siendo la rama estable user-facing. v3 es aditivo, no rompe v2.9.
 
 ---
 
 ## Completado
+
+### v3.0.0-alpha.1 — Behavior Governance Phase 1 (2026-04-13)
+
+Primer aterrizaje del layer v3: runtime + compilador + search-first end-to-end + detección de override + CLI `/forge behavior`. Cinco piezas del SCOPE de Fase 1 cumplidas. No reemplaza v2.9: coexiste como capa adicional opt-in.
+
+#### Spec closure (2 commits de docs)
+- `docs/v3/SCOPE.md` alineado con `docs/v3/RUNTIME.md` — mkdir-based locking como decisión única (eliminación de `flock`)
+- `docs/v3/RUNTIME.md` §4 + `SCHEMA.md` §3.5 + `SPEC.md` §2.3: modelo de flags formalizado (session-scoped, shape cerrado, `set_flag`/`check_flag` con `on_present`/`on_absent` obligatorios)
+
+#### Runtime (`scripts/runtime/`, 454+154 líneas lib.sh + 8 tests)
+- `.forge/runtime/state.json` con schema versionado, mkdir-based lock 2s + PID stale detection, atomic tmp+mv write, corruption recovery
+- TTL 24h inline purge en cada mutación (jq pipeline)
+- Counter increment, flag set/check/consume atómicos, `_forge_run_mutation` choke point
+- Pure functions: `forge_resolve_level`, `forge_level_max`
+- Tests: concurrencia paralela (10 increments), flag lifecycle, TTL, corruption, stale lock, pending_block
+- `.gitignore` extensions: `.forge/runtime/`, `.claude/worktrees/`
+
+#### Compilador (`scripts/compiler/`, ~320 líneas + 1 test)
+- YAML → bash hook por trigger via `python3 + pyyaml` (no `yq` dependency)
+- Hook template self-contained: fuentea `lib.sh` via `FORGE_LIB_PATH` env var o relative anchor fallback
+- Set_flag hooks minimales (30 líneas), check_flag/evaluate hooks con helpers completos solo cuando `on_absent: violate` los necesita
+- Settings.json snippet con `{type, command}` object format (requerido por Claude Code, NO strings planos)
+- Template variables sustituidas via sed: `{behavior_name}`, `{counter}`, `{tool_name}`, `{level}`, `{threshold}`
+
+#### search-first end-to-end (`behaviors/search-first/`, 5 scenarios)
+- `behavior.yaml` canónico: Grep|Glob|Read → set_flag, Write|Edit → check_flag con consume/violate
+- `behaviors/index.yaml` catalogue file
+- Scenarios: happy path (Grep→Write consume), idempotent set, alternating, escalation silent→nudge→warning→soft_block, override reinvocation
+
+#### Override detection via reinvocation (RUNTIME.md §12 + 1 test unit + 1 scenario e2e)
+- `pending_block` shape: `{tool_input_hash, blocked_at}` en behavior state
+- `forge_tool_input_hash` — sha256 truncado a 40 hex chars de canonical JSON
+- `forge_pending_block_try_override` — match + window check + audit trail triple-write
+- Ventana default 60s via `FORGE_OVERRIDE_WINDOW_SECONDS` env var
+- Corrige `SPEC.md §6.2` que originalmente asumía `PermissionDenied` event hook (solo dispara para auto-mode, no para PreToolUse blocks — verificado empíricamente)
+
+#### `/forge behavior` CLI (`scripts/forge-behavior/`, ~290 líneas + 4 tests)
+- `status [--session SID]` — tabla project + runtime con counters, levels, overrides, pending
+- `on|off <id> [--project | --session SID]` — project muta `index.yaml` via pyyaml, session escribe a `state.json`
+- `strict|relaxed <id>` — project-scope, muta escalation thresholds (halve / double)
+- Hook preamble short-circuita cuando `behavior_overrides[bid].enabled == false`
+- `skills/forge-behavior/SKILL.md` como wrapper para Claude Code
+
+#### Prueba viva end-to-end en sesión Claude Code real (`~/tmp-v3-live`)
+- 7 prompts secuenciales → escalation silent→nudge→nudge→warning→warning→soft_block observable en pantalla real
+- `permissionDecision: "deny"` del hook interpretado por Claude Code como permission denial (respeto SPEC §5.5 al pie de la letra)
+- Emergent behavior: Claude Code leyó `state.json` post-block por iniciativa propia y explicó el pending_block mechanism al usuario sin que se le pidiera
+- **Hallazgo empírico #1**: `/clear` resetea `session_id` en hook payloads → behaviors session-scoped evadibles vía `/clear` con zero audit trail. Documentado en `RUNTIME.md §3` y capturado en `practices/inbox/2026-04-13-v3-clear-creates-session-boundary.md` con 3 fixes propuestos para Fase 2.
+- **Hallazgo empírico #2**: flag masking override — si hay un flag presente cuando viene retry post-soft_block, el path `forge_flag_consume` short-circuita antes del `try_override`, el retry pasa pero sin audit trail. No verificable en vivo por el `/clear`, verificable por code inspection, regression test en Fase 2.
+
+#### Métricas Fase 1
+- 9 commits en branch `v3-fase1` (1 spec alignment + 1 spec extension + 5 feature + 1 live findings + 2 doc updates)
+- 18 tests verdes (8 runtime + 1 compiler + 5 e2e + 4 CLI)
+- ~3000 líneas netas entre código, tests y spec updates
+- 0 regresiones sobre v2.9.1 existente
+- Zero breaking changes — v3 es aditivo, v2.9 sigue funcionando sin tocar
 
 ### v2.9.0 — Hardening + Portability + Upstream Alignment (2026-04-05)
 
@@ -97,9 +153,27 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ---
 
-## v3.0.0 — LLM Stack + Effectiveness (próximo)
+## v3.0.0 — Behavior Governance (en progreso)
 
-### Pendiente (movido de v2.8.0)
+### Fase 2 — Catálogo + fixes de hallazgos empíricos (2-3 semanas post-alpha.1)
+- **Catálogo core** de behaviors: verify-before-done, no-destructive-git, respect-todo-state, plan-before-code, objection-format. Cada uno con `behavior.yaml` + scenarios tests.
+- **Reorder check_flag template** — `forge_pending_block_try_override` debe correr antes de `forge_flag_consume` para cerrar el flag-masking-override gap detectado en la prueba viva.
+- **`scope: project`** para behaviors session-clear-resistant (no-destructive-git es el candidato #1). Persiste counters en project state, no en session state, inmune a `/clear`.
+- **Sweep de pending_blocks huérfanos** en hook init — si detecta una sesión distinta con pending_block no expirado, append a audit log como `session_abandoned_with_pending_block`.
+- **`/forge audit` dimensión "behaviors coverage"** — item scored que cuenta qué fracción de eventos relevantes tienen behaviors registrados.
+- **Tests por behavior** — cada behavior en `behaviors/<id>/tests/` con al menos 1 happy path + 1 violation + 1 escalation scenario.
+- **Wiring del comando** — `/forge behavior` como sub-comando nativo en `global/commands/forge.md` (hoy se invoca directo al CLI).
+
+### Fase 3 — Release (1-2 semanas)
+- **README rewrite** — diferencial de v3 visible en las primeras 40 líneas. Hoy README habla solo de config governance, no de behavior governance.
+- **CHANGELOG v3.0.0** formal
+- **Migration guide** v2.9 → v3 (opt-in, no rompe 2.9)
+- **Benchmark real** corrido en SOMA o InviSight — medir impacto del behavior layer en comportamiento observable de Claude
+- **GIF demo** de search-first escalando en un proyecto real
+- **Tag `v3.0.0`** release
+- **Marketplace submission update** con features v3
+
+### Pendiente legacy (movido de v2.8.0, sin urgencia)
 - **PermissionRequest hook**: auto-allow para operaciones known-safe
 - **SubagentStart hook**: inyectar contexto de dominio a subagentes
 - **CwdChanged hook**: recargar reglas de dominio al cambiar directorio
@@ -107,7 +181,7 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 - **`/forge doctor`**: diagnóstico de entorno con semáforo
 - **trading stack**: reglas domain-specific — test en proyecto real
 
-### Stack `llm-python`
+### Stack `llm-python` (diferido)
 - Para proyectos Python con LLM APIs (anthropic, openai, langchain, litellm)
 - Rules: API keys, retry con backoff, no loggear `content`, costeo antes de batch ops
 

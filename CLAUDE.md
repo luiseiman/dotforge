@@ -79,6 +79,28 @@ Seven subagent definitions in `agents/`: researcher (read-only exploration), arc
 
 `integrations/` contains cross-tool bridges. Currently: OpenClaw (`integrations/openclaw/`) with a bridge skill for operating `/forge` from messaging channels, and `/forge export openclaw` for generating project-specific OpenClaw workspace skills.
 
+### v3 Behavior Governance (alpha — Phase 1 complete)
+
+`behaviors/`, `scripts/runtime/`, `scripts/compiler/`, `scripts/forge-behavior/`, and `skills/forge-behavior/` together implement the v3 behavior governance layer. Unlike the v2 configuration layer (rules, stacks, skills, agents), v3 behaviors enforce runtime policies on tool calls via compiled `PreToolUse` hooks that share a session-scoped state file.
+
+Core pieces:
+
+- `behaviors/<id>/behavior.yaml` — declarative policy (triggers, escalation, rendering). Schema: `docs/v3/SCHEMA.md`.
+- `behaviors/index.yaml` — active behavior catalogue, evaluation order.
+- `scripts/runtime/lib.sh` — shared bash API: mkdir-based lock, counters, flags, pending_blocks, overrides. Sourced by compiled hooks. Tested via `scripts/runtime/tests/run_all.sh`.
+- `scripts/compiler/compile.sh` — YAML → bash hook per trigger, plus `settings.json` snippet. Tested via `scripts/compiler/tests/run_all.sh`.
+- `scripts/forge-behavior/cli.sh` — `/forge behavior` CLI: `status`, `on`/`off` (project or session scope), `strict`/`relaxed`. Tested via `scripts/forge-behavior/tests/run_all.sh`.
+- `.forge/runtime/state.json` — per-session counters, flags, pending_blocks. Gitignored, per-machine.
+- `.forge/audit/overrides.log` — permanent append-only soft_block override audit trail. Committed to git.
+
+Specs of record live under `docs/v3/`: `SPEC.md` (evaluation algorithm, level table), `SCHEMA.md` (behavior.yaml v1), `RUNTIME.md` (state shape, locking, flags §4, TTL §7, reinvocation override detection §12), `AUDIT.md` (override log format), `COMPILER.md` (generation rules), `SCOPE.md` (Phase 1–3 milestones), `DECISIONS.md` (design decisions), `COMPETITIVE.md` (differentiation).
+
+Phase 1 (this alpha): runtime + compiler + search-first end-to-end + override detection + `/forge behavior` CLI. 18 unit/integration tests green, full live smoke test executed in a real Claude Code session.
+
+Phase 2: catalogue (verify-before-done, no-destructive-git, respect-todo-state, plan-before-code, objection-format), `/forge audit` behaviors-coverage dimension, scope: project for session-clear-resistant behaviors, reorder check_flag template to surface override detection ahead of flag consume.
+
+Phase 3: README rewrite, CHANGELOG v3, migration guide, benchmark, marketplace update, tag v3.0.0.
+
 ## Conventions
 
 - Rules files: markdown with `globs:` (eager) or `paths:` CSV + `alwaysApply: false` (lazy) frontmatter

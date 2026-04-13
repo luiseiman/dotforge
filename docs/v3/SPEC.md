@@ -47,10 +47,37 @@ FUNCTION evaluate_behaviors(tool_call, hook_event, behaviors_index):
     IF NOT matches_applies_to(behavior, tool_call):
       CONTINUE
 
-    # 3. Evaluate trigger conditions
-    triggered = evaluate_triggers(behavior.policy.triggers, tool_call)
+    # 3. Evaluate each trigger in declaration order.
+    #    Triggers dispatch by action. See Section 2.3 for flag semantics.
+    violation_occurred = false
+    FOR trigger IN behavior.policy.triggers:
+      IF NOT trigger_matches(trigger, hook_event, tool_call):
+        CONTINUE
 
-    IF NOT triggered:
+      action = trigger.action OR "evaluate"
+
+      IF action == "set_flag":
+        session.flags[trigger.flag] = {"set_at": NOW()}
+        CONTINUE  # no counter, no output
+
+      IF action == "check_flag":
+        IF trigger.flag IN session.flags:
+          IF trigger.on_present == "consume":
+            DELETE session.flags[trigger.flag]
+          # on_present: keep → leave as-is
+          CONTINUE  # no counter, no output
+        ELSE:
+          IF trigger.on_absent == "skip":
+            CONTINUE
+          # on_absent: violate → fall through to the standard evaluate path below
+          violation_occurred = true
+          BREAK
+
+      IF action == "evaluate":
+        violation_occurred = true
+        BREAK
+
+    IF NOT violation_occurred:
       CONTINUE
 
     # 4. Increment counter BEFORE level calculation
@@ -101,7 +128,40 @@ FUNCTION resolve_level(enforcement, counter):
 Level ordering: silent < nudge < warning < soft_block < hard_block.
 `max_level(a, b)` returns the higher of the two.
 
-### 2.3 merge_outputs
+### 2.3 Flag actions
+
+Triggers with `action: set_flag` or `action: check_flag` do not participate in the counter/level/rendering path. Their effect is limited to the `session.flags` map:
+
+```
+# set_flag: unconditional mark
+FUNCTION apply_set_flag(session, trigger):
+  session.flags[trigger.flag] = {"set_at": NOW()}
+  # Idempotent — re-setting updates set_at but does not duplicate the entry.
+
+# check_flag: read-and-maybe-consume
+FUNCTION apply_check_flag(session, trigger):
+  IF trigger.flag IN session.flags:
+    IF trigger.on_present == "consume":
+      DELETE session.flags[trigger.flag]
+    # on_present: keep → no state mutation
+    RETURN "pass"       # no violation, continue to next trigger
+  ELSE:
+    IF trigger.on_absent == "skip":
+      RETURN "pass"
+    # on_absent: violate
+    RETURN "violate"    # fall through to the standard evaluate path
+```
+
+Properties:
+
+- Flag actions never emit output of their own. Output is produced only by the `evaluate` path, reached from `check_flag` via `on_absent: violate`.
+- Flag actions never cut the chain. Only `evaluate` triggers that resolve to `soft_block` or `hard_block` cut the chain.
+- Flag actions do not increment counters. A `check_flag` that routes to `violate` increments the counter once, exactly as an `evaluate` trigger would.
+- Within a single behavior, multiple triggers are evaluated in declaration order. The first `violate` result or first `evaluate` match stops further trigger evaluation for that behavior (one violation per behavior per tool call, per SPEC §3.1).
+
+See [RUNTIME.md §4](RUNTIME.md#4-flags) for the storage shape and concurrency semantics of `session.flags`.
+
+### 2.4 merge_outputs
 
 ```
 FUNCTION merge_outputs(outputs, block_hit):
@@ -133,6 +193,7 @@ FUNCTION merge_outputs(outputs, block_hit):
 - Counter increments BEFORE level calculation (the first violation sees counter=1, not 0)
 - Counter never decreases within a session
 - Counter resets when session expires via TTL purge
+- Triggers with `action: set_flag` or `action: check_flag` (when routing to `on_present` or `on_absent: skip`) do **not** increment counters. Only `evaluate` triggers and `check_flag` triggers routing to `on_absent: violate` count as violations.
 
 ### 3.2 Monotonic effective level
 
@@ -284,11 +345,13 @@ Overrides apply only to `soft_block` level.
 4. If overridden, Claude Code re-invokes the tool — the hook fires again
 5. The hook detects the override via the PermissionDenied→allow flow and records the audit trail
 
-### 6.2 Override detection
+### 6.2 Override detection (reinvocation pattern)
 
-The compiled hook does NOT need to detect overrides in real-time.
-Claude Code handles the override flow natively.
-The override audit trail is written by a separate `PermissionDenied` event hook that fires when a permission denial is overridden.
+Claude Code does NOT fire a `PermissionDenied` event when a `PreToolUse` hook emits `permissionDecision: "deny"` — `PermissionDenied` is scoped to auto-mode classifier denials only. Phase 0 verified this empirically.
+
+Therefore the compiled hook detects overrides through the reinvocation pattern: after emitting a `soft_block`, the hook writes a short-lived `pending_block` into the behavior state (`tool_input_hash` + `blocked_at`). On the next invocation of the same hook, it compares the incoming `tool_input_hash` against the stored one within a configurable window (default 60s). A match within the window is treated as reinvocation after user override: the hook records the audit entry, clears the `pending_block`, and passes through silently.
+
+See [RUNTIME.md §12](RUNTIME.md#12-override-detection-via-reinvocation) for the complete semantics, field shapes, and edge cases.
 
 ### 6.3 Triple-write audit
 

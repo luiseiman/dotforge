@@ -37,12 +37,23 @@ Directory layout:
     "a1b2c3d4-e5f6-7890-abcd-ef1234567890": {
       "created_at": "2026-04-13T10:00:00Z",
       "last_accessed_at": "2026-04-13T14:30:00Z",
+      "flags": {
+        "search_context_ready": {
+          "set_at": "2026-04-13T14:29:30Z"
+        }
+      },
+      "behavior_overrides": {
+        "plan-before-code": {
+          "enabled": false
+        }
+      },
       "behaviors": {
         "search-first": {
           "counter": 4,
           "effective_level": "warning",
           "last_violation_at": "2026-04-13T14:28:00Z",
           "last_violation_tool": "Write",
+          "pending_block": null,
           "overrides": [
             {
               "timestamp": "2026-04-13T12:15:00Z",
@@ -58,6 +69,7 @@ Directory layout:
           "effective_level": "silent",
           "last_violation_at": null,
           "last_violation_tool": null,
+          "pending_block": null,
           "overrides": []
         }
       }
@@ -65,6 +77,7 @@ Directory layout:
     "e5f6g7h8-1234-5678-abcd-000000000001": {
       "created_at": "2026-04-12T08:00:00Z",
       "last_accessed_at": "2026-04-12T16:00:00Z",
+      "flags": {},
       "behaviors": {}
     }
   }
@@ -79,11 +92,15 @@ Directory layout:
 | `sessions` | object | Map of `session_id → session entry`. |
 | `created_at` | ISO 8601 | When the session entry was first created. |
 | `last_accessed_at` | ISO 8601 | Updated on every hook invocation. TTL applies to this field. |
+| `flags` | object | Map of `flag_name → flag entry`. Session-scoped, shared across behaviors. See [Section 4.1](#41-flags). |
+| `flags.<name>.set_at` | ISO 8601 | Timestamp when the flag was set or last re-set. |
+| `behavior_overrides` | object | Per-session user overrides of behavior enablement. Shape: `{<behavior_id>: {enabled: bool}}`. Absent key or `enabled: true` means "inherit from index.yaml". `enabled: false` forces the compiled hook to short-circuit. Written by `/forge behavior on\|off --session`. |
 | `behaviors` | object | Map of `behavior_id → behavior state`. |
 | `counter` | integer | Violation count. Increments before level resolution. Never negative. |
 | `effective_level` | string | Monotonic level: silent \| nudge \| warning \| soft_block \| hard_block |
 | `last_violation_at` | ISO 8601 \| null | Timestamp of last violation. Null until first violation. |
 | `last_violation_tool` | string \| null | Tool name that caused last violation. Null until first violation. |
+| `pending_block` | object \| null | Short-lived record emitted when a hook fires soft_block. Holds `tool_input_hash` and `blocked_at` (ISO 8601). Consumed by the next matching tool call to detect reinvocation after user override. Null in steady state. See Section 12. |
 | `overrides` | array | Audit records for soft_block overrides in this session. Subset of `.forge/audit/overrides.log`. |
 
 ---
@@ -103,6 +120,22 @@ SESSION_ID=$(echo "${PWD}:${PPID}:$(date +%Y%m%d)" | md5sum | cut -c1-36)
 
 This fallback is stable within a process tree on a given day, and deterministic across hooks in the same session.
 
+### Session boundaries (empirical, from Phase 1 live testing)
+
+`session_id` is **not** stable across the full lifetime of a Claude Code process. It changes at the following events:
+
+- **Process start** — new UUID on `claude` invocation (expected).
+- **`/clear`** — new UUID when the user clears conversation context. Verified in Phase 1 live test: running `/clear` mid-conversation and continuing produced a new session entry in `state.json` alongside the old one, with counter=0 and no inherited state.
+- **`/compact` (assumed)** — not yet verified. SessionStart hook payload distinguishes `source=compact` from `source=clear`, suggesting separate treatment.
+- **Subagents** — may receive the parent session_id (shared state) or a new one (isolated state); runtime handles both without special logic, see Section 9.
+
+Implications for behaviors:
+
+- A session-scoped counter is bounded by the shortest of: conversation length, last `/clear`, last `/compact`, 24h TTL.
+- Soft_blocks and pending_blocks are **not** carried across `/clear`. A user can effectively reset counters by clearing. This is a known escape hatch in Phase 1.
+- Audit evidence for abandoned-mid-block sessions is limited to the state entry itself, which lingers until TTL purge.
+- Cross-session persistence (project scope) is not in Phase 1. Phase 2 may introduce a project-scope counter for behaviors that cannot tolerate clear-based reset.
+
 ### Access
 
 Every hook invocation updates `last_accessed_at` to the current UTC timestamp before releasing the lock.
@@ -116,7 +149,43 @@ Purge runs inline on every state access — no background job required.
 
 ---
 
-## 4. Counter Mechanics
+## 4. Flags
+
+Flags are session-scoped boolean markers that enable temporal behaviors — behaviors that need to remember that something happened earlier in the same session (e.g., "a search tool was used before this write"). They exist alongside counters in the session state but are independent of any single behavior.
+
+### 4.1 Lifecycle
+
+- **Creation:** a trigger with `action: set_flag` creates or re-sets the named flag. Idempotent — re-setting updates `set_at`.
+- **Consumption:** a trigger with `action: check_flag` and `on_present: consume` deletes the flag after reading it.
+- **Persistence:** a trigger with `action: check_flag` and `on_present: keep` leaves the flag in place.
+- **Expiry:** flags live until consumed or until the session is purged by TTL. No per-flag TTL in v1.
+
+### 4.2 Shape
+
+```json
+"flags": {
+  "search_context_ready": {
+    "set_at": "2026-04-13T14:29:30Z"
+  }
+}
+```
+
+Only `set_at` is stored in v1. `set_by_tool`, `consumed_at`, and `consumed_by_tool` are reserved for future versions.
+
+### 4.3 Properties
+
+- **Session-scoped, not behavior-scoped.** Any behavior can set or check any flag. Sharing by convention: flag names should be descriptive (e.g., `search_context_ready`, not `flag1`).
+- **No effect on counters.** Setting or checking a flag never increments a counter and never changes `effective_level`.
+- **No effect on chain evaluation.** Flag triggers do not cut the chain even when another behavior produces a block on the same tool call.
+- **Shape is closed.** DSL cannot read arbitrary flag fields. Flags are manipulated only via `set_flag` and `check_flag` actions. See SCHEMA.md for allowed trigger syntax.
+
+### 4.4 Concurrency
+
+Flag mutations go through the same lock as counter mutations — serialized by `acquire_lock`. Parallel tool calls that both attempt to set the same flag produce a single entry with the latest `set_at`. Parallel consume operations are race-safe: at most one sees the flag.
+
+---
+
+## 5. Counter Mechanics
 
 - Counter is per-behavior, per-session.
 - Increments by 1 on each violation (triggered tool call). See SPEC.md Section 3.1.
@@ -137,7 +206,7 @@ Example sequence for `search-first` with `default_level: silent`, escalation `af
 
 ---
 
-## 5. Effective Level Calculation
+## 6. Effective Level Calculation
 
 Implements SPEC.md Section 2.1 (`resolve_level`) plus monotonic enforcement (Section 3.2).
 
@@ -160,7 +229,7 @@ Level ordering for `max_level`: `silent < nudge < warning < soft_block < hard_bl
 
 ---
 
-## 6. TTL Purge Protocol
+## 7. TTL Purge Protocol
 
 Runs **inline on every state.json access**, after lock acquisition, before business logic.
 Not a background job. Idempotent.
@@ -192,7 +261,7 @@ If all sessions have expired, the result is:
 
 ---
 
-## 7. Locking Protocol
+## 8. Locking Protocol
 
 Uses mkdir-based locking — POSIX-portable, works on macOS and Linux without flock.
 
@@ -244,7 +313,7 @@ the lock is stale. Remove it and retry lock acquisition once.
 
 ---
 
-## 8. Concurrency Scenarios
+## 9. Concurrency Scenarios
 
 ### Multi-agent (VPS + local + Telegram)
 
@@ -267,7 +336,7 @@ Both cases are valid. The runtime handles both without special logic.
 
 ---
 
-## 9. Error Recovery
+## 10. Error Recovery
 
 | Condition | Action |
 |-----------|--------|
@@ -281,7 +350,7 @@ Both cases are valid. The runtime handles both without special logic.
 
 ---
 
-## 10. Full Access Sequence
+## 11. Full Access Sequence
 
 Every hook invocation follows this sequence:
 
@@ -310,3 +379,65 @@ Every hook invocation follows this sequence:
 
 9. emit JSON output to stdout, exit 0
 ```
+
+---
+
+## 12. Override Detection via Reinvocation
+
+Claude Code's native hook system does NOT fire a `PermissionDenied` event when a `PreToolUse` hook emits `permissionDecision: "deny"`. `PermissionDenied` fires only for auto-mode classifier denials. Confirmed empirically in Phase 0.
+
+This means override detection cannot rely on a separate event hook. Instead, behavior hooks detect overrides via the **reinvocation pattern**: when a user approves a denied tool call, Claude Code re-invokes the same `PreToolUse` hook with the same `tool_input`. The hook observes that it just blocked the same input seconds ago and treats the new invocation as evidence of override.
+
+### 12.1 pending_block shape
+
+```json
+"pending_block": {
+  "tool_input_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4",
+  "blocked_at": "2026-04-13T14:30:05Z"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tool_input_hash` | string | First 40 hex chars of `sha256(canonical_json(tool_input))`. Stable for identical inputs. |
+| `blocked_at` | ISO 8601 | UTC timestamp when the soft_block was emitted. |
+
+### 12.2 Writer (on soft_block)
+
+Inside the same state mutation that records the violation, when `effective_level` becomes `soft_block`:
+
+1. Compute `tool_input_hash` from the incoming `tool_input` JSON (canonical serialization via `jq -S -c`).
+2. Write `pending_block = {tool_input_hash, blocked_at}` into the behavior state.
+3. Emit the standard soft_block JSON output and exit 0.
+
+### 12.3 Reader (next invocation)
+
+On every hook invocation, before counter increment:
+
+1. Read `pending_block` for this behavior in this session.
+2. If absent → normal evaluate path.
+3. If present, compute `tool_input_hash` for the current incoming `tool_input`.
+4. If the hash does NOT match the stored hash → clear `pending_block` (stale from a different tool call), continue to normal evaluate.
+5. If the hash matches, check age: `now - blocked_at < FORGE_OVERRIDE_WINDOW_SECONDS` (default 60).
+6. If stale (outside window) → clear `pending_block`, continue to normal evaluate.
+7. If fresh match → **this is a reinvocation after user override**:
+    - Append an entry to `overrides[]` with `{timestamp, tool_name, tool_input_summary, counter_at_override, reason: ""}`
+    - Append a line to `.forge/audit/overrides.log`
+    - Clear `pending_block`
+    - Exit 0 with empty stdout (pass through silently — the user already approved once, don't re-block)
+
+### 12.4 Properties
+
+- **No counter mutation on override.** The override is a "pass", not a new violation. Counter stays at whatever it was.
+- **One override per soft_block instance.** After the reinvocation is recorded, `pending_block` is cleared. The next Write must re-escalate if conditions hold.
+- **Window is configurable.** `FORGE_OVERRIDE_WINDOW_SECONDS` env var. Default 60.
+- **Stale pending_blocks self-heal.** If Claude Code never reinvokes (user denies, walks away, etc.), the `pending_block` lingers until the next invocation observes it as stale and clears it. No background job needed.
+- **Hash collision safety.** SHA-256 truncated to 40 hex chars provides ~160 bits of collision resistance — sufficient for a per-session, per-behavior, 60-second window.
+- **Different tool_input during retry = different operation.** If the user edits the file path between block and retry, hashes differ, `pending_block` is cleared as stale, and the new operation is evaluated fresh. This is by design: the override applies only to the exact operation that was blocked.
+
+### 12.5 Limitations
+
+- Cannot distinguish "user approved" from "Claude Code re-sent the same call autonomously within 60s for unrelated reasons". In practice the latter is extremely rare — Claude Code does not retry `PreToolUse` denials without user interaction.
+- If a user runs the same operation twice within 60s on purpose (not an override, just a coincidence), the second one would be recorded as an override. Acceptable false positive given the alternative (missing all real overrides).
+- First implementation in Phase 1. Signature refinement and window tuning may happen based on real usage in Phase 2+.
+

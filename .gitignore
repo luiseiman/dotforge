@@ -6,6 +6,11 @@ Thumbs.db
 .claude/settings.local.json
 .claude/.forge-manifest.json
 .claude/session/
+.claude/worktrees/
+
+# dotforge v3 runtime state (ephemeral, per-machine)
+# Note: .forge/audit/ IS committed — it is the permanent override audit trail
+.forge/runtime/
 
 # Secrets
 .env
