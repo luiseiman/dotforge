@@ -3,7 +3,21 @@
 # Install: .claude/hooks/block-destructive.sh
 # Matcher: Bash
 # Supports FORGE_HOOK_PROFILE: minimal | standard (default) | strict
-COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty' 2>/dev/null)
+#
+# Dependency: jq is REQUIRED. This is a security control — if jq is missing
+# or the payload cannot be parsed we fail closed (exit 2, block) rather than
+# fall through silently. An unreadable payload is treated as hostile.
+if ! command -v jq >/dev/null 2>&1; then
+  printf 'block-destructive: jq is required but not installed. Install jq to enable this security hook.\n' >&2
+  exit 2
+fi
+
+COMMAND=$(printf '%s' "${TOOL_INPUT:-}" | jq -r '.command // empty' 2>/dev/null)
+JQ_RC=$?
+if [ "$JQ_RC" -ne 0 ]; then
+  printf 'block-destructive: jq failed to parse tool_input (rc=%s). Blocking defensively.\n' "$JQ_RC" >&2
+  exit 2
+fi
 
 PROFILE="${FORGE_HOOK_PROFILE:-standard}"
 

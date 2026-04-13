@@ -9,9 +9,13 @@
 # Default output_dir: .claude/hooks/generated
 #
 # Supported actions: evaluate, set_flag, check_flag (SCHEMA.md §3.5)
-# Unsupported in v1: type: prompt, conditions with closed DSL beyond matcher.
-#                    conditions are emitted into the hook as a comment but NOT
-#                    enforced. The only runtime enforcement in v1 is the matcher.
+# Supported conditions (Phase 2+): regex_match, contains, not_contains, equals,
+#                                  starts_with, ends_with, exists, not_exists,
+#                                  and numeric gt/lt/gte/lte/equals. Evaluated
+#                                  at runtime via an embedded python3 block
+#                                  against .tool_input (PreToolUse/PostToolUse)
+#                                  or the top-level payload (UserPromptSubmit/Stop).
+# Unsupported in v1: type: prompt hooks, session_state.counter in conditions.
 
 set -eu
 

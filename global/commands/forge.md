@@ -45,6 +45,7 @@ If not met, show the error message and DO NOT execute the skill.
 | `status` | — | — |
 | `global sync` | — | — |
 | `global status` | — | — |
+| `behavior status\|list\|describe\|on\|off\|strict\|relaxed` | `behaviors/index.yaml` in `$DOTFORGE_DIR` | "v3 behavior catalogue not found at `$DOTFORGE_DIR/behaviors/index.yaml`. Upgrade dotforge." |
 | `version` | — | — |
 
 ## Action by $ARGUMENTS
@@ -237,6 +238,22 @@ If directory doesn't exist: "No domain rules found. Run `/forge domain extract` 
 Run the `/domain-extract` skill with sync-vault flag.
 For domain rules with `domain_source: vault://path` in frontmatter, compare against the vault note and propose updates.
 
+### `behavior <subcommand> [args]`
+
+v3 behavior governance CLI. Thin wrapper over `$DOTFORGE_DIR/scripts/forge-behavior/cli.sh`. Subcommands:
+
+- `behavior list [--category core|opinionated|experimental]` — tabular catalogue with on/off state, category, and display name. Read from `behaviors/index.yaml` + each behavior's `behavior.yaml`.
+- `behavior describe <id>` — full policy dump: triggers, enforcement levels, escalation table, recovery hint, runtime status.
+- `behavior status [--session <SID>]` — show project index + per-session counters, effective levels, active overrides from `.forge/runtime/state.json`.
+- `behavior on <id> [--project | --session <SID>]` — enable. Project scope mutates `behaviors/index.yaml` (persistent, requires recompile). Session scope writes an override to `.forge/runtime/state.json` (ephemeral, survives `/clear`).
+- `behavior off <id> [--project | --session <SID>]` — disable. Same scope rules.
+- `behavior strict <id>` — halve every escalation threshold in `behavior.yaml`. Project scope only in v1.
+- `behavior relaxed <id>` — double every escalation threshold. Project scope only in v1.
+
+**Dispatch**: invoke `bash "$DOTFORGE_DIR/scripts/forge-behavior/cli.sh" <subcommand> <args>` and stream the output verbatim. No additional processing.
+
+**Note on compilation**: behaviors are declarative YAML. To apply them to a project, the user must compile the behavior via `$DOTFORGE_DIR/scripts/compiler/compile.sh <behavior.yaml> <output_dir>` and wire the generated hooks into `.claude/settings.json`. See `docs/v3/MIGRATION.md` for the full procedure.
+
 ### `version`
 Read `$DOTFORGE_DIR/VERSION` and display.
 
@@ -272,5 +289,6 @@ Commands:
   scout         Review curated repos
   inbox         View pending practices
   pipeline      Practices lifecycle status
+  behavior      v3 behavior governance: list|describe|status|on|off|strict|relaxed
   version       Show dotforge version
 ```

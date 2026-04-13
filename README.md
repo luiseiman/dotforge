@@ -160,7 +160,9 @@ dotforge/
 ├── agents/         # 7 subagents (researcher, architect, implementer, ...)
 ├── skills/         # 18 skills installed as ~/.claude/skills/ symlinks
 ├── mcp/            # MCP server templates (github, postgres, supabase, redis, slack)
-├── audit/          # Checklist (13 items) + scoring normalized to 10
+├── behaviors/      # v3 declarative policies (index.yaml + one dir per behavior)
+├── scripts/        # v3 runtime, compiler, and /forge behavior CLI
+├── audit/          # Checklist (15 items) + scoring normalized to 10
 ├── practices/      # Pipeline: inbox → evaluating → active → deprecated
 ├── global/         # Global ~/.claude/ management (CLAUDE.md, settings, sync.sh)
 ├── registry/       # Project tracking with scores and history

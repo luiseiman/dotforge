@@ -123,3 +123,34 @@ jobs:
             exit 1
           fi
           echo "✓ Versions match"
+
+      - name: v3 runtime tests
+        run: |
+          echo "── v3 Runtime ──"
+          bash scripts/runtime/tests/run_all.sh
+
+      - name: v3 compiler tests
+        run: |
+          echo "── v3 Compiler ──"
+          bash scripts/compiler/tests/run_all.sh
+
+      - name: v3 behavior CLI tests
+        run: |
+          echo "── v3 Behavior CLI ──"
+          bash scripts/forge-behavior/tests/run_all.sh
+
+      - name: v3 per-behavior scenarios
+        run: |
+          echo "── v3 Behavior Scenarios ──"
+          ERRORS=0
+          for d in behaviors/*/tests/run_all.sh; do
+            [ -f "$d" ] || continue
+            BEHAVIOR=$(basename "$(dirname "$(dirname "$d")")")
+            if bash "$d"; then
+              echo "✓ $BEHAVIOR"
+            else
+              echo "✗ $BEHAVIOR"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          [ $ERRORS -eq 0 ] || exit 1

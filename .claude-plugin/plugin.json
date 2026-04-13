@@ -1,7 +1,7 @@
 {
   "name": "dotforge",
-  "version": "2.9.0",
-  "description": "Configuration governance for Claude Code — 18 skills, 7 agents, 16 stacks, 9 hooks, audit scoring (0-10), and practices pipeline. Bootstrap, sync, audit any project.",
+  "version": "3.0.1",
+  "description": "Behavior governance for Claude Code — declarative runtime policies on tool calls (search-first, no-destructive-git, verify-before-done, …) compiled to PreToolUse hooks, plus configuration governance: 18 skills, 7 agents, 16 stacks, audit scoring, practices pipeline.",
   "author": {
     "name": "Luis Eiman",
     "url": "https://github.com/luiseiman"
@@ -23,6 +23,9 @@
     "mcp",
     "practices",
     "template",
-    "bootstrap"
+    "bootstrap",
+    "behaviors",
+    "governance",
+    "enforcement"
   ]
 }
