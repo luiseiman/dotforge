@@ -172,6 +172,9 @@ EVENT_NAME='${EVENT}'
 PAYLOAD=\$(cat)
 SESSION_ID=\$(printf '%s' "\$PAYLOAD" | forge_session_id)
 TOOL_NAME=\$(printf '%s' "\$PAYLOAD" | jq -r '.tool_name // empty')
+TOOL_INPUT_JSON=\$(printf '%s' "\$PAYLOAD" | jq -c '.tool_input // {}')
+TOOL_INPUT_HASH=\$(printf '%s' "\$TOOL_INPUT_JSON" | forge_tool_input_hash)
+TOOL_INPUT_SUMMARY=\$(printf '%s' "\$TOOL_INPUT_JSON" | cut -c1-100 | tr -d '\\n')
 HOOK_HEADER
 
     # The evaluate helpers (render_template, emit_output, run_evaluate) are only
@@ -216,6 +219,9 @@ emit_output() {
             exit 0
             ;;
         soft_block)
+            # Write pending_block BEFORE emitting so the next invocation can
+            # detect reinvocation after user override.
+            forge_pending_block_set "\$SESSION_ID" "\$BEHAVIOR_ID" "\$TOOL_INPUT_HASH" || true
             local msg
             msg=\$(render_template "\$BLOCK_REASON" "\$counter" "\$level")
             jq -cn --arg m "\$msg" --arg evt "\$EVENT_NAME" \\
@@ -234,6 +240,14 @@ emit_output() {
 }
 
 run_evaluate() {
+    # Step 0: try override detection via reinvocation. If the pending_block
+    # matches this incoming tool_input hash within the window, record the
+    # override and pass through silently — do NOT increment counter.
+    if forge_pending_block_try_override "\$SESSION_ID" "\$BEHAVIOR_ID" \\
+            "\$TOOL_NAME" "\$TOOL_INPUT_HASH" "\$TOOL_INPUT_SUMMARY"; then
+        exit 0
+    fi
+
     local counter calculated previous effective
     counter=\$(forge_counter_increment "\$SESSION_ID" "\$BEHAVIOR_ID" "\$TOOL_NAME")
     [ -n "\$counter" ] || { _forge_log "counter increment failed"; exit 0; }

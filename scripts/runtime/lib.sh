@@ -409,6 +409,160 @@ forge_level_max() {
 }
 
 # ---------------------------------------------------------------------------
+# Pending block / override detection via reinvocation (RUNTIME.md §12)
+# ---------------------------------------------------------------------------
+
+FORGE_OVERRIDE_WINDOW_SECONDS="${FORGE_OVERRIDE_WINDOW_SECONDS:-60}"
+
+# forge_tool_input_hash — stable hash of a tool_input JSON object.
+# Input: JSON on stdin. Output: 40 hex chars on stdout.
+# Uses jq -S -c for canonical key ordering so equivalent objects hash identically.
+forge_tool_input_hash() {
+    local canonical
+    canonical=$(jq -S -c . 2>/dev/null) || canonical="null"
+    if command -v shasum >/dev/null 2>&1; then
+        printf '%s' "$canonical" | shasum -a 256 | cut -c1-40
+    elif command -v sha256sum >/dev/null 2>&1; then
+        printf '%s' "$canonical" | sha256sum | cut -c1-40
+    else
+        # Last resort: not cryptographic but stable within one run.
+        printf '%s' "$canonical" | md5sum 2>/dev/null | cut -c1-40
+    fi
+}
+
+# forge_pending_block_set — write pending_block for a behavior.
+# Args: session_id behavior_id tool_input_hash
+forge_pending_block_set() {
+    local sid="$1" bid="$2" hash="$3"
+    local now
+    now=$(_forge_now_iso8601)
+    local filter='
+        .sessions[$sid].behaviors[$bid].pending_block = {
+            "tool_input_hash": $hash,
+            "blocked_at": $now
+        }
+    '
+    _forge_run_mutation "$filter" \
+        --arg sid "$sid" --arg bid "$bid" --arg hash "$hash" --arg now "$now"
+}
+
+# forge_pending_block_clear — wipe pending_block for a behavior (no-op if absent).
+forge_pending_block_clear() {
+    local sid="$1" bid="$2"
+    local filter='
+        if .sessions[$sid].behaviors[$bid] != null then
+            .sessions[$sid].behaviors[$bid].pending_block = null
+        else . end
+    '
+    _forge_run_mutation "$filter" --arg sid "$sid" --arg bid "$bid"
+}
+
+# forge_pending_block_try_override — check pending_block and, if matching & fresh,
+# record override + clear + return 0. If no match or stale, clear if stale and
+# return 1 (caller proceeds with normal evaluate path).
+#
+# Args: session_id behavior_id tool_name tool_input_hash tool_input_summary
+# Returns: 0 if override was recorded (caller should pass through silently).
+#          1 if no override (caller should run the normal evaluate path).
+forge_pending_block_try_override() {
+    local sid="$1" bid="$2" tool="$3" hash="$4" summary="$5"
+    forge_init || return 1
+
+    if ! forge_lock_acquire; then
+        _forge_log "state lock timeout during override check — treating as no override"
+        return 1
+    fi
+    # shellcheck disable=SC2064
+    trap "forge_lock_release" EXIT INT TERM
+
+    local state purged pending stored_hash blocked_at counter_at
+    state=$(_forge_state_read)
+    purged=$(printf '%s' "$state" | _forge_purge_expired) || purged="$state"
+    pending=$(printf '%s' "$purged" | jq -c --arg sid "$sid" --arg bid "$bid" \
+        '.sessions[$sid].behaviors[$bid].pending_block // empty' 2>/dev/null)
+
+    if [ -z "$pending" ] || [ "$pending" = "null" ]; then
+        printf '%s' "$purged" | _forge_state_write || true
+        forge_lock_release
+        trap - EXIT INT TERM
+        return 1
+    fi
+
+    stored_hash=$(printf '%s' "$pending" | jq -r '.tool_input_hash // empty')
+    blocked_at=$(printf '%s' "$pending" | jq -r '.blocked_at // empty')
+
+    if [ "$stored_hash" != "$hash" ]; then
+        # Stale from a different tool call — clear it and pass through as no override.
+        local mutated_stale
+        mutated_stale=$(printf '%s' "$purged" | jq --arg sid "$sid" --arg bid "$bid" \
+            '.sessions[$sid].behaviors[$bid].pending_block = null')
+        printf '%s' "$mutated_stale" | _forge_state_write || true
+        forge_lock_release
+        trap - EXIT INT TERM
+        return 1
+    fi
+
+    # Hash matches. Check window.
+    local blocked_epoch now_epoch age
+    blocked_epoch=$(printf '%s' "$blocked_at" | _forge_iso_to_epoch)
+    now_epoch=$(_forge_now_epoch)
+    age=$(( now_epoch - blocked_epoch ))
+    if [ "$age" -gt "$FORGE_OVERRIDE_WINDOW_SECONDS" ]; then
+        # Stale — window expired. Clear and pass through.
+        local mutated_expired
+        mutated_expired=$(printf '%s' "$purged" | jq --arg sid "$sid" --arg bid "$bid" \
+            '.sessions[$sid].behaviors[$bid].pending_block = null')
+        printf '%s' "$mutated_expired" | _forge_state_write || true
+        forge_lock_release
+        trap - EXIT INT TERM
+        return 1
+    fi
+
+    # Fresh match — record override and clear pending_block.
+    counter_at=$(printf '%s' "$purged" | jq -r --arg sid "$sid" --arg bid "$bid" \
+        '.sessions[$sid].behaviors[$bid].counter // 0')
+    local now_iso
+    now_iso=$(_forge_now_iso8601)
+    local mutated
+    mutated=$(printf '%s' "$purged" | jq \
+        --arg sid "$sid" --arg bid "$bid" --arg now "$now_iso" \
+        --arg tool "$tool" --arg summary "$summary" --argjson counter "$counter_at" '
+        .sessions[$sid].last_accessed_at = $now
+        | .sessions[$sid].behaviors[$bid].pending_block = null
+        | .sessions[$sid].behaviors[$bid].overrides += [{
+            "timestamp": $now,
+            "tool_name": $tool,
+            "tool_input_summary": $summary,
+            "counter_at_override": $counter,
+            "reason": ""
+          }]
+    ')
+    printf '%s' "$mutated" | _forge_state_write
+    forge_lock_release
+    trap - EXIT INT TERM
+
+    # Append to permanent audit log
+    printf '%s|%s|%s|%s|%s|%s|%s\n' \
+        "$now_iso" "$sid" "$bid" "$tool" "$summary" "$counter_at" "" \
+        >> "$FORGE_AUDIT_LOG"
+    return 0
+}
+
+# _forge_iso_to_epoch — ISO 8601 on stdin → epoch seconds on stdout.
+# Portable across macOS (BSD date) and Linux (GNU date).
+_forge_iso_to_epoch() {
+    local iso
+    iso=$(cat)
+    if date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$iso" "+%s" 2>/dev/null; then
+        return 0
+    fi
+    if date -u -d "$iso" "+%s" 2>/dev/null; then
+        return 0
+    fi
+    printf '0'
+}
+
+# ---------------------------------------------------------------------------
 # Override audit (triple-write: state.json + overrides.log)
 # ---------------------------------------------------------------------------
 

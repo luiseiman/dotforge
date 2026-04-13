@@ -11,6 +11,7 @@ tests=(
     test_corruption.sh
     test_stale_lock.sh
     test_lock.sh
+    test_pending_block.sh
 )
 
 pass=0

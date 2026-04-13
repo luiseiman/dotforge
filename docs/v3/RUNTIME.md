@@ -48,6 +48,7 @@ Directory layout:
           "effective_level": "warning",
           "last_violation_at": "2026-04-13T14:28:00Z",
           "last_violation_tool": "Write",
+          "pending_block": null,
           "overrides": [
             {
               "timestamp": "2026-04-13T12:15:00Z",
@@ -63,6 +64,7 @@ Directory layout:
           "effective_level": "silent",
           "last_violation_at": null,
           "last_violation_tool": null,
+          "pending_block": null,
           "overrides": []
         }
       }
@@ -92,6 +94,7 @@ Directory layout:
 | `effective_level` | string | Monotonic level: silent \| nudge \| warning \| soft_block \| hard_block |
 | `last_violation_at` | ISO 8601 \| null | Timestamp of last violation. Null until first violation. |
 | `last_violation_tool` | string \| null | Tool name that caused last violation. Null until first violation. |
+| `pending_block` | object \| null | Short-lived record emitted when a hook fires soft_block. Holds `tool_input_hash` and `blocked_at` (ISO 8601). Consumed by the next matching tool call to detect reinvocation after user override. Null in steady state. See Section 12. |
 | `overrides` | array | Audit records for soft_block overrides in this session. Subset of `.forge/audit/overrides.log`. |
 
 ---
@@ -354,3 +357,65 @@ Every hook invocation follows this sequence:
 
 9. emit JSON output to stdout, exit 0
 ```
+
+---
+
+## 12. Override Detection via Reinvocation
+
+Claude Code's native hook system does NOT fire a `PermissionDenied` event when a `PreToolUse` hook emits `permissionDecision: "deny"`. `PermissionDenied` fires only for auto-mode classifier denials. Confirmed empirically in Phase 0.
+
+This means override detection cannot rely on a separate event hook. Instead, behavior hooks detect overrides via the **reinvocation pattern**: when a user approves a denied tool call, Claude Code re-invokes the same `PreToolUse` hook with the same `tool_input`. The hook observes that it just blocked the same input seconds ago and treats the new invocation as evidence of override.
+
+### 12.1 pending_block shape
+
+```json
+"pending_block": {
+  "tool_input_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4",
+  "blocked_at": "2026-04-13T14:30:05Z"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tool_input_hash` | string | First 40 hex chars of `sha256(canonical_json(tool_input))`. Stable for identical inputs. |
+| `blocked_at` | ISO 8601 | UTC timestamp when the soft_block was emitted. |
+
+### 12.2 Writer (on soft_block)
+
+Inside the same state mutation that records the violation, when `effective_level` becomes `soft_block`:
+
+1. Compute `tool_input_hash` from the incoming `tool_input` JSON (canonical serialization via `jq -S -c`).
+2. Write `pending_block = {tool_input_hash, blocked_at}` into the behavior state.
+3. Emit the standard soft_block JSON output and exit 0.
+
+### 12.3 Reader (next invocation)
+
+On every hook invocation, before counter increment:
+
+1. Read `pending_block` for this behavior in this session.
+2. If absent → normal evaluate path.
+3. If present, compute `tool_input_hash` for the current incoming `tool_input`.
+4. If the hash does NOT match the stored hash → clear `pending_block` (stale from a different tool call), continue to normal evaluate.
+5. If the hash matches, check age: `now - blocked_at < FORGE_OVERRIDE_WINDOW_SECONDS` (default 60).
+6. If stale (outside window) → clear `pending_block`, continue to normal evaluate.
+7. If fresh match → **this is a reinvocation after user override**:
+    - Append an entry to `overrides[]` with `{timestamp, tool_name, tool_input_summary, counter_at_override, reason: ""}`
+    - Append a line to `.forge/audit/overrides.log`
+    - Clear `pending_block`
+    - Exit 0 with empty stdout (pass through silently — the user already approved once, don't re-block)
+
+### 12.4 Properties
+
+- **No counter mutation on override.** The override is a "pass", not a new violation. Counter stays at whatever it was.
+- **One override per soft_block instance.** After the reinvocation is recorded, `pending_block` is cleared. The next Write must re-escalate if conditions hold.
+- **Window is configurable.** `FORGE_OVERRIDE_WINDOW_SECONDS` env var. Default 60.
+- **Stale pending_blocks self-heal.** If Claude Code never reinvokes (user denies, walks away, etc.), the `pending_block` lingers until the next invocation observes it as stale and clears it. No background job needed.
+- **Hash collision safety.** SHA-256 truncated to 40 hex chars provides ~160 bits of collision resistance — sufficient for a per-session, per-behavior, 60-second window.
+- **Different tool_input during retry = different operation.** If the user edits the file path between block and retry, hashes differ, `pending_block` is cleared as stale, and the new operation is evaluated fresh. This is by design: the override applies only to the exact operation that was blocked.
+
+### 12.5 Limitations
+
+- Cannot distinguish "user approved" from "Claude Code re-sent the same call autonomously within 60s for unrelated reasons". In practice the latter is extremely rare — Claude Code does not retry `PreToolUse` denials without user interaction.
+- If a user runs the same operation twice within 60s on purpose (not an override, just a coincidence), the second one would be recorded as an override. Acceptable false positive given the alternative (missing all real overrides).
+- First implementation in Phase 1. Signature refinement and window tuning may happen based on real usage in Phase 2+.
+

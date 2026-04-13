@@ -8,6 +8,7 @@ scenarios=(
     scenario_idempotent_set.sh
     scenario_alternating.sh
     scenario_escalation.sh
+    scenario_override_reinvocation.sh
 )
 
 pass=0

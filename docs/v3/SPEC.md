@@ -345,11 +345,13 @@ Overrides apply only to `soft_block` level.
 4. If overridden, Claude Code re-invokes the tool — the hook fires again
 5. The hook detects the override via the PermissionDenied→allow flow and records the audit trail
 
-### 6.2 Override detection
+### 6.2 Override detection (reinvocation pattern)
 
-The compiled hook does NOT need to detect overrides in real-time.
-Claude Code handles the override flow natively.
-The override audit trail is written by a separate `PermissionDenied` event hook that fires when a permission denial is overridden.
+Claude Code does NOT fire a `PermissionDenied` event when a `PreToolUse` hook emits `permissionDecision: "deny"` — `PermissionDenied` is scoped to auto-mode classifier denials only. Phase 0 verified this empirically.
+
+Therefore the compiled hook detects overrides through the reinvocation pattern: after emitting a `soft_block`, the hook writes a short-lived `pending_block` into the behavior state (`tool_input_hash` + `blocked_at`). On the next invocation of the same hook, it compares the incoming `tool_input_hash` against the stored one within a configurable window (default 60s). A match within the window is treated as reinvocation after user override: the hook records the audit entry, clears the `pending_block`, and passes through silently.
+
+See [RUNTIME.md §12](RUNTIME.md#12-override-detection-via-reinvocation) for the complete semantics, field shapes, and edge cases.
 
 ### 6.3 Triple-write audit
 
