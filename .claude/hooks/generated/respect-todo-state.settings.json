@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/respect-todo-state__pretooluse__taskupdate__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/respect-todo-state__pretooluse__taskcreate__1.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

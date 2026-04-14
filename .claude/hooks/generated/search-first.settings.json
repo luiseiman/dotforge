@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob|Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/search-first__pretooluse__grep-glob-read__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/search-first__pretooluse__write-edit__1.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -12,12 +12,13 @@ projects:
   - name: dotforge
     path: /Users/luiseiman/Documents/GitHub/dotforge
     stacks: []
-    last_audit: 2026-04-08
-    dotforge_version: 2.9.1
-    score: 10.0
+    last_audit: 2026-04-14
+    dotforge_version: 3.0.4
+    score: 9.7
     history:
       - {date: 2026-04-08, score: 10.0, version: 2.9.1}
-    notes: "14 rules, 6 hooks, 4 commands, 7 agents. Reference config."
+      - {date: 2026-04-14, score: 9.7, version: 3.0.4}
+    notes: "Reference config. v3 behaviors compiled to generated/. Sandbox pending (item 15)."
 
   - name: cds-dashboard
     path: /Users/luiseiman/Documents/jira nbch/cds-dashboard
@@ -32,12 +33,13 @@ projects:
   - name: jira-nbch
     path: /Users/luiseiman/Documents/jira nbch
     stacks: [data-analysis]
-    last_audit: 2026-04-08
-    dotforge_version: 2.9.1
-    score: 10.0
+    last_audit: 2026-04-14
+    dotforge_version: 3.0.4
+    score: 9.0
     history:
       - {date: 2026-04-08, score: 10.0, version: 2.9.1}
-    notes: "Data analysis + Jira MCP. Custom analyst agent. 7 rules."
+      - {date: 2026-04-14, score: 9.0, version: 3.0.4}
+    notes: "Data analysis + Jira MCP. v3 behaviors wired; lib.sh restored 2026-04-14."
 
   - name: openclaw
     path: /Users/luiseiman/Documents/GitHub/openclaw
@@ -52,12 +54,13 @@ projects:
   - name: cotiza-api-cloud
     path: /Users/luiseiman/Documents/GitHub/cotiza-api-cloud
     stacks: [python-fastapi, gcp-cloud-run, trading]
-    last_audit: 2026-04-08
-    dotforge_version: 2.9.1
-    score: 10.0
+    last_audit: 2026-04-14
+    dotforge_version: 3.0.4
+    score: 9.4
     history:
       - {date: 2026-04-08, score: 10.0, version: 2.9.1}
-    notes: "Python WebSocket API. 8 errors tracked. 17 commands. Rich agent memory."
+      - {date: 2026-04-14, score: 9.4, version: 3.0.4}
+    notes: "Python WebSocket API. v3 behaviors piloto (4 core). Gaps: memory, agents."
 
   - name: SOMA2
     path: /Users/luiseiman/Documents/GitHub/SOMA2
@@ -102,12 +105,13 @@ projects:
   - name: TRADINGBOT
     path: /Users/luiseiman/Documents/GitHub/TRADINGBOT
     stacks: [python-fastapi, react-vite-ts, supabase, trading]
-    last_audit: 2026-04-08
-    dotforge_version: 2.9.1
+    last_audit: 2026-04-14
+    dotforge_version: 3.0.4
     score: 10.0
     history:
       - {date: 2026-04-08, score: 10.0, version: 2.9.1}
-    notes: "Fullstack trading. 13 rules, 2 lint hooks. settings.local.json needs review."
+      - {date: 2026-04-14, score: 10.0, version: 3.0.4}
+    notes: "Fullstack trading. v3 behaviors piloto. Sandbox aún pendiente para .env handling."
 
   - name: derup
     path: /Users/luiseiman/Documents/GitHub/derup

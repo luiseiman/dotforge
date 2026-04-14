@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/no-destructive-git__pretooluse__bash__0.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

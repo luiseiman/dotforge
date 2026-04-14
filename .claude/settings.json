@@ -55,6 +55,69 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/no-destructive-git__pretooluse__bash__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/respect-todo-state__pretooluse__taskupdate__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/respect-todo-state__pretooluse__taskcreate__1.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Grep|Glob|Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/search-first__pretooluse__grep-glob-read__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/search-first__pretooluse__write-edit__1.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/verify-before-done__pretooluse__bash__0.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/generated/verify-before-done__pretooluse__bash__1.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
