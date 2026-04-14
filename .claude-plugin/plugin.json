@@ -1,6 +1,6 @@
 {
   "name": "dotforge",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Behavior governance for Claude Code — declarative runtime policies on tool calls (search-first, no-destructive-git, verify-before-done, …) compiled to PreToolUse hooks, plus configuration governance: 18 skills, 7 agents, 16 stacks, audit scoring, practices pipeline.",
   "author": {
     "name": "Luis Eiman",

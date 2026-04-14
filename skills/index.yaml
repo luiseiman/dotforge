@@ -1,0 +1,109 @@
+schema_version: "1"
+
+# Skill catalog.
+#
+# SKILL.md frontmatter in each skills/<id>/ is the source of truth for the
+# skill's name, description, and invocation semantics. This index provides:
+#
+# - Machine-readable enumeration for /forge list, audit tooling, and scripts
+# - Functional categorization for discoverability
+# - Target scope so automation knows where each skill operates
+#
+# Consistency invariant: every directory under skills/ must appear here
+# exactly once, and every entry here must have a matching skills/<id>/SKILL.md.
+# Validated by tests/test-skills-index.sh.
+#
+# Adding a new skill:
+#   1. Create skills/<id>/SKILL.md with frontmatter
+#   2. Add an entry here with the correct category + target
+#   3. Run tests/test-skills-index.sh to verify
+
+# ─── Categories ───────────────────────────────────────────────────────────
+# lifecycle    — project bootstrap, sync, reset, diff
+# analysis     — audit, benchmarks, effectiveness, post-session insights
+# practices    — inbox → evaluating → active pipeline
+# domain       — domain knowledge extraction and learning
+# export       — cross-tool export and packaging
+# integrations — external service wiring (MCP servers, etc.)
+# scouting     — external repo and docs reconnaissance
+# governance   — v3 behavior governance (forge-behavior CLI)
+
+# ─── Targets ──────────────────────────────────────────────────────────────
+# project  — operates on the current project's .claude/
+# global   — operates on ~/.claude/
+# both     — can target either, selected by argument or flag
+# external — reads/fetches information from outside the filesystem
+
+skills:
+  # lifecycle
+  - id: bootstrap-project
+    category: lifecycle
+    target: project
+  - id: init-project
+    category: lifecycle
+    target: project
+  - id: reset-project
+    category: lifecycle
+    target: project
+  - id: sync-template
+    category: lifecycle
+    target: project
+  - id: diff-project
+    category: lifecycle
+    target: project
+
+  # analysis
+  - id: audit-project
+    category: analysis
+    target: project
+  - id: rule-effectiveness
+    category: analysis
+    target: project
+  - id: session-insights
+    category: analysis
+    target: project
+  - id: benchmark
+    category: analysis
+    target: project
+
+  # practices
+  - id: capture-practice
+    category: practices
+    target: project
+  - id: update-practices
+    category: practices
+    target: project
+  - id: watch-upstream
+    category: practices
+    target: external
+
+  # domain
+  - id: learn-project
+    category: domain
+    target: project
+  - id: domain-extract
+    category: domain
+    target: project
+
+  # export
+  - id: export-config
+    category: export
+    target: project
+  - id: plugin-generator
+    category: export
+    target: project
+
+  # integrations
+  - id: mcp-add
+    category: integrations
+    target: both
+
+  # scouting
+  - id: scout-repos
+    category: scouting
+    target: external
+
+  # governance (v3)
+  - id: forge-behavior
+    category: governance
+    target: both

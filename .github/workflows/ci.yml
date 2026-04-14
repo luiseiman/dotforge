@@ -90,6 +90,11 @@ jobs:
           done
           [ $ERRORS -eq 0 ] || exit 1
 
+      - name: Validate skills/index.yaml consistency
+        run: |
+          echo "── Skills Index ──"
+          bash tests/test-skills-index.sh
+
       - name: Validate benchmark tasks
         run: |
           echo "── Benchmark Tasks ──"
