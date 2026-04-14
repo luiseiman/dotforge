@@ -4,6 +4,35 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.0.3 (2026-04-14)
+
+### Security hardening — post-session capture sanitization
+
+Complements v3.0.2 release-hygiene work. Driven by a Codex adversarial review of the v3.0.1 working tree; v3.0.2 addressed 7 release-hygiene findings including `block-destructive.sh` fail-closed behavior, and explicitly left `.vscode/` and `practices/inbox/*` out of scope. This release closes those two remaining gaps.
+
+#### `.vscode/` added to `.gitignore`
+
+`.vscode/settings.json` with `claudeCode.initialPermissionMode: "bypassPermissions"` was sitting untracked in the repo. One accidental `git add .` away from shipping a no-prompt execution mode to everyone who clones dotforge. Now explicitly ignored alongside `.idea/`. Also added to `.gitignore`: `.claude/sessions/`, `.claude/session-env/`, `.claude/projects/`, `.claude/metrics/`, `.claude/plugins/`, `.claude/mcp-*cache*.json` — all machine-local runtime state that was previously only partially covered.
+
+#### `hooks/detect-claude-changes.sh` hardened
+
+The post-session Stop hook that auto-generates `practices/inbox/<project>-session-changes.md` was emitting raw filenames of the originating project. Pre-existing inbox entries demonstrated the leak: session UUIDs, path-encoded usernames (Claude Code's `.claude/projects/-Users-<name>-Documents-GitHub-<project>/` convention), foreign project domain-rule names, and auth cache filenames all made it into markdown files destined for git.
+
+Three layers of defense, all fail-closed:
+
+1. **Path exclusion** before counting: drops `.claude/sessions/`, `session-env/`, `projects/`, `metrics/`, `plugins/`, `worktrees/`, `*cache*.json`, `settings.local.json`, `.forge-manifest.json`.
+2. **Category summary instead of filenames**: the inbox entry now reports counts per top-level category (`agents: N`, `rules: N`, etc.) and nothing else. Rule names, hook names, and skill names no longer leak.
+3. **Secret-prefix scan** on sanitized filenames, regex list adapted from `NousResearch/hermes-agent/agent/redact.py`: `sk-`, `ghp_`, `github_pat_`, `gh[ours]_`, `xox[baprs]-`, `AIza`, `AKIA`, `sk_live_`, `sk_test_`, `SG.`, `hf_`, `r8_`, `npm_`, `pypi-`, `dop_v1_`, `tvly-`, `exa_`, `gsk_`, `pplx-`, `fal_`, `fc-`, `bb_live_`. Any match → no inbox entry is written at all.
+
+Validated end-to-end against a synthetic project tree reproducing the Codex findings: 6 sensitive files excluded, 6 normal files counted by category, zero filenames in output. Fail-closed verified with a secret-looking filename (`sk-abc123def456.md`) — hook exited 0 without writing.
+
+#### Not addressed in this release
+
+- The 11 pre-existing untracked `*-session-changes.md` files in `practices/inbox/` still contain the leaked filenames. Deleting or redacting them is a pipeline decision, not a hook fix — they can be processed by the next `/forge update` and discarded.
+- Full structured storage for practices/session captures (SQLite/JSONL) remains a medium-priority future item, not blocked by this fix.
+
+---
+
 ## v3.0.1 (2026-04-13)
 
 ### Domain knowledge expansion — scout against official docs

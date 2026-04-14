@@ -6,7 +6,17 @@ Thumbs.db
 .claude/settings.local.json
 .claude/.forge-manifest.json
 .claude/session/
+.claude/sessions/
+.claude/session-env/
 .claude/worktrees/
+.claude/projects/
+.claude/metrics/
+.claude/plugins/
+.claude/mcp-*cache*.json
+
+# Editor workspace config (local only)
+.vscode/
+.idea/
 
 # dotforge v3 runtime state (ephemeral, per-machine)
 # Note: .forge/audit/ IS committed — it is the permanent override audit trail
