@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json"
 description: "Auto mode classifier, permission stripping, tool concurrency"
 domain: claude-code-engineering
-last_verified: 2026-04-07
+last_verified: 2026-04-15
 ---
 
 # Auto Mode & Tool Safety
@@ -15,7 +15,8 @@ last_verified: 2026-04-07
 - Subagent evaluation: auto mode applies to subagent tool calls too
 - Enable: `permissions.defaultMode: "auto"` in settings.json
 - Disable (managed): `permissions.disableAutoMode: "disable"`
-- `showThinkingSummaries`: defaults to false since v2.1.89 — set true to restore
+- `showThinkingSummaries`: defaults to false since v2.1.89 — controls VISIBILITY only. Thinking blocks render as collapsed stub when off, full summary when on. **Does NOT reduce thinking token spend** — model generates the same content either way. Headless mode (`-p`) and SDK callers always receive summaries regardless of this flag.
+- `alwaysThinkingEnabled`: enables extended thinking by default for all sessions. **This is the actual cost knob** — set `false` to stop generating thinking blocks. To trim spend without disabling, lower `effort` or the API `thinking_budget` instead. Typically set via `/config`, not edited directly.
 - `disableSkillShellExecution`: blocks inline shell in skills/commands (managed)
 - `forceRemoteSettingsRefresh`: fail-closed — blocks startup until remote settings fetched (v2.1.92)
 

@@ -4,6 +4,16 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.1.1 (2026-04-15)
+
+### Fix — `showThinkingSummaries` was misdocumented
+
+`domain/auto-mode.md` described `showThinkingSummaries` as if toggling it had operational meaning. Per `code.claude.com/docs/en/settings`, the flag is **purely cosmetic** — it controls visibility of thinking blocks (collapsed stub vs full summary) but does NOT change what the model generates or what gets billed. Headless mode (`-p`) and SDK callers always receive summaries regardless.
+
+Also added missing entry for `alwaysThinkingEnabled` — the actual cost knob for extended thinking. Cross-referenced effort levels and `thinking_budget` as alternatives for trimming spend without fully disabling.
+
+No runtime impact. Domain rule clarification only.
+
 ## v3.1.0 (2026-04-15)
 
 ### Domain knowledge sync — Claude Code v2.1.108
