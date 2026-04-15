@@ -4,6 +4,29 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.1.0 (2026-04-15)
+
+### Domain knowledge sync — Claude Code v2.1.108
+
+Watch-upstream pass against `code.claude.com/docs` (covers v2.1.70 → v2.1.109). Eight practices accepted, three rejected (auto-stubs).
+
+#### Domain rule updates
+
+- `domain/hook-architecture.md` — events count corrected 27 → **31**, restructured around three lifecycle cadences (session-level, turn-level, tool-loop, async/side). Added `InstructionsLoaded` (with `load_reason` field), `Elicitation`/`ElicitationResult`, and `PreCompact` blockability since v2.1.105.
+- `domain/hook-events.md` — `PreCompact` flagged as blockable, `InstructionsLoaded` payload documented, new MCP elicitation events section.
+- `domain/permission-model.md` — new sections: **Enterprise managed settings** (`managed-settings.d/`, `allowManagedHooksOnly`, `allowedChannelPlugins`, `forceRemoteSettingsRefresh`) and **Dynamic permissions from hooks** (`addRules`/`replaceRules`/`removeRules`/`setMode`/`addDirectories`/`removeDirectories` via `hookSpecificOutput.decision.updatedPermissions`).
+- `domain/model-ids.md` — documented v2.1.94 default effort change `medium → high`. Recommends pinning `effort: low` on `researcher`/`test-runner` agents.
+
+#### Template
+
+- `template/settings.json.tmpl` — added `ask:` permission list (18 entries) covering risky-but-legitimate commands: `rm *`, `chmod *`, `npm/pip install/uninstall`, `docker run`, `kubectl apply/delete`, `gcloud`/`aws`/`terraform apply/destroy`, `git push/rebase/cherry-pick`. Bridges the gap between unrestricted `allow:` and total `deny:`.
+- `template/hooks/block-destructive.sh` — added compound-bash safety verification block. Hook is **not vulnerable** to the v2.1.98 bypass class (the Claude Code core fix was about its own permission rule prefix matching; this hook uses `grep -qiE` over the full command string and catches `ls && rm -rf /`-style compound forms by design). Documented known limitations: indirect execution (`eval $(curl)`, `bash <(curl)`), encoded payloads, hostile env vars — defense-in-depth via `sandbox.enabled`.
+
+#### Practices
+
+- 8 practices moved `inbox/ → active/`, frontmatter `incorporated_in: [v3.1.0]`.
+- 3 auto-stub session-changes practices rejected (no actionable content).
+
 ## v3.0.4 (2026-04-14)
 
 ### Skills catalog — `skills/index.yaml` + CI validation

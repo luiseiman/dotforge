@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-05
+last_verified: 2026-04-15
 ---
 
 # Permission Model
@@ -31,6 +31,38 @@ last_verified: 2026-04-05
 ## Settings cascade (priority order)
 
 Managed (enterprise) > Local (.claude/settings.local.json) > Project (.claude/settings.json) > Global (~/.claude/settings.json)
+
+## Enterprise managed settings (v2.1.83+)
+
+- `managed-settings.d/` drop-in directory: every `*.json` inside merges with the main `managed-settings.json`. Lets ops ship modular policy files.
+- `allowManagedHooksOnly: true` — blocks ALL user/project/plugin hooks. Only managed-scope hooks (and hooks from plugins force-enabled by managed settings) run. Under this policy `.claude/hooks/` is inert at runtime — audit scoring should reflect runtime applicability, not file presence.
+- `allowedChannelPlugins` — restricts which plugins activate via `--channels`.
+- `forceRemoteSettingsRefresh` — fail-closed: blocks startup until remote settings fetched (v2.1.92).
+
+## Dynamic permissions from hooks (v2.1.84+)
+
+`PreToolUse` and `PermissionRequest` hooks can mutate runtime permission state via JSON output:
+
+```json
+{
+  "hookSpecificOutput": {
+    "decision": {
+      "behavior": "allow|deny",
+      "updatedInput": { "...": "..." },
+      "updatedPermissions": [
+        { "type": "addRules",          "rules": ["Bash(make *)"] },
+        { "type": "replaceRules",      "rules": ["..."] },
+        { "type": "removeRules",       "rules": ["..."] },
+        { "type": "setMode",           "mode": "auto|default|plan|acceptEdits" },
+        { "type": "addDirectories",    "directories": ["/tmp/build"] },
+        { "type": "removeDirectories", "directories": ["..."] }
+      ]
+    }
+  }
+}
+```
+
+Use cases: a behavior self-elevates its allowlist for a session, a safety hook downgrades to `plan` mode after detecting risk, or a build hook whitelists a temporary directory. Static deny rules still enforce — a hook cannot remove a managed deny.
 
 ## Bash prefix detection
 

@@ -1,11 +1,11 @@
 ---
 id: granular-ask-permissions
 source: scout:shanraisshan/claude-code-best-practice
-status: inbox
+status: active
 captured: 2026-04-13
 tags: [permissions, settings, safety, template]
 tested_in: []
-incorporated_in: []
+incorporated_in: [v3.1.0]
 ---
 
 # Granular `ask:` permission list for template settings

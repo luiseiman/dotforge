@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json"
 description: "Hook event payloads and per-event behavior details"
 domain: claude-code-engineering
-last_verified: 2026-04-07
+last_verified: 2026-04-15
 ---
 
 # Hook Event Details
@@ -11,10 +11,11 @@ last_verified: 2026-04-07
 
 - PostCompact command: `trigger` ("auto"/"manual") + `compact_summary` (full text)
 - PostCompact SDK: `compactType` + `messageCountBefore` + `messageCountAfter`
-- PreCompact: `compactType` + `messageCount` — NON-BLOCKING, exit code ignored
+- PreCompact: `compactType` + `messageCount` — **BLOCKABLE since v2.1.105** (exit 2 prevents compaction)
 - SessionStart `source`: "startup", "resume", "compact", "clear"
 - CwdChanged: fires on directory change, supports CLAUDE_ENV_FILE
 - FileChanged: fires on external file modification — use for auto-reload
+- InstructionsLoaded: fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason`: `session_start` | `nested_traversal` | `path_glob_match` | `include` | `compact`. Observability-only, no decision control.
 
 ## Tool events
 
@@ -33,3 +34,9 @@ last_verified: 2026-04-07
 
 - SubagentStart: inject additionalContext into spawned subagent via stdout
 - TeammateIdle: fires when a team member has no pending work
+
+## MCP elicitation events (v2.1.76+)
+
+- Elicitation: fires when an MCP server requests structured user input mid-tool-call. Hook can return `action: "accept" | "decline" | "cancel"` and override field values via `content: {field: "new_value"}`
+- ElicitationResult: fires after the user (or hook) responds. Observability + audit
+- Combined with `disableSkillShellExecution` and managed settings, lets enterprises pre-validate MCP form submissions before they reach the server

@@ -1,11 +1,11 @@
 ---
 id: boris-cherny-tips-scout
 source: scout:shanraisshan/claude-code-best-practice/tips
-status: inbox
+status: active
 captured: 2026-04-13
 tags: [scout, boris-cherny, workflow, gaps]
 tested_in: []
-incorporated_in: []
+incorporated_in: [v3.1.0]
 ---
 
 # Boris Cherny tips — scout digest

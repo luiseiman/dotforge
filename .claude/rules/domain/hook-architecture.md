@@ -2,22 +2,25 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-07
+last_verified: 2026-04-15
 ---
 
 # Hook Architecture
 
-## Events (27 total, verified v2.1.92)
+## Events (31 total, verified v2.1.108 — code.claude.com/docs/en/hooks)
 
-Core: SessionStart, SessionEnd, Stop, StopFailure
-Tool lifecycle: PreToolUse, PostToolUse, PostToolUseFailure
-User: UserPromptSubmit
-Permissions: PermissionRequest, PermissionDenied
-Elicitation: Elicitation, ElicitationResult
-Agent: SubagentStart, SubagentStop, TeammateIdle, TaskCreated, TaskCompleted
-Context: PreCompact, PostCompact, CwdChanged, FileChanged, InstructionsLoaded
-System: ConfigChange, Notification
-Worktree: WorktreeCreate, WorktreeRemove
+Three lifecycle cadences:
+
+**Session-level** (once per session): SessionStart, SessionEnd, InstructionsLoaded
+**Turn-level** (once per user prompt): UserPromptSubmit, Stop, StopFailure
+**Tool-loop** (every tool call): PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest, PermissionDenied
+**Async/side**: Notification, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, TeammateIdle, ConfigChange, CwdChanged, FileChanged, WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult
+
+`InstructionsLoaded` fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason` field: `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`. Observability-only — no decision control.
+
+`PreCompact` is **blockable** since v2.1.105 (exit 2 prevents compaction). Was non-blocking before.
+
+`Elicitation`/`ElicitationResult` fire during MCP tool execution when an MCP server requests structured user input. Support `accept`/`decline`/`cancel` actions and field overrides.
 
 ## Exit codes, types, and decisions
 

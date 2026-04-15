@@ -4,10 +4,10 @@ title: "/clear creates a new session_id, abandoning all session-scoped behavior 
 source: "dotforge v3 Phase 1 live smoke test in ~/tmp-v3-live"
 source_type: experience
 discovered: 2026-04-13
-status: inbox
+status: active
 tags: [v3, behavior-governance, session-lifecycle, runtime, audit-gap]
 tested_in: tmp-v3-live
-incorporated_in: []
+incorporated_in: [v3.1.0]
 replaced_by: null
 ---
 
