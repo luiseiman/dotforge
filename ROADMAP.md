@@ -1,10 +1,32 @@
 # Roadmap dotforge
 
-Estado actual: **v3.0.0-alpha.1** (2026-04-13) — Behavior governance Phase 1. v2.9.1 sigue siendo la rama estable user-facing. v3 es aditivo, no rompe v2.9.
+Estado actual: **v3.1.1** (2026-04-15) — Domain knowledge sync con Claude Code v2.1.108 + `ask:` permission template + corrección `showThinkingSummaries`. v3 behaviors operativos en 4 proyectos piloto (dotforge, cotiza-api-cloud, TRADINGBOT, jira-nbch).
 
 ---
 
 ## Completado
+
+### v3.1.1 — Doc fix `showThinkingSummaries` (2026-04-15)
+
+Hotfix de domain rule: `showThinkingSummaries` se documentaba como si su toggle tuviera impacto operativo. Por spec oficial es puramente cosmético — no reduce gasto de thinking. Agregado `alwaysThinkingEnabled` como knob real de costo. Sin impacto en runtime.
+
+### v3.1.0 — Domain knowledge sync (2026-04-15)
+
+Watch-upstream pass contra `code.claude.com/docs` cubriendo Claude Code v2.1.70 → v2.1.109. Ocho practices aceptadas, tres rechazadas (auto-stubs).
+
+#### Domain rules actualizadas
+- `hook-architecture.md`: events count corregido **27 → 31** sobre tres ciclos (session-level, turn-level, tool-loop, async/side). `InstructionsLoaded`, `Elicitation`/`ElicitationResult`, `PreCompact` blockable desde v2.1.105.
+- `permission-model.md`: nuevas secciones **Enterprise managed settings** (`managed-settings.d/`, `allowManagedHooksOnly`, `allowedChannelPlugins`, `forceRemoteSettingsRefresh`) y **Dynamic permissions from hooks** (`addRules`/`replaceRules`/`removeRules`/`setMode`/`addDirectories`/`removeDirectories`).
+- `hook-events.md`: PreCompact blockability + payload de `InstructionsLoaded` + sección de elicitation events.
+- `model-ids.md`: default `effort` cambió `medium → high` en v2.1.94.
+
+#### Template
+- `settings.json.tmpl`: nueva `ask:` list de 18 entries cubriendo `rm`/`chmod`/`npm-pip install`/`docker run`/`kubectl apply-delete`/`gcloud`/`aws`/`terraform apply-destroy`/`git push-rebase-cherry-pick`. Cierra el gap entre `allow:` total y `deny:` total.
+- `block-destructive.sh`: verificado vs compound bash bypass class fixed en v2.1.98 — el hook usa `grep -qiE` sobre el comando completo, **no es vulnerable**. Test `ls && rm -rf /` → blocked. Limitaciones documentadas (eval, payloads codificados) con cross-ref a `sandbox.enabled`.
+
+#### Behaviors rollout
+- 4 proyectos piloto con v3 behaviors compilados y wired: dotforge (worktree), cotiza-api-cloud, TRADINGBOT, jira-nbch.
+- Hallazgo: jira-nbch tenía hooks wired desde el setup inicial pero le faltaba `scripts/runtime/lib.sh` — fallaba silenciosamente. Restored.
 
 ### v3.0.0-alpha.1 — Behavior Governance Phase 1 (2026-04-13)
 
@@ -199,7 +221,9 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ---
 
-## v3.1.0 — New Features (planificado)
+## v3.2.0 — Próximo (planificado)
+
+> El número v3.1.0 quedó tomado por el sync de domain knowledge del 2026-04-15. Las features originalmente planeadas para v3.1.0 se reagrupan acá.
 
 ### Nuevo stack: prompt-engineering
 - Para proyectos que configuran Claude Code (meta-configuración)
@@ -212,6 +236,13 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 - FileChanged → auto-reload patterns
 - TaskCreated/TaskCompleted → métricas de orquestación
 - PermissionDenied → audit trail
+
+### Rollout v3 behaviors a los 8 proyectos restantes
+- Después del periodo de validación de los 4 pilotos (dotforge, cotiza-api-cloud, TRADINGBOT, jira-nbch)
+- Targets: SOMA, SOMA2, InviSight-iOS, derup, crm, cds-dashboard, openclaw, vault-bot
+
+### Sandbox config para proyectos con secretos
+- TRADINGBOT, derup → habilitar `sandbox.enabled` con `filesystem.denyRead` sobre `.env`
 
 ### Cleanup
 - Redis section redundancy entre python-fastapi y redis

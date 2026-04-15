@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.0.4-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.1.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 **Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block, with a permanent override audit trail.
@@ -32,7 +32,16 @@ bootstrap → audit → sync → capture → propagate → behaviors
 
 For people and teams managing more than one Claude Code project.
 
-## v3.0 — what's new
+## v3.1 — what's new
+
+- **Domain knowledge sync** to Claude Code v2.1.108: hook events corrected 27 → **31** (3 lifecycle cadences), `InstructionsLoaded` / `Elicitation` / blockable `PreCompact` documented, default `effort` change `medium → high` flagged across model-routing rules.
+- **Enterprise managed settings** documented: `managed-settings.d/` drop-in directory, `allowManagedHooksOnly`, `allowedChannelPlugins`, `forceRemoteSettingsRefresh`.
+- **Dynamic permissions API** from hooks: `addRules` / `replaceRules` / `removeRules` / `setMode` / `addDirectories` / `removeDirectories` via `hookSpecificOutput.decision.updatedPermissions`.
+- **`ask:` permission list in template**: 18 entries bridging the gap between unrestricted `allow:` and total `deny:` — covers `rm`, `chmod`, `npm/pip install`, `docker run`, `kubectl apply/delete`, `gcloud`/`aws`/`terraform apply/destroy`, `git push/rebase/cherry-pick`.
+- **Compound-bash safety verified** for `block-destructive.sh` against the v2.1.98 bypass class — hook uses `grep -qiE` over the full command string and catches `ls && rm -rf /`-style forms by design. Limitations and `sandbox.enabled` defense-in-depth documented.
+- **`showThinkingSummaries` corrected** in domain rules: it is purely cosmetic, does NOT reduce thinking token spend. Added missing `alwaysThinkingEnabled` entry as the actual cost knob.
+
+## v3.0 — behavior governance layer
 
 - **Behavior catalogue** (`behaviors/`): `no-destructive-git`, `search-first`, `verify-before-done`, `respect-todo-state` (core, on by default) + `plan-before-code`, `objection-format` (opinionated, opt-in)
 - **Declarative DSL**: `behavior.yaml` with closed field/operator set, 5-level escalation, flag-based temporal gating, template rendering
@@ -278,7 +287,7 @@ See [practices/README.md](practices/README.md) for the lifecycle and format.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Deep dive into project instructions
 - [Memory Strategy](docs/memory-strategy.md) — 5-layer memory policy for agents
 - [Troubleshooting](docs/troubleshooting.md) — Common problems and diagnostics
-- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v2.9.0)
+- [Changelog](docs/changelog.md) — Version history (v0.1.0 → v3.1.1)
 - [Roadmap](ROADMAP.md) — Completed features + upcoming
 
 ## Requirements
@@ -541,7 +550,7 @@ Ver [practices/README.md](practices/README.md) para el ciclo de vida y formato.
 - [Anatomy of CLAUDE.md](docs/anatomy-claude-md.md) — Análisis detallado de las instrucciones de proyecto
 - [Memory Strategy](docs/memory-strategy.md) — Política de memoria de 5 capas para agentes
 - [Troubleshooting](docs/troubleshooting.md) — Problemas comunes y diagnósticos
-- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v2.9.0)
+- [Changelog](docs/changelog.md) — Historial de versiones (v0.1.0 → v3.1.1)
 - [Roadmap](ROADMAP.md) — Features completadas + próximas
 
 ## Requisitos
