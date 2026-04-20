@@ -1,0 +1,12 @@
+{
+  "name": "dotforge-stack-vps-ssh",
+  "version": "1.0.0",
+  "description": "SSH/VPS deployment — remote host conventions, key management, and rsync/scp patterns for bare-metal or self-hosted deploys (Oracle Free Tier, Hetzner, DigitalOcean).",
+  "parent": "dotforge",
+  "components": {
+    "rules": ["rules/infra.md"],
+    "settings": "settings.json.partial"
+  },
+  "composable": true,
+  "note": "Composes with docker-deploy when the VPS also runs Docker. Adds domain/infra.md as a canonical home for Host/User/Key/AppDir/DeployCmd — NOT ephemeral session state."
+}

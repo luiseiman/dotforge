@@ -16,6 +16,8 @@ assumptions about business logic, and enrich it when you discover new facts.
 - The user explains a domain concept during conversation
 - You research a topic and find authoritative facts
 - An error reveals a domain assumption was wrong
+- **You use `ssh <host>`, `scp`, or `rsync` against a remote the first time in the session** → persist Host/User/Key/AppDir/DeployCmd in `domain/infra.md`. If the host isn't in `~/.ssh/config`, offer to add it there too. Never rely on `.claude/session/last-compact.md` for this — it is ephemeral and does not survive `/clear`.
+- You learn a deploy command, a service name (systemd unit, docker compose service), or a log/health-check location for a remote host → persist in `domain/infra.md`
 
 ## How to persist
 

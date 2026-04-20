@@ -164,6 +164,40 @@ If the user answered question 4 with domain/role info:
 
 If the user skipped question 4, skip this entirely.
 
+### SSH/VPS scaffolding (runs whenever question 2 mentions a VPS, self-hosted server, SSH, or named host)
+
+Heuristic for "VPS mentioned": answer 2 contains any of `ssh`, `vps`, `oracle`, `hetzner`, `digitalocean`, `bare metal`, `self-hosted`, `ubuntu server`, `droplet`, a hostname, or a bare IP. Also trigger if `~/.ssh/config` has a Host alias whose name resembles the project name.
+
+When triggered, ask ONE additional question in the detected language:
+
+```
+5. SSH/VPS connection? (optional)
+   → Paste the relevant lines from `cat ~/.ssh/config`, OR answer
+     "<alias> <user> <host> <key> <app_dir>".
+     Say "none" if the project does not deploy by SSH.
+```
+
+If answered (not "none"):
+1. Install the `vps-ssh` stack (add its rules + merge its settings.json.partial)
+2. Create `.claude/rules/domain/infra.md` with frontmatter:
+   ```yaml
+   ---
+   globs: "**/deploy*.sh,**/Makefile,**/scripts/*.sh"
+   description: "Remote host, deploy flow, and ops for this project"
+   domain: infra
+   last_verified: <today>
+   ---
+   ```
+3. Body sections (fill with user-provided values, leave placeholders as `TBD` if unknown):
+   - `## Host` — alias, User, HostName, IdentityFile (path only, never key content), port
+   - `## App` — remote app dir, service name (systemd/docker/pm2), runtime user
+   - `## Deploy` — exact command(s) from local → remote, rollback command
+   - `## Observability` — logs command, health-check URL or command
+4. If the `~/.ssh/config` snippet pasted is not already in the user's `~/.ssh/config`, show it and offer to append it (do NOT write `~/.ssh/config` without explicit confirmation)
+5. NEVER store private key content — only the path referenced via `IdentityFile`
+
+If answered "none" or no VPS heuristic matched, skip this section entirely.
+
 ## Step 6: Output
 
 Show a concise summary:

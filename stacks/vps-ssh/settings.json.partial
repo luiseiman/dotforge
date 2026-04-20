@@ -1,0 +1,18 @@
+{
+  "_comment": "Merge with template/settings.json.tmpl. Allows remote-access tools without blanket shell access.",
+  "permissions": {
+    "allow": [
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(rsync *)",
+      "Bash(ssh-keygen *)",
+      "Bash(ssh-copy-id *)"
+    ],
+    "deny": [
+      "Read(~/.ssh/id_*)",
+      "Read(~/.ssh/*_ed25519)",
+      "Read(~/.ssh/*_rsa)",
+      "Read(~/.ssh/*.key)"
+    ]
+  }
+}

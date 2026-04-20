@@ -14,6 +14,7 @@ Scan the current project directory for these indicators:
 | `supabase/`, `supabase.ts`, `@supabase/supabase-js` in package.json | **supabase** |
 | `*.db`, `*.sqlite`, `*.ipynb`, `*.csv`, `*.xlsx` prominent | **data-analysis** |
 | `docker-compose*`, `Dockerfile*` | **docker-deploy** |
+| `deploy*.sh`/`Makefile`/scripts contain `ssh `, `scp `, `rsync ` targeting a host; OR `~/.ssh/config` has host referenced in project | **vps-ssh** |
 | `app.yaml`, `cloudbuild.yaml`, `gcloud` in scripts | **gcp-cloud-run** |
 | `redis` in requirements.txt/pyproject.toml | **redis** |
 

@@ -90,6 +90,32 @@ From Steps 1-3, classify into categories. Only report categories with HIGH CONFI
 - Serverless (serverless.yml, sam template)
 - Cloud Run (app.yaml, cloudbuild.yaml)
 - Vercel (vercel.json)
+- VPS/SSH (grep shell scripts and CI for `ssh `/`scp `/`rsync ` targeting a host — see Step 4b)
+
+## Step 4b: Scan for remote-host usage (SSH/VPS)
+
+Extract remote-host deployment info from shell scripts, Makefiles, and CI:
+
+```bash
+# Find ssh/scp/rsync invocations in project scripts and CI
+grep -rEn "(^|[^a-z])(ssh|scp|rsync) [^|&;]*(@|--[a-z-]+=)" \
+  --include="*.sh" --include="Makefile" --include="*.mk" \
+  --include="*.yml" --include="*.yaml" --include="*.toml" \
+  . 2>/dev/null | head -30
+
+# Also check ~/.ssh/config for host aliases that might match the project
+test -f ~/.ssh/config && awk '/^Host /{h=$2} /HostName/{print h" -> "$2}' ~/.ssh/config 2>/dev/null
+```
+
+From the matches, extract:
+
+- **Host** (alias from `~/.ssh/config` or raw `user@host`)
+- **User** (before `@`)
+- **IdentityFile** (from `~/.ssh/config` or `-i` flag in the command)
+- **Remote path** (argument after `:` in scp/rsync, or inside quoted remote command)
+- **Command pattern** (what `ssh host '...'` runs — deploy, restart, health check, log tail)
+
+If any match found, this project needs the `vps-ssh` stack. Flag it in the proposal and generate `.claude/rules/domain/infra.md` with the extracted fields. NEVER paste private key content into the rule — only reference the `IdentityFile` path.
 
 **Naming conventions:**
 ```bash
