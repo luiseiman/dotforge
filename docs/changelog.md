@@ -38,6 +38,26 @@ Watch-upstream pass against `code.claude.com/docs`. Six practices accepted from 
 - 7 auto-stub session-changes captures rejected (machine-generated, summary-only, no actionable content).
 - `metrics.yml` tracks two as `status: monitoring` (security-relevant): `model-invokes-slash-commands`, `permission-request-updatedinput-deny-recheck`. Rest are `not-applicable`.
 
+## v3.1.2 (2026-04-20)
+
+### Close the SSH/VPS persistence loop
+
+Problem: Claude forgot SSH connection info (Host/User/Key/AppDir/DeployCmd) across sessions in projects that deploy to VPS (TRADINGBOT → Oracle Free Tier, jira-nbch → internal host). `hooks/post-compact.sh` captured hosts into `session/last-compact.md`, but that file is ephemeral — it only re-injects after compaction, not after `/clear` or a fresh session. Users had to re-teach the same connection details every session.
+
+Root cause: `domain-learning.md` had triggers for business rules and external APIs but nothing for remote-host usage. `learn-project` scanned imports, not shell scripts or `~/.ssh/config`. No stack existed between `docker-deploy` (Compose-only) and the bare-metal VPS reality.
+
+#### Changes
+
+- New stack **`vps-ssh`** — `rules/infra.md` conventions, `ssh`/`scp`/`rsync` permissions, deny rules for `id_*`/`key`/`ed25519`/`rsa` private keys
+- `stacks/detect.md` — detects shell scripts containing ssh/scp/rsync or `~/.ssh/config` hosts matching project name
+- `domain-learning.md` (template + dotforge's own) — explicit SSH trigger: first ssh/scp/rsync call persists Host/User/Key/AppDir/DeployCmd into `domain/infra.md`, with explicit warning that `last-compact.md` is not a substitute
+- `learn-project` Step 4b — scans `*.sh`/Makefile/CI for ssh/scp/rsync and reads `~/.ssh/config` aliases to propose `domain/infra.md`
+- `init-project` — optional Step 3.5 "SSH/VPS connection?" installs `vps-ssh` stack and scaffolds `domain/infra.md`
+
+Security: `infra.md` stores `IdentityFile` paths only, never key content. `~/.ssh/config` is never modified without explicit user confirmation.
+
+Propagation: existing projects recover via `/forge learn`. New projects get the prompt via `/forge init`.
+
 ## v3.1.1 (2026-04-15)
 
 ### Fix — `showThinkingSummaries` was misdocumented
