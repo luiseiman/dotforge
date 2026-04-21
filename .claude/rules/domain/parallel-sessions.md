@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md,**/CLAUDE.md"
 description: "Top-level session parallelism — worktrees, fork, teleport — distinct from subagent delegation"
 domain: claude-code-engineering
-last_verified: 2026-04-13
+last_verified: 2026-04-21
 ---
 
 # Parallel Sessions
@@ -37,3 +37,16 @@ Two orthogonal axes of parallelism: (a) **subagents** — isolated context, shar
 - `--agents '<json>'`: define subagents inline via JSON (same fields as frontmatter plus `prompt`). Useful for ad-hoc one-off agents without a file
 - `--setting-sources user,project,local`: filter which scopes load. Use for deterministic tests
 - `--teammate-mode auto|in-process|tmux`: how agent-team teammates display. `in-process` = same pane, `tmux` = split terminals
+
+## Automation / headless flags (print mode, `-p`)
+
+- `--effort low|medium|high|xhigh|max` (v2.1.113): pin effort at startup. Deterministic for benchmarks
+- `--max-budget-usd N`: hard cost cap. Exits with error when reached
+- `--max-turns N`: hard turn cap
+- `--json-schema '{...}'`: validated structured JSON output. See Agent SDK structured outputs
+- `--fallback-model <id>`: auto-fallback when default model overloaded
+- `--no-session-persistence`: don't save session to disk (can't be resumed)
+- `--include-hook-events`: stream all hook events (requires `--output-format stream-json`)
+- `--replay-user-messages`: echo stdin back for acknowledgment (stream-json pair)
+- `--exclude-dynamic-system-prompt-sections`: move per-machine bits (cwd, env, git status) into first user message — improves prompt-cache reuse across users/machines
+- `--init-only` / `--maintenance`: run init/maintenance hooks and exit

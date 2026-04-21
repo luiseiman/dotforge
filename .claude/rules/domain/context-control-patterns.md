@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/rules/*.md"
 description: "User-facing context management — /btw, skill budget, manual pruning"
 domain: claude-code-engineering
-last_verified: 2026-04-13
+last_verified: 2026-04-21
 ---
 
 # Context Control Patterns
@@ -28,7 +28,8 @@ User-side interventions to keep the context window healthy. For runtime limits a
 ## Manual pruning
 
 - `Esc+Esc`: rewind conversation or summarize from a selected message
-- `Ctrl+O`: toggle transcript viewer — focus view = last prompt + tool summary + response only
+- `Ctrl+O`: toggle **verbose** transcript viewer (v2.1.110 changed: no longer the focus-view toggle)
+- `/focus`: toggle focus view — last prompt + tool summary + final response only (v2.1.110+, replaces old Ctrl+O behavior)
 - `/compact <instructions>`: manual compaction with custom preservation hints
 - `Ctrl+X Ctrl+K`: kill all background agents (double-tap to confirm) — frees their context
 

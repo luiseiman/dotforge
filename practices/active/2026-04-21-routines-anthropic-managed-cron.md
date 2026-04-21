@@ -1,11 +1,11 @@
 ---
 id: routines-anthropic-managed-cron
 source: watch:code.claude.com/docs/en/overview
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [workflow-automation, routines, medium-priority]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.3.0']
 ---
 
 # Routines — Anthropic-managed cron (separate from /schedule + /loop)

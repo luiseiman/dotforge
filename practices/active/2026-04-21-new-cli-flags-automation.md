@@ -1,11 +1,11 @@
 ---
 id: new-cli-flags-automation
 source: watch:code.claude.com/docs/en/cli-reference
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [cli, automation, headless, medium-priority, v2.1.113]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.3.0']
 ---
 
 # New CLI flags relevant to dotforge automation and benchmark

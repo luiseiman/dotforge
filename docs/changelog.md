@@ -4,6 +4,29 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.3.0 (2026-04-21)
+
+### MEDIUM-priority sync from 2026-04-21 `/forge watch` pass
+
+Six practices incorporated from the inbox. Two are security-relevant (`status: monitoring`), four are documentation drift.
+
+#### Domain rule updates
+
+- `domain/hook-architecture.md` — clarified: `if` field is evaluated **only** on tool events (PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest). Silently ignored elsewhere — writing `if: "Bash(git *)"` on `Stop` or `SessionStart` hooks is a no-op filter. Verified tag bumped v2.1.108 → v2.1.114.
+- `domain/sandboxing.md` — added `network.deniedDomains` (v2.1.113+, overrides `allowedDomains` wildcards for specific hosts) and new **Subprocess env-scrub and PID isolation** section covering `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` (v2.1.83+) and Linux PID-namespace subprocess sandboxing (v2.1.98+).
+- `domain/context-control-patterns.md` — `Ctrl+O` no longer toggles focus view; it's verbose transcript only. Added `/focus` as the v2.1.110+ focus-view command.
+- `domain/workflow-automation.md` — new **Routines vs /schedule vs Desktop scheduled tasks** section disambiguating the three cron-like primitives.
+- `domain/parallel-sessions.md` — new **Automation / headless flags** section: `--effort`, `--max-budget-usd`, `--max-turns`, `--json-schema`, `--fallback-model`, `--no-session-persistence`, `--include-hook-events`, `--replay-user-messages`, `--exclude-dynamic-system-prompt-sections`, `--init-only`, `--maintenance`.
+
+#### Integrations
+
+- New `integrations/channels/README.md` documenting first-party **Channels** (v2.1.83+) as the native push-integration route, with a decision matrix comparing against OpenClaw. Clarifies when to use each.
+
+#### Practices
+
+- 6 practices moved `inbox/ → active/`, frontmatter `incorporated_in: ['3.3.0']`.
+- `metrics.yml`: 2 new `monitoring` entries (`hook-if-field-tool-events-only`, `sandbox-denieddomains-and-env-scrub`), 4 `not-applicable`.
+
 ## v3.2.0 (2026-04-21)
 
 ### Security hardening — `block-destructive.sh`

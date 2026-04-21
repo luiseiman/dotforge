@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "OS-level bash sandboxing — filesystem and network isolation complementary to permission rules"
 domain: claude-code-engineering
-last_verified: 2026-04-13
+last_verified: 2026-04-21
 ---
 
 # Sandboxing
@@ -27,9 +27,16 @@ OS-level isolation of bash subprocesses (macOS, Linux, WSL2 only — no Windows 
 ## Network (kernel-enforced)
 
 - `network.allowedDomains`: outbound allowlist with wildcards. Non-listed domains blocked without prompting
+- `network.deniedDomains` (v2.1.113+): overrides `allowedDomains` wildcards for specific hosts — use when you trust `*.example.com` except `bad.example.com`
 - `network.allowUnixSockets`, `allowLocalBinding`, `allowMachLookup` (macOS): granular exceptions
 - `network.httpProxyPort` / `socksProxyPort`: BYO proxy
 - `enableWeakerNetworkIsolation` (macOS): required for `gh`, `gcloud`, `terraform` with TLS + MITM proxy. Opens exfil path — enable only when needed
+
+## Subprocess env-scrub and PID isolation
+
+- `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` (v2.1.83+, hardened v2.1.98/v2.1.113): strips Anthropic/cloud provider credentials from subprocess env before exec. Prevents cred leak via child processes.
+- Linux (v2.1.98+): subprocess sandboxing via PID namespace isolation — defense-in-depth complement to env-scrub.
+- Enable both for projects with cloud creds in env (trading bots, cotiza-api-cloud, InviSight).
 
 ## When to enable
 

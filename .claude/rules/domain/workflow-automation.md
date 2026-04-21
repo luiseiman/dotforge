@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/skills/loop/**,**/skills/schedule/**,**/rules/_common.md"
 description: "When to reach for /loop, /schedule, /batch — temporal workflow primitives"
 domain: claude-code-engineering
-last_verified: 2026-04-20
+last_verified: 2026-04-21
 ---
 
 # Workflow Automation Primitives
@@ -29,6 +29,14 @@ Three bundled or dotforge-provided workflow skills cover temporal orchestration:
 - Each change must be independent (no shared mutable state, no order dependency)
 - When blast radius is wide, stage into a branch first — batch failures are harder to unwind than sequential
 - If changes are <10, sequential is usually faster than `/batch` setup overhead
+
+## Routines vs `/schedule` vs Desktop scheduled tasks
+
+Three distinct cron-like primitives — don't confuse them:
+
+- **Routines** (Anthropic-managed cloud): survives machine off; triggers on cron, API calls, or GitHub events. Use for unattended reports, overnight audits, dead-man switches that must run regardless of local state. Create via web/Desktop app or `/schedule` in the CLI.
+- **Desktop scheduled tasks** (local machine): full file/tool access. Use when local state matters (reading local dev files, hitting `localhost`).
+- **`/schedule`** (dotforge skill): session-bound local cron. Use for per-project recurring work during active development.
 
 ## Anti-patterns
 

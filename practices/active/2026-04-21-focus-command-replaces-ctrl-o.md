@@ -1,11 +1,11 @@
 ---
 id: focus-command-replaces-ctrl-o
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [ui, drift, context-control, medium-priority, v2.1.110]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.3.0']
 ---
 
 # Ctrl+O no longer toggles focus view — `/focus` is the new command

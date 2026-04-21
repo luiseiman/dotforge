@@ -2,12 +2,12 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-15
+last_verified: 2026-04-21
 ---
 
 # Hook Architecture
 
-## Events (31 total, verified v2.1.108 — code.claude.com/docs/en/hooks)
+## Events (31 total, verified v2.1.114 — code.claude.com/docs/en/hooks)
 
 Three lifecycle cadences:
 
@@ -33,6 +33,7 @@ Three lifecycle cadences:
 ## Conditional hooks (v2.1.85+)
 
 - `if` field: filter by permission rule syntax (e.g., `"if": "Bash(git *)"`) — replaces matcher + script logic
+- **`if` is evaluated ONLY on tool events** (PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest). Silently ignored on other events — hook fires unconditionally there. Writing `if: "Bash(git *)"` on a `Stop` or `SessionStart` hook is a no-op filter.
 
 ## Async, timeouts, matchers
 

@@ -229,3 +229,69 @@ practices:
     status: not-applicable
     projects_applied: 0
     last_checked: 2026-04-20
+
+  - id: hook-if-field-tool-events-only
+    error_targeted: "hook `if` filter written on non-tool event silently ignored — fires unconditionally"
+    error_type: config
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-21
+
+  - id: sandbox-denieddomains-and-env-scrub
+    error_targeted: "credentials leaked to subprocess via inherited env; allowedDomains wildcards trust bad hosts"
+    error_type: security
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-21
+
+  - id: focus-command-replaces-ctrl-o
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-21
+
+  - id: routines-anthropic-managed-cron
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-21
+
+  - id: new-cli-flags-automation
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-21
+
+  - id: channels-native-push-integration
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-21

@@ -1,11 +1,11 @@
 ---
 id: hook-if-field-tool-events-only
 source: watch:code.claude.com/docs/en/hooks
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [hooks, drift, medium-priority, v2.1.85]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.3.0']
 ---
 
 # Hook `if` field is evaluated only on tool events

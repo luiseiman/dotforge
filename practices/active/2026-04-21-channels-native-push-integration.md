@@ -1,11 +1,11 @@
 ---
 id: channels-native-push-integration
 source: watch:code.claude.com/docs/en/channels
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [integrations, channels, medium-priority, v2.1.83]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.3.0']
 ---
 
 # Channels — native push-event integration (Telegram/Discord/iMessage/webhooks)
