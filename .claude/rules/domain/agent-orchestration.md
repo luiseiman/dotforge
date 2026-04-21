@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md"
 description: "Agent delegation patterns and team coordination"
 domain: claude-code-engineering
-last_verified: 2026-04-08
+last_verified: 2026-04-20
 ---
 
 # Agent Orchestration
@@ -49,3 +49,11 @@ Subagents share the main session's working tree. For independent top-level Claud
 bundledSkills > builtinPluginSkills > skillDirCommands > workflowCommands > pluginCommands > pluginSkills > COMMANDS()
 
 Skills installed via dotforge can shadow built-in commands if names collide — be intentional about naming.
+
+## Model self-invocation of slash commands (v2.1.108+)
+
+Since v2.1.108, the model can invoke slash commands directly in its tool-use loop — previously user-only. Implication for skill design:
+
+- Destructive or state-mutating commands (reset, unregister, capture) should set `disable-model-invocation: true` (v2.1.111+) to stay user-gated
+- `user-invocable: true` by itself no longer restricts the model — both flags needed for full gating
+- Audit `global/commands/` and `skills/*/SKILL.md` when introducing new commands: ask "do I want the model to self-trigger this?"

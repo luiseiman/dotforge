@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/skills/loop/**,**/skills/schedule/**,**/rules/_common.md"
 description: "When to reach for /loop, /schedule, /batch — temporal workflow primitives"
 domain: claude-code-engineering
-last_verified: 2026-04-13
+last_verified: 2026-04-20
 ---
 
 # Workflow Automation Primitives
@@ -12,7 +12,7 @@ Three bundled or dotforge-provided workflow skills cover temporal orchestration:
 ## `/loop` — time-bounded polling
 
 - Use for: watching a long-running build, waiting for a PR check to finish, polling an external service with a known-short settling time, iterating on a prompt until a condition holds
-- Default cadence heuristic: sleep <5min stays in prompt cache; 5–60min pays one cache miss; 20–30min is the sweet spot for idle polls. See `ScheduleWakeup` docs for the full rationale
+- Default cadence heuristic: sleep <5min stays in prompt cache; 5–60min pays one cache miss; 20–30min is the sweet spot for idle polls. See `ScheduleWakeup` docs for the full rationale. With `ENABLE_PROMPT_CACHING_1H=1` (v2.1.108+) the 5-min boundary extends to 60min — see `context-window-optimization.md`
 - Never use `sleep N` in Bash as a polling mechanism — it burns a tool call, freezes Claude, and wastes context. `/loop` or `ScheduleWakeup` instead
 - Stop condition MUST be explicit in the loop prompt — otherwise `/loop` runs forever
 

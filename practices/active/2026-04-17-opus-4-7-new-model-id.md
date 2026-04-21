@@ -1,11 +1,11 @@
 ---
 id: opus-4-7-new-model-id
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-04-17
 tags: [model-routing, drift, high-priority, v2.1.111]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.2.0']
 ---
 
 # Opus 4.7 — new model ID, replaces 4.6

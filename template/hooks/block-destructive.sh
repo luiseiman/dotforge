@@ -61,6 +61,13 @@ STANDARD_PATTERNS=(
   'git reset --hard'
   'docker system prune -a'
   'chmod -R 777'
+  # find-based destruction (v2.1.113: Bash(find:*) no longer auto-approves these in core,
+  # but in auto/bypass modes the hook is the last line of defense)
+  'find .* -delete'
+  'find .* -exec rm'
+  'find .* -exec unlink'
+  'xargs[^|]*rm -rf'
+  'xargs[^|]*rm -f'
 )
 
 # Strict: standard + risky execution patterns

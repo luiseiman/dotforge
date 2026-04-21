@@ -1,11 +1,11 @@
 ---
 id: prompt-cache-1h-ttl
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-04-17
 tags: [cache, context-window, cost, high-priority, v2.1.108]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.2.0']
 ---
 
 # 1-hour prompt cache TTL — opt-in via `ENABLE_PROMPT_CACHING_1H`

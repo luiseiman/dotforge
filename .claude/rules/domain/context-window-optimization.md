@@ -2,7 +2,7 @@
 globs: "template/**/*.md,docs/memory-strategy.md,**/CLAUDE.md,**/rules/memory.md,**/MEMORY.md"
 description: "Context window runtime — compaction tiers, size budgets, tool result limits"
 domain: claude-code-engineering
-last_verified: 2026-04-13
+last_verified: 2026-04-20
 ---
 
 # Context Window Runtime
@@ -42,3 +42,11 @@ last_verified: 2026-04-13
 - Per-turn aggregate: 200K chars. Bash truncation: 30K chars
 - Oversized results: persisted to disk, preview sent to Claude
 - See `context-control-patterns.md` for user-facing context management (/btw, skill budget, Esc+Esc)
+
+## Prompt cache TTL (v2.1.108+)
+
+- Default: 5 minutes — sleeping past 300s = cache miss
+- Opt-in 1 hour: set `ENABLE_PROMPT_CACHING_1H=1` env var; `FORCE_PROMPT_CACHING_5M=1` forces 5m
+- With 1h TTL: idle polling cadence heuristics loosen — sleeps up to 3600s stay in cache
+- Cost tradeoff: 1h TTL bills for cache storage; 5m is "free". Consider enabling for long-running `/loop` or `/schedule` work
+- Subscribers with `DISABLE_TELEMETRY` fell back to 5m before v2.1.108 fix

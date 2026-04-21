@@ -4,6 +4,40 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.2.0 (2026-04-21)
+
+### Security hardening — `block-destructive.sh`
+
+Added `find`/`xargs` destruction patterns to the `standard` profile. Pre-v2.1.113, Claude Code core auto-approved `Bash(find:*)` allow rules for `find -exec`/`-delete`; v2.1.113 fixed that gap in core. This commit closes the same gap in the hook layer so `auto` and `bypassPermissions` modes (where core permission checks are relaxed) still block destructive find/xargs invocations:
+
+- `find .* -delete`
+- `find .* -exec rm`
+- `find .* -exec unlink`
+- `xargs[^|]*rm -rf`
+- `xargs[^|]*rm -f`
+
+Smoke-tested against 6 variants including `find / -delete`, `find /tmp -exec rm -rf {} \;`, `find . | xargs rm -rf`, and `find / | xargs -I{} rm -rf {}` — all now blocked. Pre-existing `rm -rf /` pattern already catches `sudo rm -rf /`, `env rm -rf /`, `watch rm -rf /` via full-string grep, so wrapper-bypass (v2.1.113 core fix) does not require hook changes.
+
+### Domain knowledge sync — Claude Code v2.1.108 → v2.1.114
+
+Watch-upstream pass against `code.claude.com/docs`. Six practices accepted from the inbox, seven auto-stub session-changes captures rejected.
+
+#### Domain rule updates
+
+- `domain/model-ids.md` — opus tier model ID **`claude-opus-4-6` → `claude-opus-4-7`** (v2.1.111). New `xhigh` effort level documented between `high` and `max` (Opus 4.7-exclusive; other tiers fall back to `high`). Recommends `xhigh` for `security-auditor`/`architect` on complex tasks before escalating to `max`.
+- `domain/auto-mode.md` — research-preview hedging removed; auto mode is GA. `--enable-auto-mode` flag removed in v2.1.111 (use `permissions.defaultMode: "auto"` or `--permission-mode auto`). Max-subscriber + Opus 4.7 tier gate noted.
+- `domain/rule-effectiveness.md` — added `xhigh` to effort values. New frontmatter field `disable-model-invocation: boolean` documented (v2.1.111+) for gating commands after v2.1.108 made slash commands model-invocable. Skill description cap updated 250 → **1,536 chars** (v2.1.105).
+- `domain/permission-model.md` — security note on `updatedInput` recheck (v2.1.110+): mutated tool input is re-validated against `permissions.deny` before execution. Pre-v2.1.110 a hook could bypass denies via mutation.
+- `domain/context-window-optimization.md` — new **Prompt cache TTL** section: `ENABLE_PROMPT_CACHING_1H=1` opt-in for 1h TTL (v2.1.108+), `FORCE_PROMPT_CACHING_5M` counterpart, cost tradeoff notes.
+- `domain/workflow-automation.md` — cadence heuristic annotated with 1h-TTL extension from `ENABLE_PROMPT_CACHING_1H`.
+- `domain/agent-orchestration.md` — new **Model self-invocation of slash commands** section (v2.1.108+). Recommends `disable-model-invocation: true` on destructive commands (`reset`, `unregister`, `capture`) to stay user-gated.
+
+#### Practices
+
+- 6 practices moved `inbox/ → active/`, frontmatter `incorporated_in: ['3.2.0']`.
+- 7 auto-stub session-changes captures rejected (machine-generated, summary-only, no actionable content).
+- `metrics.yml` tracks two as `status: monitoring` (security-relevant): `model-invokes-slash-commands`, `permission-request-updatedinput-deny-recheck`. Rest are `not-applicable`.
+
 ## v3.1.1 (2026-04-15)
 
 ### Fix — `showThinkingSummaries` was misdocumented

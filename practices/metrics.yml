@@ -163,3 +163,69 @@ practices:
     status: not-applicable
     projects_applied: 0
     last_checked: 2026-04-08
+
+  - id: opus-4-7-new-model-id
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-20
+
+  - id: xhigh-effort-level
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-20
+
+  - id: auto-mode-no-enable-flag
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-20
+
+  - id: model-invokes-slash-commands
+    error_targeted: "destructive slash command auto-invoked by the model without user gating"
+    error_type: security
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-20
+
+  - id: permission-request-updatedinput-deny-recheck
+    error_targeted: "hook returning updatedInput bypasses permissions.deny via mutation"
+    error_type: security
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-20
+
+  - id: prompt-cache-1h-ttl
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-20
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-20

@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-04-05
+last_verified: 2026-04-20
 ---
 
 # Rule Effectiveness
@@ -14,11 +14,12 @@ last_verified: 2026-04-05
 | `globs:` | CSV glob patterns | Eager loading at session start |
 | `paths:` | Unquoted CSV only | Lazy loading with `alwaysApply: false` |
 | `model` | `haiku`, `sonnet`, `opus`, `inherit` | Pin model tier for rule/skill execution |
-| `effort` | `low`, `medium`, `high`, `max`, integer | Thinking level / reasoning depth |
+| `effort` | `low`, `medium`, `high`, `xhigh`, `max`, integer | Thinking level; `xhigh` Opus 4.7-exclusive (v2.1.111+) |
 | `context` | `inline`, `fork` | Execute inline or fork to subagent |
 | `agent` | agent type string | Sub-agent type when `context: fork` |
 | `allowed-tools` | tool name filter | Restrict available tools |
 | `user-invocable` | boolean | Show as slash command |
+| `disable-model-invocation` | boolean | Skill only invocable by the user, not the model (v2.1.111+). Use for destructive or gated commands after v2.1.108 (model can self-invoke slash commands) |
 
 ## Loading behavior
 
@@ -30,6 +31,7 @@ last_verified: 2026-04-05
 ## Design constraints
 
 - Max 50 lines per rule file; split if longer
+- Skill description cap: 1,536 chars (raised from 250 in v2.1.105). Front-load key use case
 - Each rule: what it covers, clear patterns, common mistakes
 - Rule coverage = files matching ≥1 rule glob / total rules
 - Classification: Active (>50%), Occasional (10-50%), Inert (<10%) — prune inert rules

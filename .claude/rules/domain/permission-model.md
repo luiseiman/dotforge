@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-15
+last_verified: 2026-04-20
 ---
 
 # Permission Model
@@ -63,6 +63,8 @@ Managed (enterprise) > Local (.claude/settings.local.json) > Project (.claude/se
 ```
 
 Use cases: a behavior self-elevates its allowlist for a session, a safety hook downgrades to `plan` mode after detecting risk, or a build hook whitelists a temporary directory. Static deny rules still enforce — a hook cannot remove a managed deny.
+
+**Security note on `updatedInput` (v2.1.110+)**: when a hook returns `updatedInput` to mutate a tool call, the modified input is re-checked against `permissions.deny` before execution. A hook cannot use `updatedInput` to smuggle an otherwise-denied payload past static deny rules. Before v2.1.110 the recheck was missing and a hook could bypass denies via mutation.
 
 ## Bash prefix detection
 
