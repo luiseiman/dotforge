@@ -4,6 +4,32 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.3.1 (2026-04-21)
+
+### Fix — `session-report.sh` writes malformed JSON (5-month silent bug)
+
+Discovered via `/forge insights`: every JSON file under `~/.claude/metrics/<slug>/*.json` across all 12 registered projects was malformed. 54 corrupt files total, dating back to 2026-03-22 — the Stop-event session-report hook had been silently corrupting metrics for ~5 months. `/forge insights` silently degraded to retroactive git-log analysis.
+
+**Root cause (two compounding bugs)**:
+
+1. **`grep -c ... || echo "0"` idiom** (3 occurrences in the hook): GNU `grep -c` returns count `"0"` with exit code `1` when no match. `||` then fires and echoes `"0"` again — stdout becomes `"0\n0"`, producing multi-line JSON values like `"errors_added": 0\n0,`.
+
+2. **Cascade via malformed previous file**: once today's metrics file is malformed, `PREV_SESSIONS=$(jq -r '.sessions // 0' "$METRICS_FILE")` returns empty string on the corrupt file. `SESSIONS=$((PREV_SESSIONS + 1))` throws arithmetic error, `SESSIONS` stays empty → next write emits `"sessions": ,`. Corruption compounds on every new session.
+
+**Fix**:
+
+- `template/hooks/session-report.sh` and `.claude/hooks/session-report.sh` — replace `grep -c ... || echo "0"` with separated capture + `${var//[!0-9]/}` sanitization + `${var:-0}` default. Added `_jq_num()` helper that validates numeric output before arithmetic. Pre-validate the previous file with `jq -e .` before attempting the merge — if malformed, restart cleanly from `SESSIONS=1`.
+- New `scripts/fix-session-metrics.sh` — propagator that detects the old idiom in each project's hook and replaces it, preserves the project's original shebang, and deletes existing malformed JSON files. Idempotent, safe to re-run.
+
+**Applied this release**:
+
+- 9 projects patched: InviSight-iOS, TRADINGBOT, cotiza-api-cloud, openclaw, vault-bot, SOMA2, cds-dashboard, jira-nbch, crm.
+- 1 project already clean: dotforge (fixed in-repo before release).
+- 2 projects skipped: derup, SOMA (no `session-report.sh` — predate the template).
+- 54 malformed JSON files deleted. Next session in each project writes valid metrics from a clean slate.
+
+Practice: `session-report-malformed-json` → `active/`, `metrics.yml` marked `monitoring`.
+
 ## v3.3.0 (2026-04-21)
 
 ### MEDIUM-priority sync from 2026-04-21 `/forge watch` pass

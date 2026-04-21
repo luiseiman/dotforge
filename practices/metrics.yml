@@ -295,3 +295,14 @@ practices:
     status: not-applicable
     projects_applied: 0
     last_checked: 2026-04-21
+
+  - id: session-report-malformed-json
+    error_targeted: "session-report.sh writes malformed JSON via grep -c || echo 0 + cascade from corrupted previous file"
+    error_type: logic
+    activated: 2026-04-21
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 10
+    last_checked: 2026-04-21

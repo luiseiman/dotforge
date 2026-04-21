@@ -25,13 +25,13 @@ PROJECT_HASH=$(_hash "$PWD")
 
 # Git changes from this session (last 2 hours of commits)
 RECENT_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | head -50)
-FILES_TOUCHED=$(echo "$RECENT_FILES" | grep -c '.' 2>/dev/null || echo "0")
+FILES_TOUCHED=$(printf '%s\n' "$RECENT_FILES" | grep -c . 2>/dev/null); FILES_TOUCHED=${FILES_TOUCHED//[!0-9]/}; FILES_TOUCHED=${FILES_TOUCHED:-0}
 COMMITS=$(git log --oneline --since="2 hours ago" 2>/dev/null | wc -l | tr -d ' ')
 
 # Errors added today
 ERRORS_ADDED=0
 if [[ -f "CLAUDE_ERRORS.md" ]]; then
-  ERRORS_ADDED=$(grep -c "| $DATE |" CLAUDE_ERRORS.md 2>/dev/null || echo "0")
+  ERRORS_ADDED=$(grep -c "| $DATE |" CLAUDE_ERRORS.md 2>/dev/null); ERRORS_ADDED=${ERRORS_ADDED//[!0-9]/}; ERRORS_ADDED=${ERRORS_ADDED:-0}
 fi
 
 # Hook block counters (written by block-destructive.sh and lint-on-save.sh)
@@ -94,7 +94,7 @@ fi
 # --- Domain knowledge tracking ---
 DOMAIN_CHANGES=0
 if [[ -d ".claude/rules/domain" ]]; then
-  DOMAIN_CHANGES=$(echo "$RECENT_FILES" | grep -c '.claude/rules/domain/' 2>/dev/null || echo "0")
+  DOMAIN_CHANGES=$(printf '%s\n' "$RECENT_FILES" | grep -c '.claude/rules/domain/' 2>/dev/null); DOMAIN_CHANGES=${DOMAIN_CHANGES//[!0-9]/}; DOMAIN_CHANGES=${DOMAIN_CHANGES:-0}
 fi
 
 # --- Write JSON metrics ---
@@ -103,14 +103,24 @@ mkdir -p "$METRICS_DIR"
 
 METRICS_FILE="$METRICS_DIR/${DATE}.json"
 
-# If file exists (multiple sessions same day), merge by incrementing
-if [[ -f "$METRICS_FILE" ]] && command -v jq &>/dev/null; then
-  PREV_ERRORS=$(jq -r '.errors_added // 0' "$METRICS_FILE")
-  PREV_HOOK=$(jq -r '.hook_blocks // 0' "$METRICS_FILE")
-  PREV_LINT=$(jq -r '.lint_blocks // 0' "$METRICS_FILE")
-  PREV_FILES=$(jq -r '.files_touched // 0' "$METRICS_FILE")
-  PREV_COMMITS=$(jq -r '.commits // 0' "$METRICS_FILE")
-  PREV_SESSIONS=$(jq -r '.sessions // 0' "$METRICS_FILE")
+# If file exists AND is valid JSON, merge by incrementing.
+# If prior file is malformed (known pre-3.3.1 corruption), restart cleanly.
+_jq_num() {
+  # Read numeric field from METRICS_FILE via jq; fall back to 0 on any error
+  # or non-numeric result. Prevents arithmetic cascade failure from corrupted files.
+  local val
+  val=$(jq -r "$1 // 0" "$METRICS_FILE" 2>/dev/null)
+  [[ "$val" =~ ^[0-9]+$ ]] || val=0
+  printf '%s' "$val"
+}
+
+if [[ -f "$METRICS_FILE" ]] && command -v jq &>/dev/null && jq -e . "$METRICS_FILE" >/dev/null 2>&1; then
+  PREV_ERRORS=$(_jq_num '.errors_added')
+  PREV_HOOK=$(_jq_num '.hook_blocks')
+  PREV_LINT=$(_jq_num '.lint_blocks')
+  PREV_FILES=$(_jq_num '.files_touched')
+  PREV_COMMITS=$(_jq_num '.commits')
+  PREV_SESSIONS=$(_jq_num '.sessions')
 
   ERRORS_ADDED=$((ERRORS_ADDED + PREV_ERRORS))
   HOOK_BLOCKS=$((HOOK_BLOCKS + PREV_HOOK))
