@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/rules/*.md"
 description: "User-facing context management — /btw, skill budget, manual pruning"
 domain: claude-code-engineering
-last_verified: 2026-04-21
+last_verified: 2026-04-26
 ---
 
 # Context Control Patterns
@@ -32,6 +32,19 @@ User-side interventions to keep the context window healthy. For runtime limits a
 - `/focus`: toggle focus view — last prompt + tool summary + final response only (v2.1.110+, replaces old Ctrl+O behavior)
 - `/compact <instructions>`: manual compaction with custom preservation hints
 - `Ctrl+X Ctrl+K`: kill all background agents (double-tap to confirm) — frees their context
+
+## TUI rendering modes (v2.1.110+)
+
+- `tui` setting in `settings.json`: `"fullscreen"` or `"default"` (default). Fullscreen renders without flicker — useful in long sessions and inside tmux/zellij
+- `/tui` slash command toggles between modes mid-session without losing the conversation
+- `autoScrollEnabled`: disable conversation auto-scroll in fullscreen mode
+
+## Idle-return recap (v2.1.108+)
+
+- `/recap`: summarize session state on demand
+- `awaySummaryEnabled` setting: auto-show recap when returning to an idle session
+- `CLAUDE_CODE_ENABLE_AWAY_SUMMARY=1` env var: forces recap on for telemetry-disabled deployments (Bedrock, Vertex, Foundry, `DISABLE_TELEMETRY`); v2.1.110 enabled it by default for those users — opt out via `/config` or `=0`
+- Coexists with dotforge's `last-compact.md` pattern: recap = idle return summary (user-driven), `last-compact.md` = surviving compaction (model-driven). They solve adjacent problems
 
 ## Avoid context pollution
 

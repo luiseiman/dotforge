@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json"
 description: "Hook event payloads and per-event behavior details"
 domain: claude-code-engineering
-last_verified: 2026-04-15
+last_verified: 2026-04-26
 ---
 
 # Hook Event Details
@@ -20,7 +20,11 @@ last_verified: 2026-04-15
 ## Tool events
 
 - PreToolUse/PostToolUse: receive ABSOLUTE file paths since v2.1.90
+- PostToolUse/PostToolUseFailure: input includes `duration_ms` (v2.1.119+) — tool execution time excluding permission prompts and PreToolUse hooks. Use for per-tool latency metrics without external timing
 - PostToolUseFailure: fires when tool execution fails — use for error tracking
+- PostToolBatch (v2.1.x+): fires when a batch of parallel tool calls completes, before the next model call. No matcher. Blockable via `decision: "block"` — point of choice for end-of-batch validation
+- UserPromptExpansion: fires when a slash command expands. Matcher: command name. Blockable — can prevent the expansion
+- UserPromptSubmit: hook can return `hookSpecificOutput.sessionTitle: "..."` (v2.1.94+) to set the session display title (shown in `/resume` and terminal title)
 - TaskCreated/TaskCompleted: agent lifecycle — use for orchestration metrics
 - Hook output >50K chars: saved to disk, file path + preview sent (v2.1.89)
 

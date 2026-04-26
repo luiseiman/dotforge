@@ -117,7 +117,7 @@ These have no dotforge equivalent — they manage the runtime session:
 | `/schedule`, `/loop`, `/autofix-pr` | Automation |
 | `/resume`, `/branch`, `/teleport` | Session lifecycle |
 | `/model`, `/effort`, `/fast` | Model selection |
-| `/cost`, `/usage`, `/stats` | Usage metrics |
+| `/usage` (`/cost` and `/stats` are typing shortcuts since v2.1.118) | Usage metrics |
 | `/remote-control`, `/remote-env` | Remote execution |
 | `/copy`, `/btw` | Productivity (voice input is `Hold Space` push-to-talk, not a slash command) |
 | `/doctor`, `/login`, `/logout` | System management |
@@ -294,7 +294,7 @@ Sin equivalente en dotforge — gestionan la sesi&oacute;n de runtime:
 | `/schedule`, `/loop`, `/autofix-pr` | Automatizaci&oacute;n |
 | `/resume`, `/branch`, `/teleport` | Ciclo de vida de sesiones |
 | `/model`, `/effort`, `/fast` | Selecci&oacute;n de modelo |
-| `/cost`, `/usage`, `/stats` | M&eacute;tricas de uso |
+| `/usage` (`/cost` y `/stats` son atajos desde v2.1.118) | M&eacute;tricas de uso |
 | `/remote-control`, `/remote-env` | Ejecuci&oacute;n remota |
 | `/voice`, `/copy`, `/btw` | Productividad |
 | `/doctor`, `/login`, `/logout` | Gesti&oacute;n del sistema |

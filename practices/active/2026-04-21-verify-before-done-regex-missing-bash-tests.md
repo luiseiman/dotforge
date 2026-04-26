@@ -1,11 +1,11 @@
 ---
 id: verify-before-done-regex-missing-bash-tests
 source: live-session
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [v3-behavior, verify-before-done, regex, false-negative, medium-priority]
 tested_in: [dotforge]
-incorporated_in: []
+incorporated_in: ["docs/changelog.md#v340"]
 ---
 
 # `verify-before-done` regex misses `bash tests/*.sh` — blocks legitimate pushes in markdown/config repos

@@ -2,23 +2,27 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-21
+last_verified: 2026-04-26
 ---
 
 # Hook Architecture
 
-## Events (31 total, verified v2.1.114 — code.claude.com/docs/en/hooks)
+## Events (33+ total, verified 2026-04-26 — code.claude.com/docs/en/hooks)
 
 Three lifecycle cadences:
 
 **Session-level** (once per session): SessionStart, SessionEnd, InstructionsLoaded
-**Turn-level** (once per user prompt): UserPromptSubmit, Stop, StopFailure
-**Tool-loop** (every tool call): PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest, PermissionDenied
+**Turn-level** (once per user prompt): UserPromptSubmit, UserPromptExpansion, Stop, StopFailure
+**Tool-loop** (every tool call): PreToolUse, PostToolUse, PostToolUseFailure, PostToolBatch, PermissionRequest, PermissionDenied
 **Async/side**: Notification, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, TeammateIdle, ConfigChange, CwdChanged, FileChanged, WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult
 
 `InstructionsLoaded` fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason` field: `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`. Observability-only — no decision control.
 
 `PreCompact` is **blockable** since v2.1.105 (exit 2 prevents compaction). Was non-blocking before.
+
+`UserPromptExpansion` fires when a slash command expands; matcher = command name; blockable (deny prevents the expansion). Useful for gating destructive or expensive commands.
+
+`PostToolBatch` fires when a batch of parallel tool calls completes, before the next model call; no matcher; blockable via `decision: "block"`. Use for end-of-batch validation that would be redundant per-tool in PostToolUse.
 
 `Elicitation`/`ElicitationResult` fire during MCP tool execution when an MCP server requests structured user input. Support `accept`/`decline`/`cancel` actions and field overrides.
 
@@ -26,7 +30,7 @@ Three lifecycle cadences:
 
 - Exit codes: 0 = allow, 1 = warn (non-blocking), 2 = block
 - PreToolUse: also supports `defer` (pause for SDK integrations, v2.1.89+)
-- Types: `command` (bash), `http` (POST), `prompt` (LLM decision), `agent` (subagent)
+- Types: `command` (bash), `http` (POST), `prompt` (LLM decision), `agent` (subagent), `mcp_tool` (v2.1.118+ — invoke an MCP tool directly with `${tool_input.*}` substitution)
 - Hooks MUST be objects: `{"type": "command", "command": "path.sh"}`
 - NEVER plain strings — Claude Code rejects them silently
 

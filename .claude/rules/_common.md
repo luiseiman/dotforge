@@ -10,6 +10,8 @@ globs: "**/*.md,**/*.sh,**/*.yml,**/*.json,**/*.tmpl,**/*.py,**/*.ts,**/*.tsx,**
 - Never commit .env, secrets, keys, credentials
 - No force push to main/master without explicit confirmation
 - Branch naming: feature/, fix/, refactor/, chore/
+- Customize commit/PR trailers via `attribution.commit` and `attribution.pr` in `settings.json` — supersedes the deprecated `includeCoAuthoredBy` boolean
+- For self-hosted GitHub/GitLab/Bitbucket, set `prUrlTemplate` to point the footer PR badge at the right host
 
 ## Naming
 - Descriptive variable/function names, no cryptic abbreviations

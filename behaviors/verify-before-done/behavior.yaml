@@ -16,7 +16,7 @@ policy:
       conditions:
         - field: command
           operator: regex_match
-          value: '(^|[;&|\s])(pytest|npm\s+(test|run\s+build)|yarn\s+(test|build)|pnpm\s+(test|build)|bun\s+test|go\s+test|cargo\s+test|cargo\s+build|mvn\s+(test|package|verify)|gradle\s+(test|build)|swift\s+test|make\s+(test|check|build)|vitest(\s|$)|jest(\s|$)|ruff\s+check|mypy\s+|tsc(\s|$)|eslint\s+)'
+          value: '(^|[;&|\s])(pytest|npm\s+(test|run\s+build)|yarn\s+(test|build)|pnpm\s+(test|build)|bun\s+test|go\s+test|cargo\s+test|cargo\s+build|mvn\s+(test|package|verify)|gradle\s+(test|build)|swift\s+test|make\s+(test|check|build)|vitest(\s|$)|jest(\s|$)|ruff\s+check|mypy\s+|tsc(\s|$)|eslint\s+|bash\s+\S*tests?/\S+\.sh|bash\s+\S*test[_-]\S*\.sh|\./tests?/\S+\.sh|\./\S+test[_-]\S+\.sh)'
       logic: all
       action: set_flag
       flag: verification_done

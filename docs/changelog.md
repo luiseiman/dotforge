@@ -4,6 +4,40 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.4.0 (2026-04-26)
+
+### `/forge watch` sync from CHANGELOG v2.1.92 → v2.1.119
+
+Twelve upstream practices incorporated from the 2026-04-26 watch pass plus two older inbox items. Domain rules refreshed against the live docs at code.claude.com.
+
+#### Domain rule updates
+
+- `domain/hook-architecture.md` — bumped event count to 33+; added `UserPromptExpansion` (blockable, slash command expansion) and `PostToolBatch` (blockable, end-of-batch validation). Added `mcp_tool` as a fifth hook type with `${tool_input.*}` substitution (v2.1.118+).
+- `domain/hook-events.md` — `PostToolUse`/`PostToolUseFailure` now carry `duration_ms` (v2.1.119+). `UserPromptSubmit` can return `hookSpecificOutput.sessionTitle` to set the session title (v2.1.94+).
+- `domain/auto-mode.md` — added the `"$defaults"` placeholder pattern for `autoMode.allow|soft_deny|environment` (v2.1.118+); flagged that native macOS/Linux builds fold `Glob`/`Grep` into `Bash` (v2.1.117+).
+- `domain/permission-model.md` — documented the v2.1.113 tightening of `Bash(find:*)` (no longer auto-approves `-exec`/`-delete`), exec-wrapper deny matching (`env`, `sudo`, `watch`, `ionice`, `setsid`), and `/private/{etc,var,tmp,home}` as dangerous removal targets on macOS. Added v2.1.119 PowerShell auto-approval and `cd <project-dir> && ...` no-prompt rule. Noted that `Glob(...)`/`Grep(...)` permission specifiers are platform-dependent.
+- `domain/context-control-patterns.md` — added TUI rendering modes (`tui` setting, `/tui`, `autoScrollEnabled`) and idle-return recap (`/recap`, `awaySummaryEnabled`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`). Documented coexistence with `last-compact.md` (different problems: idle-return vs compaction-survival).
+- `domain/parallel-sessions.md` — extended the headless flags table with `--input-format`, `--include-partial-messages`, `--strict-mcp-config`, `--system-prompt[-file]`, `--append-system-prompt[-file]`, `--tools`/`--allowedTools`/`--disallowedTools`, `--debug-file`. New "Other CLI flags (interactive)" subsection and a "CLI subcommands" section covering `claude install`, `auth`, `agents`, `auto-mode`, `remote-control`, `setup-token`.
+
+#### Other updates
+
+- `_common.md` — Git section now mentions `attribution.commit`/`attribution.pr` (deprecates `includeCoAuthoredBy`) and `prUrlTemplate` for self-hosted Git hosts.
+- `docs/claude-vs-forge.md` — `/cost` and `/stats` are typing shortcuts since v2.1.118; `/usage` is the canonical command.
+- `behaviors/verify-before-done/behavior.yaml` — extended the test-runner regex to recognize `bash tests/*.sh`, `bash <path>/test-*.sh`, and `./tests/*.sh` patterns. Fixes `git push` from dotforge being soft-blocked despite legitimate `bash tests/test-*.sh` runs.
+- `audit/checklist.md` item 14 — scoring now requires ENFORCEMENT (compiled hooks under `.claude/hooks/generated/` AND a `settings.json` reference), not just `behaviors/index.yaml` declaration. Closes the false-positive that scored projects 1/1 with no runtime effect.
+
+#### Notes
+
+- `template/hooks/session-report.sh` was NOT edited despite the `duration_ms` practice listing it: that's a Stop-event hook with no tool payload. The right home is a future PostToolUse `tool-latency.sh` that buffers per-tool durations to a file. Documentation update in `domain/hook-events.md` covers the field for now.
+- The built-in `/less-permission-prompts` skill (Claude Code v2.1.111+) overlaps with `skills/fewer-permission-prompts/` if installed at user scope. dotforge does not ship that skill — flagged here for users who do.
+
+#### Inbox lifecycle
+
+- 12 new upstream-watch practices (2026-04-26) → `active/`
+- 2 older inbox items → `active/`: `audit-item-14-false-positive-behavior-not-compiled`, `verify-before-done-regex-missing-bash-tests`
+- 6 auto-generated `*-session-changes` captures rejected (no actionable content)
+- 1 deferred: `agent-memory-underused` tagged `needs-more-info` for cross-project investigation
+
 ## v3.3.1 (2026-04-21)
 
 ### Fix — `session-report.sh` writes malformed JSON (5-month silent bug)

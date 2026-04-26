@@ -70,10 +70,14 @@
 **Verification:** Check if `permissions.defaultMode` is set to `"auto"` in settings.json. If yes, verify deny list covers secrets. If auto mode is not enabled (default), automatic pass.
 
 ### 14. Behaviors coverage (v3) (0-1)
-- 0: No v3 behaviors enabled in the project
-- 1: At least one v3 behavior enabled via `behaviors/index.yaml`, compiled hooks under `.claude/hooks/generated/`, or behavior hook references in `settings.json`
+- 0: No v3 behaviors enforced — declaration in `behaviors/index.yaml` alone DOES NOT count
+- 1: At least one v3 behavior compiled to a runtime hook under `.claude/hooks/generated/` AND referenced in `settings.json` so the harness actually loads it
 
-**Verification:** Check `behaviors/index.yaml` for entries with `enabled: true`, or count generated behavior hooks matching `*__pretooluse__*.sh`. A project that has not opted into the v3 behavior governance layer scores 0 — this does not apply the security cap.
+**Verification:** Score reflects ENFORCEMENT, not intent. Required evidence:
+1. `.claude/hooks/generated/*__pretooluse__*.sh` (or matching event suffix) exists for at least one behavior — proof the YAML compiled
+2. `settings.json` references the generated hook path (auto-injected by `/forge behavior on` or merged from a `*.settings.json` snippet)
+
+A project with `behaviors/index.yaml` declaring `enabled: true` for several behaviors but no compiled hooks scores **0**. Compilation without the settings.json reference also scores 0 — the harness does not auto-load generated hooks. To diagnose: `ls .claude/hooks/generated 2>/dev/null` and `grep generated .claude/settings.json`. A project that has not opted into the v3 behavior governance layer scores 0 — this does not apply the security cap.
 
 ### 15. OS-level sandboxing (0-1)
 - 0: Project handles secrets (env vars, credentials, API keys, cloud configs) with no `sandbox.enabled` in settings.json

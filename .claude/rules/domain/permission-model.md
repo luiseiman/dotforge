@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-20
+last_verified: 2026-04-26
 ---
 
 # Permission Model
@@ -83,3 +83,15 @@ Use cases: a behavior self-elevates its allowlist for a session, a safety hook d
 - MCP tools default to `passthrough` (always ask)
 - Audit: if settings.json OR block-destructive hook missing → max score 6.0
 - For OS-level defense-in-depth (kernel-enforced filesystem/network isolation), see `sandboxing.md`
+
+## Tightened auto-approvals (v2.1.113+)
+
+- `Bash(find:*)` allow rules NO LONGER auto-approve `find -exec` or `find -delete` — those drop back to the regular permission flow
+- Bash deny rules now match commands wrapped in `env`, `sudo`, `watch`, `ionice`, `setsid`, and similar exec wrappers
+- macOS: `/private/{etc,var,tmp,home}` paths are treated as dangerous removal targets under `Bash(rm:*)` allow rules
+- v2.1.119: PowerShell tool commands can be auto-approved in permission mode (matching Bash); `cd <project-dir> && git ...` no longer triggers a permission prompt when the `cd` is a no-op
+- Audit any stack `settings.json.partial` with `Bash(find:*)` or `Bash(rm:*)` allow rules — relying on prior auto-approval will now prompt
+
+## Glob/Grep are platform-dependent (v2.1.117+)
+
+On native macOS/Linux builds, standalone `Glob` and `Grep` tools are replaced by embedded `bfs`/`ugrep` reachable through Bash. `Glob(...)` and `Grep(...)` permission specifiers become inert on native builds — Windows and npm-installed builds keep the original tools. Prefer `Bash(...)` rules for cross-platform coverage.

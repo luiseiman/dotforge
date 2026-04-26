@@ -36,23 +36,23 @@ practices:
     error_targeted: "multiple fix commits for same symptom without resolving root cause (import errors, shadowed packages, config bugs)"
     error_type: logic
     activated: 2026-03-24
-    recurrence_checks: 2
+    recurrence_checks: 3
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 1
-    last_checked: 2026-04-08
+    last_checked: 2026-04-26
 
   - id: websocket-shadow-import
     error_targeted: "local directory name shadows PyPI package causing AttributeError on import (e.g., websocket/ shadows websocket-client)"
     error_type: config
     activated: 2026-03-24
-    recurrence_checks: 2
+    recurrence_checks: 3
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 1
-    last_checked: 2026-04-08
+    last_checked: 2026-04-26
 
   - id: practice-2026-03-30-globs-vs-paths-frontmatter
     error_targeted: null
@@ -80,12 +80,12 @@ practices:
     error_targeted: "writing PreCompact hook with exit 2 expecting to block compaction — silently ignored"
     error_type: config
     activated: 2026-03-30
-    recurrence_checks: 1
+    recurrence_checks: 2
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 0
-    last_checked: 2026-04-08
+    last_checked: 2026-04-26
 
   - id: practice-2026-03-30-hook-types-http-prompt-agent
     error_targeted: null
@@ -201,23 +201,23 @@ practices:
     error_targeted: "destructive slash command auto-invoked by the model without user gating"
     error_type: security
     activated: 2026-04-20
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 0
-    last_checked: 2026-04-20
+    last_checked: 2026-04-26
 
   - id: permission-request-updatedinput-deny-recheck
     error_targeted: "hook returning updatedInput bypasses permissions.deny via mutation"
     error_type: security
     activated: 2026-04-20
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 0
-    last_checked: 2026-04-20
+    last_checked: 2026-04-26
 
   - id: prompt-cache-1h-ttl
     error_targeted: null
@@ -234,23 +234,23 @@ practices:
     error_targeted: "hook `if` filter written on non-tool event silently ignored — fires unconditionally"
     error_type: config
     activated: 2026-04-21
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 0
-    last_checked: 2026-04-21
+    last_checked: 2026-04-26
 
   - id: sandbox-denieddomains-and-env-scrub
     error_targeted: "credentials leaked to subprocess via inherited env; allowedDomains wildcards trust bad hosts"
     error_type: security
     activated: 2026-04-21
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 0
-    last_checked: 2026-04-21
+    last_checked: 2026-04-26
 
   - id: focus-command-replaces-ctrl-o
     error_targeted: null
@@ -300,9 +300,164 @@ practices:
     error_targeted: "session-report.sh writes malformed JSON via grep -c || echo 0 + cascade from corrupted previous file"
     error_type: logic
     activated: 2026-04-21
-    recurrence_checks: 0
+    recurrence_checks: 1
     recurrence_target: 5
     recurred: false
     status: monitoring
     projects_applied: 10
-    last_checked: 2026-04-21
+    last_checked: 2026-04-26
+
+  # v3.4.0 — 2026-04-26 watch sync
+  - id: practice-2026-04-26-hook-duration-ms
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-automode-defaults-placeholder
+    error_targeted: "auto mode classifier silently replaced (not extended) when custom autoMode arrays defined without $defaults placeholder"
+    error_type: config
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-usage-merge-and-skill-collision
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-new-hook-events
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-hook-type-mcp-tool
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-native-bfs-ugrep-replaces-glob-grep
+    error_targeted: "hook with matcher Glob or Grep silently never fires on native macOS/Linux builds (v2.1.117+)"
+    error_type: config
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-tui-fullscreen-setting
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-recap-and-away-summary
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-pr-url-template-and-attribution
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-bash-find-tightening
+    error_targeted: "Bash(find:*) allow rule no longer auto-approves -exec/-delete (v2.1.113+) — stack hooks relying on auto-approval prompt instead"
+    error_type: security
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-userpromptsubmit-session-title
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: practice-2026-04-26-cli-flags-and-subcommands-gap
+    error_targeted: null
+    error_type: null
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-04-26
+
+  - id: audit-item-14-false-positive-behavior-not-compiled
+    error_targeted: "audit item 14 awards 1 point for behaviors/index.yaml declaration without verifying compiled hooks under .claude/hooks/generated/ are referenced in settings.json"
+    error_type: logic
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 1
+    last_checked: 2026-04-26
+
+  - id: verify-before-done-regex-missing-bash-tests
+    error_targeted: "verify-before-done behavior soft-blocks git push from dotforge after legitimate bash tests/test-*.sh run because regex did not include bash test runners"
+    error_type: config
+    activated: 2026-04-26
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 1
+    last_checked: 2026-04-26

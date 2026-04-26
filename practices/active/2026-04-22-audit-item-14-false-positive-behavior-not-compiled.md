@@ -1,11 +1,11 @@
 ---
 id: audit-item-14-false-positive-behavior-not-compiled
 source: live-session
-status: inbox
+status: active
 captured: 2026-04-22
 tags: [audit, scoring, v3-behavior, false-positive, item-14, high-priority]
 tested_in: [tradingview]
-incorporated_in: []
+incorporated_in: ["docs/changelog.md#v340"]
 ---
 
 # Audit item 14 (Behaviors v3) is a false positive — counts declaration, not enforcement
