@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.1.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.4.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 **Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block, with a permanent override audit trail.
@@ -32,14 +32,21 @@ bootstrap → audit → sync → capture → propagate → behaviors
 
 For people and teams managing more than one Claude Code project.
 
-## v3.1 — what's new
+## v3.4 — what's new (2026-04-26)
 
-- **Domain knowledge sync** to Claude Code v2.1.108: hook events corrected 27 → **31** (3 lifecycle cadences), `InstructionsLoaded` / `Elicitation` / blockable `PreCompact` documented, default `effort` change `medium → high` flagged across model-routing rules.
-- **Enterprise managed settings** documented: `managed-settings.d/` drop-in directory, `allowManagedHooksOnly`, `allowedChannelPlugins`, `forceRemoteSettingsRefresh`.
-- **Dynamic permissions API** from hooks: `addRules` / `replaceRules` / `removeRules` / `setMode` / `addDirectories` / `removeDirectories` via `hookSpecificOutput.decision.updatedPermissions`.
-- **`ask:` permission list in template**: 18 entries bridging the gap between unrestricted `allow:` and total `deny:` — covers `rm`, `chmod`, `npm/pip install`, `docker run`, `kubectl apply/delete`, `gcloud`/`aws`/`terraform apply/destroy`, `git push/rebase/cherry-pick`.
-- **Compound-bash safety verified** for `block-destructive.sh` against the v2.1.98 bypass class — hook uses `grep -qiE` over the full command string and catches `ls && rm -rf /`-style forms by design. Limitations and `sandbox.enabled` defense-in-depth documented.
-- **`showThinkingSummaries` corrected** in domain rules: it is purely cosmetic, does NOT reduce thinking token spend. Added missing `alwaysThinkingEnabled` entry as the actual cost knob.
+- **Hook event catalogue** updated to **33+** — `UserPromptExpansion` (slash-command expansion, blockable) and `PostToolBatch` (end-of-batch validation, blockable) added; documented `mcp_tool` as a fifth hook type with `${tool_input.*}` substitution (v2.1.118+); `PostToolUse`/`PostToolUseFailure` now carry `duration_ms` (v2.1.119+).
+- **Auto mode `"$defaults"` placeholder** (v2.1.118+) — extends `autoMode.allow|soft_deny|environment` instead of replacing them. Removes the all-or-nothing trade-off when shipping custom rules.
+- **Permission tightening** (v2.1.113+): `Bash(find:*)` allow rules no longer auto-approve `-exec`/`-delete`; deny rules now match `env`/`sudo`/`watch`/`ionice`/`setsid` wrappers; on macOS `/private/{etc,var,tmp,home}` are dangerous removal targets under `Bash(rm:*)`.
+- **Native macOS/Linux builds** (v2.1.117+) replace `Glob`/`Grep` tools with embedded `bfs`/`ugrep` via `Bash`. `Glob(...)`/`Grep(...)` permission specifiers and hook matchers are now platform-dependent — flagged in domain rules.
+- **TUI + idle-return recap**: `tui` setting + `/tui` toggle (v2.1.110+); `awaySummaryEnabled` + `/recap` (v2.1.108+, default-on for telemetry-disabled deployments since v2.1.110). Coexists with dotforge's `last-compact.md` — different problems (idle return vs compaction survival).
+- **Git attribution refresh**: `attribution.commit`/`attribution.pr` supersede the deprecated `includeCoAuthoredBy`; `prUrlTemplate` for self-hosted GitHub/GitLab/Bitbucket.
+- **CLI surface fully documented**: `--name`/`-n`, `--tools`/`--allowedTools`/`--disallowedTools`, `--system-prompt[-file]`/`--append-system-prompt[-file]`, `--strict-mcp-config`, `--input-format`, `--include-partial-messages`, `--debug-file`, `--disable-slash-commands`, `--remote-control`/`--rc`, `--allow-dangerously-skip-permissions`, `--plugin-dir`, `--ide`, `--betas`, `--channels`. New CLI subcommands: `claude install`, `auth`, `agents`, `auto-mode`, `remote-control`, `setup-token`.
+- **Audit checklist item 14 fixed**: scoring v3 behavior coverage now requires ENFORCEMENT (compiled hook under `.claude/hooks/generated/` AND a `settings.json` reference), not just a `behaviors/index.yaml` declaration. Closes the false-positive that scored projects 1/1 with no runtime effect.
+- **`verify-before-done` regex extended**: now matches `bash tests/*.sh`, `bash <path>/test-*.sh`, `./tests/*.sh` patterns. Fixes legitimate `git push` from dotforge being soft-blocked after `bash tests/test-*.sh` runs.
+
+## v3.3.1 — Session-report JSON bug (2026-04-21)
+
+5-month silent bug: `session-report.sh` corrupted every metrics JSON across all 12 registered projects. Root cause: `grep -c ... || echo "0"` idiom that emitted `"0\n0"` on no-match, plus a cascade where the corrupted previous file made arithmetic fail on the next write. Fixed in 9 projects, 54 corrupt JSON files deleted.
 
 ## v3.0 — behavior governance layer
 

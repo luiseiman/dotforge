@@ -1,10 +1,50 @@
 # Roadmap dotforge
 
-Estado actual: **v3.1.1** (2026-04-15) — Domain knowledge sync con Claude Code v2.1.108 + `ask:` permission template + corrección `showThinkingSummaries`. v3 behaviors operativos en 4 proyectos piloto (dotforge, cotiza-api-cloud, TRADINGBOT, jira-nbch).
+Estado actual: **v3.4.0** (2026-04-26) — Sync con Claude Code v2.1.92 → v2.1.119 (12 prácticas upstream incorporadas) + dos fixes operativos (audit item 14 enforcement, verify-before-done regex `bash tests/*.sh`). v3 behaviors operativos en 4 proyectos piloto.
 
 ---
 
 ## Completado
+
+### v3.4.0 — Sync upstream + audit/behavior fixes (2026-04-26)
+
+`/forge watch` pass contra code.claude.com cubriendo Claude Code **v2.1.92 → v2.1.119**. 14 prácticas aceptadas (12 upstream + 2 operativas), 6 rechazos auto-generados, 1 deferred.
+
+#### Domain rules
+- `hook-architecture.md` / `hook-events.md`: catálogo de eventos a **33+** con `UserPromptExpansion` (blockable, slash command expansion) y `PostToolBatch` (blockable, fin de batch paralelo). Quinto tipo de hook `mcp_tool` con `${tool_input.*}` substitution. `PostToolUse`/`PostToolUseFailure` ahora reciben `duration_ms`. `UserPromptSubmit` puede setear `hookSpecificOutput.sessionTitle`.
+- `auto-mode.md`: placeholder `"$defaults"` para `autoMode.allow|soft_deny|environment` (extiende vs reemplaza built-in classifier). Nota sobre native macOS/Linux builds que pliegan `Glob`/`Grep` en `Bash`.
+- `permission-model.md`: tightening v2.1.113 (`Bash(find:*)` ya no auto-aprueba `-exec`/`-delete`; deny matching sobre wrappers `env`/`sudo`/`watch`/`ionice`/`setsid`; macOS `/private/{etc,var,tmp,home}` como targets peligrosos en `Bash(rm:*)`). PowerShell auto-approval (v2.1.119). `Glob(...)`/`Grep(...)` specifiers son platform-dependent.
+- `context-control-patterns.md`: TUI modes (`tui` setting, `/tui`, `autoScrollEnabled`); idle-return recap (`/recap`, `awaySummaryEnabled`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`). Coexistencia documentada con `last-compact.md`.
+- `parallel-sessions.md`: superficie completa de CLI flags (`--name`, `--tools`, `--strict-mcp-config`, `--system-prompt[-file]`, `--input-format`, `--include-partial-messages`, `--debug-file`, `--disable-slash-commands`, `--remote-control`, `--allow-dangerously-skip-permissions`, `--plugin-dir`, `--ide`, `--betas`, `--channels`) + subcomandos (`claude install`, `auth`, `agents`, `auto-mode`, `remote-control`, `setup-token`).
+- `_common.md`: Git section actualiza con `attribution.commit/pr` (deprecates `includeCoAuthoredBy`) y `prUrlTemplate` para self-hosted.
+
+#### Operativos
+- `behaviors/verify-before-done/behavior.yaml`: regex extiende a `bash tests/*.sh`, `bash <path>/test-*.sh`, `./tests/*.sh`. Resuelve `git push` desde dotforge soft-blocked tras `bash tests/test-*.sh` legítimo.
+- `audit/checklist.md` item 14: scoring requiere ENFORCEMENT (hook compilado en `.claude/hooks/generated/` AND referencia en `settings.json`), no solo declaración en `behaviors/index.yaml`. Cierra el falso positivo que premiaba a proyectos con 1/1 sin efecto runtime.
+- `docs/claude-vs-forge.md`: `/usage` como comando canónico; `/cost` y `/stats` son atajos desde v2.1.118.
+
+#### Inbox lifecycle
+14 → `active/` (12 upstream + audit-item-14 + verify-before-done-regex). 6 capturas auto-generadas `*-session-changes` rechazadas. 1 diferida (`agent-memory-underused`, tag `needs-more-info`). `metrics.yml` con 14 entries nuevas + 8 monitoring bumps.
+
+### v3.3.1 — Fix session-report.sh malformed JSON (2026-04-21)
+
+Bug silencioso de 5 meses: el hook `session-report.sh` corrompía cada archivo JSON bajo `~/.claude/metrics/<slug>/*.json` en los 12 proyectos registrados (54 archivos corruptos desde 2026-03-22). `/forge insights` degradaba silenciosamente a análisis retroactivo de git-log.
+
+Causa raíz (dos bugs encadenados): (1) `grep -c ... || echo "0"` emite `"0\n0"` cuando no hay match (GNU `grep -c` retorna `"0"` exit code 1 → `||` dispara → JSON queda con valores multi-línea); (2) cascada — un archivo corrupto previo hacía fallar la aritmética en el siguiente write, dejando `"sessions": ,`.
+
+Fix: separación `grep -c` + sanitización `${var//[!0-9]/}` + default `${var:-0}`. Helper `_jq_num()` que valida output numérico antes de aritmética. Pre-validación con `jq -e .` y restart limpio si el archivo previo está corrupto. Propagador `scripts/fix-session-metrics.sh` aplicado a 9 proyectos.
+
+### v3.3.0 — MEDIUM sync + integrations/channels (2026-04-21)
+
+Watch pass del 2026-04-21. Seis prácticas incorporadas (dos security-relevant en `monitoring`, cuatro doc-drift). `/forge audit` script-version (`scripts/audit_all.py`) para batch.
+
+### v3.2.0 — Domain sync v2.1.108 → v2.1.114 + block-destructive hardening (2026-04-19)
+
+Watch pass cubriendo Claude Code v2.1.108 → v2.1.114. Hardening de `block-destructive.sh` contra compound bash y env-var prefix bypass. Six prácticas incorporadas.
+
+### v3.1.2 — SSH/VPS persistence loop (2026-04-17)
+
+`domain/infra.md` como rule canónica para persistir SSH host config + deploy commands + service names entre sesiones. Cierra el problema de "Claude no recuerda cómo deployar" tras `/clear`.
 
 ### v3.1.1 — Doc fix `showThinkingSummaries` (2026-04-15)
 
@@ -221,9 +261,7 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ---
 
-## v3.2.0 — Próximo (planificado)
-
-> El número v3.1.0 quedó tomado por el sync de domain knowledge del 2026-04-15. Las features originalmente planeadas para v3.1.0 se reagrupan acá.
+## Próximo (planificado, sin versión asignada)
 
 ### Nuevo stack: prompt-engineering
 - Para proyectos que configuran Claude Code (meta-configuración)
@@ -232,10 +270,12 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 - Estima costo en tokens de la configuración actual
 
 ### Hooks para eventos no usados
-- PostToolUseFailure → error tracking automático
+- PostToolUseFailure → error tracking automático (parcial: domain rules ya documentan `duration_ms` field desde v3.4.0)
 - FileChanged → auto-reload patterns
 - TaskCreated/TaskCompleted → métricas de orquestación
 - PermissionDenied → audit trail
+- PostToolBatch → end-of-batch validation (nuevo desde v3.4.0)
+- UserPromptExpansion → gate de expansión de slash commands (nuevo desde v3.4.0)
 
 ### Rollout v3 behaviors a los 8 proyectos restantes
 - Después del periodo de validación de los 4 pilotos (dotforge, cotiza-api-cloud, TRADINGBOT, jira-nbch)
@@ -243,6 +283,10 @@ Reverse engineering de 5 repositorios + alineación de dotforge con internals ve
 
 ### Sandbox config para proyectos con secretos
 - TRADINGBOT, derup → habilitar `sandbox.enabled` con `filesystem.denyRead` sobre `.env`
+
+### Hook follow-up de v3.4.0
+- `template/hooks/tool-latency.sh` — PostToolUse hook que bufferea `duration_ms` por tool a un archivo, leído por `session-report.sh` al final de la sesión
+- Auditoría de stacks por `Bash(find:*)`/`Bash(rm:*)` allow rules afectados por el tightening v2.1.113
 
 ### Cleanup
 - Redis section redundancy entre python-fastapi y redis
