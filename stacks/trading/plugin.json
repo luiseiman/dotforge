@@ -1,10 +1,10 @@
 {
   "name": "dotforge-stack-trading",
-  "version": "2.0.0",
-  "description": "Trading & investment analysis — thesis tracking, earnings watch, screening, catalyst calendar. AR + US markets.",
+  "version": "2.1.0",
+  "description": "Trading & investment analysis — thesis tracking, earnings watch, screening, catalyst calendar, backtesting ADR gate. AR + US markets.",
   "parent": "dotforge",
   "components": {
-    "rules": ["rules/trading.md"],
+    "rules": ["rules/trading.md", "rules/backtesting-adr-gate.md"],
     "settings": "settings.json.partial",
     "skills": [
       "skills/thesis-tracker/SKILL.md",

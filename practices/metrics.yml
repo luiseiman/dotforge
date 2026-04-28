@@ -461,3 +461,14 @@ practices:
     status: monitoring
     projects_applied: 1
     last_checked: 2026-04-26
+
+  - id: psr-gate-baseline-adrs
+    error_targeted: "ADR declares baseline strategy based on Sharpe delta indistinguishable from noise"
+    error_type: logic
+    activated: 2026-04-27
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-04-27

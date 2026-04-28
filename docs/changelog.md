@@ -4,6 +4,33 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.4.1 (2026-04-27)
+
+### New rule — `stacks/trading/rules/backtesting-adr-gate.md`
+
+Captured from a real ADR retrospective in the `tradingview` repo: a "Dual Momentum SPY/QQQ/BIL 12m" strategy was declared the official baseline of the passive-US sleeve based on walk-forward OOS Sharpe 1.08 vs QQQ B&H 1.04 (delta = +0.04) and Calmar 2.78 vs 1.66. After fixing a look-ahead bug in the rebalancer, the OOS metrics deflated to 1.06 vs 1.04. Computing **PSR(QQQ B&H)** per Bailey & López de Prado (2012) for all 9 strategies tested in the repo showed **none passed the 0.95 threshold** — the "best" strategy gave 70% probability of beating B&H, i.e. 30% probability of being worse.
+
+The new rule encodes:
+
+- **PSR(benchmark) > 0.95** required to claim "baseline", "winner", or "supersedes" in any ADR
+- **DSR (Deflated Sharpe Ratio)** required when testing > 5 strategies in the same project (multiple-testing correction)
+- Below threshold: ADR may document the strategy as alternative, but must not use the strong words
+- Implementation: ~50 lines stdlib-only via `statistics.NormalDist`; no scipy needed
+
+Generalization beyond trading: when ranking N options by a noisy metric, compute Pr(top option genuinely better than alternatives). Below threshold, the ranking is decoration — don't anchor decisions on it.
+
+#### Changed
+
+- `stacks/trading/plugin.json`: bumped to v2.1.0, components.rules now lists both rules.
+- `practices/active/2026-04-27-psr-gate-baseline-adrs.md`: incorporated_in `['3.4.1']`.
+- `metrics.yml`: monitoring entry, error_type=logic.
+
+#### Inbox processing
+
+- 1 accepted (psr-gate-baseline-adrs → above)
+- 1 rejected (tradingview-session-changes — auto-stub, summary-only)
+- 1 deferred (agent-memory-underused — low-priority, needs more usage data to evaluate)
+
 ## v3.4.0 (2026-04-26)
 
 ### `/forge watch` sync from CHANGELOG v2.1.92 → v2.1.119
