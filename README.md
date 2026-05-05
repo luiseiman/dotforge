@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.4.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.7.0-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 **Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block, with a permanent override audit trail.
@@ -31,6 +31,39 @@ bootstrap → audit → sync → capture → propagate → behaviors
 ```
 
 For people and teams managing more than one Claude Code project.
+
+## v3.7 — what's new (2026-05-05)
+
+### Smart init + smart auto-compact (v3.6.3 + v3.7.0)
+
+- **Smart auto-compact** — `scripts/compact-filter.py` pipes `compact_summary` through a conservative filter before persisting to `last-compact.md`. Collapses fenced blocks > 40 lines, dense unprotected runs ≥ 30 lines, triplicate paragraphs. Never drops headings, paths, or `decision/error/fix` lines. Rotating history of last 5 checkpoints under `.claude/session/compact-history/`. Worst case: file unchanged (filter is a safety net, not aggressive compression).
+- **Smart init** — new `session-startup.sh` (SessionStart hook for all sources except `compact`) captures branch, HEAD, working-tree count, recent `.claude/` edits (24h), pending TODOs, behaviors disabled. Compares against the last snapshot to surface drift. Writes `last-startup.md` plus rotating `startup-history/<ISO>.md` (last 5). Injects a brief into context only when something is noteworthy.
+- **Setup hook validation** — new `pre-session-check.sh` wired in `Setup` (matchers `init`, `maintenance`). Validates `settings.json` JSON, `block-destructive.sh` executable, `behaviors/index.yaml` YAML, all wired hooks present + executable. Exit 2 blocks session start. Closes the gap between Setup being documented and never wired.
+
+### Audit hardening (v3.6.1 → v3.6.2)
+
+- **`search-first` behavior disabled** — flag-consume design generated false positives in sessions with prior context (counter reached `soft_block` and was disabled mid-session). Re-enable when sticky-flag mode lands.
+- **Permission rule split** — `domain/permission-model.md` (112 → 59 lines) + new `domain/permission-managed-settings.md` (60 lines, distinct globs). Loads only when applicable.
+- **Inbox signal gate** — `detect-claude-changes.sh` now skips auto-stub captures when total < 15 files and no structural change (agents/commands/skills = 0).
+- **Honest validation rate** — `not-applicable` renamed to `informational`. Practices that don't target a specific error are excluded from the validation rate calc, instead of inflating it as "validated".
+- **Registry shadow clarified** — `projects.yml` is now explicitly an example/reference file; runtime source of truth is `projects.local.yml` (gitignored).
+- **`parallel-sessions.md` split** (81 → 38 lines) — generic CLI flags moved to new `domain/cli-flags.md`.
+
+### Sync from Claude Code v2.1.120-128 (v3.5.0 → v3.6.0)
+
+- **`Setup` event** added to dotforge's catalogue (32+ hook events). Fires for `--init-only` / `--maintenance` runs with matchers `init` and `maintenance`.
+- **`PostToolUse.updatedToolOutput`** generalized from MCP-only to all tools (v2.1.121+). Documented design tradeoff: rewriting tool output can hide errors and breaks audit trails — prefer `additionalContext` for augmentation.
+- **5 managed-only enterprise fields** documented: `allowManagedPermissionRulesOnly`, `network.allowManagedDomainsOnly`, `filesystem.allowManagedReadPathsOnly`, `strictKnownMarketplaces`, `blockedMarketplaces`.
+- **`alwaysLoad: true`** per-MCP-server option (v2.1.121+) — tools skip tool-search deferral and stay always available.
+- **`workspace`** reserved as MCP server name (v2.1.128+).
+- **`disable-model-invocation`** frontmatter field (v2.1.111+) for skills.
+- **`${CLAUDE_EFFORT}`** runtime placeholder in skill content (v2.1.120+).
+- **`channelsEnabled`** required for API-key auth on `--channels` (v2.1.128+).
+- **Plugin distribution** — new `domain/plugin-distribution.md` covers `${CLAUDE_PLUGIN_DATA}`, multi-seed `CLAUDE_CODE_PLUGIN_SEED_DIR`, marketplace governance, `claude plugin prune`.
+
+### Trading stack (v3.4.1)
+
+- New `stacks/trading/rules/backtesting-adr-gate.md` — PSR/DSR gate rule for ADR baseline declarations (Bailey & López de Prado 2012, 2014).
 
 ## v3.4 — what's new (2026-04-26)
 

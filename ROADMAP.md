@@ -1,10 +1,51 @@
 # Roadmap dotforge
 
-Estado actual: **v3.4.0** (2026-04-26) — Sync con Claude Code v2.1.92 → v2.1.119 (12 prácticas upstream incorporadas) + dos fixes operativos (audit item 14 enforcement, verify-before-done regex `bash tests/*.sh`). v3 behaviors operativos en 4 proyectos piloto.
+Estado actual: **v3.7.0** (2026-05-05) — Init inteligente (snapshot + drift + Setup validation) sumado al auto-compact inteligente (filter + history). Propagado a los 12 proyectos registrados. 7 GitHub releases publicados (v3.4.1 → v3.7.0).
 
 ---
 
 ## Completado
+
+### v3.7.0 — Smart init: startup snapshot + drift + Setup validation (2026-05-05)
+
+Cierra la simetría con auto-compact (v3.6.3): el SessionStart ahora captura, compara y persiste el estado inicial; el Setup hook valida invariantes antes de cualquier tool call.
+
+- **`.claude/hooks/session-startup.sh`** — wired en `SessionStart` (todos los `source ≠ compact`). Captura branch, HEAD, working tree, edits 24h en `.claude/`, TODOs, behaviors disabled. Compara HEAD con `startup-history/` para detectar drift. Inyecta brief al contexto sólo si hay algo notable.
+- **`.claude/hooks/pre-session-check.sh`** — wired en `Setup` (`init`, `maintenance`). Valida JSON/YAML, hooks executable, `block-destructive.sh` ejecutable. Exit 2 bloquea session start.
+- **Histórico rotatorio** — últimos 5 snapshots bajo `startup-history/<ISO>.md`.
+- **Propagación a 12 proyectos** — `scripts/sync_all.py` + `scripts/wire_hooks_all.py`. 22 hooks copiados, 33 wirings agregados, 11 `post-compact.sh` actualizados al template v3.7.0 (filter logic). 0 customizaciones detectadas, 0 errores.
+
+### v3.6.3 — Smart auto-compact: filter + rotating history (2026-05-05)
+
+Capa de filtrado encima del compact_summary. **`scripts/compact-filter.py`** colapsa fenced blocks > 40 líneas, runs ≥ 30 líneas no-protegidas, párrafos triplicados. Nunca borra headings, paths, decision/error/fix lines. Hook `post-compact.sh` pipea por el filter, fallback al raw si falla. Histórico de los últimos 5 checkpoints bajo `.claude/session/compact-history/`.
+
+Verificación: synthetic verbose 2253B → 730B (68% reducción), real dense 22453B → 22447B (~0%, no daña).
+
+### v3.6.2 — Cierre de pendientes de auditoría (2026-05-05)
+
+- `detect-claude-changes.sh` con signal gate (skip si TOTAL < 15 archivos AND nada estructural)
+- `not-applicable` → `informational` en metrics, frontmatters, docs (validation rate honesta: 0/19 = 0%)
+- `registry/projects.yml` header reescrito como EXAMPLE / REFERENCE
+- `domain/parallel-sessions.md` 81 → 38 + nuevo `domain/cli-flags.md` (53 líneas)
+
+### v3.6.1 — Auditoría crítica + pulidos de calidad (2026-05-05)
+
+- `behaviors/index.yaml`: `search-first.enabled: false` (counter=7, escaló a soft_block, deshabilitado por user en sesión)
+- Hooks generados de search-first eliminados → PreToolUse: 8 → 6 hooks
+- `domain/permission-model.md` dividido (112 → 59 líneas) + nuevo `domain/permission-managed-settings.md` (60 líneas)
+- 9 backups huérfanos `.bak.20260428-*` borrados (dotforge + 8 proyectos)
+
+### v3.6.0 — Sync from CC v2.1.120-128 round 2 (2026-05-05)
+
+7 prácticas captadas e incorporadas en una pasada de `/forge watch`. Setup event documentado. PostToolUse `updatedToolOutput` generalizado a todos los tools. 5 managed-only enterprise fields. alwaysLoad MCP option. workspace reserved name.
+
+### v3.5.0 — Sync from CC v2.1.120-128 + agent memory checklist (2026-05-05)
+
+11 prácticas. `disable-model-invocation`, `${CLAUDE_EFFORT}`, plugin-distribution.md (PLUGIN_DATA + multi-seed). Agent memory checklist en architect/code-reviewer/implementer/security-auditor.
+
+### v3.4.1 — Backtesting ADR gate rule (2026-04-27)
+
+`stacks/trading/rules/backtesting-adr-gate.md` — PSR/DSR gate para baseline ADRs (Bailey & López de Prado 2012, 2014).
 
 ### v3.4.0 — Sync upstream + audit/behavior fixes (2026-04-26)
 
