@@ -4,6 +4,45 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.7.1 (2026-05-05)
+
+### Política de compactación basada en evidencia
+
+Investigación combinando academia (Liu et al. Stanford 2023, Chroma Research, Greg Kamradt) y práctica de campo en X (Boris Cherny y Cat Wu de Anthropic, Daniel San, Avthar, Paweł Huryn) consolidada en política operacional dotforge. Threshold canónico: **80%** del context window (no 50%, no 96.7% default).
+
+#### Nuevas piezas
+
+- **`domain/compaction-strategy.md`** (nueva domain rule, 70 líneas) — política basada en evidencia: threshold 80%, distinción `/compact` vs `/clear` vs subagent, anti-patterns confirmados, cache economy (Paweł Huryn — invalidación de prefix cache), re-anchoring para mitigar "lost in the middle" (Liu et al.). Citas con URLs.
+- **`/forge compact-task`** (nuevo slash command) — wrapper de `/compact` con hint estandarizado dotforge: preserve decisions, files modified, pending TODOs, behaviors disabled, last commit; drop tool output verbose. Resuelve el anti-pattern de `/compact` sin instructions custom.
+- **`/forge context-status`** (nuevo slash command) — reporte read-only sobre uso estimado del context window, cache health proxy (basado en `tool-latency.sh` p50), edits recientes, recomendación de acción. No compacta.
+- **`pre-compact-warning.sh`** (nuevo hook, wired en `UserPromptSubmit`) — alerta proactiva al 80% (warning) y 90% (urgent). Estimación: bytes del transcript / 5. Configurable via env vars: `CLAUDE_CONTEXT_LIMIT`, `CLAUDE_COMPACT_WARN_PCT`, `CLAUDE_COMPACT_URGENT_PCT`. Smoke-tested en 3 escenarios (debajo del threshold, warning, urgent).
+- **`docs/internal/compaction-strategy.md`** (~200 líneas) — guía operacional canónica con flow chart ASCII, tabla de decisión `/compact` vs `/clear` vs subagent, configuración por tipo de proyecto (light/standard/heavy), bibliografía completa (académica + X).
+
+#### Wiring
+
+- `.claude/settings.json`: nuevo bloque `UserPromptSubmit` con `pre-compact-warning.sh` (timeout 3s)
+- `template/settings.json.tmpl`: idem para propagación a 12 proyectos
+- `template/hooks/pre-compact-warning.sh`: copia propagable
+
+#### Hallazgos clave de la investigación
+
+- **Liu et al. (Stanford 2023)**: 30%+ accuracy loss para info en el medio del contexto (7-50% depth)
+- **Chroma Research (2024)**: 18 modelos frontier degradan dentro de su ventana declarada — Sonnet 200K muestra caídas desde 50K tokens
+- **Greg Kamradt**: GPT-4 recall degrada >73K tokens
+- **Boris Cherny (Anthropic)**: auto-compact dispara ~155K tokens; plan acceptance auto-clears context
+- **Cat Wu (Anthropic)**: defiende auto-compact como preservador de info crítica
+- **Daniel San (X)**: mantiene auto-compact OFF, hook al 80% en producción ("every time it triggered for me, I lost important context")
+- **Avthar (X)**: "actively clear context yourself using /clear or /compact rather than waiting for auto-compact to happen mid-task, which can hurt performance"
+- **Paweł Huryn (X)**: cache economics dominan la decisión — bug de marzo 2026 causó 20× cost inflation por cache roto
+
+#### Convergencia de la evidencia
+
+| Threshold | Veredicto |
+|---|---|
+| 50% | Demasiado agresivo. Pérdida de thread reciente, summary acumula degradación |
+| **80%** | **Sweet spot**. Coinciden Daniel San, Avthar, evidencia académica con safety margin |
+| 96.7% (default) | Demasiado tarde. Calidad ya degradada al disparar auto-compact |
+
 ## v3.7.0 (2026-05-05)
 
 ### Init inteligente — startup snapshot + drift detection + Setup validation

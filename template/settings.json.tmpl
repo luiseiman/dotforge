@@ -184,6 +184,18 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-compact-warning.sh",
+            "timeout": 3
+          }
+        ]
+      }
     ]
   }
 }
