@@ -28,6 +28,7 @@ last_verified: 2026-04-20
 - `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`: lower = earlier compaction
 - `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1`: disable entirely
 - `/compact <instructions>`: manual trigger with custom preservation hints
+- dotforge `post-compact.sh` (v3.6.3+) pipes `compact_summary` through `scripts/compact-filter.py` before persisting to `.claude/session/last-compact.md`. Conservative: collapses fenced blocks > 40 lines, dense unprotected runs ≥ 30 lines, triplicate paragraphs. Never drops headings, paths, decision/error/fix lines. Keeps last 5 checkpoints under `.claude/session/compact-history/`
 
 ## CLAUDE.md and memory limits
 

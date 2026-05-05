@@ -4,6 +4,36 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.6.3 (2026-05-05)
+
+### Auto-compact inteligente — filtrado y histórico
+
+Capa de filtrado encima del compact_summary que genera Claude Code. Dos mejoras concretas al pipeline existente (`PostCompact → last-compact.md → SessionStart restore`):
+
+- **`scripts/compact-filter.py`** (nuevo) — pipe filter conservador que reduce el summary antes de persistirlo. Heurísticas seguras:
+  - Bloques fenced (` ``` `) >40 líneas → primer 5 + último 5 + nota de elisión
+  - Runs de ≥30 líneas no-protegidas (sin markdown structure, sin paths, sin keywords decisión/error/fix/pending) → primer 3 + último 3 + nota
+  - Paragraphs duplicados ≥3 veces → 1 sola copia
+  - Runs de >2 newlines consecutivos → colapso a 2
+  - **Nunca filtra**: lineas con `#`/`-`/`|`/`>`/`=`, paths (`.md`/`.sh`/`.py`/etc.), tokens críticos (`decision`, `error`, `fix`, `pending`, `next step`, `commit`, `todo`, `blocker`, `warning`, `fail`), primeras 10 líneas
+  - Output a stdout, métricas (in/out bytes, ratio) a stderr
+  - Tests: 2253B → 730B = **68% reducción** sobre summary verbose; 22453B → 22447B = ~0% sobre summary ya denso (no daña).
+- **`.claude/hooks/post-compact.sh`** + **`template/hooks/post-compact.sh`** — pipe summary por compact-filter, con fallback al raw si el filter falla. Métrica `[compact-filter]` queda en el frontmatter del checkpoint.
+- **Histórico rotatorio** — últimas 5 compactaciones bajo `.claude/session/compact-history/<ISO>.md`. Permite diff entre compactaciones consecutivas o recovery si `last-compact.md` quedó stale.
+- **`domain/context-window-optimization.md`** — actualizado con la nota del nuevo comportamiento del hook.
+
+#### Verificación
+
+Smoke test end-to-end con JSON sintético (40 líneas filler + decision + next steps):
+```
+[compact-filter] in=2253B  out=730B  saved=1523B  ratio=0.32
+```
+Sobre `last-compact.md` real de la sesión actual (22 KB de summary denso):
+```
+[compact-filter] in=22453B  out=22447B  saved=6B  ratio=1.00
+```
+Comportamiento esperado: summaries densos pasan casi sin tocar, summaries con tool dumps verbose se reducen 30-70%. **Worst case el archivo queda igual** — el filter es seguridad, no compresión agresiva.
+
 ## v3.6.2 (2026-05-05)
 
 ### Cierre de pendientes de auditoría
