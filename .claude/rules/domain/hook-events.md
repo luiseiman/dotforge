@@ -12,11 +12,11 @@ last_verified: 2026-05-05
 - PostCompact command: `trigger` ("auto"/"manual") + `compact_summary` (full text)
 - PostCompact SDK: `compactType` + `messageCountBefore` + `messageCountAfter`
 - PreCompact: `compactType` + `messageCount` — **BLOCKABLE since v2.1.105** (exit 2 prevents compaction)
-- SessionStart `source`: "startup", "resume", "compact", "clear"
+- SessionStart `source`: "startup", "resume", "compact", "clear". dotforge wires three hooks here (v3.7.0+): `check-updates.sh` (version check), `session-restore.sh` (re-injects last-compact.md when source=compact), `session-startup.sh` (snapshot + drift detection on every other source — writes `.claude/session/last-startup.md` plus rotating `startup-history/<ISO>.md`, last 5)
 - CwdChanged: fires on directory change, supports CLAUDE_ENV_FILE
 - FileChanged: fires on external file modification — use for auto-reload
 - InstructionsLoaded: fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason`: `session_start` | `nested_traversal` | `path_glob_match` | `include` | `compact`. Observability-only, no decision control.
-- Setup: fires for `--init-only` / `--maintenance` runs. Matchers: `init` | `maintenance`. Non-blockable. Use for credential rotation, env-var provisioning, prerequisite checks BEFORE session starts. Distinct from SessionStart (every session) — Setup only fires on explicit request.
+- Setup: fires for `--init-only` / `--maintenance` runs. Matchers: `init` | `maintenance`. Use for credential rotation, env-var provisioning, prerequisite checks BEFORE session starts. dotforge wires `pre-session-check.sh` (v3.7.0+) — validates settings.json JSON, behaviors/index.yaml YAML, all wired hooks present + executable, block-destructive.sh executable. Exit 2 blocks session start.
 
 ## Tool events
 

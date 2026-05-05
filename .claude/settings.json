@@ -45,6 +45,10 @@
             "type": "command",
             "command": ".claude/hooks/session-restore.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-startup.sh"
           }
         ]
       }
@@ -165,6 +169,26 @@
             "type": "command",
             "command": ".claude/hooks/permission-denied.sh",
             "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Setup": [
+      {
+        "matcher": "init",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-session-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "maintenance",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-session-check.sh"
           }
         ]
       }

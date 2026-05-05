@@ -4,6 +4,75 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.7.0 (2026-05-05)
+
+### Init inteligente — startup snapshot + drift detection + Setup validation
+
+Cuatro piezas nuevas que cierran la simetría con auto-compact (v3.6.3): el SessionStart ahora captura, compara y persiste el estado inicial; el Setup hook valida invariantes antes de cualquier tool call.
+
+#### Nuevos hooks
+
+- **`.claude/hooks/session-startup.sh`** (wired en `SessionStart`, todos los `source ≠ compact`):
+  - Captura branch, HEAD short, working tree count, archivos `.claude/` editados en últimas 24h, TODOs/FIXMEs pendientes, behaviors deshabilitados
+  - Compara HEAD actual con el HEAD del último snapshot en `startup-history/` → emite "drift" line con commits-ahead
+  - Escribe `.claude/session/last-startup.md` (snapshot completo) + `startup-history/<ISO>.md` (rotating, últimos 5)
+  - Inyecta brief al stdout (Claude lo recibe como contexto inicial) SOLO si hay algo notable: tree dirty, recent edits, drift, behaviors off, TODOs pending. Silencioso si todo limpio
+  - Silencioso en `source=compact` (delegado a `session-restore.sh`)
+
+- **`.claude/hooks/pre-session-check.sh`** (wired en `Setup`, matchers `init` y `maintenance`):
+  - Valida invariantes en `claude --init-only` / `claude --maintenance`:
+    1. `settings.json` es JSON válido
+    2. `block-destructive.sh` presente + ejecutable (security baseline)
+    3. `behaviors/index.yaml` es YAML válido (si existe)
+    4. Todos los hooks wireados existen y son ejecutables
+    5. `DOTFORGE_DIR` resuelve (warn only)
+  - Exit 2 bloquea session start si hay errores críticos
+  - Output: silencioso en éxito, checklist completo en fallo
+
+#### Cambios
+
+- **`template/settings.json.tmpl`** — nuevos hooks wireados:
+  - `SessionStart` agrega tercer entry: `session-startup.sh` (timeout 10s)
+  - `Setup` con matchers `init` y `maintenance` apunta a `pre-session-check.sh`
+- **`template/hooks/session-startup.sh`** y **`template/hooks/pre-session-check.sh`** — copias propagables a los 12 proyectos en próximo `/forge sync`
+- **`domain/hook-events.md`** — documenta el wiring de dotforge en `SessionStart` (3 hooks) y `Setup` (pre-session-check). Refleja `enabled` en `index.yaml` para los 3 hooks y los matchers para Setup.
+
+#### Verificación
+
+Smoke tests sobre el proyecto dotforge mismo:
+```
+$ printf '{"source":"startup"}' | bash .claude/hooks/session-startup.sh
+## Session Startup Brief
+**Branch:** main @ fffc0b6
+**Working tree:** 6 changed files
+**Recent .claude/ edits (24h):** 14
+**Behaviors disabled:** search-first,plan-before-code,objection-format
+
+$ bash .claude/hooks/pre-session-check.sh
+✓ dotforge pre-session check: all invariants pass
+
+$ printf '{"source":"compact"}' | bash .claude/hooks/session-startup.sh
+(silent — delegated to session-restore.sh)
+
+$ # Inject broken hook reference, run check
+$ bash .claude/hooks/pre-session-check.sh
+── dotforge pre-session check ──
+Errors (1):
+  ✗ Wired hook missing: .claude/hooks/nonexistent.sh
+─────────────────────────────────
+exit=2
+```
+
+#### Lo que cierra de la auditoría inicial
+
+| Pre-v3.7.0 | Post-v3.7.0 |
+|---|---|
+| SessionStart sólo en `compact` re-inyecta contexto | Cubre los 4 sources (startup, resume, compact, clear) |
+| No detección de drift entre sesiones | `session-startup.sh` compara HEAD vs último snapshot |
+| Setup hook nunca wireado pese a estar documentado | `pre-session-check.sh` valida invariantes en `--init-only` |
+| No histórico de session starts | `startup-history/` rotating, último 5 |
+| Sin visibilidad de behaviors disabled al arrancar | Brief incluye lista explícita |
+
 ## v3.6.3 (2026-05-05)
 
 ### Auto-compact inteligente — filtrado y histórico
