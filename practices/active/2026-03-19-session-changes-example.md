@@ -9,7 +9,7 @@ tags: [auto-detected, settings, hooks, rules]
 tested_in: example-project
 incorporated_in: [template/settings.json.tmpl, stacks/react-vite-ts/hooks/lint-ts.sh, stacks/python-fastapi/rules/backend.md, stacks/python-fastapi/rules/tests.md, stacks/react-vite-ts/rules/frontend.md, template/hooks/lint-on-save.sh]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 error_type: null
 ---
 

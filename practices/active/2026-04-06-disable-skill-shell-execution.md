@@ -9,7 +9,7 @@ tags: [skills, security, settings]
 tested_in: null
 incorporated_in: [".claude/rules/domain/auto-mode.md"]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 ---
 
 ## Descripción

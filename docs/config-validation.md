@@ -121,11 +121,11 @@ Práctica activada
 ### Campos en frontmatter de prácticas
 
 ```yaml
-effectiveness: validated | monitoring | failed | not-applicable
+effectiveness: validated | monitoring | failed | informational
 error_type: null | syntax | logic | integration | config | security
 ```
 
-Prácticas que no apuntan a un error específico (mejoras generales) se marcan `not-applicable`.
+Prácticas que no apuntan a un error específico (mejoras generales / conocimiento) se marcan `informational` — quedan excluidas del cálculo de validation rate, ya que no hay error que prevenir. Renombrado en v3.6.2 desde `not-applicable` para reflejar mejor su semántica.
 
 ## Fase 4: Benchmark comparativo
 

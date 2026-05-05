@@ -9,7 +9,7 @@ tags: [rules, frontmatter, path-scoping, verified]
 tested_in: [dotforge]
 incorporated_in: [.claude/rules/domain/rule-effectiveness.md, docs/best-practices.md, docs/usage-guide.md, docs/guia-uso.md]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 error_type: null
 ---
 

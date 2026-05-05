@@ -9,7 +9,7 @@ tags: [hooks, permissions, security]
 tested_in: null
 incorporated_in: [".claude/rules/domain/hook-events.md", ".claude/rules/domain/hook-architecture.md"]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 ---
 
 ## Descripción

@@ -9,7 +9,7 @@ tags: [hooks, precompact, documentation, correction]
 tested_in: []
 incorporated_in: [.claude/rules/domain/hook-architecture.md]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 error_type: config
 ---
 

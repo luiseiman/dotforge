@@ -1,12 +1,23 @@
-# Registry of projects managed by dotforge
-# Updated by /forge audit and /forge sync
-# Schema: name, path, stacks, last_audit, last_sync, dotforge_version, score, history, metrics_summary, notes
-# Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/8) (max 10.0)
-# history: array of {date, score, version} entries — appended by /forge audit, never overwritten
-# metrics_summary: aggregated session metrics — updated by /forge insights from ~/.claude/metrics/{slug}/
+# Registry of projects managed by dotforge — EXAMPLE / REFERENCE FILE
 #
-# This file ships empty. /forge bootstrap and /forge audit populate it with your projects.
-# Your local registry is gitignored after first use — see .gitignore.
+# IMPORTANT: this file is committed to git as a SCHEMA EXAMPLE only.
+# The runtime source of truth is `projects.local.yml` (gitignored, per-machine,
+# updated by `/forge audit` and `/forge sync`). When both files exist, the
+# CLI prefers `projects.local.yml`.
+#
+# Why two files: dotforge ships as a public template, but each user's project
+# list is private (paths, scores, history). Keeping `projects.yml` as a small
+# committed example shows the schema; `projects.local.yml` holds real state.
+#
+# Schema: name, path, stacks, last_audit, last_sync, dotforge_version, score,
+#         history, metrics_summary, notes
+# Scoring v2.3.0: score = obligatorio*0.7 + recomendado*(3.0/8) (max 10.0)
+# history: array of {date, score, version} — appended, never overwritten
+# metrics_summary: aggregated from ~/.claude/metrics/{slug}/ via /forge insights
+#
+# Below is example data from a maintainer machine. Treat it as illustration —
+# not authoritative state. Do not edit by hand; use `/forge audit` to refresh
+# `projects.local.yml` instead.
 
 projects:
   - name: dotforge

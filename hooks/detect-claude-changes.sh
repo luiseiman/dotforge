@@ -85,6 +85,17 @@ TOTAL=$(printf '%s\n' "$CHANGED" | wc -l | tr -d ' ')
 N_KNOWN=$((N_AGENTS + N_COMMANDS + N_HOOKS + N_RULES + N_SKILLS + N_MEMORY + N_CLAUDEMD + N_SETTINGS))
 N_OTHER=$((TOTAL - N_KNOWN))
 
+# Signal gate: skip low-signal captures. Only emit the inbox entry when the
+# session introduced or modified something structurally interesting:
+#   - any new/modified agents, commands, or skills (categorical change), OR
+#   - large diff (>= MIN_TOTAL files) in hooks/rules/settings/CLAUDE.md
+# Below threshold the entry is summary-only noise the user can't act on.
+MIN_TOTAL=15
+N_STRUCTURAL=$((N_AGENTS + N_COMMANDS + N_SKILLS))
+if [[ "$N_STRUCTURAL" -eq 0 && "$TOTAL" -lt "$MIN_TOTAL" ]]; then
+  exit 0
+fi
+
 emit_line() {
   local label="$1" n="$2"
   if [[ "$n" -gt 0 ]]; then

@@ -9,7 +9,7 @@ tags: [mcp, performance, settings]
 tested_in: null
 incorporated_in: [".claude/rules/domain/context-window-optimization.md"]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 ---
 
 ## Descripción

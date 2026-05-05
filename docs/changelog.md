@@ -4,6 +4,34 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.6.2 (2026-05-05)
+
+### Cierre de pendientes de auditoría
+
+Aplicados los 4 pendientes registrados en v3.6.1.
+
+- **`hooks/detect-claude-changes.sh`** — gate de señal: skip auto-stub si TOTAL < 15 archivos AND no hay cambios estructurales (agents/commands/skills = 0). Elimina ruido de inbox que el usuario no podía evaluar.
+- **Métrica honesta — `not-applicable` → `informational`** en `practices/metrics.yml` (35 entradas), `skills/update-practices/SKILL.md`, `practices/active/*.md` (11 frontmatters), `practices/README.md`, `docs/config-validation.md`, `docs/internal/config-validation-flow.md`. Validation rate ahora calcula sobre 19 prácticas trackable (no sobre 54), produciendo 0/19 = 0% — métrica realista, no inflada por información general.
+- **`registry/projects.yml`** — header reescrito como "EXAMPLE / REFERENCE FILE" explícito. Aclara que la fuente de verdad es `projects.local.yml` (gitignored) y por qué hay dos archivos.
+- **`domain/parallel-sessions.md`** — 81 → 38 líneas. Las secciones de CLI flags no relacionadas con paralelismo migraron al nuevo **`domain/cli-flags.md`** (53 líneas), con globs distintos (`CLAUDE.md`, `agents/*`, `skills/**/SKILL.md`, `scripts/**/*.sh`, `.github/workflows/*.yml`) — cargan según contexto distinto.
+
+#### Domain rules > 50 líneas tras este pase (8 restantes, no críticas)
+
+| Archivo | Líneas | Sobre |
+|---|---:|---:|
+| rule-effectiveness.md | 68 | +18 |
+| hook-architecture.md | 63 | +13 |
+| auto-mode.md | 62 | +12 |
+| permission-managed-settings.md | 60 | +10 |
+| permission-model.md | 59 | +9 |
+| agent-orchestration.md | 59 | +9 |
+| context-control-patterns.md | 54 | +4 |
+| cli-flags.md | 53 | +3 |
+| plugin-distribution.md | 52 | +2 |
+| context-window-optimization.md | 52 | +2 |
+
+Diminishing returns: trim de wording en próxima iteración sin fragmentación adicional.
+
 ## v3.6.1 (2026-05-05)
 
 ### Auditoría crítica + pulidos de calidad

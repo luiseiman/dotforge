@@ -160,7 +160,7 @@ Practice activated
   └── error recurred → status: failed ⚠️ (practice needs revision)
 ```
 
-**Practices without a specific error target:** `status: not-applicable` (skipped in checks).
+**Practices without a specific error target:** `status: informational` (skipped in checks; excluded from validation rate). Renamed v3.6.2 from `not-applicable`.
 
 ## Phase 4: Comparative Benchmark
 

@@ -16,7 +16,7 @@
 #   recurrence_checks: number of audits performed since activation
 #   recurrence_target: checks needed to validate (default 5)
 #   recurred: boolean — did the targeted error recur?
-#   status: monitoring | validated | failed | not-applicable
+#   status: monitoring | validated | failed | informational
 #   projects_applied: number of projects where this practice is active
 #   last_checked: date of last recurrence check
 
@@ -28,7 +28,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 1
     last_checked: 2026-03-20
 
@@ -61,7 +61,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-03-30
 
@@ -72,7 +72,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-03-30
 
@@ -94,7 +94,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-03-30
 
@@ -105,7 +105,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-03-30
 
@@ -116,7 +116,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-08
 
@@ -127,7 +127,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-08
 
@@ -138,7 +138,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-08
 
@@ -149,7 +149,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-08
 
@@ -160,7 +160,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-08
 
@@ -171,7 +171,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-20
 
@@ -182,7 +182,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-20
 
@@ -193,7 +193,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-20
 
@@ -226,7 +226,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-20
 
@@ -259,7 +259,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-21
 
@@ -270,7 +270,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-21
 
@@ -281,7 +281,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-21
 
@@ -292,7 +292,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-21
 
@@ -315,7 +315,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -337,7 +337,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -348,7 +348,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -359,7 +359,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -381,7 +381,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -392,7 +392,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -403,7 +403,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -425,7 +425,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -436,7 +436,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-04-26
 
@@ -502,7 +502,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -524,7 +524,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -557,7 +557,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -568,7 +568,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -579,7 +579,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -590,7 +590,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -601,7 +601,7 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05
 
@@ -612,6 +612,6 @@ practices:
     recurrence_checks: 0
     recurrence_target: 5
     recurred: false
-    status: not-applicable
+    status: informational
     projects_applied: 0
     last_checked: 2026-05-05

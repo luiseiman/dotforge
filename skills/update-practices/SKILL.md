@@ -70,12 +70,12 @@ For each accepted practice in `evaluating/`:
 2. Modify the corresponding dotforge files
 3. **If the practice warrants a new rule**: generate a `.md` file in `template/rules/` or `stacks/*/rules/` with proper `globs:` (eager) or `paths:` + `alwaysApply: false` (lazy) frontmatter. Only create a rule if the practice is a repeatable constraint (not a one-time fix). Use existing rules as format reference.
 4. Move practice from `evaluating/` to `active/` with `incorporated_in:` updated
-5. Set frontmatter fields: `effectiveness: monitoring` (or `not-applicable` if no error targeted), `error_type` matching CLAUDE_ERRORS.md types
+5. Set frontmatter fields: `effectiveness: monitoring` (or `informational` if no error targeted — informational is excluded from the validation rate metric), `error_type` matching CLAUDE_ERRORS.md types
 6. Register in `$DOTFORGE_DIR/practices/metrics.yml`:
    - `error_targeted`: description of the error this practice prevents (null if not error-targeted)
    - `error_type`: syntax | logic | integration | config | security | null
    - `activated`: today's date
-   - `status`: monitoring (or not-applicable)
+   - `status`: monitoring (or informational — for general-knowledge practices, never validated)
    - `recurrence_checks`: 0
    - `recurrence_target`: 5
 7. Update `docs/changelog.md`
@@ -124,7 +124,7 @@ Report:
   {{if monitoring: "🔍 {{remaining}} checks remaining"}}
 ```
 
-Skip practices with `status: not-applicable` or `status: validated`.
+Skip practices with `status: informational` or `status: validated`. Informational practices are general-knowledge captures — they don't target an error, so recurrence is undefined and they never enter the validation rate.
 
 ---
 

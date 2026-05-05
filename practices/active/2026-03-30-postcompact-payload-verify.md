@@ -9,7 +9,7 @@ tags: [hooks, postcompact, context-continuity, verified]
 tested_in: [dotforge]
 incorporated_in: [.claude/rules/domain/hook-architecture.md]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 error_type: null
 verified: 2026-03-30
 verification_result: "compact_summary AND trigger ARE present in PostCompact payload. Official docs are incomplete — they say 'Common fields only' but these extra fields DO arrive."

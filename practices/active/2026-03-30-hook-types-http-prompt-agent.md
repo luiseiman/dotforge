@@ -9,7 +9,7 @@ tags: [hooks, documentation, hook-types]
 tested_in: []
 incorporated_in: [.claude/rules/domain/hook-architecture.md, stacks/hookify/rules/hookify.md]
 replaced_by: null
-effectiveness: not-applicable
+effectiveness: informational
 error_type: null
 ---
 

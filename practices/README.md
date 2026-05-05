@@ -43,7 +43,7 @@ tags: [hooks, security, prompting, ...]
 tested_in: null | project-name
 incorporated_in: [] | [template/rules/_common.md, ...]
 replaced_by: null | practice-id
-effectiveness: validated | monitoring | failed | not-applicable
+effectiveness: validated | monitoring | failed | informational
 error_type: null | syntax | logic | integration | config | security
 ---
 
@@ -105,7 +105,7 @@ tags: [hooks, security, prompting, ...]
 tested_in: null | nombre-proyecto
 incorporated_in: [] | [template/rules/_common.md, ...]
 replaced_by: null | practice-id
-effectiveness: validated | monitoring | failed | not-applicable
+effectiveness: validated | monitoring | failed | informational
 error_type: null | syntax | logic | integration | config | security
 ---
 
