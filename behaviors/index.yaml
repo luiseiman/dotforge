@@ -9,7 +9,7 @@ behaviors:
   - id: no-destructive-git
     enabled: true
   - id: search-first
-    enabled: true
+    enabled: false  # disabled v3.6.1 — flag-consume design causes false positives; revisit when sticky-flag mode lands
   - id: verify-before-done
     enabled: true
   - id: respect-todo-state

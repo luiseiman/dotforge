@@ -4,6 +4,34 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.6.1 (2026-05-05)
+
+### Auditoría crítica + pulidos de calidad
+
+Sesión de auditoría a conciencia detectó tres degradaciones reales y se aplicaron las correcciones baratas + alto retorno.
+
+#### Cambios
+
+- **`behaviors/index.yaml`** — `search-first.enabled: false`. Evidencia: counter=7, escaló a `soft_block` y el usuario lo desactivó manualmente en sesión. Diseño actual (flag se consume tras cada Write/Edit) genera falsos positivos en sesiones tras compactación o con contexto ya cargado vía Read inicial. Revisitar cuando exista modo "sticky-flag".
+- **Hooks generados de `search-first` removidos** — eliminados de `.claude/hooks/generated/` y de `settings.json`. PreToolUse: 8 → 6 hooks. Latencia neta menor; los hooks restantes (`block-destructive`, `no-destructive-git`, `respect-todo-state×2`, `verify-before-done×2`) siguen activos.
+- **`domain/permission-model.md` dividido** — 112 líneas → 59 (core: modes, cascade, prefix detection, core rules, auto-approvals tightening, glob/grep platform note). El nuevo **`domain/permission-managed-settings.md`** (60 líneas) absorbe enterprise managed settings, MCP server config y dynamic permissions from hooks. Globs distintos (managed-settings.json, .mcp.json) → cargan sólo cuando aplican.
+- **Limpieza de filesystem** — borrados 9 backups huérfanos `settings.json.bak.20260428-*` (dotforge + 8 proyectos), worktree zombi `reverent-banzai` ya no aparecía.
+
+#### Auditoría — qué SÍ aporta valor (con evidencia)
+
+- `block-destructive.sh`: activo en 12 proyectos, nunca desactivado, intercepta patrones nuevos (`find -delete`, `xargs rm`)
+- Fix `session-report.sh` (v3.3.1): corrigió bug silencioso de 5 meses en métricas
+- `tool-latency.sh`: datos llegando — Bash p50=53ms, Edit p50=11ms (hooks no son cuello de botella)
+- Domain rules con globs específicos: cargan sólo cuando aplican
+- `scripts/audit_all.py` + `sync_all.py` + `wire_hooks_all.py`: real automatización 12× → 1×
+
+#### Auditoría — pendientes (no críticos)
+
+- 8 domain rules siguen >50 líneas (propio límite). Acumular en próximo refactor sin urgencia.
+- `practices/metrics.yml`: 35/54 = `not-applicable`. Métrica engañosa — "validated" debería significar "previno error", no "5 ciclos sin pasar nada". Renombrar campo a `informational` y excluir de validation rate.
+- Registry shadow: `projects.yml` (committed, ejemplo) vs `projects.local.yml` (gitignored, real) — aclarar en docs.
+- `inbox/*-session-changes.md` automáticos sin detalle son ruido. Filtrar en post-session hook si sólo son conteos.
+
 ## v3.6.0 (2026-05-05)
 
 ### Sync from Claude Code v2.1.120-128 — round 2 (deeper coverage)

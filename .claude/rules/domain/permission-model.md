@@ -30,83 +30,30 @@ last_verified: 2026-05-05
 
 ## Settings cascade (priority order)
 
-Managed (enterprise) > Local (.claude/settings.local.json) > Project (.claude/settings.json) > Global (~/.claude/settings.json)
-
-## Enterprise managed settings (v2.1.83+)
-
-- `managed-settings.d/` drop-in directory: every `*.json` inside merges with the main `managed-settings.json`. Lets ops ship modular policy files.
-- `allowManagedHooksOnly: true` — blocks ALL user/project/plugin hooks. Only managed-scope hooks (and hooks from plugins force-enabled by managed settings) run. Under this policy `.claude/hooks/` is inert at runtime — audit scoring should reflect runtime applicability, not file presence.
-- `allowedChannelPlugins` — restricts which plugins activate via `--channels`.
-- `forceRemoteSettingsRefresh` — fail-closed: blocks startup until remote settings fetched (v2.1.92).
-- `allowManagedPermissionRulesOnly` — locks projects to managed-scope permission rules; user/project/local rules ignored. Use for org-wide policy enforcement.
-- `network.allowManagedDomainsOnly` — managed `allowedDomains` is the only source of outbound truth; user/project additions ignored.
-- `filesystem.allowManagedReadPathsOnly` — managed read paths are the only source; user/project additions ignored.
-- `strictKnownMarketplaces` — managed allowlist of plugin marketplace sources (exact match; supports `github`, `git`, `url`, `npm`, `file`, `directory`, `hostPattern` types).
-- `blockedMarketplaces` — managed denylist of marketplace sources; takes precedence over `extraKnownMarketplaces`.
-- `pluginTrustMessage` — custom warning shown on plugin trust prompts; useful for org-specific guidance.
-
-## MCP server config
-
-- `enableAllProjectMcpServers` — auto-approve every project MCP server. Use sparingly.
-- `enabledMcpjsonServers` / `disabledMcpjsonServers` — per-server allow/deny.
-- `allowedMcpServers` / `deniedMcpServers` — managed-scope versions.
-- `allowManagedMcpServersOnly` — managed-only MCP source.
-- `alwaysLoad: true` (per-server, v2.1.121+) — tools from that server skip tool-search deferral and stay always available in the prompt. Costs context for fewer tool-search invocations. Use only when MCP tools are needed in every turn.
-- `workspace` reserved as MCP server name since v2.1.128 — projects with that name skipped with warning.
-
-## Dynamic permissions from hooks (v2.1.84+)
-
-`PreToolUse` and `PermissionRequest` hooks can mutate runtime permission state via JSON output:
-
-```json
-{
-  "hookSpecificOutput": {
-    "decision": {
-      "behavior": "allow|deny",
-      "updatedInput": { "...": "..." },
-      "updatedPermissions": [
-        { "type": "addRules",          "rules": ["Bash(make *)"] },
-        { "type": "replaceRules",      "rules": ["..."] },
-        { "type": "removeRules",       "rules": ["..."] },
-        { "type": "setMode",           "mode": "auto|default|plan|acceptEdits" },
-        { "type": "addDirectories",    "directories": ["/tmp/build"] },
-        { "type": "removeDirectories", "directories": ["..."] }
-      ]
-    }
-  }
-}
-```
-
-Use cases: a behavior self-elevates its allowlist for a session, a safety hook downgrades to `plan` mode after detecting risk, or a build hook whitelists a temporary directory. Static deny rules still enforce — a hook cannot remove a managed deny.
-
-**Security note on `updatedInput` (v2.1.110+)**: when a hook returns `updatedInput` to mutate a tool call, the modified input is re-checked against `permissions.deny` before execution. A hook cannot use `updatedInput` to smuggle an otherwise-denied payload past static deny rules. Before v2.1.110 the recheck was missing and a hook could bypass denies via mutation.
+Managed > Local (`.claude/settings.local.json`) > Project (`.claude/settings.json`) > Global (`~/.claude/settings.json`). Enterprise-managed scope details in `permission-managed-settings.md`.
 
 ## Bash prefix detection
 
-- Separate LLM call (fast model) extracts command prefixes
-- `cat foo.txt` → `cat`, `git commit -m "foo"` → `git commit`
-- `npm run lint` → `none` (always prompts unless broadly allowed)
-- Injection: `git status\`ls\`` → `command_injection_detected`
+Separate fast-model LLM call extracts command prefixes. `cat foo.txt` → `cat`. `git commit -m "foo"` → `git commit`. `npm run lint` → `none` (always prompts). Injection like `git status\`ls\`` → `command_injection_detected`.
 
 ## Core rules
 
-- Never use Bash(*) — use specific: Bash(git *), Bash(docker *), Bash(npm *)
-- Mandatory deny: **/.env, **/*.key, **/*.pem, **/*credentials*
-- Mandatory deny commands: rm -rf *, git push*--force*, DROP TABLE, DROP DATABASE, chmod -R 777
-- Deny merge: union of sets (add missing, never remove). Allow: preserve as-is
-- NEVER touch skipDangerousModePermissionPrompt — user decision only
-- MCP tools default to `passthrough` (always ask)
-- Audit: if settings.json OR block-destructive hook missing → max score 6.0
-- For OS-level defense-in-depth (kernel-enforced filesystem/network isolation), see `sandboxing.md`
+- Never `Bash(*)` — use specific: `Bash(git *)`, `Bash(docker *)`, `Bash(npm *)`
+- Mandatory deny paths: `**/.env`, `**/*.key`, `**/*.pem`, `**/*credentials*`
+- Mandatory deny cmds: `rm -rf *`, `git push*--force*`, `DROP TABLE`, `DROP DATABASE`, `chmod -R 777`
+- Deny merge: union (add missing, never remove). Allow: preserve as-is
+- NEVER touch `skipDangerousModePermissionPrompt` — user decision only
+- Audit: missing `settings.json` OR `block-destructive.sh` → score capped at 6.0
+- OS-level defense-in-depth: see `sandboxing.md`
 
 ## Tightened auto-approvals (v2.1.113+)
 
-- `Bash(find:*)` allow rules NO LONGER auto-approve `find -exec` or `find -delete` — those drop back to the regular permission flow
-- Bash deny rules now match commands wrapped in `env`, `sudo`, `watch`, `ionice`, `setsid`, and similar exec wrappers
-- macOS: `/private/{etc,var,tmp,home}` paths are treated as dangerous removal targets under `Bash(rm:*)` allow rules
-- v2.1.119: PowerShell tool commands can be auto-approved in permission mode (matching Bash); `cd <project-dir> && git ...` no longer triggers a permission prompt when the `cd` is a no-op
-- Audit any stack `settings.json.partial` with `Bash(find:*)` or `Bash(rm:*)` allow rules — relying on prior auto-approval will now prompt
+- `Bash(find:*)` no longer auto-approves `find -exec` / `find -delete` — back to normal permission flow
+- Bash deny rules match commands wrapped in `env`, `sudo`, `watch`, `ionice`, `setsid`
+- macOS: `/private/{etc,var,tmp,home}` treated as dangerous under `Bash(rm:*)` allow rules
+- v2.1.119: PowerShell auto-approval matches Bash; `cd <project-dir> && git ...` no longer prompts when `cd` is a no-op
+- Audit any stack `settings.json.partial` with `Bash(find:*)` or `Bash(rm:*)` allow rules — prior auto-approvals will prompt
 
 ## Glob/Grep are platform-dependent (v2.1.117+)
 
-On native macOS/Linux builds, standalone `Glob` and `Grep` tools are replaced by embedded `bfs`/`ugrep` reachable through Bash. `Glob(...)` and `Grep(...)` permission specifiers become inert on native builds — Windows and npm-installed builds keep the original tools. Prefer `Bash(...)` rules for cross-platform coverage.
+Native macOS/Linux builds replace standalone `Glob`/`Grep` with embedded `bfs`/`ugrep` via Bash. `Glob(...)` and `Grep(...)` permission specifiers become inert on native builds. Windows and npm-installed builds keep originals. Prefer `Bash(...)` rules for cross-platform coverage.
