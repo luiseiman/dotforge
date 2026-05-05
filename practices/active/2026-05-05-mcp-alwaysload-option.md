@@ -1,11 +1,11 @@
 ---
 id: mcp-alwaysload-option
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [mcp, permissions, performance, medium-priority, v2.1.121]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # `alwaysLoad: true` MCP server option (v2.1.121) — bypass tool-search deferral

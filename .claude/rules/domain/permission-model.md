@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-04-26
+last_verified: 2026-05-05
 ---
 
 # Permission Model
@@ -38,6 +38,21 @@ Managed (enterprise) > Local (.claude/settings.local.json) > Project (.claude/se
 - `allowManagedHooksOnly: true` — blocks ALL user/project/plugin hooks. Only managed-scope hooks (and hooks from plugins force-enabled by managed settings) run. Under this policy `.claude/hooks/` is inert at runtime — audit scoring should reflect runtime applicability, not file presence.
 - `allowedChannelPlugins` — restricts which plugins activate via `--channels`.
 - `forceRemoteSettingsRefresh` — fail-closed: blocks startup until remote settings fetched (v2.1.92).
+- `allowManagedPermissionRulesOnly` — locks projects to managed-scope permission rules; user/project/local rules ignored. Use for org-wide policy enforcement.
+- `network.allowManagedDomainsOnly` — managed `allowedDomains` is the only source of outbound truth; user/project additions ignored.
+- `filesystem.allowManagedReadPathsOnly` — managed read paths are the only source; user/project additions ignored.
+- `strictKnownMarketplaces` — managed allowlist of plugin marketplace sources (exact match; supports `github`, `git`, `url`, `npm`, `file`, `directory`, `hostPattern` types).
+- `blockedMarketplaces` — managed denylist of marketplace sources; takes precedence over `extraKnownMarketplaces`.
+- `pluginTrustMessage` — custom warning shown on plugin trust prompts; useful for org-specific guidance.
+
+## MCP server config
+
+- `enableAllProjectMcpServers` — auto-approve every project MCP server. Use sparingly.
+- `enabledMcpjsonServers` / `disabledMcpjsonServers` — per-server allow/deny.
+- `allowedMcpServers` / `deniedMcpServers` — managed-scope versions.
+- `allowManagedMcpServersOnly` — managed-only MCP source.
+- `alwaysLoad: true` (per-server, v2.1.121+) — tools from that server skip tool-search deferral and stay always available in the prompt. Costs context for fewer tool-search invocations. Use only when MCP tools are needed in every turn.
+- `workspace` reserved as MCP server name since v2.1.128 — projects with that name skipped with warning.
 
 ## Dynamic permissions from hooks (v2.1.84+)
 

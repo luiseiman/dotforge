@@ -222,6 +222,16 @@ CONTEXT → PLANNING → EXECUTION → VALIDATION → REFINEMENT → DOCUMENTATI
 - Recurring errors (3+ times) → promote to rule in CLAUDE.md or rules/
 - Auto-memory for cross-project errors
 
+### Minor tooling tips (v2.1.120-128)
+
+- **`--plugin-dir` accepts `.zip`**: alternative distribution path — ship a release archive in CI alongside git instructions.
+- **`claude plugin prune`** + **`plugin uninstall --prune`**: clean orphaned auto-installed plugin dependencies. Run after a marketplace update.
+- **`AI_AGENT` env var**: auto-set in subprocesses spawned by hooks (`gh`, `kubectl`, etc.) so platforms can attribute traffic. No setup required.
+- **`ANTHROPIC_BEDROCK_SERVICE_TIER`**: choose Bedrock tier (`default | flex | priority`). Only relevant if `--bedrock` is in use.
+- **`--channels` with API-key auth (v2.1.128)**: requires `channelsEnabled: true` in settings. Claude.ai sessions don't need it.
+- **`workspace` reserved as MCP server name (v2.1.128)**: don't name your MCP server `workspace`; Claude Code skips it with a warning.
+- **`claude install [version|stable|latest]`**: pin a specific Claude Code version for reproducible CI builds.
+
 ---
 
 ## 5. Effective prompting

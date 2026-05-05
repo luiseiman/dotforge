@@ -1,11 +1,11 @@
 ---
 id: claude-ultrareview-cli
 source: watch:code.claude.com/docs/en/cli-reference
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [cli, ci, code-review, medium-priority, v2.1.120]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # `claude ultrareview [target]` non-interactive CLI subcommand (v2.1.120)

@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md,**/CLAUDE.md"
 description: "Top-level session parallelism — worktrees, fork, teleport — distinct from subagent delegation"
 domain: claude-code-engineering
-last_verified: 2026-04-26
+last_verified: 2026-05-05
 ---
 
 # Parallel Sessions
@@ -49,7 +49,7 @@ Two orthogonal axes of parallelism: (a) **subagents** — isolated context, shar
 - `--include-hook-events`: stream all hook events (requires `--output-format stream-json`)
 - `--replay-user-messages`: echo stdin back for acknowledgment (stream-json pair)
 - `--exclude-dynamic-system-prompt-sections`: move per-machine bits (cwd, env, git status) into first user message — improves prompt-cache reuse across users/machines
-- `--init-only` / `--maintenance`: run init/maintenance hooks and exit
+- `--init-only` / `--maintenance`: run `Setup` hooks (matchers `init` / `maintenance`) and exit. See `hook-events.md` for Setup payload
 - `--input-format text|stream-json` and `--include-partial-messages`: SDK streaming knobs (require `--output-format stream-json`)
 - `--strict-mcp-config`: only honor MCP servers from `--mcp-config`, ignore everything else
 - `--system-prompt` / `--system-prompt-file` / `--append-system-prompt` / `--append-system-prompt-file`: prompt customization (replace vs append)

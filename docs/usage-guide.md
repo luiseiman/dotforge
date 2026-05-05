@@ -327,6 +327,36 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 
 ---
 
+## 5b. CI / automation
+
+### `claude ultrareview` — non-interactive code review (v2.1.120+)
+
+Run `/ultrareview`'s multi-agent code review from CI without an interactive session:
+
+```bash
+claude ultrareview 1234            # PR number → human-readable findings on stdout
+claude ultrareview 1234 --json     # raw payload for parsing
+claude ultrareview 1234 --timeout 60  # override 30-min default
+# exit 0 = clean | exit 1 = findings or error
+```
+
+Pair with `claude setup-token` for long-lived CI auth and the `code-reviewer` agent for interactive follow-up:
+
+```yaml
+# .github/workflows/ultrareview.yml (sketch)
+- name: Ultrareview PR
+  env: { ANTHROPIC_AUTH_TOKEN: ${{ secrets.CLAUDE_OAUTH_TOKEN }} }
+  run: |
+    claude ultrareview ${{ github.event.pull_request.number }} --json > review.json
+    # post review.json as PR comment via gh api
+```
+
+### Subprocess attribution (v2.1.120+)
+
+When dotforge hooks invoke `gh`, `kubectl`, `terraform`, etc., Claude Code automatically sets `AI_AGENT=claude-code` in the subprocess environment. Platforms that surface this var (e.g. GitHub via UA strings, OTel collectors) can attribute traffic correctly. No code change needed — works out of the box.
+
+---
+
 ## 6. Available stacks
 
 16 stacks that are detected automatically and can be combined (multi-stack):

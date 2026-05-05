@@ -1,11 +1,11 @@
 ---
 id: claude-effort-skill-placeholder
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [skills, effort, design-pattern, medium-priority, v2.1.120]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # `${CLAUDE_EFFORT}` skill placeholder (v2.1.120) — effort-aware skill content

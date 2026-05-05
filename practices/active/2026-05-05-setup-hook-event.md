@@ -1,11 +1,11 @@
 ---
 id: setup-hook-event
 source: watch:code.claude.com/docs/en/hooks
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [hooks, lifecycle, drift, medium-priority]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # `Setup` hook event missing from domain rules — should be 32 events not 31

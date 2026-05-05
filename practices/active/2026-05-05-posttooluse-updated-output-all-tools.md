@@ -1,11 +1,11 @@
 ---
 id: posttooluse-updated-output-all-tools
 source: watch:code.claude.com/docs/en/changelog
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [hooks, post-tool-use, capability, high-priority, v2.1.121]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # `PostToolUse.hookSpecificOutput.updatedToolOutput` now works for ALL tools (v2.1.121)

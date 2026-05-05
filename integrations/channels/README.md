@@ -9,6 +9,7 @@
 - CLI flag: `--channels plugin:<name>@<marketplace>` (space-separated list)
 - Enterprise allowlist: `allowedChannelPlugins` in managed settings
 - Development channels not on the official allowlist: `--dangerously-load-development-channels` (prompts for confirmation)
+- **API-key auth (v2.1.128+)**: console / API-key users must set `channelsEnabled: true` in settings. Claude.ai-authenticated sessions don't need this flag — Channels works by default.
 
 ## Why it matters for dotforge
 

@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-04-20
+last_verified: 2026-05-05
 ---
 
 # Rule Effectiveness
@@ -38,6 +38,27 @@ last_verified: 2026-04-20
 - Error promotion: 3+ occurrences → derive rule
 - Stack rules: stacks/{name}/rules/ with settings.json.partial
 - Domain rules: .claude/rules/domain/ — project-owned, never touched by sync
+
+## Runtime placeholders in skill content (v2.1.120+)
+
+Skill markdown body (not just frontmatter) supports `${CLAUDE_EFFORT}` — resolves at runtime to the active effort tier (`low|medium|high|xhigh|max`). Lets one skill scale depth without forking:
+
+```markdown
+Run audit at ${CLAUDE_EFFORT} depth. low = file presence; high = content + cross-checks.
+```
+
+Pair with explicit `effort:` frontmatter when a skill MUST run at a fixed tier; omit for caller-driven depth.
+
+## Settings fields worth knowing (beyond permissions)
+
+- `availableModels` — restrict the model picker to a subset (project policy)
+- `effortLevel` — persist effort across sessions (vs the session-only `--effort` flag)
+- `defaultShell` — `bash | powershell` at the settings level (cross-platform projects)
+- `viewMode` — `default | verbose | focus` default transcript view
+- `enableWeakerNestedSandbox` — Docker-friendly relaxed sandbox
+- `pluginTrustMessage` — custom plugin trust prompt warning
+
+For managed-scope (enterprise) variants, see `permission-model.md` Enterprise managed settings.
 
 ## System prompt conflicts to override
 

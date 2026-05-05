@@ -538,3 +538,80 @@ practices:
     status: monitoring
     projects_applied: 1
     last_checked: 2026-05-05
+
+  - id: posttooluse-updated-output-all-tools
+    error_targeted: "PostToolUse hook rewriting tool output hides errors from model"
+    error_type: logic
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: setup-hook-event
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: mcp-alwaysload-option
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: claude-ultrareview-cli
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: claude-effort-skill-placeholder
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: settings-fields-missing
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: misc-v2-1-120-128
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05

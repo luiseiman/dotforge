@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json"
 description: "Hook event payloads and per-event behavior details"
 domain: claude-code-engineering
-last_verified: 2026-04-26
+last_verified: 2026-05-05
 ---
 
 # Hook Event Details
@@ -16,12 +16,14 @@ last_verified: 2026-04-26
 - CwdChanged: fires on directory change, supports CLAUDE_ENV_FILE
 - FileChanged: fires on external file modification — use for auto-reload
 - InstructionsLoaded: fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason`: `session_start` | `nested_traversal` | `path_glob_match` | `include` | `compact`. Observability-only, no decision control.
+- Setup: fires for `--init-only` / `--maintenance` runs. Matchers: `init` | `maintenance`. Non-blockable. Use for credential rotation, env-var provisioning, prerequisite checks BEFORE session starts. Distinct from SessionStart (every session) — Setup only fires on explicit request.
 
 ## Tool events
 
 - PreToolUse/PostToolUse: receive ABSOLUTE file paths since v2.1.90
 - PostToolUse/PostToolUseFailure: input includes `duration_ms` (v2.1.119+) — tool execution time excluding permission prompts and PreToolUse hooks. Use for per-tool latency metrics without external timing
 - PostToolUseFailure: fires when tool execution fails — use for error tracking
+- PostToolUse `hookSpecificOutput.updatedToolOutput` (v2.1.121+): replaces tool output for the model. Pre-v2.1.121 was MCP-only (`updatedMCPToolOutput`); now works for Bash, Edit, Write, Read, etc. Use sparingly — rewriting can hide errors and breaks audit trail
 - PostToolBatch (v2.1.x+): fires when a batch of parallel tool calls completes, before the next model call. No matcher. Blockable via `decision: "block"` — point of choice for end-of-batch validation
 - UserPromptExpansion: fires when a slash command expands. Matcher: command name. Blockable — can prevent the expansion
 - UserPromptSubmit: hook can return `hookSpecificOutput.sessionTitle: "..."` (v2.1.94+) to set the session display title (shown in `/resume` and terminal title)

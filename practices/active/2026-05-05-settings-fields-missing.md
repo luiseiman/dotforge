@@ -1,11 +1,11 @@
 ---
 id: settings-fields-missing
 source: watch:code.claude.com/docs/en/settings
-status: inbox
+status: active
 captured: 2026-05-05
 tags: [settings, drift, enterprise, medium-priority]
 tested_in: []
-incorporated_in: []
+incorporated_in: ['3.6.0']
 ---
 
 # settings.json fields missing from domain rules

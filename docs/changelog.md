@@ -4,6 +4,39 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.6.0 (2026-05-05)
+
+### Sync from Claude Code v2.1.120-128 — round 2 (deeper coverage)
+
+Seven practices captured this morning from a fresh `/forge watch` pass — all incorporated. One auto-stub rejected. Inbox: 0.
+
+#### Domain rule updates
+
+- **`domain/hook-architecture.md`** — added `Setup` event to Session-level cadence (32 events total now). Documents `Setup` lifecycle: fires for `--init-only` / `--maintenance` runs with matchers `init` and `maintenance`, distinct from `SessionStart` (every session) — Setup only fires on explicit request. Also added design tradeoff note for `PostToolUse.updatedToolOutput`: now works for ALL tools (v2.1.121+), not just MCP — but rewriting can hide errors and breaks audit trail. Prefer `additionalContext` for augmentation; reserve `updatedToolOutput` for redaction or compression.
+
+- **`domain/hook-events.md`** — generalized `updatedToolOutput` from MCP-only to all tools (v2.1.121+). New `Setup` event payload: matchers `init` | `maintenance`, non-blockable, used for credential rotation / env-var provisioning / prerequisite checks BEFORE session starts.
+
+- **`domain/permission-model.md`** — added 5 managed-only enterprise fields (`allowManagedPermissionRulesOnly`, `network.allowManagedDomainsOnly`, `filesystem.allowManagedReadPathsOnly`, `strictKnownMarketplaces`, `blockedMarketplaces`) plus `pluginTrustMessage` for org-specific guidance. New **MCP server config** section consolidating `enableAllProjectMcpServers`, `enabledMcpjsonServers`, etc., with new `alwaysLoad: true` option (v2.1.121+) that bypasses tool-search deferral per server, and `workspace` reserved name (v2.1.128+).
+
+- **`domain/rule-effectiveness.md`** — new **Runtime placeholders in skill content (v2.1.120+)** section: `${CLAUDE_EFFORT}` resolves to active effort tier in skill markdown body (not just frontmatter). New **Settings fields worth knowing (beyond permissions)** section: `availableModels`, `effortLevel`, `defaultShell`, `viewMode`, `enableWeakerNestedSandbox`, `pluginTrustMessage`.
+
+- **`domain/parallel-sessions.md`** — `--init-only` / `--maintenance` flag now cross-references `Setup` hook (matchers `init` / `maintenance`) and points to `hook-events.md`.
+
+#### Docs
+
+- **`docs/usage-guide.md`** — new section **5b. CI / automation** covering `claude ultrareview [target]` non-interactive code review (v2.1.120+, exit 0/1 contract, `--json`/`--timeout` flags, GitHub Actions sketch with `claude setup-token`). Subprocess attribution note: `AI_AGENT=claude-code` auto-set in subprocesses for platforms that surface it.
+
+- **`docs/best-practices.md`** — new **Minor tooling tips (v2.1.120-128)** subsection batching: `--plugin-dir .zip`, `claude plugin prune` / `--prune` cascade, `AI_AGENT` subprocess env, `ANTHROPIC_BEDROCK_SERVICE_TIER`, `--channels` API-key auth (`channelsEnabled: true` requirement), `workspace` reserved MCP name, `claude install [version|stable|latest]` for CI pinning.
+
+- **`integrations/channels/README.md`** — added API-key auth note (v2.1.128+): console / API-key users must set `channelsEnabled: true`; Claude.ai sessions don't need this flag.
+
+#### Practices
+
+- 7 practices moved `inbox/ → active/`, frontmatter `incorporated_in: ['3.6.0']`.
+- 1 rejected (`invisigtht-session-changes` — auto-stub, summary-only).
+- Inbox: 0 pending.
+- `metrics.yml`: 1 new `monitoring` (posttooluse-updated-output-all-tools — error_type=logic), 6 `not-applicable`.
+
 ## v3.5.0 (2026-05-05)
 
 ### Sync from Claude Code v2.1.120 → v2.1.128 + agent memory checklist
