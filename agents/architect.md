@@ -63,3 +63,12 @@ Only record decisions with lasting impact. Skip trivial or one-off choices.
 - Never propose a technology switch without cost/effort analysis
 - Keep total output under 5K tokens — summarize, don't dump raw analysis
 - If the caller needs follow-up, they will use SendMessage — do not start a new context
+
+## Memory persistence
+
+Before returning, ask yourself: *Did I discover a non-obvious pattern, a recurring tradeoff in this codebase, or a constraint a future architect would benefit from knowing?* If yes, append a dated entry to `.claude/agent-memory/architect.md` with:
+- One-line title
+- Key recurring/false-positive findings (use `**Recurring:**` or `**False positive:**` prefix)
+- A short note on context (which subsystem, why it matters)
+
+Skip persistence for: routine validations, single-use answers, work the caller already understood.

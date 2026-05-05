@@ -1,11 +1,11 @@
 ---
 id: agent-memory-underused
 source: session-insights
-status: inbox
+status: active
 captured: 2026-04-21
 tags: [insights, agents, agent-memory, low-priority, needs-more-info]
 tested_in: [dotforge]
-incorporated_in: []
+incorporated_in: ['3.5.0']
 ---
 
 # Agent memory is underused — 1–2 entries per agent across ~5 months

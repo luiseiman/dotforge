@@ -80,6 +80,21 @@ Preserved files:
 = CLAUDE_ERRORS.md (restored from backup)
 ```
 
+## Step 5b: Offer purge of Claude Code state (v2.1.126+)
+
+`/forge reset` rebuilds `.claude/` but Claude Code's own state for this project lives elsewhere — transcripts, task lists, debug logs, file-edit history, prompt history, and the project entry in `~/.claude.json`. After a reset, those references now point at archived/missing files.
+
+If `claude project purge` is available (v2.1.126+), offer to run it after the rollback decision:
+
+```bash
+# Verify availability
+claude project purge --help >/dev/null 2>&1 && {
+  echo "Run 'claude project purge $PWD --dry-run' to preview, then drop --dry-run to apply."
+}
+```
+
+Do NOT run it automatically. Show the user the dry-run command first; they decide. Skip the suggestion if the CLI version doesn't support `project purge`.
+
 ## Step 6: Offer rollback
 
 ```

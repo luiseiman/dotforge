@@ -63,6 +63,18 @@ cd ~/Documents/GitHub/dotforge   # or wherever you cloned dotforge
 
 **Cross-platform:** Linux, macOS, WSL, Git Bash. Uses copies as fallback if symlinks are not supported.
 
+### Layered distribution (multi-seed)
+
+Claude Code's `CLAUDE_CODE_PLUGIN_SEED_DIR` accepts multiple directories separated by `:` (Unix) / `;` (Windows). Layer base + corporate + personal overlays:
+
+```bash
+# base = public dotforge | corporate = chaco-digital private overlay | personal = luiseiman tweaks
+export CLAUDE_CODE_PLUGIN_SEED_DIR="$HOME/.dotforge:$HOME/work/cd-overlay:$HOME/.dotforge-personal"
+claude
+```
+
+Later seeds override earlier seeds for files with the same path. Use this for enterprise deployments where a public template + private overlay must coexist without forks.
+
 ### Skill Execution Context
 
 Heavy skills (>150 lines, ~5K+ tokens) use `context: fork` in their frontmatter. This executes the skill in an isolated subagent, preventing it from consuming the main conversation's context window. Skills with `context: fork`: plugin-generator, bootstrap-project, init-project, domain-extract, audit-project.
@@ -225,6 +237,15 @@ my-frontend      react-vite-ts            7.2     ▇▅▃ ↓    2026-03-18
 Automatic alerts:
 - Score that drops >1.5 points
 - Projects with an old version of dotforge
+
+### PR review flow tip (v2.1.122+)
+
+Pasting a PR URL into the `/resume` search box finds the session that originally created the PR — works for GitHub, GitHub Enterprise, GitLab, Bitbucket. Useful for picking up review feedback without remembering session names.
+
+```
+/resume
+# then paste: https://github.com/luiseiman/repo/pull/123
+```
 
 ### Session analysis
 

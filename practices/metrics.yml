@@ -472,3 +472,69 @@ practices:
     status: monitoring
     projects_applied: 0
     last_checked: 2026-04-27
+
+  - id: plugin-data-variable
+    error_targeted: "plugin state lost on update because stored in install dir"
+    error_type: integration
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: claude-project-purge
+    error_targeted: "stale Claude Code project state after /forge reset (orphaned transcripts/manifests)"
+    error_type: integration
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: plugin-seed-multi-dir
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: skip-permissions-claude-paths
+    error_targeted: "automation with --dangerously-skip-permissions writes to .claude/ from injected prompts"
+    error_type: security
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: resume-pr-url-search
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: not-applicable
+    projects_applied: 0
+    last_checked: 2026-05-05
+
+  - id: agent-memory-underused
+    error_targeted: "agents have memory enabled but accumulate no learnings — knowledge loss"
+    error_type: config
+    activated: 2026-05-05
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 1
+    last_checked: 2026-05-05

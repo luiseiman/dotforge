@@ -82,3 +82,12 @@ Do NOT report:
 - Run `git diff` or `git diff --staged` to see actual changes when available
 - Keep total output under 5K tokens — summarize, don't dump raw diffs
 - If the caller needs follow-up, they will use SendMessage — do not start a new context
+
+## Memory persistence
+
+Before returning, ask yourself: *Did I find a recurring issue (same bug class twice), a false-positive pattern in my own heuristics, or an idiom this codebase uses that a future review should respect?* If yes, append a dated entry to `.claude/agent-memory/code-reviewer.md` with:
+- One-line title
+- Bullets prefixed with `**Recurring:**` or `**False positive:**` (matches existing entries in this project)
+- The why — one sentence on what makes it a pattern, not a one-off
+
+Skip persistence for: clean reviews, project-specific style nits without broader implication.

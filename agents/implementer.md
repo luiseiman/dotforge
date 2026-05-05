@@ -71,3 +71,12 @@ Always conclude with:
 - Use project conventions (check CLAUDE.md for stack preferences)
 - Keep total output under 5K tokens — summarize changes, don't echo full files
 - If the caller needs follow-up, they will use SendMessage — do not start a new context
+
+## Memory persistence
+
+Before returning, ask yourself: *Did I hit a non-obvious build/test gotcha, an environment quirk, or a workaround that future implementers would re-discover?* If yes, append a dated entry to `.claude/agent-memory/implementer.md` with:
+- One-line title (the symptom)
+- Cause and fix in 2-3 lines
+- Optional: link to commit or file:line that documents the fix
+
+Skip persistence for: standard implementation tasks where the spec was clear and execution routine.

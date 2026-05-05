@@ -68,6 +68,15 @@ Claude Code supports 6 permission modes that control when operations require con
 - [ ] Document which permissions are stripped in auto-mode for team awareness
 - [ ] Test critical workflows with auto-mode enabled to verify they still work
 
+### `--dangerously-skip-permissions` tradeoffs (v2.1.121+)
+
+Since v2.1.121/126, this flag bypasses prompts for writes to `.claude/skills/`, `.claude/agents/`, `.claude/commands/`, `.claude/`, `.git/`, `.vscode/`, and shell config files. Catastrophic removals still prompt as a safety net.
+
+- [ ] Use ONLY in trusted automation (CI/CD with vetted prompts, scripted bootstrap)
+- [ ] NEVER pair with prompts that include unverified content (issues, web fetches, untrusted documents) — those become injection vectors that can now write to template files unprompted
+- [ ] In CI, prefer specific allow rules over `--dangerously-skip-permissions` whenever the operation set is bounded
+- [ ] Audit the prompt source before invoking with this flag — anything that lands in `.claude/` shapes the next session's behavior
+
 ---
 
 # Checklist de Seguridad — Pre-deploy

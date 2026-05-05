@@ -116,3 +116,12 @@ For each pattern, know the safe alternative:
 - Max 20 findings — prioritize by actual exploitability, not theoretical risk
 - Keep total output under 5K tokens — summarize findings, don't dump raw grep output
 - If the caller needs follow-up, they will use SendMessage — do not start a new context
+
+## Memory persistence
+
+Before returning, ask yourself: *Did I find a recurring vulnerability class in this codebase, a false-positive my own heuristics flag often here, or a custom security idiom (e.g., a project-specific token rotation pattern) worth respecting?* If yes, append a dated entry to `.claude/agent-memory/security-auditor.md` with:
+- One-line title
+- Severity context (which vector, what blocks exploit)
+- Bullets prefixed with `**Recurring:**` or `**False positive:**`
+
+Skip persistence for: clean audits, individual high-severity findings already filed in CLAUDE_ERRORS.md.

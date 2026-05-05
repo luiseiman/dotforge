@@ -4,6 +4,35 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.5.0 (2026-05-05)
+
+### Sync from Claude Code v2.1.120 → v2.1.128 + agent memory checklist
+
+Six practices incorporated. Three security-relevant (`monitoring`), one auto-stub rejected.
+
+#### New domain rule
+
+- **`.claude/rules/domain/plugin-distribution.md`** — covers `${CLAUDE_PLUGIN_DATA}` (v2.1.126+ persistent state for plugins surviving updates), `CLAUDE_CODE_PLUGIN_SEED_DIR` multi-dir layered overlays (base + corporate + personal), managed marketplace governance (`strictKnownMarketplaces`, `blockedMarketplaces`, `allowManagedPermissionRulesOnly`, `pluginTrustMessage`), reserved server names (`workspace` since v2.1.128), and lifecycle hygiene (`claude plugin prune`, `--plugin-dir .zip`).
+- Migration of dotforge's `practices/metrics.yml` and `inbox/` to `${CLAUDE_PLUGIN_DATA}` is documented as a candidate but explicitly out of scope this release (multi-commit work).
+
+#### Skill / docs / agent updates
+
+- `skills/reset-project/SKILL.md` — new Step 5b suggesting `claude project purge $PWD` post-reset (v2.1.126+) to drop orphaned transcripts, task lists, and `~/.claude.json` entry. Verifies CLI availability before suggesting; never runs automatically.
+- `docs/usage-guide.md` — new "Layered distribution (multi-seed)" subsection covering `CLAUDE_CODE_PLUGIN_SEED_DIR` overlay pattern; new "PR review flow tip" noting `/resume` accepts pasted PR URLs (v2.1.122+, GitHub/Enterprise/GitLab/Bitbucket).
+- `docs/security-checklist.md` — new "`--dangerously-skip-permissions` tradeoffs (v2.1.121+)" subsection documenting that the flag now bypasses prompts for `.claude/skills,agents,commands` writes, with explicit warning against pairing with prompts that include unverified content (injection vector that can now write to template files unprompted).
+- `agents/{architect,code-reviewer,implementer,security-auditor}.md` — appended a "Memory persistence" section to each agent prompt with concrete checklist on when (and when not) to write to `.claude/agent-memory/<agent>.md`. Targets the `agent-memory-underused` finding from `/forge insights` 2026-04-21 (≤2 entries per agent across 5 months).
+
+#### Practices
+
+- 6 practices moved `inbox/ → active/`, frontmatter `incorporated_in: ['3.5.0']`.
+- 1 rejected (`tradingbot-session-changes` — auto-stub, summary-only).
+- Inbox: 0 pending.
+- `metrics.yml`: 4 new `monitoring` entries (plugin-data-variable, claude-project-purge, skip-permissions-claude-paths, agent-memory-underused), 2 `not-applicable`.
+
+#### Verified against
+
+- Claude Code v2.1.128 (latest as of 2026-05-04). Watch-upstream pass surfaced additional v2.1.120-128 deltas captured for next cycle (PostToolUse.updatedToolOutput for all tools, Setup hook event, alwaysLoad MCP option, claude ultrareview, ${CLAUDE_EFFORT} placeholder, missing settings fields).
+
 ## v3.4.1 (2026-04-27)
 
 ### New rule — `stacks/trading/rules/backtesting-adr-gate.md`
