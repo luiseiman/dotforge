@@ -615,3 +615,114 @@ practices:
     status: informational
     projects_applied: 0
     last_checked: 2026-05-05
+
+  # v3.8.0 — 2026-05-13 watch sync (v2.1.129 → v2.1.140)
+  - id: practice-2026-05-13-hook-continueonblock
+    error_targeted: "PostToolUse validation hook block kills agent flow even when failure is non-fatal (lint, type-check, drift)"
+    error_type: config
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-hook-args-exec-form
+    error_targeted: "shell injection or quoting bugs when hook command interpolates ${tool_input.*} with spaces or special chars"
+    error_type: security
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-automode-hard-deny
+    error_targeted: "auto mode classifier auto-approves a curl|sh / eval pipe on benign-sounding rationalization, executing untrusted code"
+    error_type: security
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-hook-effort-visibility
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-apikey-disables-remote-features
+    error_targeted: "Remote Control / /schedule / claude.ai MCP connectors silently disabled when ANTHROPIC_API_KEY is set alongside Claude.ai login"
+    error_type: config
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-worktree-baseref-fresh-default
+    error_targeted: "Agent Team worktrees missing unpushed local commits after v2.1.133 default flip from head to fresh"
+    error_type: config
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-plan-mode-blocks-edit-allow
+    error_targeted: "plan mode wrote files under Edit(*) allow rule before v2.1.136 fix"
+    error_type: security
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-claude-bg-background-sessions
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-goal-command-completion-condition
+    error_targeted: null
+    error_type: null
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: 2026-05-13
+
+  - id: practice-2026-05-13-gateway-model-discovery-opt-in
+    error_targeted: "custom gateway models silently missing from /model picker after v2.1.129 discovery default flipped from auto to opt-in"
+    error_type: config
+    activated: 2026-05-13
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: 2026-05-13

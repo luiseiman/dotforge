@@ -114,7 +114,7 @@ These have no dotforge equivalent — they manage the runtime session:
 |---------|----------|
 | `/compact`, `/context`, `/rewind` | Context management |
 | `/plan`, `/ultraplan` | Planning mode |
-| `/schedule`, `/loop`, `/autofix-pr` | Automation |
+| `/schedule`, `/loop`, `/goal` (v2.1.139), `/autofix-pr` | Automation |
 | `/resume`, `/branch`, `/teleport` | Session lifecycle |
 | `/model`, `/effort`, `/fast` | Model selection |
 | `/usage` (`/cost` and `/stats` are typing shortcuts since v2.1.118) | Usage metrics |
@@ -291,7 +291,7 @@ Sin equivalente en dotforge — gestionan la sesi&oacute;n de runtime:
 |---------|-----------|
 | `/compact`, `/context`, `/rewind` | Gesti&oacute;n de contexto |
 | `/plan`, `/ultraplan` | Modo planificaci&oacute;n |
-| `/schedule`, `/loop`, `/autofix-pr` | Automatizaci&oacute;n |
+| `/schedule`, `/loop`, `/goal` (v2.1.139), `/autofix-pr` | Automatizaci&oacute;n |
 | `/resume`, `/branch`, `/teleport` | Ciclo de vida de sesiones |
 | `/model`, `/effort`, `/fast` | Selecci&oacute;n de modelo |
 | `/usage` (`/cost` y `/stats` son atajos desde v2.1.118) | M&eacute;tricas de uso |

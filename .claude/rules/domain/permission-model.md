@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-05-05
+last_verified: 2026-05-13
 ---
 
 # Permission Model
@@ -22,10 +22,10 @@ last_verified: 2026-05-05
 
 1. Bypass mode → immediate Allow
 2. Persistent deny rules (pattern matching)
-3. Persistent allow rules
-4. AcceptEdits mode → Allow
-5. Auto mode → LLM classifier evaluation
-6. Plan mode → Read-only enforcement
+3. **Plan mode → Read-only enforcement** (v2.1.136+: now precedes allow rules — was a bug where `Edit(*)` allow could write under plan mode)
+4. Persistent allow rules
+5. AcceptEdits mode → Allow
+6. Auto mode → LLM classifier evaluation (with `hard_deny` short-circuit before classifier — see `auto-mode.md`)
 7. Default → derive from tool's danger level
 
 ## Settings cascade (priority order)

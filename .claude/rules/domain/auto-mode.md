@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json"
 description: "Auto mode classifier, permission stripping, tool concurrency"
 domain: claude-code-engineering
-last_verified: 2026-04-26
+last_verified: 2026-05-13
 ---
 
 # Auto Mode & Tool Safety
@@ -36,6 +36,28 @@ last_verified: 2026-04-26
 ```
 
 Always prepend `"$defaults"` unless you intend a full classifier replacement.
+
+## Three tiers: allow / soft_deny / hard_deny (v2.1.136+)
+
+`autoMode` now supports three tiers with distinct semantics:
+
+| Tier | Behavior | Override path |
+|------|----------|---------------|
+| `allow` | Auto-approve when rule matches | Always granted if matched |
+| `soft_deny` | Block by default, classifier may grant pass | Classifier can override on user intent |
+| `hard_deny` | Block unconditionally — classifier ignored, no allow can override | None |
+
+Use `hard_deny` for patterns that must never auto-approve regardless of how the model rationalizes the intent — e.g. `Bash(curl *|sh)`, `Bash(eval *)`, base64-decode pipes. Recommended for projects with secrets in env, trading bots, or any cloud-cred-handling code.
+
+```json
+{
+  "autoMode": {
+    "hard_deny": ["Bash(curl *|sh)", "Bash(* base64 -d * | sh)"],
+    "allow": ["$defaults", "Bash(make build:*)"],
+    "soft_deny": ["$defaults"]
+  }
+}
+```
 
 ## Permission stripping in auto mode
 

@@ -4,6 +4,37 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.8.0 (2026-05-13)
+
+### `/forge watch` sync from Claude Code v2.1.129 → v2.1.140
+
+Diez prácticas upstream incorporadas. Cinco de prioridad alta cubren primitives nuevos (hook `continueOnBlock`, exec form, `autoMode.hard_deny`, effort visibility en hooks, API key precedence). Cinco de prioridad media cubren breaking sutiles (worktree.baseRef flip, gateway model discovery opt-in, plan mode fix) y features nuevos (`/goal`, `claude --bg`).
+
+#### Domain rules actualizadas
+
+- **`domain/hook-architecture.md`** — `continueOnBlock: true` para PostToolUse (v2.1.139+) cambia el contrato de fatal stop a feedback loop. Forma exec (`args: string[]`, v2.1.139+) — spawn directo sin shell, sin quoting para path placeholders. Nueva sección sobre `effort.level` / `$CLAUDE_EFFORT` visibility en hooks (v2.1.133+).
+- **`domain/hook-events.md`** — `continueOnBlock` documentado bajo PostToolUse. Sección nueva "Shared payload fields" cubriendo `session_id` / `$CLAUDE_CODE_SESSION_ID` (v2.1.132+), `effort.level` / `$CLAUDE_EFFORT` (v2.1.133+), `cwd`, `transcript_path`. Subagent agent_id headers + OTEL attrs (v2.1.139+).
+- **`domain/auto-mode.md`** — tercer tier `autoMode.hard_deny` (v2.1.136+) con tabla allow/soft_deny/hard_deny. Bloquea sin override possible — recomendado para `Bash(curl *|sh)`, eval pipes, base64-decode pipes en proyectos con cloud creds.
+- **`domain/permission-model.md`** — cascade order corregida: plan mode ahora precede allow rules (v2.1.136 fix). Antes `Edit(*)` permitía escribir bajo plan mode — era bug. Anotada también el hard_deny short-circuit antes del classifier.
+- **`domain/parallel-sessions.md`** — `worktree.baseRef` setting (v2.1.133+) con nota sobre default flip `head → fresh` entre v2.1.128 y v2.1.133. Sección nueva "Background sessions" cubriendo `--bg` + 5 subcomandos (`attach`/`logs`/`respawn`/`rm`/`stop`) + `claude agents` agent-view (v2.1.139+). Tabla comparativa worktree / fork / background.
+- **`domain/cli-flags.md`** — nueva sección "Background sessions" + 5 subcomandos. Nueva sección "Env vars worth knowing" con `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` (breaking v2.1.129 — opt-in para gateway model discovery), `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`, `CLAUDE_CODE_FORCE_SYNC_OUTPUT`, `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`, `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`, `CLAUDE_CODE_SESSION_ID`, `$CLAUDE_EFFORT`.
+- **`domain/workflow-automation.md`** — agregada sección `/goal` (v2.1.139+) al principio como cuarto primitive: condition-driven vs `/loop` cadence-driven. Notas sobre Stop condition phrasing y fail-closed bajo `disableAllHooks`/`allowManagedHooksOnly` (v2.1.140 fix).
+
+#### Domain rules nuevas
+
+- **`domain/auth.md`** (nueva, ~45 líneas) — modelo de auth completo: 4 sources con precedencia (API key > setup-token OAuth > Claude.ai > Console), feature gating por API key presence (v2.1.139+ disables Remote Control / `/schedule` / claude.ai MCP / notifications cuando API key está set), canonical CI path con `claude setup-token`, anti-patterns (API key in `.bashrc`, shared OAuth tokens, etc.).
+
+#### Otros
+
+- **`docs/claude-vs-forge.md`** — `/goal` agregado a tablas de automation (EN + ES) junto a `/schedule`, `/loop`, `/autofix-pr`.
+
+#### Inbox lifecycle
+
+- 10 watch captures (2026-05-13) → `active/`
+- 7 auto-generated `*-session-changes` rejected (incluye 1 duplicado macOS Finder)
+- 0 deferred esta vuelta
+- `metrics.yml`: 10 entradas nuevas (5 con `status: monitoring` por targetear errores concretos, 5 con `status: informational` por ser conocimiento general)
+
 ## v3.7.1 (2026-05-05)
 
 ### Política de compactación basada en evidencia

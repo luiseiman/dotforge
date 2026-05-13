@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/agents/*.md,**/skills/**/SKILL.md,**/scripts/**/*.sh,**/.github/workflows/*.yml"
 description: "Claude Code CLI flags and subcommands — automation, interactive, headless"
 domain: claude-code-engineering
-last_verified: 2026-05-05
+last_verified: 2026-05-13
 ---
 
 # Claude Code CLI Flags
@@ -42,12 +42,28 @@ Reference for non-paralellism CLI surface. For session-parallelism flags see `pa
 - `--channels plugin:<name>@<marketplace>`: listen for MCP channel notifications (requires Claude.ai auth); `--dangerously-load-development-channels` allows non-allowlist channels for local development
 - `--agent <name>`: override the agent setting for the session
 
+## Background sessions (v2.1.139+)
+
+- `--bg "<task>"`: start the session as a background agent and return immediately. Prints session ID + management commands. Combine with `--agent <name>` to run a specific subagent. See `parallel-sessions.md` for the full lifecycle (`attach`/`logs`/`respawn`/`rm`/`stop`)
+- `claude agents` (Research Preview): opens the agent view — unified list of every Claude Code session (running/blocked/done). When stdin is piped, falls back to listing configured subagents
+
 ## CLI subcommands
 
 - `claude install [version|stable|latest]`: install/reinstall the native binary at a specific version
 - `claude auth (login|logout|status)`: account auth; `--email`, `--sso`, `--console` modifiers; `auth status --text` for human-readable
-- `claude agents`: list configured subagents grouped by source
+- `claude agents`: opens agent view (v2.1.139+); when piped, lists configured subagents grouped by source
+- `claude attach <id>` / `logs <id>` / `respawn <id>` / `rm <id>` / `stop <id>`: background session lifecycle (v2.1.139+)
 - `claude auto-mode (defaults|config)`: print built-in classifier rules / effective config as JSON
 - `claude remote-control`: server mode (no local interactive session) — pair from claude.ai
 - `claude setup-token`: generate a long-lived OAuth token for CI scripts (requires Claude subscription) — canonical CI auth flow
 - `claude mcp`, `claude plugin` / `claude plugins`: configuration subcommands
+
+## Env vars worth knowing
+
+- `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` (v2.1.129+): opt in to `/v1/models` discovery for the `/model` picker against custom `ANTHROPIC_BASE_URL` gateways. Was automatic in v2.1.126–v2.1.128 — **breaking change for users who depended on the auto behavior**. Affects Bedrock app-inference-profile, Vertex custom endpoints, Foundry, and any gateway. Pinned `model:` in settings is unaffected
+- `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` (v2.1.132+): opt out of the fullscreen alternate-screen renderer; keeps conversation in native scrollback
+- `CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` (v2.1.129+): force-enable synchronized output for terminals auto-detection misses (Emacs `eat`, custom embedded terminals)
+- `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` (v2.1.129+): for Homebrew/WinGet installs, runs the upgrade command in background and prompts for restart
+- `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` (v2.1.136+): re-enable session quality survey for enterprises capturing responses via OpenTelemetry
+- `CLAUDE_CODE_SESSION_ID` (v2.1.132+): exported to Bash tool subprocesses, matches the `session_id` passed to hooks
+- `$CLAUDE_EFFORT` (v2.1.133+): active effort level exported to Bash tool subprocesses; hook inputs see the same value under `effort.level`. See `hook-events.md`

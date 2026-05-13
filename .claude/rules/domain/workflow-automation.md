@@ -2,12 +2,20 @@
 globs: "**/CLAUDE.md,**/skills/loop/**,**/skills/schedule/**,**/rules/_common.md"
 description: "When to reach for /loop, /schedule, /batch — temporal workflow primitives"
 domain: claude-code-engineering
-last_verified: 2026-04-21
+last_verified: 2026-05-13
 ---
 
 # Workflow Automation Primitives
 
-Three bundled or dotforge-provided workflow skills cover temporal orchestration: `/loop` (polling), `/schedule` (cron triggers), `/batch` (fan-out). Pick by the problem shape, not by familiarity.
+Four workflow primitives cover temporal orchestration: `/goal` (condition-driven persistence), `/loop` (polling), `/schedule` (cron triggers), `/batch` (fan-out). Pick by the problem shape, not by familiarity.
+
+## `/goal` — condition-driven persistence (v2.1.139+)
+
+- `/goal <completion-condition>`: Claude keeps working across turns until the condition is met. Works in interactive, `-p` print mode, and Remote Control. Live overlay shows elapsed/turns/tokens
+- Use for: open-ended tasks with a clear "done" signal (`all tests in <file> pass and the change is committed`, `the deploy reports HEALTHY for 60s`, `PR #N is approved and CI green`)
+- Stop condition is judged by the model; phrase it concretely so the judgment is reliable
+- Alternative to `/loop` when the stop condition is well-defined — `/goal` is condition-driven (semantic), `/loop` is cadence-driven (temporal)
+- Fails closed when `disableAllHooks` or `allowManagedHooksOnly` is set (v2.1.140 — shows clear message instead of silent hang)
 
 ## `/loop` — time-bounded polling
 

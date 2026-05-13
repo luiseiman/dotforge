@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-05-05
+last_verified: 2026-05-13
 ---
 
 # Hook Architecture
@@ -37,6 +37,28 @@ Three lifecycle cadences:
 - Types: `command` (bash), `http` (POST), `prompt` (LLM decision), `agent` (subagent), `mcp_tool` (v2.1.118+ — invoke an MCP tool directly with `${tool_input.*}` substitution)
 - Hooks MUST be objects: `{"type": "command", "command": "path.sh"}`
 - NEVER plain strings — Claude Code rejects them silently
+- `continueOnBlock: true` on a PostToolUse hook (v2.1.139+) flips the contract: a `decision: "block"` no longer halts the turn — the hook's `reason` is fed back to Claude as feedback and the turn continues. Use for non-fatal validators (lint, type-check) so failures self-heal in the same turn instead of stopping the agent.
+
+## Command hook forms
+
+Two ways to spawn a `type: "command"` hook:
+
+- **Shell form** (`command: "..."`): a single string, interpreted by `/bin/sh`. Convenient for pipes, redirects, and short scripts. Path placeholders need quoting: `"./hook.sh \"${tool_input.file_path}\""`.
+- **Exec form** (`command + args: string[]`, v2.1.139+): spawns directly via `execve`, no shell. Path placeholders never need quoting. Safer when interpolating `${tool_input.*}` — eliminates shell injection via crafted payloads.
+
+```json
+{
+  "type": "command",
+  "command": ".claude/hooks/validate.sh",
+  "args": ["${tool_input.file_path}", "--strict"]
+}
+```
+
+Prefer exec form whenever the hook consumes user-controlled values.
+
+## Effort visibility in hooks (v2.1.133+)
+
+Every hook event's stdin JSON now includes `effort.level` (`"low" | "medium" | "high" | "xhigh" | "max"`). Bash tool subprocesses also see `$CLAUDE_EFFORT` with the same value. Enables effort-aware decisions — e.g. `block-destructive.sh` can tighten matching at `low`/`medium` and relax at `max`.
 
 ## Conditional hooks (v2.1.85+)
 

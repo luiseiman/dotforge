@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json"
 description: "Hook event payloads and per-event behavior details"
 domain: claude-code-engineering
-last_verified: 2026-05-05
+last_verified: 2026-05-13
 ---
 
 # Hook Event Details
@@ -23,6 +23,7 @@ last_verified: 2026-05-05
 - PreToolUse/PostToolUse: receive ABSOLUTE file paths since v2.1.90
 - PostToolUse/PostToolUseFailure: input includes `duration_ms` (v2.1.119+) — tool execution time excluding permission prompts and PreToolUse hooks. Use for per-tool latency metrics without external timing
 - PostToolUseFailure: fires when tool execution fails — use for error tracking
+- PostToolUse `continueOnBlock: true` (v2.1.139+) — when set in the hook config, a `decision: "block"` feeds the `reason` back to Claude and the turn continues instead of stopping. Use for non-fatal validators (lint, type-check, drift detection)
 - PostToolUse `hookSpecificOutput.updatedToolOutput` (v2.1.121+): replaces tool output for the model. Pre-v2.1.121 was MCP-only (`updatedMCPToolOutput`); now works for Bash, Edit, Write, Read, etc. Use sparingly — rewriting can hide errors and breaks audit trail
 - PostToolBatch (v2.1.x+): fires when a batch of parallel tool calls completes, before the next model call. No matcher. Blockable via `decision: "block"` — point of choice for end-of-batch validation
 - UserPromptExpansion: fires when a slash command expands. Matcher: command name. Blockable — can prevent the expansion
@@ -40,6 +41,14 @@ last_verified: 2026-05-05
 
 - SubagentStart: inject additionalContext into spawned subagent via stdout
 - TeammateIdle: fires when a team member has no pending work
+- Subagent API requests carry `x-claude-code-agent-id` / `x-claude-code-parent-agent-id` headers (v2.1.139+); OTEL `claude_code.llm_request` spans include `agent_id` / `parent_agent_id` attributes — use for distributed tracing of agent trees
+
+## Shared payload fields
+
+- `session_id` — present in every hook input; matches `$CLAUDE_CODE_SESSION_ID` exported into Bash tool subprocesses (v2.1.132+)
+- `effort.level` — present in every hook input (v2.1.133+); values `"low" | "medium" | "high" | "xhigh" | "max"`. Bash tool subprocesses see the same value as `$CLAUDE_EFFORT`. Enables effort-aware hook decisions (stricter at low, relaxed at max)
+- `cwd` — absolute working directory
+- `transcript_path` — path to the session transcript jsonl
 
 ## MCP elicitation events (v2.1.76+)
 
