@@ -17,14 +17,16 @@ If either tool is not found, fall back to `Bash(curl -s <url>)` for fetching.
 
 Use WebFetch to read these pages directly:
 
-1. `https://docs.anthropic.com/en/docs/claude-code/overview` — main feature list
-2. `https://docs.anthropic.com/en/docs/claude-code/settings` — settings.json schema, permissions
-3. `https://docs.anthropic.com/en/docs/claude-code/hooks` — hook types, events, matchers
-4. `https://docs.anthropic.com/en/docs/claude-code/memory` — memory and context management
-5. `https://docs.anthropic.com/en/docs/claude-code/agent-tool` — subagent capabilities
-6. `https://docs.anthropic.com/en/docs/claude-code/cli` — CLI flags and options
+1. `https://code.claude.com/docs/en/overview` — main feature list
+2. `https://code.claude.com/docs/en/settings` — settings.json schema, permissions
+3. `https://code.claude.com/docs/en/hooks` — hook types, events, matchers
+4. `https://code.claude.com/docs/en/memory` — memory and context management
+5. `https://code.claude.com/docs/en/sub-agents` — subagent capabilities (renamed from agent-tool)
+6. `https://code.claude.com/docs/en/cli` — CLI flags and options
 
-If any URL fails, use WebSearch with query `"Claude Code" <topic> site:docs.anthropic.com` as fallback.
+If any URL fails, use WebSearch with query `"Claude Code" <topic> site:code.claude.com` as fallback.
+
+If a URL returns 404 instead of redirecting, fall back to `https://code.claude.com/docs/llms.txt` (canonical index) and search for the slug — the new domain reorganized some paths (e.g. agent-tool → sub-agents).
 
 Then search for recent announcements:
 - WebSearch: `Claude Code new features 2026`

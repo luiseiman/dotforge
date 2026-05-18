@@ -4,6 +4,21 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v3.8.1 — 2026-05-18
+
+Maintenance: docs domain migration.
+
+- `skills/watch-upstream/SKILL.md`: 6 fetch URLs migrated from
+  `docs.anthropic.com/en/docs/claude-code/*` to `code.claude.com/docs/en/*`
+  (Anthropic flipped the canonical host between v3.7.x and v3.8.0).
+  `agent-tool` slug also moved → `sub-agents`. Added llms.txt fallback
+  note for future migrations.
+- `docs/internal/improvement-plan-internals.md`: WebFetch reference
+  updated to point at the new canonical host.
+
+Practice: `2026-05-18-docs-domain-migration-claude-code` (active,
+informational).
+
 ## v3.8.0 (2026-05-13)
 
 ### `/forge watch` sync from Claude Code v2.1.129 → v2.1.140

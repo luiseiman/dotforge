@@ -319,7 +319,7 @@ Los usuarios activan auto-mode y sus permisos dejan de funcionar sin explicació
 
 Stack para proyectos que configuran Claude Code (meta-configuración):
 - `rules/prompt-eng.md`: system prompt override patterns, frontmatter reference, compaction awareness
-- `plugin.json`: allow WebFetch docs.anthropic.com, allow Bash(claude *)
+- `plugin.json`: allow WebFetch code.claude.com (was docs.anthropic.com pre-2026-05), allow Bash(claude *)
 - Detección: proyecto contiene `CLAUDE.md.tmpl` o `agents/*.md` o `skills/*/SKILL.md`
 
 **Archivos**: `stacks/prompt-engineering/`
