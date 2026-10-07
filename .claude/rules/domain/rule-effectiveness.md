@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Rule Effectiveness
@@ -13,8 +13,10 @@ last_verified: 2026-10-06
 |-------|--------|--------|
 | `globs:` | CSV glob patterns | Eager loading at session start |
 | `paths:` | Unquoted CSV only | Lazy loading with `alwaysApply: false` |
-| `model` | `haiku`, `sonnet`, `opus`, `inherit` | Pin model tier for rule/skill execution |
-| `effort` | `low`, `medium`, `high`, `xhigh`, `max`, integer | Thinking level; `xhigh` Opus 4.7-exclusive (v2.1.111+) |
+| `model` | `haiku`, `sonnet`, `opus`, `fable`, full ID, `inherit` | Pin model for skill/command/agent execution. Honored on pinned-default models since v2.1.259 (was silently ignored); `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` overrides it for agents |
+| `effort` | `low`, `medium`, `high`, `xhigh`, `max`, integer | Thinking level; `xhigh` Opus/Fable-only. Honored on pinned-default models since v2.1.267; capped by `maxEffortLevel` |
+| `omitClaudeMd` | boolean (agents) | Skip user/project/local CLAUDE.md in the subagent context (v2.1.271+) |
+| `maxTurns` | integer (agents) | Stop the subagent after N turns; output marked partial, resumable via `SendMessage` (v2.1.246+) |
 | `context` | `inline`, `fork` | Execute inline or fork to subagent |
 | `agent` | agent type string | Sub-agent type when `context: fork` |
 | `allowed-tools` | tool name filter | Restrict available tools |

@@ -4,11 +4,13 @@ title: Low-priority fixes bundle — worktree include patterns, /cd settings rel
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [worktree, memory, code-review, mcp, misc]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/agents.md", ".claude/rules/memory.md", ".claude/rules/domain/native-vs-dotforge-boundary.md", ".claude/rules/domain/permission-managed-settings.md", ".claude/rules/domain/parallel-sessions.md"]
 replaced_by: null
+effectiveness: informational
+error_type: null
 ---
 
 ## Description
@@ -30,4 +32,4 @@ All low priority; no dotforge content contradicted. `agents.md` item 6 and `nati
 - `.claude/rules/domain/permission-managed-settings.md`: MCP client defaults
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

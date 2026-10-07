@@ -4,11 +4,13 @@ title: Plugin/marketplace additions — marketplace aliases, owner wildcards, ar
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [plugins, marketplace, managed-settings, distribution]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/plugin-distribution.md", ".claude/rules/domain/agent-orchestration.md"]
 replaced_by: null
+effectiveness: informational
+error_type: null
 ---
 
 ## Description
@@ -28,4 +30,4 @@ replaced_by: null
 - `.claude/rules/domain/agent-orchestration.md` § model self-invocation: `disable-model-invocation` now hard-enforced
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

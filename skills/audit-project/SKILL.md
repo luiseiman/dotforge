@@ -56,7 +56,7 @@ For each checklist item, verify existence **and quality**:
    - At least 1 exact build/test command
    - Project structure or architecture
    - Do NOT count only lines — a 50-line boilerplate file is score 1
-2. **settings.json** — Does it exist in `.claude/`? Does it have explicit permissions? Does it have a deny list?
+2. **settings.json** — Does it exist in `.claude/`? Does it have explicit permissions? Does it have a deny list? Warn (do not fail) on: boolean `"attribution": false` in the shared file (older CLIs skip the whole file, v2.1.281), project-scope-inert keys (`defaultMode: auto|bypassPermissions`, `sandbox.credentials`, telemetry env — see `domain/permission-managed-settings.md`), allow rules with a wildcard before the subcommand (`Bash(git * main)`)
 3. **Rules** — Is there at least 1 rule in `.claude/rules/`? Does it have frontmatter with `globs:` or `paths:`?
 4. **Hook block-destructive** — Verify:
    - Does `.claude/hooks/block-destructive.sh` exist?

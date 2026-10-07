@@ -14,6 +14,8 @@ last_verified: 2026-10-07
 3. **Claude.ai login** — persistent OAuth, stored in `~/.claude/.credentials.json`
 4. **Anthropic Console login** — `claude auth login --console`, billing via Console
 
+`claude auth status` (JSON) reports which one won under `authMethod`: `none | claude.ai | oauth_token | api_key | api_key_helper | third_party`, plus `configDirectory` (v2.1.268). Exit code 1 when logged out — usable as a CI precondition.
+
 When multiple are present, Claude Code chooses by source (1 > 2 > 3 > 4). The first one found is used; others are ignored for *requests*, but their **presence still affects feature gating** (see below).
 
 ## API key presence disables feature set (v2.1.139+)

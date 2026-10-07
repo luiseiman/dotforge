@@ -4,11 +4,13 @@ title: CLI/env additions bundle — autocompact, system-prompt-snapshot, bashOut
 source: "/forge watch — docs/en/cli + CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [cli, env-vars, automation, context, skills]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/cli-flags.md", ".claude/rules/domain/prompting-patterns.md", ".claude/rules/domain/context-window-optimization.md", ".claude/rules/domain/auth.md", "skills/reset-project/SKILL.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -28,4 +30,4 @@ Settings/env: `bashOutputMaxChars` up to 128K (v2.1.261; `taskOutputMaxChars`/`T
 - `.claude/rules/domain/auth.md`: `authMethod` values, `configDirectory`
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

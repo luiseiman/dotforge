@@ -1614,3 +1614,102 @@ practices:
     status: informational
     projects_applied: 0
     last_checked: null
+
+  - id: practice-2026-10-06-subagent-frontmatter-and-model-force
+    error_targeted: "agent model: pin silently overridden by CLAUDE_CODE_SUBAGENT_MODEL_FORCE; transactional agents load full CLAUDE.md they never use"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-cross-session-messaging
+    error_targeted: "untrusted inbound session message lands in a production-tier session with crossSessionInbound unset (accept)"
+    error_type: security
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-maxeffortlevel-and-frontmatter-effort-honored
+    error_targeted: "agent effort: max now billed at max (was ignored); maxEffortLevel cap refuses /effort xhigh unexpectedly"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-plugin-marketplace-additions-bundle
+    error_targeted: null
+    error_type: null
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-background-limits-monitor-workflows
+    error_targeted: "/loop or Monitor babysitting a long background job in CI dies silently at the 30 min / 2 h cap"
+    error_type: integration
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-attribution-false-boolean-cross-version
+    error_targeted: "shared settings.json with boolean attribution:false skipped entirely by older CLI — every other key silently dropped"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-cli-flags-env-vars-misc-bundle
+    error_targeted: "-p script iterates --append-system-prompt against a resumed conversation and silently keeps the first prompt (snapshot); reset-project probes removed subcommand name"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-worktree-config-and-memory-fixes-bundle
+    error_targeted: null
+    error_type: null
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-watch-upstream-large-delta-process
+    error_targeted: "/forge watch classifies from a WebFetch summary of CHANGELOG and misses most versions when the delta is large"
+    error_type: logic
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null

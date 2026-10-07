@@ -4,11 +4,13 @@ title: Subagent frontmatter additions (omitClaudeMd, maxTurns, cacheTtl), CLAUDE
 source: "/forge watch — docs/en/sub-agents + CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [subagents, agents, model-routing, context, cost]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["agents/researcher.md", ".claude/rules/domain/agent-orchestration.md", ".claude/rules/agents.md", ".claude/rules/domain/rule-effectiveness.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -28,4 +30,4 @@ replaced_by: null
 - `.claude/rules/agents.md`: SendMessage follow-up rule covers `maxTurns` partial output
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

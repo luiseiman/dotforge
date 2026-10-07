@@ -62,6 +62,7 @@ Keys silently ignored when set in `.claude/settings.json` or `settings.local.jso
 - `alwaysLoad: false` (v2.1.285) defers all of a server's tools behind tool search; per-tool `_meta['anthropic/alwaysLoad']=false` keeps one deferred. `"type":"sdk"` entries skipped (v2.1.274)
 - Reserved MCP server names: `workspace` (v2.1.128), `widgets` in cloud sessions and self-hosted runners (v2.1.287) — skipped with warning
 - MCP tools default to `passthrough` (always ask)
+- Bedrock/Vertex/Foundry/telemetry-off installs use the v2 MCP client and 2026-07-28 protocol negotiation by default (v2.1.288); a server that stops connecting in URL-mode elicitation needs `"bareElicitationCapability": true` in its entry (v2.1.287)
 - **`claude mcp list/get/add` secrets handling (v2.1.161 fix)**: pre-fix the CLI subcommands printed `${VAR}`-expanded values verbatim, leaking subprocess env into stdout (incident potential when piping `claude mcp list` to a log file or screenshare). Post-fix `${VAR}` is no longer expanded in CLI output — safer to dump configs for review. Audit any pre-v2.1.161 ops runbooks that included `claude mcp list` output.
 
 ## Dynamic permissions from hooks (v2.1.84+)

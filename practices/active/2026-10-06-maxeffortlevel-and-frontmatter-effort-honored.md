@@ -4,11 +4,13 @@ title: "maxEffortLevel caps effort; frontmatter effort/model now honored on pinn
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [effort, models, agents, cost, settings]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["agents/security-auditor.md", ".claude/rules/domain/rule-effectiveness.md", ".claude/rules/domain/model-ids.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -27,4 +29,4 @@ replaced_by: null
 - `.claude/rules/domain/workflow-and-ultracode-policy.md`: tier → effort cap mapping
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

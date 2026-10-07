@@ -33,6 +33,32 @@ Then search for recent announcements:
 - WebSearch: `Claude Code changelog site:anthropic.com`
 - WebSearch: `Claude Code hooks settings update site:github.com/anthropics`
 
+Budget: WebFetch fails after 5 min per page (`CLAUDE_CODE_WEBFETCH_DEADLINE_MS`), WebSearch refills 100 calls/hour. Keep the doc fetches to the 6 pages + `whats-new` and at most 3 searches.
+
+## Step 1b: Determine the baseline and the raw changelog delta
+
+`WebFetch` summarizes the CHANGELOG through a small model and silently drops bullets when the delta is large (2026-10-06: 60 of 73 versions lost). Never classify from a WebFetch summary of the changelog — use the raw file:
+
+```bash
+# Baseline = newest version already cited in the domain rules
+BASE=$(grep -rhoE 'v2\.1\.[0-9]+' "$DOTFORGE_DIR/.claude/rules/domain/" | sort -t. -k3 -n | tail -1)
+curl -sL https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md -o "$SCRATCH/CHANGELOG.md"
+HEAD=$(grep -m1 '^## 2\.1\.' "$SCRATCH/CHANGELOG.md" | awk '{print $2}')
+END=$(grep -n "^## ${BASE#v}$" "$SCRATCH/CHANGELOG.md" | cut -d: -f1)
+sed -n "1,$((END-1))p" "$SCRATCH/CHANGELOG.md" > "$SCRATCH/changelog-slice.md"
+echo "delta: $BASE → $HEAD, $(grep -c '^## ' "$SCRATCH/changelog-slice.md") versions"
+```
+
+Note: `whats-new` weekly digests and the docs pages may cite versions newer than the CHANGELOG head (docs are published ahead) — record them with the docs URL as source.
+
+## Step 2b: Split classification when the delta exceeds ~30 versions
+
+For ≤30 versions, read `changelog-slice.md` directly. Above that, spawn **two `general-purpose` subagents (`model: sonnet`) in parallel**, each owning a contiguous version range (split by header presence — some version numbers are skipped upstream, never by arithmetic). Each prompt must carry: the slice path, its range, the Step 2 impact table, and the instruction to `grep -rn` the dotforge surfaces per kept bullet before classifying as Gap / Partial / Covered / Breaking. Ask for the compact report format (BREAKING / GAP / PARTIAL / COVERED / NOTABLE SKIPPED, under 2500 words). Cost reference: ~500K subagent tokens for 62 versions. Keep the 6 doc pages as persisted files and `grep` them for `v2.1.N` notes instead of reading inline.
+
+## Step 3b: Spot-check before reporting
+
+`grep -n` the raw slice for the 3–5 highest-impact claims (the BREAKING ones) and quote the version header. Subagent summaries occasionally merge adjacent bullets; the raw line is the source of truth.
+
 ## Step 2: Extract and classify changes
 
 For each finding, check if it affects dotforge:

@@ -14,14 +14,15 @@ Before starting any task, evaluate:
 3. **Code changes + tests needed** → delegate to `implementer`
 4. **Security/vulnerability concern** → delegate to `security-auditor`
 5. **Multi-component refactor (>3 files, >2 concerns)** → evaluate Agent Teams
-6. **Code review before merge** → delegate to `code-reviewer` subagent (structured chain-of-review during the change) OR invoke the built-in `/code-review` slash command (v2.1.147+ ad-hoc end-of-PR pass; `--comment` posts inline GitHub PR comments, `--fix` applies findings to working tree). The two are independent — subagent is for in-flight review with memory, slash command is for one-shot review-and-comment
+6. **Code review before merge** → delegate to `code-reviewer` subagent (structured chain-of-review during the change) OR invoke the built-in `/code-review` slash command (v2.1.147+ ad-hoc end-of-PR pass, runs as a background subagent since v2.1.214; `/review` is an alias since v2.1.223; `--comment` posts inline comments on GitHub PRs and GitLab MRs, `--fix` applies findings, `--max-findings <n>|all` bounds output, v2.1.274; medium effort also reports cleanup + CLAUDE.md-convention findings, v2.1.290). The two are independent — subagent is for in-flight review with memory, slash command is for one-shot review-and-comment
 7. **Architecture decision or tradeoff analysis** → delegate to `architect`
 8. **Session analysis / pattern detection / /forge insights** → delegate to `session-reviewer`
 
 ## Subagent Invocation Rules
 
 - Use `Agent(subagent_type="<name>", ...)` to spawn new subagents
-- To continue a subagent's work, use `SendMessage({to: agentId})` — NEVER spawn a new agent for follow-up
+- To continue a subagent's work, use `SendMessage({to: agentId})` — NEVER spawn a new agent for follow-up. A subagent stopped by `maxTurns` returns partial output with the same hint: resume it
+- `SendMessage` also reaches OTHER Claude Code sessions on this machine by name (v2.1.224+, `ListAgents` discovers them). That is cross-session messaging, not subagent continuation — see `domain/parallel-sessions.md` § Cross-session messaging before using it
 - Pass minimal, focused context — don't dump the full conversation
 - Each subagent must return a structured summary, not raw output
 - Chain subagents sequentially: researcher → architect → implementer → test-runner → code-reviewer

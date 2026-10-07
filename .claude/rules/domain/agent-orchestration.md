@@ -37,6 +37,18 @@ dotforge implications:
 - Audit `agents/*.md` — architect (may need EnterPlanMode/ExitPlanMode), security-auditor (may need AskUserQuestion), any agent listing tools outside the allowlist gets silent removal in background mode
 - If an agent MUST have foreground tools, set `background: false` in frontmatter to force foreground execution
 - `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` kills background entirely
+- Monitor watches always carry a deadline (max 30 min, 10 min in `-p`); the `persistent` option was removed (v2.1.271). Background Bash/PowerShell in unattended `-p`/SDK/CI/cloud sessions stop after 30 min by default, 2 h max (v2.1.285/288); interactive sessions are exempt
+
+## Frontmatter and spawn additions (v2.1.232–v2.1.281)
+
+- **Fork mode on by default** in interactive sessions (v2.1.232; `CLAUDE_CODE_FORK_SUBAGENT=1` no longer needed). `/subtask` replaced `/fork` (v2.1.212). Forks inherit the exact parent tool pool and keep the parent's `plan`/`dontAsk` mode. Interactive non-teammate spawns run in the background by default
+- `omitClaudeMd: true` (v2.1.271) — subagent skips user/project/local CLAUDE.md (managed still loads; `.claude/rules/` path-scoped files skip too). dotforge sets it on `researcher` only — `test-runner` needs the project's build/test commands from CLAUDE.md
+- `maxTurns: N` (v2.1.246) — output marked partial at the limit with a hint to continue via `SendMessage`; resume, never respawn
+- `experimental.cacheTtl: "5m"|"1h"` (v2.1.248) per agent; settings `promptCacheTtl` / `subagentPromptCacheTtl` (v2.1.243) keep the main conversation at 1h while subagents stay at 5m. Experimental — not set on dotforge agents yet
+- `name` validated (no `:` or leading `-`, v2.1.218); files starting with a UTF-8 BOM now load (v2.1.239); `--agents` accepts a JSON file path with `-p` (v2.1.281) and is validated at startup (v2.1.242)
+- Model resolution: per-invocation `model` → definition `model` → `CLAUDE_CODE_SUBAGENT_MODEL` → main. Family alias (`opus`) resolves to main's model when same family (v2.1.251). **`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` (v2.1.257) overrides every pin** — check it is unset before trusting `model: haiku` cost assumptions
+- Results reach the main agent under a marker header; in auto mode through a classifier-reviewed hand-back call (v2.1.271/277). Sibling roster is injected when `SendMessage` is in `tools` (v2.1.206). Teammates use the leader's model — the "Default teammate model" setting was removed (v2.1.234). In-process teammate results carry `agent_id` (agent ID) and `teammate_id` (`name@team`, v2.1.290)
+- Combined subagent `description` text should stay under ~15K tokens (docs, v2.1.296) — it is injected into every turn's delegation prompt
 
 ## Subagent output scanning (v2.1.210+, prompt-injection defense)
 
@@ -143,6 +155,6 @@ Skills installed via dotforge can shadow built-in commands if names collide — 
 
 Since v2.1.108, the model can invoke slash commands directly in its tool-use loop — previously user-only. Implication for skill design:
 
-- Destructive or state-mutating commands (reset, unregister, capture) should set `disable-model-invocation: true` (v2.1.111+) to stay user-gated
+- Destructive or state-mutating commands (reset, unregister, capture) should set `disable-model-invocation: true` (v2.1.111+) to stay user-gated — since v2.1.222 the runtime hard-refuses model invocation of such skills with an "ask the user to run it" message
 - `user-invocable: true` by itself no longer restricts the model — both flags needed for full gating
 - Audit `global/commands/` and `skills/*/SKILL.md` when introducing new commands: ask "do I want the model to self-trigger this?"

@@ -2,7 +2,7 @@
 globs: workflows/*.js, docs/v4/*.md, .claude/rules/domain/workflow-automation.md
 description: When dotforge should use workflows vs skills, based on PoC cost-quality measurements
 domain: dotforge-meta
-last_verified: 2026-06-03
+last_verified: 2026-10-07
 ---
 
 # Workflow Economics
@@ -71,7 +71,7 @@ ALWAYS specify `model:` in `agent()` opts when a stage doesn't need the session-
 
 - **`/forge sync-all`** — pure mechanical (git classify), 0 hot-path LLM calls. Workflow = token bomb.
 - **`/forge audit`** — file/grep checks. Mechanical.
-- **`/forge watch`** — measured 4-5x baseline; bash skill produces good-enough output with manual review
+- **`/forge watch`** — measured 4-5x baseline; bash skill produces good-enough output with manual review. For deltas >30 releases the skill uses the **bash-first + 2 sonnet subagents by version range** pattern (curl raw CHANGELOG → slice → split → grep coverage → spot-check), ~500K subagent tokens for 62 versions — still a plain skill, not a workflow
 - **`/forge update`** — judgment-heavy but recurring; cost compounds
 - **`/forge sync`, `/forge bootstrap`, `/forge init`** — file ops, no LLM judgment in hot path
 

@@ -4,11 +4,13 @@ title: When /forge watch delta exceeds ~30 releases, download CHANGELOG raw and 
 source: "own experience"
 source_type: experience
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [process, watch-upstream, subagents, context, skills]
 tested_in: dotforge
-incorporated_in: []
+incorporated_in: ["skills/watch-upstream/SKILL.md", ".claude/rules/domain/workflow-economics.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: logic
 ---
 
 ## Description
@@ -23,4 +25,4 @@ replaced_by: null
 - `global/commands/forge.md`: `watch` description mentions last-covered-version baseline in `practices/metrics.yml`
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

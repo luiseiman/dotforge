@@ -2,7 +2,7 @@
 globs: "template/**/*.md,docs/memory-strategy.md,**/CLAUDE.md,**/rules/memory.md,**/MEMORY.md"
 description: "Context window runtime — compaction tiers, size budgets, tool result limits"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Context Window Runtime
@@ -43,8 +43,8 @@ last_verified: 2026-10-06
 ## Tool result limits
 
 - Per-tool: 50K chars. MCP override: 500K via `_meta["anthropic/maxResultSizeChars"]`
-- Per-turn aggregate: 200K chars. Bash truncation: 30K chars
-- Oversized results: persisted to disk, preview sent to Claude
+- Per-turn aggregate: 200K chars. Bash inline cap: 30K chars by default, raise up to 128K with the `bashOutputMaxChars` setting (v2.1.261); `taskOutputMaxChars` / `TASK_MAX_OUTPUT_LENGTH` no longer have any effect (v2.1.277)
+- Oversized results: persisted to disk (1 GB cap, v2.1.265), preview sent to Claude
 - See `context-control-patterns.md` for user-facing context management (/btw, skill budget, Esc+Esc)
 
 ## Prompt cache TTL (v2.1.108+)

@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/agents/*.md,**/commands/*.md,**/skills/**/SKILL.md,docs/prompting-patterns.md"
 description: "Structural prompt engineering patterns for Claude Code configuration"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Prompting Patterns
@@ -53,7 +53,9 @@ Measured (vps-control watchdog, 2026-05-31, Opus 4.7 — pre-lean-default era):
 - Second call inside 5-min cache window: 0 cache_creation, ~$0.004/call
 - **12-37x cost reduction on identical workload**
 
-Interaction with prompt cache TTL: identical `--system-prompt` between calls within 5 min (default) or 60 min (`ENABLE_PROMPT_CACHING_1H=1`) → cache hits, near-zero marginal cost. Stable sys prompt + variable stdin is the cache-friendly shape.
+Interaction with prompt cache TTL: identical `--system-prompt` between calls within 5 min (default) or 60 min (`ENABLE_PROMPT_CACHING_1H=1`) → cache hits, near-zero marginal cost. Stable sys prompt + variable stdin is the cache-friendly shape. Since v2.1.275 a line containing only `__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__` inside the custom prompt marks the cached/dynamic split explicitly — put the stable instructions above it and per-run context below.
+
+**Snapshot caveat (v2.1.257+)**: the system prompt is recorded on a conversation's first request and reused until compaction, including across `--continue`/`--resume`. Iterating on `--append-system-prompt` text against the same conversation silently keeps the first version — pass `--system-prompt-snapshot off` while tuning, or start a fresh conversation per variant. Bare mode (`--bare` / `CLAUDE_CODE_SIMPLE=1`) records only with `--system-prompt-snapshot on`.
 
 ## Language rules
 

@@ -4,11 +4,13 @@ title: attribution:false boolean form breaks older CLIs (whole settings file ski
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [git, attribution, settings, sync, compatibility]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/_common.md", "skills/sync-template/SKILL.md", "skills/audit-project/SKILL.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -24,4 +26,4 @@ v2.1.281: `"attribution": false` hides all commit and PR attribution. **Older CL
 - `skills/audit-project/SKILL.md`: flag boolean `attribution` in shared file
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

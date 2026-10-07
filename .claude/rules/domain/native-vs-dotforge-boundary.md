@@ -2,7 +2,7 @@
 globs: docs/v4/*.md, behaviors/*, stacks/*, skills/*, .claude/rules/domain/*.md
 description: Native-first boundary — what dotforge keeps vs cedes to native Claude Code, and the method for deciding
 domain: dotforge-meta
-last_verified: 2026-06-03
+last_verified: 2026-10-07
 ---
 
 # Native vs dotforge Boundary
@@ -46,7 +46,7 @@ CEDE — native covers it:
 - Identical shared rules (no merge needed) → native symlinks in `.claude/rules/` + global CLAUDE.md
 - Workflows / orchestration → `/workflows`, Agent Teams, `/deep-research` (already ceded v4)
 - Base CLAUDE.md generation → `/init`
-- One-shot code review → `/code-review --comment/--fix`
+- One-shot code review → `/code-review` (`/review` alias, `--comment` on GitHub PRs + GitLab MRs, `--fix`, `--max-findings <n>|all`; medium effort also reports cleanup + CLAUDE.md-convention findings since v2.1.290)
 - Model routing as a system → `/effort` (keep only as documentation)
 
 ## Anti-pattern

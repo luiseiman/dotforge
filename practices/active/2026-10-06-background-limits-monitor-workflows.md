@@ -4,11 +4,13 @@ title: Background command time limits, Monitor deadlines, /goal backoff, /loop c
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [workflows, background, monitor, loop, goal, automation]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/workflow-automation.md", ".claude/rules/domain/agent-orchestration.md", ".claude/rules/domain/cli-flags.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: integration
 ---
 
 ## Description
@@ -29,4 +31,4 @@ replaced_by: null
 - `.claude/rules/domain/cli-flags.md`: env vars
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.6.0 (/forge update, catalogue block).

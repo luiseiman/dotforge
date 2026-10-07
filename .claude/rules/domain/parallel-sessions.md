@@ -36,12 +36,13 @@ Two orthogonal axes of parallelism: (a) **subagents** — isolated context, shar
 
 Process-level isolation alongside the filesystem-level isolation of `--worktree`. Six surfaces:
 
-- `claude --bg "<task>"`: start a session in the background and return immediately. Prints session ID and management commands. Combine with `--agent <name>` to run a specific subagent
-- `claude attach <id>`: attach to a running background session in the current terminal
-- `claude logs <id>`: print recent output
-- `claude respawn <id>`: restart a stopped session with conversation intact (`--all` restarts every stopped session)
-- `claude rm <id>`: remove from the agent-view list
+- `claude --bg "<task>"`: start a session in the background and return immediately. Prints session ID and management commands. Combine with `--agent <name>` to run a specific subagent, or `--exec '<cmd>'` to run a shell command as a PTY-backed background job. Checks workspace trust first (v2.1.225); cannot be combined with `-p`
+- `claude attach <id|name>` / `claude logs <id|name>`: attach / print recent output — a partial session name works since v2.1.290
+- `claude respawn <id>`: restart a running or stopped session with conversation intact (`--all` restarts every running session, e.g. to pick up an updated binary)
+- `claude rm <id>`: remove from the agent-view list. A refusal over the worktree prints the exact resolver: `--discard-unpushed <commit>@<worktree-id>` (v2.1.260) or `--force-remove-worktree <worktree-id>` (v2.1.268). Transcript stays resumable
 - `claude stop <id>` / `claude kill <id>`: stop a running session
+- `claude daemon status` / `claude daemon stop --any [--keep-workers]`: inspect or stop the background-session supervisor; `--keep-workers` leaves sessions running for the next supervisor to reconnect. Use when agent view reports "the background service did not respond"
+- `claude --continue` now opens a finished background session (v2.1.257); `--resume <id>` searches every project on the machine (v2.1.223) and attaches when the session is still running (v2.1.285)
 
 `claude agents` (v2.1.139+, Research Preview) opens the unified agent view showing every session (running/blocked/done). When stdin is piped, the older subagent-listing behavior is preserved.
 
@@ -72,12 +73,22 @@ Set `"none"` only when worktrees are impractical: Bazel monorepos that assume a 
 
 For exhaustive flag reference see `cli-flags.md`.
 
+## Cross-session messaging (v2.1.220+, macOS/Linux)
+
+- Sessions on the same machine can message each other: `SendMessage({to: "<session name>"})` + `ListAgents` to discover; typing `@` in the prompt mentions a session by name (v2.1.232). Claude passes a finding or decision from one session to another instead of the user re-explaining it
+- Settings: `crossSessionInbound: accept|hold|refuse` — an invalid value warns and holds/refuses (v2.1.251); `dialogExpiry`; `notify_when_idle` (v2.1.236). Messages to a session running with bypassed permissions are **held** (v2.1.248). Outbound `SendMessage` is classified by auto mode before dispatch (v2.1.222)
+- **Injection surface**: an inbound message is untrusted text landing in a live session. Production-tier projects (TRADINGBOT, cotiza-api-cloud, SOMA) should run with `crossSessionInbound: "hold"` (or `refuse`) at user scope and review held messages in agent view
+- Background subagents can reply to an unnamed sibling or parent (v2.1.251); a teammate's final answer reaches the lead in its idle notification (v2.1.246)
+- `/cd <dir>` (v2.1.246) re-reads project + local `settings.json` from the new directory — the cache-preserving move also swaps permissions
+
 ## Session handoff
 
 - `--fork-session`: resume with a new session ID instead of reusing the original. Use with `--resume` or `-c` to clone a session's history without touching the original
 - `--teleport`: resume a web session (claude.ai/code) in the local terminal
-- `--remote "<task>"`: spawn a new web session from CLI
-- `claude --from-pr <n>`: resume sessions linked to a GitHub PR (auto-linked when created via `gh pr create`)
+- `--cloud "<task>"`: spawn a new cloud session from CLI; with a session ID or claude.ai/code URL and `-p`, queue a follow-up message into that session. `--remote` is a deprecated alias
+- `--environment ccpool_<id> [--ref <branch>]` (v2.1.224): create the cloud session on a self-hosted environment
+- `claude --from-pr <n>`: resume sessions linked to a GitHub/GitLab/Bitbucket PR or MR (auto-linked when created via `gh pr create`)
+- `claude --desktop [--continue | --resume <id>]` (v2.1.285): open the Desktop app on the current directory or session and exit
 
 ## Fast-start flags relevant to parallelism
 

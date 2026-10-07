@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/skills/loop/**,**/skills/schedule/**,**/rules/_common.md"
 description: "When to reach for /goal, /loop, /schedule, /batch, /workflows — temporal and orchestration primitives"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Workflow Automation Primitives
@@ -16,6 +16,7 @@ Five primitives cover temporal and multi-agent orchestration: `/goal` (condition
 - Stop condition is judged by the model; phrase it concretely so the judgment is reliable
 - Alternative to `/loop` when the stop condition is well-defined — `/goal` is condition-driven (semantic), `/loop` is cadence-driven (temporal)
 - Fails closed when `disableAllHooks` or `allowManagedHooksOnly` is set (v2.1.140 — shows clear message instead of silent hang)
+- Clears itself on an unrecoverable error; check-ins on background work back off 30 min → 1 h → 2 h and are capped at 3 per goal; `CLAUDE_CODE_GOAL_CHECKIN_MINUTES=0` opts out (v2.1.234–246). Restored when resuming from the picker (v2.1.233)
 
 ## `/loop` — time-bounded polling
 
@@ -23,6 +24,8 @@ Five primitives cover temporal and multi-agent orchestration: `/goal` (condition
 - Default cadence heuristic: sleep <5min stays in prompt cache; 5–60min pays one cache miss; 20–30min is the sweet spot for idle polls. See `ScheduleWakeup` docs for the full rationale. With `ENABLE_PROMPT_CACHING_1H=1` (v2.1.108+) the 5-min boundary extends to 60min — see `context-window-optimization.md`
 - Never use `sleep N` in Bash as a polling mechanism — it burns a tool call, freezes Claude, and wastes context. `/loop` or `ScheduleWakeup` instead
 - Stop condition MUST be explicit in the loop prompt — otherwise `/loop` runs forever
+- Self-paced mode (no interval) is always available (v2.1.248); idle wake-ups are folded in the transcript and `/usage` shows a Loops breakdown (v2.1.243). `claude --continue` skips sessions whose first prompt was `/loop` unless `-p`
+- **Background command caps**: in unattended `-p`/SDK/CI/cloud sessions a background Bash/PowerShell job stops after 30 min by default, 2 h max (v2.1.285/288; interactive sessions exempt). Monitor watches always have a deadline — max 30 min, 10 min in `-p`; `persistent` was removed (v2.1.271). A `/loop` that babysits a long background job in CI dies silently at the cap — split the job or poll an external status instead
 
 ## `/schedule` — recurring work
 
@@ -37,6 +40,8 @@ Five primitives cover temporal and multi-agent orchestration: `/goal` (condition
 - Each change must be independent (no shared mutable state, no order dependency)
 - When blast radius is wide, stage into a branch first — batch failures are harder to unwind than sequential
 - If changes are <10, sequential is usually faster than `/batch` setup overhead
+- Runs where a `WorktreeCreate` hook provides the worktrees (v2.1.281) — custom worktree layouts no longer block `/batch`
+- Budget: `--max-budget-usd` counts subagent spend; at the cap, spawning fails with `Budget limit reached` and running background subagents are stopped (v2.1.217). Data-residency workspaces add a 1.1x US-only-inference premium to the estimate (v2.1.239)
 
 ## `/workflows` — dynamic multi-agent orchestration (v2.1.154+)
 

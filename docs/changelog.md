@@ -4,6 +4,21 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.6.0 (2026-10-07)
+
+### Upstream sync — catalogue block (9 of the remaining 12 v2.1.219→v2.1.291 practices)
+
+3 practices stay in `practices/evaluating/` — all native-first boundary decisions (native audit tooling, Claude Mods vs behaviors v3, AGENTS.md native support).
+
+- **Agents** — `agents/researcher.md`: `omitClaudeMd: true` + `maxTurns: 30` (v2.1.271/246). `agents/security-auditor.md`: `effort: max` → `xhigh` now that frontmatter effort is honored (v2.1.259/267). `domain/agent-orchestration.md`: fork default, `/subtask`, `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` warning, Monitor/background caps, result marker. `rules/agents.md`: `/code-review` flags, SendMessage vs cross-session. `domain/rule-effectiveness.md`: frontmatter table.
+- **Sessions** — `domain/parallel-sessions.md`: cross-session messaging + `crossSessionInbound: hold` for production tier, bg lifecycle (`daemon`, `rm` flags, partial names), `--cloud`/`--environment`/`--desktop`.
+- **Plugins** — `domain/plugin-distribution.md`: marketplace aliases/wildcards/fail-closed, sources (`archive`, `command`, `headersHelper`, synced), `plugin eval`, Claude Mods section, reserved `widgets`.
+- **Automation** — `domain/workflow-automation.md`: `/goal` backoff, `/loop` self-paced + background caps, `/batch` on `WorktreeCreate`, `--max-budget-usd` semantics.
+- **Attribution** — `rules/_common.md`, `skills/sync-template`, `skills/audit-project`: boolean `attribution: false` breaks older CLIs — keep object form in shared files; audit warns.
+- **CLI/env** — `domain/cli-flags.md`: ~25 flags/subcommands/env vars (`--autocompact`, snapshot flags, `claude purge`, `doctor`, `daemon`, `import`, `auth status` fields, WebFetch/WebSearch limits, rm-guard opt-outs, `feedbackDrafts` egress). `domain/prompting-patterns.md`: snapshot caveat + `__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__`. `domain/context-window-optimization.md`: `bashOutputMaxChars`. `domain/auth.md`: `authMethod`. `skills/reset-project`: `claude purge`.
+- **Memory / misc** — `rules/memory.md`: 25 KB cap, markup neutralization. `domain/native-vs-dotforge-boundary.md`: `/code-review` flags. `domain/permission-managed-settings.md`: MCP v2 client defaults.
+- **Process** — `skills/watch-upstream`: Step 1b raw changelog slice + baseline detection, Step 2b split across 2 subagents above ~30 versions, Step 3b spot-check, fetch budget. `domain/workflow-economics.md` records the pattern.
+
 ## v4.5.0 (2026-10-07)
 
 ### Upstream sync — security block (6 of the 18 remaining v2.1.219→v2.1.291 practices)

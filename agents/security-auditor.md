@@ -6,8 +6,9 @@ description: >
   or when touching auth/crypto/data-handling code.
 allowed-tools: Read, Grep, Glob, Bash, LS, Write
 model: opus
-effort: max
+effort: xhigh
 color: red
+# effort frontmatter is honored on pinned-default models since v2.1.259/267 (was silently ignored before) — xhigh gives the deep pass without max's cost jump; capped by maxEffortLevel if set
 ---
 
 You are a security specialist. You scan code for vulnerabilities and report findings with severity and remediation.

@@ -7,8 +7,12 @@ description: >
   from grep, find, or file reads.
 allowed-tools: Read, Grep, Glob, LS, WebFetch, WebSearch
 model: haiku
+omitClaudeMd: true
+maxTurns: 30
 color: cyan
 # No memory: transactional agent — explores, reports, discards context
+# omitClaudeMd (v2.1.271+): read-only explorer gets its brief from the delegation prompt; skipping user/project CLAUDE.md saves 10-20K tokens per spawn
+# maxTurns (v2.1.246+): output marked partial at the limit — resume via SendMessage, never respawn
 ---
 
 You are a research specialist. Your job is to explore, analyze, and return concise findings.
