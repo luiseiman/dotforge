@@ -1417,7 +1417,7 @@ practices:
     last_checked: null
 
 # /forge update 2026-08-07 (second pass) — upstream domain-rule drift from /forge watch
-  - id: practice-2026-08-07-sandbox-credentials-schema-expanded
+  - id: practice-2026-08-07-sandbox-creds-schema-expanded
     error_targeted: "settings.json emits deprecated boolean sandbox.credentials form — degrades to deny mode or fails validation on current Claude Code"
     error_type: config
     activated: 2026-08-07
