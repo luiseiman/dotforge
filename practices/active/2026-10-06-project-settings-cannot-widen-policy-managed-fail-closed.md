@@ -4,11 +4,13 @@ title: Project/local settings can no longer widen policy; managed settings fail 
 source: "/forge watch — Claude Code CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [settings, managed-settings, sandbox, permissions, security, sync]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/permission-managed-settings.md", ".claude/rules/domain/sandboxing.md", ".claude/rules/domain/auth.md", "skills/sync-template/SKILL.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -30,4 +32,4 @@ New managed keys: `allowedProviders`, `deniedModels`, `availableModelsMatch:"exa
 - `skills/sync-template/SKILL.md`: `/forge sync` must never write `defaultMode: auto|bypassPermissions`, `sandbox.credentials`, `sandbox.ripgrep`, telemetry env into project scope — they are silently ignored
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.5.0 (/forge update, security block).

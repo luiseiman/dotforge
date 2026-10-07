@@ -4,11 +4,13 @@ title: Trust gating expanded, worktree sessions cannot touch main checkout, suba
 source: "/forge watch — Claude Code CHANGELOG v2.1.219–v2.1.291 + docs/en/sub-agents"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [permissions, security, worktree, subagents, trust]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/parallel-sessions.md", ".claude/rules/domain/agent-orchestration.md", ".claude/rules/domain/permission-model.md", ".claude/rules/domain/permission-managed-settings.md", ".claude/rules/domain/sandboxing.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: security
 ---
 
 ## Description
@@ -28,4 +30,4 @@ replaced_by: null
 - `agents/*.md`: confirm none sets `permissionMode: bypassPermissions`
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.5.0 (/forge update, security block).

@@ -2,7 +2,7 @@
 globs: "**/managed-settings.json,**/managed-settings.d/*.json,**/.mcp.json,**/settings.json"
 description: "Enterprise managed settings, MCP server governance, dynamic hook-mutated permissions"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Permission Model — Enterprise & MCP
@@ -24,6 +24,30 @@ Companion to `permission-model.md`. Covers managed-scope governance, MCP server 
 - `forceLoginOrgUUID` / `forceLoginMethod` — restrict login to org UUIDs or to `claudeai`/`console`. **v2.1.147 fix**: now enforced against third-party-provider (Bedrock/Vertex/Foundry/Mantle) AND API-key sessions; before v2.1.147 those bypassed both restrictions silently. Re-verify enterprise audits done on older Claude Code builds. See `auth.md`
 - `claudeMd` (managed) — embed org-wide CLAUDE.md content directly in `managed-settings.json` as a string instead of deploying a separate file at `/Library/Application Support/ClaudeCode/CLAUDE.md` (or Linux/Windows equivalents). Example: `"claudeMd": "Always run \`make lint\` before committing.\\nNever push directly to main."`. Honored only in managed/policy scope — setting it in user/project/local has no effect. Same precedence as a managed CLAUDE.md file
 - `requiredMinimumVersion` / `requiredMaximumVersion` (v2.1.187+) — version-gating for managed deployments. Block session startup when Claude Code version falls outside the declared range. Use for enterprise rollouts pinned to validated versions, or to block known-bad builds. Format: semver-compatible string (e.g. `"2.1.187"`). Fail-closed: out-of-range startup is rejected with a clear error
+- Keys added v2.1.257–v2.1.285: `allowedProviders`, `deniedModels`, `availableModelsMatch: "exact"`, `managedMcpServers`, `allowClaudeInChromeWithManagedMcp`, `gatewayInternalNetworks`, `modelPricing` (multiplier ≤10x), `forceLoginMethod: "gateway"` + `forceLoginGatewayUrl` (v2.1.266/261), `policyHelper.timeoutMs` (clamped), `strictPluginOnlyCustomization` (lock customization to plugins only), managed `skillOverrides` keyed on bundled-skill alias (v2.1.260), `maxEffortLevel` (lowest cap from any scope wins, v2.1.267), `modelPicker` (whole-value, highest of managed/`--settings`/user, v2.1.242), `enableArtifact`/`disableArtifact` (`false` from any scope wins, v2.1.242)
+- `allowManagedPermissionRulesOnly` + plugins (v2.1.282/284): plugins loaded via `allowed-tools` no longer pre-approve their own tools unless the source is official or vouched for by managed settings
+
+## Project/local scope cannot widen policy (v2.1.252–v2.1.290)
+
+Keys silently ignored when set in `.claude/settings.json` or `settings.local.json` — only user, managed, or `--settings` take effect:
+- `permissions.defaultMode: auto|bypassPermissions` (v2.1.257)
+- `sandbox.excludedCommands` when managed/`--settings` set `allowUnsandboxedCommands:false` or `allowManagedDomainsOnly:true`; project cannot widen or disable an admin-required sandbox (v2.1.282/285/290). An `excludedCommands` glob must match every part of a compound command (v2.1.277)
+- `sandbox.credentials.*`, `sandbox.ripgrep`, `bwrapPath`/`socatPath` (user/managed/`--settings` only)
+- `env`: `CLAUDE_CONFIG_DIR`, `CLAUDE_CODE_TMPDIR`, `TMPDIR`/`TMP`/`TEMP` (v2.1.252), `CLAUDE_CODE_ENABLE_TELEMETRY`, `OTEL_LOG_*`, `CLAUDE_CODE_DISABLE_ATTACHMENTS`, Chrome enablement
+- Remote Control auto-start (repo-local settings may still turn it off, v2.1.222); `modelPicker`; `instructionFiles` (AGENTS.md policy)
+- `ANTHROPIC_CUSTOM_HEADERS` setting credential/tenant/routing headers needs approval from managed or project scope (v2.1.252)
+
+`/forge sync` must never write these into project scope — they are inert there and mislead audits.
+
+## Fail-closed semantics (v2.1.259–v2.1.285)
+
+- Unparseable managed source → Claude Code refuses to start
+- Invalid nested value inside `sandbox`, `permissions`, `autoMode`, `worktree`, `attribution` → that value fails closed, the rest of the block still applies (v2.1.267)
+- Unreadable `allowedHttpHookUrls`, `httpHookAllowedEnvVars`, `allowedChannelPlugins` → admit nothing
+- Mistyped boolean lock key still applies; malformed `strictKnownMarketplaces` / `blockedMarketplaces` entries fail closed (v2.1.277)
+- OS denies reading the managed file → warn and start without it (v2.1.285)
+- `managedSourcesBehavior: "merge"` takes `sandbox.credentials.awsPairs` and `sandbox.ripgrep` whole, never element-wise (v2.1.257); server-delivered settings merge the `env` block per key with a local `managed-settings.json` (v2.1.229)
+- Managed `claudeMd` no longer triggers the approval dialog (v2.1.260); approval does not re-appear on re-login when settings are unchanged (v2.1.234); `/status` shows a "Skipped sources" line (v2.1.243)
 
 ## MCP server config
 
@@ -65,4 +89,4 @@ Companion to `permission-model.md`. Covers managed-scope governance, MCP server 
 
 Use cases: a behavior self-elevates its allowlist for a session, a safety hook downgrades to `plan` mode after detecting risk, a build hook whitelists a temp directory. Static deny rules still enforce — a hook cannot remove a managed deny.
 
-**Security note on `updatedInput` (v2.1.110+)**: when a hook returns `updatedInput` to mutate a tool call, the modified input is re-checked against `permissions.deny` before execution. A hook cannot use `updatedInput` to smuggle an otherwise-denied payload past static deny rules. Before v2.1.110 the recheck was missing.
+**Security note on `updatedInput` (v2.1.110+, widened v2.1.290)**: when a hook returns `updatedInput` to mutate a tool call, the modified input is re-checked against `permissions.deny` (v2.1.110) and, since v2.1.290, against every permission rule and built-in safety check. A hook cannot use `updatedInput` to smuggle an otherwise-denied payload past static rules. PreToolUse auto-allow hooks no longer bypass tool restrictions in background agent tasks (v2.1.222).

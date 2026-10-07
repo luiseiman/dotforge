@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md"
 description: "Agent delegation patterns and team coordination"
 domain: claude-code-engineering
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # Agent Orchestration
@@ -52,10 +52,13 @@ Defense against hostile content the subagent read (files, URLs, tool output). NO
 Project-level subagent `hooks:` blocks in `.claude/agents/*.md` now require workspace-trust acceptance BEFORE they fire. Non-interactive sessions (`-p`, SDK, CI) silently SKIP untrusted frontmatter hooks — subagent still runs, hooks are inert, debug log records the skip.
 
 Trust scope:
-- `.claude/agents/*.md` project-level → workspace-trust gate applies
-- `--add-dir` folders outside trusted workspace → separate trust required
+- `.claude/agents/*.md` project-level → workspace-trust gate applies to `hooks:` (v2.1.218) AND inline `mcpServers:` (v2.1.238)
+- `--add-dir` folders outside trusted workspace → separate trust required; nested git repos do not inherit trust from a parent (v2.1.232)
 - `~/.claude/agents/` user-level → no trust needed (files you wrote)
-- `--agents` inline JSON → no trust needed (explicit caller input)
+- `--agents` inline JSON or file path → no trust needed (explicit caller input)
+- Helpers (`headersHelper`, etc.) from project/plugin/agent files run without inherited credential env vars (v2.1.248)
+
+Permission-mode inheritance (v2.1.267): a subagent's `permissionMode: bypassPermissions` works only if the main session also runs bypass, and honors an org policy that disables bypass (v2.1.223). If main is in `bypassPermissions`, `acceptEdits`, or `auto`, the subagent inherits that mode regardless of its own `permissionMode`. Forks keep the parent's `plan`/`dontAsk` mode and cannot exit plan mode (v2.1.284/285). PreToolUse auto-allow hooks no longer bypass tool restrictions in background agent tasks (v2.1.222). dotforge agents set no `permissionMode` — they inherit.
 
 Pre-v2.1.218: frontmatter hooks could run from untrusted folders including in non-interactive sessions — the injection surface a hostile PR could exploit (malicious `agents/reviewer.md` frontmatter hook fires on next Claude session in the checkout). Post-v2.1.218 that path is closed.
 

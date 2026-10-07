@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json"
 description: "Hook event payloads and per-event behavior details"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-07
 ---
 
 # Hook Event Details
@@ -12,8 +12,10 @@ last_verified: 2026-05-27
 - PostCompact command: `trigger` ("auto"/"manual") + `compact_summary` (full text)
 - PostCompact SDK: `compactType` + `messageCountBefore` + `messageCountAfter`
 - PreCompact: `compactType` + `messageCount` — **BLOCKABLE since v2.1.105** (exit 2 prevents compaction)
-- SessionStart `source`: "startup", "resume", "compact", "clear". dotforge wires three hooks here (v3.7.0+): `check-updates.sh` (version check), `session-restore.sh` (re-injects last-compact.md when source=compact), `session-startup.sh` (snapshot + drift detection on every other source — writes `.claude/session/last-startup.md` plus rotating `startup-history/<ISO>.md`, last 5). **v2.1.152**: SessionStart hooks can return `hookSpecificOutput.reloadSkills: true` to trigger a same-session skill directory re-scan after installing new skills, and `hookSpecificOutput.sessionTitle: "..."` to set the session display title on startup/resume (extending the v2.1.94 UserPromptSubmit-only capability).
+- SessionStart `source`: "startup", "resume", "compact", "clear", "fork" (v2.1.232+). **Resume staleness fields (v2.1.251+)**: `seconds_since_last_response`, `context_tokens`, `prompt_cache_likely_expired`, `estimated_cache_write_usd` — lets `session-restore.sh` size its re-injection by whether the cache is already cold. Output: `hookSpecificOutput.initialUserMessage` auto-submits a first turn. dotforge wires three hooks here (v3.7.0+): `check-updates.sh` (version check), `session-restore.sh` (re-injects last-compact.md when source=compact), `session-startup.sh` (snapshot + drift detection on every other source — writes `.claude/session/last-startup.md` plus rotating `startup-history/<ISO>.md`, last 5). **v2.1.152**: SessionStart hooks can return `hookSpecificOutput.reloadSkills: true` to trigger a same-session skill directory re-scan after installing new skills, and `hookSpecificOutput.sessionTitle: "..."` to set the session display title on startup/resume (extending the v2.1.94 UserPromptSubmit-only capability).
 - CwdChanged: fires on directory change, supports CLAUDE_ENV_FILE
+- DirectoryAdded (v2.1.219+): fires after `/add-dir` (matcher `slash_command`) or an SDK `register_repo_root` call adds a working directory mid-session. Use to re-run drift/trust checks on the new root
+- PreModelSwitch / PostModelSwitch (v2.1.251+): matcher = model name. Pre is blockable (`permissionDecision` allow/deny/ask + `permissionDecisionReason`); Post is observational. Fires on `/model`, fallback chains, and `--fallback-model` switches
 - FileChanged: fires on external file modification — use for auto-reload
 - InstructionsLoaded: fires when CLAUDE.md or `.claude/rules/*.md` loads. `load_reason`: `session_start` | `nested_traversal` | `path_glob_match` | `include` | `compact`. Observability-only, no decision control.
 - Setup: fires for `--init-only` / `--maintenance` runs. Matchers: `init` | `maintenance`. Use for credential rotation, env-var provisioning, prerequisite checks BEFORE session starts. dotforge wires `pre-session-check.sh` (v3.7.0+) — validates settings.json JSON, behaviors/index.yaml YAML, all wired hooks present + executable, block-destructive.sh executable. Exit 2 blocks session start.
@@ -34,14 +36,17 @@ last_verified: 2026-05-27
 
 ## Permission events
 
-- PermissionRequest: intercept permission dialog, auto-allow/deny with exit 2
+- PermissionRequest: intercept permission dialog, auto-allow/deny with exit 2. Output `decision: {behavior, updatedInput?, ruleApply?}`. Fires in `--print` mode since v2.1.268. `agent`-type handlers rejected here (v2.1.280). Fails closed when matching fails or input is unserializable (v2.1.288)
 - PermissionDenied: fires on auto mode classifier denials only (not manual deny or PreToolUse block). Input: tool_name, tool_input, tool_use_id, reason. Return `{retry: true}` to allow retry
+- Elicitation / ElicitationResult: `{"decision": "block"}` now declines the elicitation (v2.1.284)
 - PreToolUse `defer`: pause execution for async external approval (Slack, mobile notification). Combine with `asyncRewake: true` for human-in-the-loop flows (v2.1.89+)
 
 ## Agent events
 
 - SubagentStart: inject additionalContext into spawned subagent via stdout
-- TeammateIdle: fires when a team member has no pending work
+- SubagentStop: a specific matcher no longer fires when the agent type is empty (v2.1.275)
+- TeammateIdle: fires when a team member has no pending work; no longer fired from subagents or forks (v2.1.290). `idle_prompt` notifications are silenced while background agents run (v2.1.288)
+- InstructionsLoaded carries `agent_id`, `agent_type`, `effort` (v2.1.288) — attribute which subagent loaded which rule
 - Subagent API requests carry `x-claude-code-agent-id` / `x-claude-code-parent-agent-id` headers (v2.1.139+); OTEL `claude_code.llm_request` spans include `agent_id` / `parent_agent_id` attributes — use for distributed tracing of agent trees
 
 ## Shared payload fields
@@ -50,6 +55,8 @@ last_verified: 2026-05-27
 - `effort.level` — present in every hook input (v2.1.133+); values `"low" | "medium" | "high" | "xhigh" | "max"`. Bash tool subprocesses see the same value as `$CLAUDE_EFFORT`. Enables effort-aware hook decisions (stricter at low, relaxed at max)
 - `cwd` — absolute working directory
 - `transcript_path` — path to the session transcript jsonl
+- `scratchpad_dir` (v2.1.257+) — session-scoped scratch directory; write hook temp files here instead of `/tmp`
+- Path placeholders in hook config: `${CLAUDE_PROJECT_DIR}` (project root — stays put inside worktrees), `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`
 
 ## Hook JSON output fields (universal)
 
@@ -124,6 +131,7 @@ Matcher accepts the documented `error_type` values. Use for production-grade rou
 | `authentication_failed` | OAuth token expired/revoked, or `ANTHROPIC_API_KEY` invalid | Trigger token rotation or page operator |
 | `billing_error` | Subscription quota exhausted or payment failed | **PAGE** — bot will not recover without human intervention |
 | `server_error` | Anthropic-side 5xx | Log + degrade gracefully. Alert if persistent (>5min sustained) |
+| `cloud_credential_error` (v2.1.267+) | Bedrock/Vertex/Foundry credential chain failed (expired STS, missing ADC, wrong profile) | Page operator — rotate cloud creds; distinct from `authentication_failed` (Anthropic auth) |
 
 Production hook config:
 ```json
@@ -141,7 +149,7 @@ StopFailure is observability-only (not blockable) — the hook reports/alerts, i
 
 ## Display events (v2.1.152+)
 
-- **MessageDisplay**: fires when an assistant message is about to be rendered to the user. Hook can transform the text (e.g. PII/secret redaction) or hide it entirely. First "display-time" event — distinct from all prior events which are control-flow
+- **MessageDisplay**: fires when an assistant message is about to be rendered to the user. Hook returns `hookSpecificOutput.displayContent` — a display-only replacement (the model's own transcript is untouched) — to redact PII/secrets or hide the message. First "display-time" event — distinct from all prior events which are control-flow
 
 ## Stop / SubagentStop additional fields (v2.1.145+)
 

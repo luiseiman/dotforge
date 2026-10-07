@@ -4,11 +4,13 @@ title: Bash permission-detection bypasses fixed and prompts tightened (v2.1.221�
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [permissions, security, bash, prefix-detection]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/permission-model.md"]
 replaced_by: null
+effectiveness: informational
+error_type: null
 ---
 
 ## Description
@@ -25,4 +27,4 @@ Rule hygiene: startup warning for allow rules with wildcard before the subcomman
 - `template/hooks/block-destructive.sh`: `--amend`/`--no-verify` now natively gated in `/commit-push-pr` only — keep hook for general Bash
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.5.0 (/forge update, security block).

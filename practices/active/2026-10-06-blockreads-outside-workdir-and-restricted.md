@@ -4,11 +4,13 @@ title: permissions.blockReadsOutsideWorkingDirectories and --restricted mode (v2
 source: "/forge watch — Claude Code CHANGELOG v2.1.219–v2.1.291 + docs/en/cli"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [permissions, security, sandbox, production-tier, cli]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/permission-model.md", ".claude/rules/domain/cli-flags.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: security
 ---
 
 ## Description
@@ -27,4 +29,4 @@ replaced_by: null
 - `.claude/rules/domain/native-vs-dotforge-boundary.md`: block-destructive.sh vs native rm guard (keep for non-rm patterns: force-push, DROP, chmod 777)
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.5.0 (/forge update, security block).

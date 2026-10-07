@@ -35,6 +35,7 @@ For each component, compare with the dotforge version:
 - **deny**: union of sets. Add missing security denies. NEVER remove local denies.
 - **hooks**: add missing hooks from template. Preserve custom project hooks.
 - **Other fields**: preserve everything that is not allow/deny/hooks (e.g., MCP configs).
+- **Never write project-scope-inert keys**: `permissions.defaultMode: auto|bypassPermissions`, `sandbox.credentials`, `sandbox.ripgrep`, `sandbox.excludedCommands` under a managed sandbox, telemetry/OTEL `env`, `CLAUDE_CONFIG_DIR`/`TMPDIR` `env`, `modelPicker`, `instructionFiles`. Claude Code ignores them in `.claude/settings.json` / `settings.local.json` (v2.1.252–v2.1.290) — they belong in `~/.claude/settings.json` or managed settings. If a project already has one, warn in the sync report instead of propagating it. See `domain/permission-managed-settings.md` § Project/local scope cannot widen policy.
 
 ### Rules
 - Is `_common.md` missing? → propose adding it

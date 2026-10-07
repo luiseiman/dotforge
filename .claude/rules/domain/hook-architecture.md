@@ -7,15 +7,16 @@ last_verified: 2026-10-06
 
 # Hook Architecture
 
-## Events (34+ total, verified 2026-05-27 — code.claude.com/docs/en/hooks)
+## Events (37 total, verified 2026-10-06 — code.claude.com/docs/en/hooks)
 
-Four lifecycle cadences:
+Five lifecycle cadences:
 
-**Session-level** (once per session): SessionStart, SessionEnd, InstructionsLoaded, Setup
+**Session-level** (once per session): SessionStart (matchers `startup|resume|clear|compact|fork`), SessionEnd (`clear|resume|logout|prompt_input_exit|other`), InstructionsLoaded, Setup
 **Turn-level** (once per user prompt): UserPromptSubmit, UserPromptExpansion, Stop, StopFailure
 **Tool-loop** (every tool call): PreToolUse, PostToolUse, PostToolUseFailure, PostToolBatch, PermissionRequest, PermissionDenied
 **Display-level** (v2.1.152+, on each assistant message render): MessageDisplay
-**Async/side**: Notification, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, TeammateIdle, ConfigChange, CwdChanged, FileChanged, WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult
+**Model switch** (v2.1.251+): PreModelSwitch (blockable — `permissionDecision` allow/deny/ask + reason), PostModelSwitch (observational, `additionalContext`). Matcher = model name. Use to pin production sessions to a vetted model or to annotate cost changes when `/model` or fallback switches
+**Async/side**: Notification, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, TeammateIdle, ConfigChange (`user_settings|project_settings|local_settings|policy_settings|skills`), CwdChanged, DirectoryAdded (v2.1.219+, matchers `slash_command|register_repo_root` — fires after `/add-dir` or the SDK registers a working directory mid-session), FileChanged (matcher = literal filename), WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult
 
 `MessageDisplay` (v2.1.152+) is the first display-time event. It fires when assistant text is about to be rendered to the user; the hook can transform or hide the text. Use for output redaction (PII, secrets, internal IDs that leaked into tool output) or post-processing. Distinct from all prior events which are control-flow.
 
@@ -40,6 +41,8 @@ Four lifecycle cadences:
 - Types: `command` (bash), `http` (POST), `prompt` (LLM decision), `agent` (subagent), `mcp_tool` (v2.1.118+ — invoke an MCP tool directly with `${tool_input.*}` substitution)
 - Hooks MUST be objects: `{"type": "command", "command": "path.sh"}`
 - NEVER plain strings — Claude Code rejects them silently
+- Handler fields beyond `type`/`matcher`/`if`/`timeout`: `statusMessage` (custom spinner text), `once` (skills only — run once per session), `shell: bash|powershell` (command hooks), `async` + `asyncRewake` (background; rewake Claude on exit 2, ignores timeout — v2.1.219 docs), http `headers` + `allowedEnvVars` (env vars allowed to interpolate into headers), prompt/agent `model`. `agent`-type hooks do not run on PermissionRequest (v2.1.280)
+- **Fail-closed (v2.1.248/288)**: stdout that looks like `{…}` but is invalid JSON is a hook error (was treated as plain text); PreToolUse/PermissionRequest hooks are blocked when matching fails or input cannot be serialized. dotforge template hooks emit plain text only; compiled behavior hooks use `jq -cn` — both safe
 - `continueOnBlock: true` on a PostToolUse hook (v2.1.139+) flips the contract: a `decision: "block"` no longer halts the turn — the hook's `reason` is fed back to Claude as feedback and the turn continues. Use for non-fatal validators (lint, type-check) so failures self-heal in the same turn instead of stopping the agent.
 
 ## Command hook forms

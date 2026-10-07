@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md,**/CLAUDE.md"
 description: "Top-level session parallelism — worktrees, fork, teleport — distinct from subagent delegation"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-07
 ---
 
 # Parallel Sessions
@@ -22,6 +22,8 @@ Two orthogonal axes of parallelism: (a) **subagents** — isolated context, shar
 - `claude -w feature-x --tmux`: also creates a tmux session (iTerm2 native panes when available, `--tmux=classic` for traditional)
 - Each worktree has its own branch, its own `.claude/session/`, and does not see other worktrees' in-flight edits
 - `worktree.baseRef` setting (v2.1.133+): `"fresh"` (default) branches from `origin/<default>`, `"head"` branches from local HEAD. **Subtle versioned breaking**: in v2.1.128–v2.1.132 the default was `head` (carried unpushed commits into new worktrees); v2.1.133 reverted to `fresh`. Set `worktree.baseRef: "head"` if you rely on unpushed work being available to teammates
+- **Isolation guarantee (v2.1.222)**: a worktree session and every subagent it spawns cannot run destructive git commands against the main checkout, in any session type. `/fork` creates its own worktree (v2.1.221); background sessions hold the worktree lock while they run (v2.1.248); `.worktreeinclude` patterns starting with `**/` work (v2.1.239). `claude rm` refusals print the exact flag to resolve them: `--discard-unpushed <commit>@<worktree-id>` (v2.1.260) or `--force-remove-worktree <worktree-id>` (v2.1.268)
+- `-w #<PR>` / `-w <GitHub PR URL>` / `-w <GitLab MR URL>` (v2.1.233) fetches the PR/MR from `origin` and branches the worktree from it
 
 ### Lifecycle improvements (2026 changelog)
 

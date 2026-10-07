@@ -1548,3 +1548,69 @@ practices:
     status: monitoring
     projects_applied: 0
     last_checked: null
+
+  - id: practice-2026-10-06-hook-events-fields-v2219-v2291
+    error_targeted: "hook emitting malformed JSON stdout or unknown event/field silently breaks or fails closed (v2.1.248/288)"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-blockreads-outside-workdir-and-restricted
+    error_targeted: "production-tier session reads secrets outside working dirs; unattended run prompts and hangs instead of denying"
+    error_type: security
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-project-settings-cannot-widen-policy-managed-fail-closed
+    error_targeted: "/forge sync writes a key into project scope that Claude Code ignores there (defaultMode auto, sandbox.credentials, telemetry env) — audit passes, runtime differs"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-permission-hardening-trust-worktree-subagent-bypass
+    error_targeted: "agent definition relies on permissionMode bypassPermissions or untrusted-folder mcpServers/hooks that the runtime now ignores or blocks"
+    error_type: security
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-sandbox-v2219-v2291-bundle
+    error_targeted: "sandbox.credentials mask recommended on macOS where it falls back to deny; credentials/ripgrep keys placed in project scope where they are inert; deny paths with trailing slash"
+    error_type: security
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-permission-bypasses-fixed-v2221-v2290
+    error_targeted: null
+    error_type: null
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null

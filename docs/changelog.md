@@ -4,6 +4,18 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.5.0 (2026-10-07)
+
+### Upstream sync — security block (6 of the 18 remaining v2.1.219→v2.1.291 practices)
+
+Domain rules only, no template or engine changes. 12 practices still in `practices/evaluating/`.
+
+- **Hooks** — `hook-architecture.md`, `hook-events.md`: 37 events incl. `PreModelSwitch`/`PostModelSwitch` (v2.1.251), `DirectoryAdded` (v2.1.219); SessionStart `fork` + resume staleness fields; handler fields (`statusMessage`, `once`, `shell`, `allowedEnvVars`, `asyncRewake`); `scratchpad_dir`, `${CLAUDE_PROJECT_DIR}`; MessageDisplay `displayContent`; StopFailure `cloud_credential_error`; fail-closed JSON contract (v2.1.248/288). Verified: template hooks emit plain text, compiled hooks use `jq -cn` — both safe.
+- **Permissions** — `permission-model.md`: `blockReadsOutsideWorkingDirectories` (v2.1.257+), hardening modes (`--restricted`, `--permission-prompts none`, native dangerous-`rm` guard), second bypass-fix wave v2.1.221–v2.1.290 + rule-hygiene warnings, workspace trust expanded (frontmatter `mcpServers`, `.mcp.json headersHelper`, nested repos, bg sessions). `cli-flags.md` gains the two flags.
+- **Managed settings** — `permission-managed-settings.md`: keys v2.1.257–285, "project/local scope cannot widen policy" (defaultMode, sandbox keys, telemetry/tmp env, Remote Control), fail-closed semantics, `updatedInput` re-check widened (v2.1.290). `auth.md`: `forceLoginMethod: gateway`. `skills/sync-template`: never propagate project-scope-inert keys.
+- **Sandbox** — `sandboxing.md`: credentials schema v2.1.221–232 with the **macOS `mask` → `deny` fallback** (previous production-tier advice to prefer `mask` was wrong on Mac), scope-restricted keys, `!` bash-mode runs unsandboxed, `strictAllowlist`, per-command `allowed_domains`, deny-path trailing-slash fix, worktree destructive-git block (v2.1.222).
+- **Isolation** — `parallel-sessions.md`, `agent-orchestration.md`: worktree isolation guarantee, `claude rm` resolution flags, subagent permission-mode inheritance (v2.1.267), fork keeps plan/dontAsk, trust scope table.
+
 ## v4.4.0 (2026-10-06)
 
 ### Upstream sync — Claude Code v2.1.219 → v2.1.291, breaking batch (7 of 25 practices)

@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/agents/*.md,**/skills/**/SKILL.md,**/scripts/**/*.sh,**/.github/workflows/*.yml"
 description: "Claude Code CLI flags and subcommands — automation, interactive, headless"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-07
 ---
 
 # Claude Code CLI Flags
@@ -26,6 +26,8 @@ Reference for non-paralellism CLI surface. For session-parallelism flags see `pa
 - `--system-prompt` / `--system-prompt-file` / `--append-system-prompt` / `--append-system-prompt-file`: prompt customization (replace vs append)
 - `--tools "Bash,Edit,Read"` (or `""`/`"default"`) restricts built-in tools; `--allowedTools` and `--disallowedTools` apply pattern-matched permission rules. **Native build conditional (v2.1.162+)**: on native macOS/Linux builds the standalone `Grep` / `Glob` tools are replaced by embedded `bfs`/`ugrep` via Bash. Listing `--tools "Grep,Glob"` explicitly activates the native searchers (otherwise they're routed through Bash). On Windows / npm builds the flag behaves as before
 - `--debug-file <path>` / `--debug "api,hooks"`: targeted debug output
+- `--restricted` / `CLAUDE_CODE_RESTRICTED=1` (v2.1.248+): eval-harness mode for shared machines — removes command/code-running tools and WebFetch unless named in `--tools`, confines file tools to working directories, loads only managed settings + `--settings`, refuses `bypassPermissions` and cloud sessions
+- `--permission-prompts host|none` (v2.1.259+, `-p` only): `none` denies anything that would prompt while the active mode keeps deciding — safer than `dontAsk` when allow rules should still apply. `--permission-mode manual` is an alias of `default` (v2.1.200+)
 - `--safe-mode` / `CLAUDE_CODE_SAFE_MODE=1` (v2.1.169+): start Claude Code with ALL customizations disabled — no hooks, skills, plugins, custom agents, custom MCP. Auth + built-in permissions + built-in tools only. Use for triaging "is dotforge breaking something?" vs "is Claude Code itself broken?". Equivalent to `--bare` but with explicit semantics and CI-friendly env var. If a project misbehaves only outside `--safe-mode`, the bug is in user/project config not core
 
 ## Other interactive flags
