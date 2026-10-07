@@ -1702,3 +1702,36 @@ practices:
     status: monitoring
     projects_applied: 0
     last_checked: null
+
+  - id: practice-2026-10-06-native-audit-tooling-cede-candidates
+    error_targeted: null
+    error_type: null
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-claude-mods-tool-check-vs-behaviors-v3
+    error_targeted: "behavior hook emits guidance as systemMessage only — user sees it, model never does; override_allowed field has no effect"
+    error_type: logic
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-agents-md-native-support
+    error_targeted: "bootstrap/sync writes a CLAUDE.md that hides an existing AGENTS.md; audit scores 0 on a valid AGENTS.md-only project; export creates a drifting AGENTS.md copy"
+    error_type: config
+    activated: 2026-10-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null

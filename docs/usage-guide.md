@@ -289,9 +289,8 @@ Deletes `.claude/` and re-runs a full bootstrap. But:
 | `/forge audit` | Audit against checklist, score 0-10 |
 | `/forge diff` | View pending changes since last sync |
 | `/forge reset` | Restore from scratch (with backup) |
-| `/forge insights` | Analyze past sessions |
-| `/forge rule-check` | Detect inert rules (cross-reference globs vs git history) |
-| `/forge benchmark` | Compare full config vs minimal on standardized tasks |
+| `/forge insights` | dotforge-data insights → practices (cross-project friction: native `/insights`) |
+| `/forge rule-check` | Detect inert rules (cross-reference globs vs git history; content/cost: `/doctor prompt-audit`, `/skill-doctor`) |
 | `/forge plugin` | Generate Claude Code plugin package for marketplace |
 | `/forge unregister` | Remove project from registry |
 | `/forge export cursor` | Export config to Cursor |
@@ -403,7 +402,7 @@ The audit produces two independent numbers:
 
 | # | Item | 0 | 1 | 2 |
 |---|------|---|---|---|
-| 1 | **CLAUDE.md** | Does not exist | Exists but incomplete (<20 useful lines) | Complete: stack, architecture, build/test commands, conventions |
+| 1 | **CLAUDE.md / AGENTS.md** | Neither exists | Exists but incomplete (<20 useful lines) | Complete: stack, architecture, build/test commands, conventions. Scored on the file Claude loads: `CLAUDE.md` (+ `AGENTS.md` when imported with `@AGENTS.md`), or `AGENTS.md` alone when there is no `CLAUDE.md` (native since v2.1.277) |
 | 2 | **settings.json** | Does not exist | No deny list or excessive permissions | Explicit permissions + security deny list |
 | 3 | **Contextual rules** | Do not exist | No `globs:`/`paths:` frontmatter | Rules with specific globs per area + correct loading mode |
 | 4 | **Hook block-destructive** | Does not exist | Exists but misconfigured | Exists + executable + wired in settings.json |
@@ -632,21 +631,15 @@ Cross-references rule globs against `git log` to classify each rule:
 
 Also reports **file coverage** — what percentage of files you touch fall under at least one rule, and which directories have no coverage.
 
-### Benchmark
+### Benchmark (retired in v4.7.0)
+
+`/forge benchmark` was removed. Claude Code ships the harness natively: `claude plugin eval` (v2.1.269+) runs a test suite with and without a plugin, several runs each, graded, and reports the delta as `aggregate-result.json` + `report.html`. It loads no project-level config, so package yours first:
 
 ```
-/forge benchmark
+/forge plugin ./dotforge-plugin
+claude plugin eval init ./dotforge-plugin   # drafts cases + graders
+claude plugin eval ./dotforge-plugin
 ```
-
-Runs the same standardized task in two isolated worktrees:
-1. **Full config** — your complete `.claude/` setup
-2. **Minimal config** — only `CLAUDE.md` + basic `settings.json`
-
-Compares: files created, tests passing, lint issues, errors. Shows whether your configuration is actually making a difference.
-
-Task definitions exist for python-fastapi, react-vite-ts, swift-swiftui, node-express, go-api, and a generic fallback.
-
-**Cost:** runs Claude Code twice. Always opt-in with explicit confirmation.
 
 ### Config coherence
 

@@ -1,11 +1,13 @@
 ---
 name: session-insights
-description: Analyze past Claude Code sessions to extract patterns, metrics, and recommendations.
+description: Per-project insights from dotforge data — CLAUDE_ERRORS.md, session-report metrics, agent memory, registry score trend — fed into the practices pipeline. General friction analysis across transcripts is native (/insights).
 ---
 
 # Session Insights
 
 Analyze the current project's Claude Code usage patterns and generate actionable recommendations.
+
+**Scope (native-first boundary, v4.7.0)**: Claude Code's `/insights` already analyzes up to 200 recent sessions across every project on the machine from transcripts (misunderstood requests, buggy code, auto-mode recommendation) → `~/.claude/usage-data/report.html`. This skill does NOT read transcripts and does not duplicate that. It covers only what native has no access to: `CLAUDE_ERRORS.md` by Area/Type, `session-report.sh` hook metrics, `.claude/agent-memory/`, the registry score trend, and the automatic feed into `practices/inbox/`. Start by pointing the user to `/insights` for the cross-project friction picture.
 
 ## Step 1: Gather session data
 
@@ -29,7 +31,7 @@ When `~/.claude/metrics/{project-slug}/` is empty or doesn't exist, reconstruct 
    - Fix frequency (`git log --grep="fix" --oneline | wc -l`)
    - Commit cadence by week
 3. **Registry history** → score progression over time
-4. **Rule glob coverage** → cross-reference `git log --name-only` against `.claude/rules/*.md` globs to estimate historical rule coverage
+4. **Rule glob coverage** → delegate to `/forge rule-check` (the `rule-effectiveness` skill) instead of recomputing it here; cite its ACTIVE/INERT summary
 
 Mark all retroactive data clearly as:
 ```

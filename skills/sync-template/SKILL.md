@@ -20,7 +20,7 @@ Before syncing the project, verify that `~/.claude/CLAUDE.md` exists and contain
 ## Step 1: Detect current state
 
 1. Read the current `.claude/settings.json`
-2. Read the current `CLAUDE.md`
+2. Read the current `CLAUDE.md`. If it is a **symlink** (e.g. to `AGENTS.md`), resolve it with `realpath` and apply every CLAUDE.md change to the target file — never replace the link with a regular file. If `AGENTS.md` exists next to a `CLAUDE.md` that has no `@AGENTS.md` line, report it in the sync summary (`AGENTS.md ignored by Claude Code — add "@AGENTS.md" to CLAUDE.md or run /import`) but do not change either file without confirmation
 3. Read existing `.claude/rules/`
 4. Read existing `.claude/hooks/`
 5. Detect stacks using `$DOTFORGE_DIR/stacks/detect.md`

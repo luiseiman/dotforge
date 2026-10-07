@@ -223,13 +223,13 @@ fi
 echo ""
 
 # ── 6. Prompt injection scan ──
-# Scan only shipped/synced config — NOT worktrees, agent-memory (local), benchmark
+# Scan only shipped/synced config — NOT worktrees, agent-memory (local), test
 # fixtures, or doc examples that legitimately quote injection patterns as
 # illustrations. Exclusions are below.
 echo "── Prompt injection scan ──"
 SUSPICIOUS_PATTERNS='ignore previous|IGNORE ALL|disregard|override instructions|<system>|</system>|<instructions>.*</instructions>'
 SCAN_FILES=$(find "$PROJECT_DIR/.claude" "$PROJECT_DIR/CLAUDE.md" -name "*.md" -type f 2>/dev/null \
-  | grep -vE '/\.claude/worktrees/|/\.claude/agent-memory/|/\.claude/sessions/|/tests/benchmark-tasks/|/tests/fixtures/' \
+  | grep -vE '/\.claude/worktrees/|/\.claude/agent-memory/|/\.claude/sessions/|/tests/fixtures/' \
   || true)
 INJECTION_FOUND=false
 while IFS= read -r scan_file; do

@@ -34,10 +34,15 @@ Generate a single `.cursorrules` file at project root:
 
 ### `codex` → `AGENTS.md`
 
+**Claude Code reads `AGENTS.md` natively (v2.1.277+)**, so this file is no longer Codex-only — whatever you write here Claude may load too. Before generating:
+- If `CLAUDE.md` is a symlink to `AGENTS.md`, or already contains an `@AGENTS.md` line: **skip** — the project is already sharing one file; say so and stop.
+- If `AGENTS.md` exists without an import: warn that Claude ignores it (a `CLAUDE.md` is present) and that regenerating creates a second drifting copy. Recommend adding `@AGENTS.md` to `CLAUDE.md` and moving the shared content into `AGENTS.md` instead of exporting.
+- Never include the `.claude/settings.json` permission lists in `AGENTS.md` when Claude will load it — they are enforced natively and only add stale duplicates.
+
 Generate `AGENTS.md` at project root:
-1. Start with project context from `CLAUDE.md`
+1. Start with project context from `CLAUDE.md` (skip forge markers)
 2. Append rules as "## Rules" section
-3. Convert permissions to "## Permissions" section: list allowed and denied commands
+3. Convert permissions to "## Permissions" section: list allowed and denied commands — Codex-only; omit when `AGENTS.md` will also be read by Claude (see above)
 4. Add "## Workflow" section from agent orchestration rules if present
 5. Format as flat markdown (Codex expects simple instructions)
 

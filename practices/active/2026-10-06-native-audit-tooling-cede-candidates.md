@@ -4,11 +4,13 @@ title: Native audit tooling (plugin eval, /skill-doctor, /doctor prompt-audit, /
 source: "/forge watch — docs/en/whats-new + CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [native-first, audit, skills, rule-effectiveness, benchmark, boundary]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["skills/rule-effectiveness/SKILL.md", "skills/session-insights/SKILL.md", "global/commands/forge.md", "skills/index.yaml", "docs/claude-vs-forge.md", ".github/workflows/ci.yml"]
 replaced_by: null
+effectiveness: informational
+error_type: null
 ---
 
 ## Description
@@ -30,4 +32,4 @@ Per `native-vs-dotforge-boundary.md`: "If Claude Code resolves it natively, ADOP
 - `global/commands/forge.md`: command table
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.7.0 (native-first boundary decisions). See docs/changelog.md v4.7.0 for the verdict.

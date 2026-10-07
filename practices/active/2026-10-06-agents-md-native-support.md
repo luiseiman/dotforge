@@ -4,11 +4,13 @@ title: Claude Code reads AGENTS.md natively when no CLAUDE.md exists; instructio
 source: "/forge watch — docs/en/memory + CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [memory, claude-md, export, templates, native-first]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["audit/score.sh", "scripts/audit_all.py", "audit/checklist.md", "skills/audit-project/SKILL.md", "skills/bootstrap-project/SKILL.md", "skills/init-project/SKILL.md", "skills/sync-template/SKILL.md", "skills/export-config/SKILL.md", "template/CLAUDE.md.tmpl"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -28,4 +30,4 @@ Only hits in dotforge: `skills/export-config/SKILL.md:35` and `global/commands/f
 - `template/CLAUDE.md.tmpl`: optional `@AGENTS.md` import comment
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.7.0 (native-first boundary decisions). See docs/changelog.md v4.7.0 for the verdict.

@@ -65,9 +65,7 @@ skills:
   - id: session-insights
     category: analysis
     target: project
-  - id: benchmark
-    category: analysis
-    target: project
+  # benchmark retired v4.7.0 — native `claude plugin eval` (v2.1.269+) is the harness
 
   # practices
   - id: capture-practice

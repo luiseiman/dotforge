@@ -12,6 +12,7 @@ invoke_hook "$CHECK_FLAG_HOOK" "Write"
 assert_eq "1" "$(state_counter)" "write#1 counter" || exit 1
 assert_eq "nudge" "$(state_effective_level)" "write#1 level" || exit 1
 stdout_has_system_message || { printf 'FAIL: write#1 expected systemMessage\n' >&2; exit 1; }
+stdout_has_model_context || { printf 'FAIL: write#1 nudge must reach the model via additionalContext\n' >&2; exit 1; }
 stdout_is_deny && { printf 'FAIL: write#1 should not deny\n' >&2; exit 1; } || true
 
 # Write #2: counter=2 → still nudge
@@ -36,6 +37,7 @@ assert_eq "5" "$(state_counter)" "write#5 counter" || exit 1
 assert_eq "soft_block" "$(state_effective_level)" "write#5 level" || exit 1
 stdout_is_deny || { printf 'FAIL: write#5 expected permissionDecision deny\n  got: %s\n' "$SCENARIO_LAST_STDOUT" >&2; exit 1; }
 stdout_has_system_message || { printf 'FAIL: write#5 expected systemMessage alongside deny\n' >&2; exit 1; }
+stdout_has_deny_reason || { printf 'FAIL: write#5 deny must carry permissionDecisionReason\n' >&2; exit 1; }
 
 # Write #6: same empty tool_input as the one that just got blocked → detected
 # as reinvocation after override. Counter does NOT move, override recorded,

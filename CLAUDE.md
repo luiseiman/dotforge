@@ -61,7 +61,7 @@ Stacks are additive: `/forge bootstrap` detects the project's tech and layers ma
 
 ### Skills & /forge Command
 
-Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `benchmark`, `plugin`, `unregister`, `mcp add`, `domain extract|sync-vault|list`, `global sync`, `global status`.
+Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `plugin`, `unregister`, `mcp add`, `domain extract|sync-vault|list`, `global sync`, `global status`.
 
 ### Agents
 

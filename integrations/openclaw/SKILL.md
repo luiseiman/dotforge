@@ -58,7 +58,6 @@ If no project specified, use current context or ask the user.
 | `watch` | Check for upstream changes |
 | `scout` | Review curated repos |
 | `reset` | Restore .claude/ from template |
-| `benchmark` | Compare full vs minimal config |
 
 ## Execution
 

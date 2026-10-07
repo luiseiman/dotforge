@@ -58,9 +58,16 @@ Adapt the list shown based on the profile (hide components that won't be install
 
 ## Step 3: Generate CLAUDE.md
 
+**First, check for an existing `AGENTS.md`** (Claude Code reads it natively since v2.1.277, but only when no `CLAUDE.md` exists — a new `CLAUDE.md` would silently hide it):
+- If `CLAUDE.md` is a symlink to `AGENTS.md` (openclaw pattern): do NOT write through the link. Treat `AGENTS.md` as the instruction file, write the generated managed sections to the symlink target, and keep the symlink.
+- If `AGENTS.md` exists and `CLAUDE.md` does not: generate `CLAUDE.md` from the template with `@AGENTS.md` as the first line after the title (replace the `<!-- forge:agents-md -->` marker). Claude then loads both once; `AGENTS.md` stays the shared file for other tools. Mention `/import` as an alternative if the user prefers a single merged `CLAUDE.md`.
+- If both exist and `CLAUDE.md` has no `@AGENTS.md` line: warn that `AGENTS.md` is currently ignored and offer to add the import.
+- Otherwise remove the `<!-- forge:agents-md -->` marker line.
+
 Use `$DOTFORGE_DIR/template/CLAUDE.md.tmpl` as the base.
 Replace markers:
 - `{{PROJECT_NAME}}` → name of the current directory
+- `<!-- forge:agents-md -->` → `@AGENTS.md` or nothing (see above)
 - `<!-- forge:stack -->` → detected technologies
 - `<!-- forge:commands -->` → detected build/test commands (package.json scripts, Makefile targets, etc.)
 

@@ -64,7 +64,7 @@ Standard output fields all hooks may return:
 - `continue: bool` — false aborts the current turn
 - `stopReason: string` — surfaced in the UI when continue=false
 - `suppressOutput: bool` — hide stdout from the model
-- `systemMessage: string` — inject a system-style message into context
+- `systemMessage: string` — warning shown to the **user** (transcript/UI; `SDKInformationalMessage` in stream-json). The model does NOT see it. Text for the model goes in `hookSpecificOutput.additionalContext` (any event that supports it) or, for a PreToolUse deny, `permissionDecisionReason` (shown as the block reason). dotforge behaviors v3 emitted nudges as `systemMessage` only until v4.7.0 — the agent never read them
 - `terminalSequence: string` (v2.1.141+) — emit raw escape sequences for desktop notifications (OSC 9 on iTerm2/macOS), window titles (`\033]0;<title>\007`), or terminal bell (`\a`). Works without a controlling TTY, so hooks can signal the user during background sessions. Example: `{"terminalSequence":"]0;Build green"}`
 
 ### Channel-specific 10K char cap (BREAKING, 2026)

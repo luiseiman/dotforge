@@ -18,6 +18,8 @@ Already initialized. Use /forge sync to update or /forge audit to check score.
 ```
 Exit without changes.
 
+If `AGENTS.md` exists (with or without a `CLAUDE.md`), say so before the questions: bootstrap will keep it and generate `CLAUDE.md` with an `@AGENTS.md` import (or write to the symlink target) instead of hiding it — see `/bootstrap-project` Step 3.
+
 ## Step 2: Detect stacks
 
 Scan project files silently using `$DOTFORGE_DIR/stacks/detect.md` as reference:

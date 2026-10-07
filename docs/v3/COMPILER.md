@@ -377,10 +377,10 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"/src/new.ts","content":"ex
   | bash .claude/hooks/behaviors/PreToolUse.sh
 
 # Expected — nudge (counter=1):
-# {"systemMessage":"Search Before Writing: Consider searching first (violation 1/5)"}
+# {"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"Search Before Writing: Consider searching first (violation 1/5)"},"systemMessage":"Search Before Writing: ..."}
 
 # Expected — soft_block (counter=5):
-# {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny"},"systemMessage":"..."}
+# {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"..."},"systemMessage":"..."}
 
 # Exit code must always be 0:
 echo $?
@@ -388,7 +388,8 @@ echo $?
 # Test no-destructive-git hard_block
 echo '{"tool_name":"Bash","tool_input":{"command":"git push origin main --force"},"session_id":"test-xyz","hook_event_name":"PreToolUse"}' \
   | bash .claude/hooks/behaviors/PreToolUse.sh
-# Expected: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","override_allowed":false},"systemMessage":"..."}
+# Expected: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"..."},"systemMessage":"..."}
+# (hard_block records no pending_block, so a reinvocation is never treated as an override)
 ```
 
 ---

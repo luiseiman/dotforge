@@ -34,6 +34,8 @@ counter=$(jq -r --arg sid "$SID" '.sessions[$sid].behaviors["search-first"].coun
 assert_eq "1" "$counter" "enabled: counter=1 after first Write" || exit 1
 printf '%s' "$out" | jq -e '.systemMessage | type == "string"' >/dev/null \
     || { printf 'FAIL: enabled Write should emit systemMessage\n' >&2; exit 1; }
+printf '%s' "$out" | jq -e '.hookSpecificOutput.additionalContext | type == "string"' >/dev/null \
+    || { printf 'FAIL: enabled Write nudge should reach the model via additionalContext\n' >&2; exit 1; }
 
 # --- Step 2: disable at session scope via the CLI ---
 bash "$CLI" off search-first --session "$SID" >/dev/null || { printf 'FAIL: off session\n' >&2; exit 1; }

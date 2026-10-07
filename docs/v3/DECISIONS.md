@@ -11,10 +11,12 @@ Cinco niveles en escalación de severidad:
 | Nivel | Mecanismo | Ve el agente | Override |
 |-------|-----------|--------------|----------|
 | silent | exit 0 | Nada | No aplica |
-| nudge | exit 0 + stdout breve (1 línea) | Recordatorio neutral | No aplica |
-| warning | exit 0 + stdout JSON `systemMessage` (2-4 líneas) | Advertencia clara: behavior, expectativa, corrección | No aplica |
-| soft_block | JSON `permissionDecision: "deny"` + `override_allowed: true` | Bloqueo con instrucción de corrección u override | Sí, auditado |
-| hard_block | JSON `permissionDecision: "deny"` + `override_allowed: false` | Bloqueo definitivo | No en 3.0 |
+| nudge | exit 0 + JSON `hookSpecificOutput.additionalContext` (1 línea) + `systemMessage` al usuario | Recordatorio neutral | No aplica |
+| warning | exit 0 + JSON `additionalContext` (2-4 líneas) + `systemMessage` | Advertencia clara: behavior, expectativa, corrección | No aplica |
+| soft_block | JSON `permissionDecision: "deny"` + `permissionDecisionReason`; registra pending_block | Bloqueo con instrucción de corrección u override | Sí, auditado |
+| hard_block | JSON `permissionDecision: "deny"` + `permissionDecisionReason`; sin pending_block | Bloqueo definitivo | No en 3.0 |
+
+> Corrección v4.7.0 (2026-10-07): `systemMessage` solo lo ve el usuario, nunca el modelo (hooks reference). Hasta v4.6 nudge/warning salían solo como `systemMessage` → el agente nunca los leyó; `override_allowed` no es un campo de Claude Code → soft y hard eran idénticos en runtime. La diferencia real entre ambos es el pending_block (detección de override por reinvocación).
 
 - Override permitido únicamente en soft_block.
 - hard_block sin override en 3.0 por diseño. Sin esta regla, hard_block

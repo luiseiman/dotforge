@@ -111,16 +111,21 @@ emit_output() {
         silent)
             exit 0
             ;;
+        # systemMessage is shown to the USER only; the model reads
+        # hookSpecificOutput.additionalContext (nudge/warning) or
+        # permissionDecisionReason (blocks). Emit both so each side sees it.
         nudge)
             local msg
             msg=$(render_template "$NUDGE_TEMPLATE" "$counter" "$level")
-            jq -cn --arg m "$msg" '{systemMessage: $m}'
+            jq -cn --arg m "$msg" --arg evt "$EVENT_NAME" \
+                '{hookSpecificOutput: {hookEventName: $evt, additionalContext: $m}, systemMessage: $m}'
             exit 0
             ;;
         warning)
             local msg
             msg=$(render_template "$WARNING_TEMPLATE" "$counter" "$level")
-            jq -cn --arg m "$msg" '{systemMessage: $m}'
+            jq -cn --arg m "$msg" --arg evt "$EVENT_NAME" \
+                '{hookSpecificOutput: {hookEventName: $evt, additionalContext: $m}, systemMessage: $m}'
             exit 0
             ;;
         soft_block)
@@ -130,14 +135,15 @@ emit_output() {
             local msg
             msg=$(render_template "$BLOCK_REASON" "$counter" "$level")
             jq -cn --arg m "$msg" --arg evt "$EVENT_NAME" \
-                '{hookSpecificOutput: {hookEventName: $evt, permissionDecision: "deny"}, systemMessage: $m}'
+                '{hookSpecificOutput: {hookEventName: $evt, permissionDecision: "deny", permissionDecisionReason: $m}, systemMessage: $m}'
             exit 0
             ;;
         hard_block)
+            # No pending_block: reinvocation is never treated as an override.
             local msg
             msg=$(render_template "$BLOCK_REASON" "$counter" "$level")
             jq -cn --arg m "$msg" --arg evt "$EVENT_NAME" \
-                '{hookSpecificOutput: {hookEventName: $evt, permissionDecision: "deny", override_allowed: false}, systemMessage: $m}'
+                '{hookSpecificOutput: {hookEventName: $evt, permissionDecision: "deny", permissionDecisionReason: $m}, systemMessage: $m}'
             exit 0
             ;;
     esac

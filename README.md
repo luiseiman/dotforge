@@ -218,7 +218,7 @@ dotforge/
 ├── hooks/          # Global post-session change detection hook
 ├── integrations/   # Cross-tool bridges (OpenClaw)
 ├── docs/           # Guides, patterns, security checklist
-└── tests/          # Hook test suite + benchmark tasks
+└── tests/          # Hook test suite
 ```
 
 ## Stacks
@@ -267,10 +267,9 @@ All skills are invoked through the `/forge` command:
 | `/forge scout` | Review curated repos for useful patterns |
 | `/forge export` | Export config to Cursor, Codex, Windsurf, or OpenClaw format |
 | `/forge learn` | Scan code to detect patterns (ORM, auth, testing) and propose domain rules |
-| `/forge insights` | Analyze sessions for patterns and recommendations |
-| `/forge rule-check` | Detect inert rules by cross-referencing globs against git history |
-| `/forge benchmark` | Compare full config vs minimal config on standardized tasks |
-| `/forge plugin` | Generate Claude Code plugin package for marketplace submission |
+| `/forge insights` | dotforge-data insights (errors, metrics, registry) fed into practices — cross-project friction is native `/insights` |
+| `/forge rule-check` | Detect inert rules by cross-referencing globs against git history (content/cost: `/doctor prompt-audit`, `/skill-doctor`) |
+| `/forge plugin` | Generate Claude Code plugin package for marketplace submission (benchmark it with `claude plugin eval`) |
 | `/forge unregister` | Remove a project from the registry |
 | `/forge global sync` | Auto-update dotforge + sync global `~/.claude/` config |
 | `/forge global status` | Show global config status |
@@ -487,7 +486,7 @@ dotforge/
 ├── hooks/          # Hook global post-sesión para detección de cambios
 ├── integrations/   # Bridges cross-tool (OpenClaw)
 ├── docs/           # Guías, patrones, checklist de seguridad
-└── tests/          # Suite de tests para hooks + benchmark tasks
+└── tests/          # Suite de tests para hooks
 ```
 
 ## Stacks
@@ -536,10 +535,9 @@ Todos los skills se invocan a través del comando `/forge`:
 | `/forge scout` | Revisar repos curados en busca de patrones útiles |
 | `/forge export` | Exportar config a formato Cursor, Codex, Windsurf u OpenClaw |
 | `/forge learn` | Escanear código para detectar patrones (ORM, auth, testing) y proponer domain rules |
-| `/forge insights` | Analizar sesiones para patrones y recomendaciones |
-| `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git |
-| `/forge benchmark` | Comparar config completa vs minimal en tareas estandarizadas |
-| `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code |
+| `/forge insights` | Insights con datos dotforge (errores, métricas, registry) → practices; la fricción cross-project es el `/insights` nativo |
+| `/forge rule-check` | Detectar reglas inertes cruzando globs contra historial de git (contenido/costo: `/doctor prompt-audit`, `/skill-doctor`) |
+| `/forge plugin` | Generar paquete de plugin para el marketplace de Claude Code (benchmark con `claude plugin eval`) |
 | `/forge unregister` | Eliminar proyecto del registro |
 | `/forge global sync` | Auto-actualizar dotforge + sincronizar `~/.claude/` |
 | `/forge global status` | Mostrar estado de la configuración global |

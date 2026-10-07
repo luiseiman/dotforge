@@ -66,9 +66,20 @@ These commands exist in both systems but serve different purposes:
 
 | | Claude Code `/insights` | dotforge `/forge insights` |
 |---|---|---|
-| **Analyzes** | Interaction patterns, friction points, project areas | Session logs: error patterns, file activity, recurring issues |
-| **Output** | Report with interaction metrics | Actionable recommendations + practice suggestions |
-| **Action** | Informational | Can feed into practices pipeline via `/forge capture` |
+| **Analyzes** | Up to 200 recent session transcripts **across all projects on the machine**: misunderstood requests, buggy code, friction, auto-mode fit | dotforge data for **one project**: `CLAUDE_ERRORS.md` by area/type, `session-report.sh` metrics, agent memory, registry score trend |
+| **Output** | `~/.claude/usage-data/report.html` (deleted after 30 days) | Report + top-3 recommendations written into `practices/inbox/` |
+| **Use** | Run first — the cross-project friction picture | Run after — the per-project, dotforge-specific slice. Does not read transcripts |
+
+### `/doctor prompt-audit` + `/skill-doctor` vs `/forge rule-check`
+
+| | Claude Code `/doctor prompt-audit`, `/skill-doctor` | dotforge `/forge rule-check` |
+|---|---|---|
+| **Measures** | Content quality (stale-model phrasing, broken paths, contradictions) and per-skill context cost / usage | Whether each rule's `globs:` matches files the project actually touches (git history), plus directories no rule covers |
+| **Gap** | Rules are never "invoked", so native has no usage signal for them | Does not judge content or cost — points to the native commands |
+
+### `claude plugin eval` vs `/forge benchmark` (retired v4.7.0)
+
+`claude plugin eval` (v2.1.269+) runs a test suite with/without a plugin, several runs each, graded, with an HTML/JSON report — a better harness than the old two-worktree benchmark. It loads no project-level config, so package the config with `/forge plugin` first.
 
 ### `/plugin` vs `/forge plugin`
 
@@ -134,7 +145,7 @@ These have no Claude Code equivalent — they manage configuration governance:
 | `/forge reset` | Restore config from template with backup |
 | `/forge audit` | 15-item scored configuration audit |
 | `/forge rule-check` | Detect and prune inert rules |
-| `/forge benchmark` | Compare full vs minimal config performance |
+| ~~`/forge benchmark`~~ | Retired v4.7.0 — `claude plugin eval` on a `/forge plugin` package |
 | `/forge capture` / `/cap` | Register practices in improvement pipeline |
 | `/forge update` | Process practices: inbox → evaluate → incorporate |
 | `/forge learn` | Auto-detect code patterns → domain rules |
@@ -244,9 +255,20 @@ Estos comandos existen en ambos sistemas pero sirven prop&oacute;sitos diferente
 
 | | Claude Code `/insights` | dotforge `/forge insights` |
 |---|---|---|
-| **Analiza** | Patrones de interacci&oacute;n, puntos de fricci&oacute;n, &aacute;reas del proyecto | Logs de sesiones: patrones de error, actividad de archivos, issues recurrentes |
-| **Output** | Reporte con m&eacute;tricas de interacci&oacute;n | Recomendaciones accionables + sugerencias de pr&aacute;cticas |
-| **Acci&oacute;n** | Informativo | Puede alimentar el pipeline de pr&aacute;cticas v&iacute;a `/forge capture` |
+| **Analiza** | Hasta 200 transcripts recientes **de todos los proyectos de la m&aacute;quina**: pedidos malentendidos, c&oacute;digo con bugs, fricci&oacute;n, aptitud para auto mode | Datos dotforge de **un proyecto**: `CLAUDE_ERRORS.md` por &aacute;rea/tipo, m&eacute;tricas de `session-report.sh`, agent memory, tendencia de score en el registry |
+| **Output** | `~/.claude/usage-data/report.html` (se borra a los 30 d&iacute;as) | Reporte + top-3 recomendaciones escritas en `practices/inbox/` |
+| **Uso** | Correr primero — la foto de fricci&oacute;n cross-project | Correr despu&eacute;s — el corte por proyecto, espec&iacute;fico de dotforge. No lee transcripts |
+
+### `/doctor prompt-audit` + `/skill-doctor` vs `/forge rule-check`
+
+| | Claude Code `/doctor prompt-audit`, `/skill-doctor` | dotforge `/forge rule-check` |
+|---|---|---|
+| **Mide** | Calidad de contenido (frases para modelos viejos, paths rotos, contradicciones) y costo de contexto / uso por skill | Si los `globs:` de cada rule matchean archivos que el proyecto realmente toca (git history), m&aacute;s directorios sin cobertura |
+| **Hueco** | Las rules nunca se "invocan": lo nativo no tiene se&ntilde;al de uso para ellas | No juzga contenido ni costo — deriva a los comandos nativos |
+
+### `claude plugin eval` vs `/forge benchmark` (retirado en v4.7.0)
+
+`claude plugin eval` (v2.1.269+) corre una suite con y sin plugin, varias corridas, con graders y reporte HTML/JSON — mejor harness que el viejo benchmark de dos worktrees. No carga config de proyecto: empaquetala primero con `/forge plugin`.
 
 ### `/plugin` vs `/forge plugin`
 
@@ -312,7 +334,7 @@ Sin equivalente en Claude Code — gestionan gobernanza de configuraci&oacute;n:
 | `/forge reset` | Restaurar config desde template con backup |
 | `/forge audit` | Auditor&iacute;a de configuraci&oacute;n con score de 13 &iacute;tems |
 | `/forge rule-check` | Detectar y podar reglas inertes |
-| `/forge benchmark` | Comparar rendimiento config completa vs m&iacute;nima |
+| ~~`/forge benchmark`~~ | Retirado en v4.7.0 — `claude plugin eval` sobre un paquete de `/forge plugin` |
 | `/forge capture` / `/cap` | Registrar pr&aacute;cticas en pipeline de mejora |
 | `/forge update` | Procesar pr&aacute;cticas: inbox → evaluar → incorporar |
 | `/forge learn` | Auto-detectar patrones de c&oacute;digo → reglas de dominio |

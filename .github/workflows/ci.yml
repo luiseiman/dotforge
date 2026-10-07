@@ -95,23 +95,6 @@ jobs:
           echo "── Skills Index ──"
           bash tests/test-skills-index.sh
 
-      - name: Validate benchmark tasks
-        run: |
-          echo "── Benchmark Tasks ──"
-          python3 -c "
-          import yaml, glob, sys
-          errors = 0
-          for f in sorted(glob.glob('tests/benchmark-tasks/*.yml')):
-              try:
-                  data = yaml.safe_load(open(f))
-                  assert 'id' in data, 'missing id'
-                  assert 'stack' in data, 'missing stack'
-                  assert 'prompt' in data, 'missing prompt'
-                  print(f'✓ {f}')
-              except Exception as e:
-                  print(f'✗ {f}: {e}')
-                  errors += 1
-          sys.exit(errors)
           "
 
       - name: Version consistency check

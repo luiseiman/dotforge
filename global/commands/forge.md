@@ -31,7 +31,6 @@ If not met, show the error message and DO NOT execute the skill.
 | `insights` | `CLAUDE_ERRORS.md` or `.claude/agent-memory/` | "No history to analyze. Use the project for a while and try again." |
 | `plugin` | `CLAUDE.md` + `.claude/settings.json` | "No configuration to convert into a plugin. Run `/forge bootstrap` first." |
 | `rule-check` | `.claude/rules/` with at least 1 rule | "No rules to evaluate. Run `/forge bootstrap` first." |
-| `benchmark` | `.claude/settings.json` + `CLAUDE.md` + clean git repo | "Requires project with dotforge config and clean working tree." |
 | `mcp add <server>` | target `settings.json` exists (project) OR `--global` flag | If no settings.json: "No settings.json found. Run `/forge bootstrap` first, or use `--global` to install globally." |
 | `domain extract` | `CLAUDE.md` or `.claude/` | "No configured project found. Run `/forge init` or `/forge bootstrap` first." |
 | `domain list` | `.claude/rules/domain/` | "No domain rules found. Run `/forge domain extract` to generate from existing sources." |
@@ -155,13 +154,10 @@ N projects | avg score: X.X | N need sync | N perfect
 ### `rule-check`
 Run the `/rule-effectiveness` skill on the current project.
 Cross-reference globs from `.claude/rules/*.md` against `git log --name-only` to classify rules as active (>50% match), occasional (10-50%), or inert (<10%).
-Report rule coverage and directories without coverage.
+Report rule coverage and directories without coverage. Content quality and context cost are native: point the user to `/doctor prompt-audit` and `/skill-doctor`.
 
-### `benchmark`
-Run the `/benchmark` skill on the current project.
-Compare full vs minimal config by running the same standard task in two isolated worktrees.
-Load task from `$DOTFORGE_DIR/tests/benchmark-tasks/{stack}.yml` based on detected stack.
-**Requires explicit user confirmation** (runs Claude Code twice).
+### `benchmark` (retired in v4.7.0)
+Removed — Claude Code's `claude plugin eval` (v2.1.269+) is the native harness (multi-run, graders, with/without-plugin delta, HTML/JSON report). To benchmark a project's dotforge config, package it with `/forge plugin` and run `claude plugin eval` on the result. Show this message and stop.
 
 ### `plugin [output-dir]`
 Run the `/plugin-generator` skill on the current project.
@@ -171,8 +167,7 @@ If output-dir not specified, defaults to `./dotforge-plugin/`.
 
 ### `insights`
 Run the `/session-insights` skill on the current project.
-Analyze usage patterns, frequent errors, most-edited files, and score trends.
-Generate recommendations and feed the practices pipeline automatically.
+Analyze dotforge-specific data — `CLAUDE_ERRORS.md`, session-report metrics, agent memory, registry score trend — and feed the practices pipeline automatically. Cross-project friction analysis from transcripts is native: `/insights`.
 
 ### `unregister <project-name>`
 Remove a project from the local registry (`$DOTFORGE_DIR/registry/projects.local.yml`).
@@ -280,10 +275,9 @@ Commands:
   global sync   Sync ~/.claude/ against global template
   global status State of ~/.claude/ vs template
   status        View project registry, scores, and trends
-  rule-check    Detect inert rules by crossing globs against git history
-  benchmark     Compare full vs minimal config on standardized tasks
-  plugin        Generate plugin package for Claude Code marketplace
-  insights      Analyze past sessions and generate recommendations
+  rule-check    Detect inert rules by crossing globs against git history (content/cost: /doctor prompt-audit, /skill-doctor)
+  plugin        Generate plugin package for Claude Code marketplace (benchmark it with claude plugin eval)
+  insights      dotforge-data insights (errors, metrics, registry) → practices (friction: native /insights)
   unregister    Remove project from registry (does not delete config)
   mcp add       Install MCP server template in project or global [--global]
   learn           Scan code to detect patterns and propose domain rules

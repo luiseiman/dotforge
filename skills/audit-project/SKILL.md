@@ -51,7 +51,7 @@ Read `$DOTFORGE_DIR/audit/scoring.md` for weights and caps.
 For each checklist item, verify existence **and quality**:
 
 ### Obligatory (0-10 points)
-1. **CLAUDE.md** — Does it exist? Verify it has key sections:
+1. **CLAUDE.md / AGENTS.md** — Does the instruction file Claude actually loads exist? `CLAUDE.md` if present (plus `AGENTS.md` when `CLAUDE.md` has an `@AGENTS.md` line); otherwise `AGENTS.md` alone (native since v2.1.277). Warn, without penalizing, when both exist with no import — `AGENTS.md` is then ignored and the copies drift. Verify it has key sections:
    - Stack/technologies mentioned explicitly
    - At least 1 exact build/test command
    - Project structure or architecture

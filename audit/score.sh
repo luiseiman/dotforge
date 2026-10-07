@@ -51,20 +51,39 @@ b1=0; m1=""; b2=0; m2=""; b3=0; m3=""; b4=0; m4=""
 # DIMENSION A — OBLIGATORIO (each 0-2)
 # ─────────────────────────────────────────────────────────────────────────────
 
-# 1. CLAUDE.md
-if [[ ! -f "CLAUDE.md" ]]; then
-  s1=0; n1="CLAUDE.md not found"
+# 1. Project instructions — CLAUDE.md, or AGENTS.md when Claude Code loads it natively (v2.1.277+)
+#    Evaluate the file(s) Claude actually reads: CLAUDE.md (+ AGENTS.md if imported via "@AGENTS.md"),
+#    or AGENTS.md alone when there is no CLAUDE.md. A CLAUDE.md symlink to AGENTS.md counts as CLAUDE.md.
+INSTR_FILES=""; INSTR_NOTE=""; INSTR_TEXT=""
+if [[ -f "CLAUDE.md" ]]; then
+  INSTR_FILES="CLAUDE.md"
+  if [[ -f "AGENTS.md" ]]; then
+    if grep -qE '^@(\./)?AGENTS\.md[[:space:]]*$' CLAUDE.md 2>/dev/null; then
+      INSTR_FILES="CLAUDE.md AGENTS.md"
+    elif [[ -L "CLAUDE.md" ]]; then
+      INSTR_NOTE=" (CLAUDE.md is a symlink to AGENTS.md)"
+    else
+      INSTR_NOTE=" ⚠ AGENTS.md present but not imported — ignored by Claude Code, copies may drift"
+    fi
+  fi
+elif [[ -f "AGENTS.md" ]]; then
+  INSTR_FILES="AGENTS.md"
+  INSTR_NOTE=" (AGENTS.md read natively, no CLAUDE.md)"
+fi
+if [[ -z "$INSTR_FILES" ]]; then
+  s1=0; n1="No CLAUDE.md or AGENTS.md found"
 else
-  USEFUL=$(grep -v '^\s*$' CLAUDE.md | grep -v '^\s*<!--' | wc -l | tr -d ' ')
+  INSTR_TEXT=$(cat $INSTR_FILES 2>/dev/null)
+  USEFUL=$(printf '%s\n' "$INSTR_TEXT" | grep -v '^\s*$' | grep -v '^\s*<!--' | wc -l | tr -d ' ')
   HS=0; HB=0; HA=0; HC=0
-  grep -qiE '(python|fastapi|react|vite|swift|swiftui|node|express|go|java|spring|docker|supabase|redis|typescript|javascript)' CLAUDE.md && HS=1
-  grep -qE  '(npm (run|test|build)|pytest|go test|cargo test|mvn|gradle|make test|ruff|eslint|swiftlint|swift test|python -m|uvicorn|poetry run)' CLAUDE.md && HB=1
-  grep -qiE '(src/|architecture|structure|components?|modules?|services?|[├└]|`[a-z]+/)' CLAUDE.md && HA=1
-  grep -qiE '(convention|pattern|rule|style|format|naming|never|always|prefer|avoid)' CLAUDE.md && HC=1
+  printf '%s\n' "$INSTR_TEXT" | grep -qiE '(python|fastapi|react|vite|swift|swiftui|node|express|go|java|spring|docker|supabase|redis|typescript|javascript)' && HS=1
+  printf '%s\n' "$INSTR_TEXT" | grep -qE  '(npm (run|test|build)|pytest|go test|cargo test|mvn|gradle|make test|ruff|eslint|swiftlint|swift test|python -m|uvicorn|poetry run)' && HB=1
+  printf '%s\n' "$INSTR_TEXT" | grep -qiE '(src/|architecture|structure|components?|modules?|services?|[├└]|`[a-z]+/)' && HA=1
+  printf '%s\n' "$INSTR_TEXT" | grep -qiE '(convention|pattern|rule|style|format|naming|never|always|prefer|avoid)' && HC=1
   SSUM=$((HS + HB + HA + HC))
-  if   [[ $USEFUL -lt 15 ]];    then s1=0; n1="Too short (${USEFUL} useful lines)"
-  elif [[ $SSUM  -ge 3  ]];     then s1=2; n1="Complete (stack:${HS} build:${HB} arch:${HA} conventions:${HC})"
-  else                               s1=1; n1="Incomplete sections (stack:${HS} build:${HB} arch:${HA} conventions:${HC})"
+  if   [[ $USEFUL -lt 15 ]];    then s1=0; n1="Too short (${USEFUL} useful lines in ${INSTR_FILES})${INSTR_NOTE}"
+  elif [[ $SSUM  -ge 3  ]];     then s1=2; n1="Complete (stack:${HS} build:${HB} arch:${HA} conventions:${HC}; ${INSTR_FILES})${INSTR_NOTE}"
+  else                               s1=1; n1="Incomplete sections (stack:${HS} build:${HB} arch:${HA} conventions:${HC}; ${INSTR_FILES})${INSTR_NOTE}"
   fi
 fi
 
@@ -119,17 +138,17 @@ else
   fi
 fi
 
-# 5. Build/test commands in CLAUDE.md
-if [[ ! -f "CLAUDE.md" ]]; then
-  s5=0; n5="CLAUDE.md not found"
+# 5. Build/test commands in the instruction file (same file set as item 1)
+if [[ -z "$INSTR_FILES" ]]; then
+  s5=0; n5="No CLAUDE.md or AGENTS.md found"
 else
   HT=0; HB2=0
-  grep -qiE '(pytest|npm test|go test|cargo test|swift test|mvn test|gradle test|make test|vitest|jest)' CLAUDE.md && HT=1
-  grep -qiE '(npm run build|go build|cargo build|mvn package|gradle build|docker build|make build|ruff check|tsc )' CLAUDE.md && HB2=1
-  if   [[ $HT -eq 1 && $HB2 -eq 1 ]]; then s5=2; n5="Both build and test commands documented"
-  elif [[ $HT -eq 1 || $HB2 -eq 1 ]]; then s5=1; n5="Partial (build:${HB2} test:${HT})"
+  printf '%s\n' "$INSTR_TEXT" | grep -qiE '(pytest|npm test|go test|cargo test|swift test|mvn test|gradle test|make test|vitest|jest)' && HT=1
+  printf '%s\n' "$INSTR_TEXT" | grep -qiE '(npm run build|go build|cargo build|mvn package|gradle build|docker build|make build|ruff check|tsc )' && HB2=1
+  if   [[ $HT -eq 1 && $HB2 -eq 1 ]]; then s5=2; n5="Both build and test commands documented (${INSTR_FILES})"
+  elif [[ $HT -eq 1 || $HB2 -eq 1 ]]; then s5=1; n5="Partial (build:${HB2} test:${HT}; ${INSTR_FILES})"
   else
-    grep -qE '`[a-z].*`|```bash|```sh' CLAUDE.md && s5=1 && n5="Commands present but no build/test pattern detected" || { s5=0; n5="No runnable commands found in CLAUDE.md"; }
+    printf '%s\n' "$INSTR_TEXT" | grep -qE '`[a-z].*`|```bash|```sh' && s5=1 && n5="Commands present but no build/test pattern detected" || { s5=0; n5="No runnable commands found in ${INSTR_FILES}"; }
   fi
 fi
 
@@ -154,7 +173,7 @@ fi
 # 7. Prompt injection scan
 SCAN_FOUND=""
 SCAN_COUNT=0
-for f in CLAUDE.md .claude/rules/*.md .claude/*.md; do
+for f in CLAUDE.md AGENTS.md .claude/rules/*.md .claude/*.md; do
   [[ -f "$f" ]] || continue
   SCAN_COUNT=$((SCAN_COUNT+1))
   MATCH=$(grep -niE \

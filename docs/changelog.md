@@ -4,6 +4,32 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.7.0 (2026-10-07)
+
+### Native-first boundary decisions + behaviors v3 defect fix (last 3 of 25 upstream practices)
+
+Closes the v2.1.219→v2.1.291 sync. Three scope decisions taken after a 3-agent exploration (audit tooling, Claude Mods, AGENTS.md).
+
+#### FIX — behaviors v3 never reached the model
+
+- `systemMessage` is user-facing only (hooks reference); the model reads `hookSpecificOutput.additionalContext` or, on a deny, `permissionDecisionReason`. Since v3.0 every nudge/warning was emitted as `systemMessage` alone — the agent never saw them — and `override_allowed` (not a Claude Code field) made `soft_block` and `hard_block` identical at runtime. `scripts/compiler/compile.sh` now emits `additionalContext` for nudge/warning and `permissionDecisionReason` for blocks; soft vs hard differ only by the pending_block (override-on-reinvocation) record. Three behaviors recompiled; tests extended (`stdout_has_model_context`, `stdout_has_deny_reason`); `docs/v3/SPEC.md`, `DECISIONS.md`, `COMPILER.md` and `domain/hook-events.md` corrected. **Projects with compiled hooks (TRADINGBOT, cotiza-api-cloud, jira-nbch) must recompile on next `/forge sync`.**
+- Decision: no `--target mod` compiler backend yet — Claude Mods (v2.1.287+) can replace v3 cleanly (`$.ui.ask` instead of hash-override) but the API is days old and mods don't load under `--safe-mode`, `allowManagedHooksOnly`, WSL Desktop or CLI <2.1.287. Revisit when Mods have 2+ months of stability.
+
+#### CEDE — `/forge benchmark` retired
+
+`claude plugin eval` (v2.1.269+) is the native harness (multi-run, graders, with/without delta, HTML+JSON). It loads no project-level config, so package it with `/forge plugin` first. Removed `skills/benchmark/`, `tests/benchmark-tasks/`, the CI validation step and the dangling `~/.claude/skills/benchmark` symlink; docs, `forge.md`, `skills/index.yaml`, openclaw bridge updated.
+
+#### NARROW — `rule-effectiveness`, `session-insights`
+
+- `rule-effectiveness` keeps the one measurement native lacks (rule `globs:` × git history, uncovered directories) and points to `/doctor prompt-audit` (content) + `/skill-doctor` (cost); token-budget table dropped.
+- `session-insights` keeps dotforge-only data (`CLAUDE_ERRORS.md`, session-report metrics, agent memory, registry trend, practices feed) and defers cross-project friction to native `/insights`. `docs/claude-vs-forge.md` gains the three comparison tables (EN/ES).
+
+#### ADOPT — AGENTS.md as a first-class instruction file (native v2.1.277+)
+
+- Audit items 1, 5, 7 (`audit/score.sh`, `scripts/audit_all.py`, `checklist.md`, `audit-project` skill, docs EN/ES) score the file Claude actually loads: `CLAUDE.md` (+ `AGENTS.md` when imported with `@AGENTS.md`), or `AGENTS.md` alone; a `CLAUDE.md` symlink counts as `CLAUDE.md`; both present without import → warning, not penalty.
+- `bootstrap-project` detects `AGENTS.md`/symlinks and generates `CLAUDE.md` with `@AGENTS.md` (new `<!-- forge:agents-md -->` template marker) instead of hiding it; `init-project` announces it; `sync-template` writes through symlinks to the real target and reports un-imported `AGENTS.md`; `export-config codex` skips when already shared and never duplicates permission lists into a file Claude will read.
+- Portfolio finding: InviSight-iOS and TRADINGBOT carry a Codex-style `AGENTS.md` next to `CLAUDE.md` without import (ignored by Claude, drifting); openclaw symlinks `CLAUDE.md → AGENTS.md`. Fix on next `/forge sync`.
+
 ## v4.6.0 (2026-10-07)
 
 ### Upstream sync — catalogue block (9 of the remaining 12 v2.1.219→v2.1.291 practices)

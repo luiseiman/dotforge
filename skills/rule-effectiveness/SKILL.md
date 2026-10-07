@@ -1,11 +1,16 @@
 ---
 name: rule-effectiveness
-description: Analyze which rules are actively used vs inert. Detect coverage gaps. Recommend pruning to reduce token consumption.
+description: Cross-reference .claude/rules/ globs against git history to find inert rules and uncovered directories. Content quality and context cost are native — run /doctor prompt-audit and /skill-doctor for those.
 ---
 
 # Rule Effectiveness Analysis
 
 Analyze the effectiveness of `.claude/rules/` in the current project by cross-referencing rule globs against actual file activity from git history.
+
+**Scope (native-first boundary, v4.7.0)**: this skill owns the one measurement Claude Code has no native equivalent for — *does each rule's glob match files the project actually touches*. Everything else is native:
+- `/doctor prompt-audit [path]` (v2.1.283+) flags rules/CLAUDE.md written for older models, references to files or commands that no longer exist, and contradictions between files — run it for content quality.
+- `/skill-doctor` (v2.1.252+) and `/doctor` report per-skill/MCP context cost and unused skills — run them for token budget.
+Do not re-implement either here.
 
 ## Step 1: Collect rules inventory
 
@@ -68,21 +73,13 @@ For each gap, suggest:
 - If directory maps to an existing stack (e.g., `migrations/` → supabase), recommend adding stack rule
 - If directory is project-specific, recommend creating a custom rule
 
-## Step 6: Token optimization analysis
+## Step 6: Native content + cost audit (pointer, not re-implemented)
 
-Calculate approximate token impact:
-- **Always-loaded rules**: sum of all lines (loaded every session)
-- **Active rules**: weighted by match_rate × lines
-- **Inert rules**: full line count = wasted tokens
+Tell the user to run, in this order, and include the pointers in the report:
+1. `/doctor prompt-audit .claude/rules` — stale-model phrasing, broken paths/commands, contradictions (content quality).
+2. `/skill-doctor` — context cost and usage of skills; `/doctor` for MCP servers and plugins vs their cost.
 
-```
-TOKEN BUDGET:
-  Always loaded:  _common.md (35 lines) + agents.md (52 lines) + memory.md (18 lines) = 105 lines/session
-  Active rules:   backend.md (33 lines × 95%) + testing.md (30 lines × 78%) = ~55 lines avg/session
-  Inert rules:    ios.md (34 lines × 0%) = 34 lines WASTED per session when loaded
-
-  POTENTIAL SAVINGS: Remove ios.md → save ~34 lines of context per session
-```
+For inert rules found in Step 4, the line count is a sufficient proxy — do not compute a token budget table.
 
 ## Step 7: Generate report
 
@@ -111,10 +108,9 @@ Rules: {{rule_count}} files, {{total_lines}} lines
   Files covered by rules:   {{covered}}/{{total}} ({{coverage}}%)
   Gaps: {{gap_dirs}}
 
-── TOKEN OPTIMIZATION ──
-  Current avg load:    ~{{current}} lines/session
-  After pruning inert: ~{{pruned}} lines/session
-  Potential savings:   ~{{savings}} lines/session ({{pct}}% reduction)
+── NATIVE FOLLOW-UP ──
+  /doctor prompt-audit .claude/rules   → content quality (stale models, broken refs, contradictions)
+  /skill-doctor                        → context cost of skills; /doctor for MCP + plugins
 
 ── RECOMMENDATIONS ──
 1. {{action}} — {{reason}}

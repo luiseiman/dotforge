@@ -86,16 +86,32 @@ def audit(proj_path: Path, name: str, version: str, prev_version) -> dict:
     commands_dir = claude_dir / "commands"
     agents_dir = claude_dir / "agents"
     errors_md = proj_path / "CLAUDE_ERRORS.md"
+    agents_md = proj_path / "AGENTS.md"
     manifest = claude_dir / ".forge-manifest.json"
     gitignore = proj_path / ".gitignore"
 
     # ── DIMENSION A — obligatory (0-2) ──
 
-    # Item 1: CLAUDE.md
-    if not claude_md.exists():
+    # Item 1: project instructions — CLAUDE.md, or AGENTS.md when Claude loads it natively (v2.1.277+).
+    # Evaluate the file(s) Claude actually reads: CLAUDE.md (+ AGENTS.md if imported via "@AGENTS.md"),
+    # or AGENTS.md alone when there is no CLAUDE.md. A CLAUDE.md symlink to AGENTS.md counts as CLAUDE.md.
+    instr_files = []
+    if claude_md.exists():
+        instr_files.append(claude_md)
+        if agents_md.exists():
+            if re.search(r"^@(\./)?AGENTS\.md\s*$", read_text(claude_md), re.M):
+                instr_files.append(agents_md)
+            elif not claude_md.is_symlink():
+                r["notes"].append("AGENTS.md present but not imported — ignored by Claude Code, copies may drift")
+    elif agents_md.exists():
+        instr_files.append(agents_md)
+        r["notes"].append("AGENTS.md read natively (no CLAUDE.md)")
+    instr_txt = "\n".join(read_text(f) for f in instr_files)
+
+    if not instr_files:
         r["items"]["1_claude_md"] = 0
     else:
-        txt = read_text(claude_md)
+        txt = instr_txt
         non_blank = [l for l in txt.splitlines() if l.strip() and not l.strip().startswith("#")]
         has_build = bool(re.search(
             r"\b(npm|pnpm|yarn|pip|pytest|go test|cargo|make|uvicorn|vite|swift build|xcodebuild|docker|bun)\b",
@@ -158,9 +174,9 @@ def audit(proj_path: Path, name: str, version: str, prev_version) -> dict:
             if not wired:
                 r["notes"].append("block-destructive.sh not wired in settings.json hooks")
 
-    # Item 5: build/test in CLAUDE.md
-    if claude_md.exists():
-        txt = read_text(claude_md)
+    # Item 5: build/test in the instruction file (same file set as item 1)
+    if instr_files:
+        txt = instr_txt
         has_cmd = bool(re.search(
             r"\b(npm|pnpm|yarn|pytest|pip install|go test|cargo|make|uvicorn|docker|swift build|xcodebuild|bun)\b.{0,40}(test|build|dev|lint|run)",
             txt, re.I))
@@ -190,6 +206,8 @@ def audit(proj_path: Path, name: str, version: str, prev_version) -> dict:
         scan_paths.extend(rules_dir.glob("**/*.md"))
     if claude_md.exists():
         scan_paths.append(claude_md)
+    if agents_md.exists():
+        scan_paths.append(agents_md)
     texts = [read_text(sp, 30_000) for sp in scan_paths]
     found, reason = scan_injection(texts)
     if found:

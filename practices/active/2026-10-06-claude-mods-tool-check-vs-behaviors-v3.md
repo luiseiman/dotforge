@@ -4,11 +4,13 @@ title: Claude Mods — plugins modify runtime behavior via hooks modules (tool.c
 source: "/forge watch — CHANGELOG v2.1.219–v2.1.291"
 source_type: upstream
 discovered: 2026-10-06
-status: evaluating
+status: active
 tags: [plugins, mods, behaviors, v3, native-first, boundary]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["scripts/compiler/compile.sh", ".claude/hooks/generated/", "docs/v3/SPEC.md", "docs/v3/DECISIONS.md", "docs/v3/COMPILER.md", ".claude/rules/domain/hook-events.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: logic
 ---
 
 ## Description
@@ -25,4 +27,4 @@ dotforge v3 behaviors compile YAML → bash `PreToolUse` hooks sharing `.forge/r
 - `.claude/rules/domain/hook-architecture.md`: distinguish settings hooks vs mod hooks modules
 
 ## Decision
-Pending
+Accepted 2026-10-07 — incorporated in dotforge v4.7.0 (native-first boundary decisions). See docs/changelog.md v4.7.0 for the verdict.

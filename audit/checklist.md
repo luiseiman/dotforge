@@ -11,12 +11,12 @@ El audit tiene **dos dimensiones independientes**:
 
 ## Obligatorio (cada item: 0-2 puntos, total máximo: 10)
 
-### 1. CLAUDE.md (0-2)
-- 0: No existe
+### 1. Instrucciones de proyecto — CLAUDE.md o AGENTS.md (0-2)
+- 0: No existe ni `CLAUDE.md` ni `AGENTS.md`
 - 1: Existe pero <20 líneas útiles O falta alguna sección clave
 - 2: Completo — incluye **todas** estas secciones: stack/tecnologías, arquitectura/estructura, comandos build/test exactos, convenciones
 
-**Verificación:** No contar líneas vacías ni comentarios. Buscar presencia explícita de: nombre del stack, al menos 1 comando build/test, estructura de directorios o descripción de arquitectura. `/init` nativo genera la base; score 2 exige que esté completo.
+**Verificación:** Evaluar el archivo que Claude Code carga realmente (v2.1.277+): `CLAUDE.md` si existe; si `CLAUDE.md` contiene una línea `@AGENTS.md`, evaluar ambos concatenados; si no hay `CLAUDE.md`, evaluar `AGENTS.md` (Claude lo lee nativamente con el setting por defecto `claude-md-or-agents-md`). Un `CLAUDE.md` symlink a `AGENTS.md` cuenta como `CLAUDE.md`. No contar líneas vacías ni comentarios. Buscar presencia explícita de: nombre del stack, al menos 1 comando build/test, estructura de directorios o descripción de arquitectura. `/init` nativo genera la base; score 2 exige que esté completo. Advertir (sin penalizar) si existen `CLAUDE.md` y `AGENTS.md` sin import — Claude ignora `AGENTS.md` y las copias derivan.
 
 ### 2. .claude/settings.json (0-2)
 - 0: No existe
@@ -37,8 +37,8 @@ El audit tiene **dos dimensiones independientes**:
 
 ### 5. Comandos build/test documentados (0-2)
 - 0: No hay forma de saber cómo buildear/testear
-- 1: Están en README pero no en CLAUDE.md, o están en CLAUDE.md pero son incorrectos
-- 2: Documentados en CLAUDE.md con comandos exactos que corresponden al stack detectado
+- 1: Están en README pero no en el archivo de instrucciones, o están pero son incorrectos
+- 2: Documentados en el archivo de instrucciones (`CLAUDE.md`, o `AGENTS.md` cuando es el que Claude carga — mismas reglas que el item 1) con comandos exactos que corresponden al stack detectado
 
 ## Recomendado (cada item: 0-1 punto, total máximo: 10)
 
@@ -50,7 +50,7 @@ El audit tiene **dos dimensiones independientes**:
 - 0: Rules or CLAUDE.md contain suspicious patterns (prompt injection risk)
 - 1: No suspicious patterns detected
 
-**Verification:** Scan `.claude/rules/`, `CLAUDE.md`, and any `*.md` in `.claude/` for patterns: `ignore previous`, `system:`, `<system>`, `</system>`, `<instructions>`, encoded payloads (base64 inline blocks), `IGNORE ALL`, `disregard`, `override instructions`. If any match → score 0 with explicit warning.
+**Verification:** Scan `.claude/rules/`, `CLAUDE.md`, `AGENTS.md`, and any `*.md` in `.claude/` for patterns: `ignore previous`, `system:`, `<system>`, `</system>`, `<instructions>`, encoded payloads (base64 inline blocks), `IGNORE ALL`, `disregard`, `override instructions`. If any match → score 0 with explicit warning.
 
 ### 8. Auto mode safety (0-1)
 - 0: Auto mode active (explicit `"auto"` OR `defaultMode` absent — auto is the session default since Claude Code v2.1.284) without deny list covering .env, *.key, *.pem, *credentials*

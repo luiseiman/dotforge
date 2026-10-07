@@ -12,12 +12,14 @@ Reference: [DECISIONS.md](DECISIONS.md) for closed design decisions.
 | Level | Exit Code | Output Channel | Agent Sees | Override | Use Case |
 |-------|-----------|---------------|------------|----------|----------|
 | silent | 0 | none | nothing | n/a | telemetry-only, baseline counting |
-| nudge | 0 | stdout JSON `systemMessage` (1 line) | neutral reminder | n/a | gentle first reminder |
-| warning | 0 | stdout JSON `systemMessage` (2-4 lines) | firm warning with expected behavior and correction | n/a | repeated violation, clear guidance |
-| soft_block | 0 | stdout JSON `hookSpecificOutput` + `systemMessage` | block with correction instruction; override available | yes, audited | serious violation, escapable |
-| hard_block | 0 | stdout JSON `hookSpecificOutput` + `systemMessage` | definitive block, no escape | no (v3.0) | safety-critical, non-negotiable |
+| nudge | 0 | `hookSpecificOutput.additionalContext` (1 line) + `systemMessage` for the user | neutral reminder | n/a | gentle first reminder |
+| warning | 0 | `hookSpecificOutput.additionalContext` (2-4 lines) + `systemMessage` | firm warning with expected behavior and correction | n/a | repeated violation, clear guidance |
+| soft_block | 0 | `permissionDecision: "deny"` + `permissionDecisionReason` + `systemMessage`; pending_block recorded | block with correction instruction; override available | yes, audited | serious violation, escapable |
+| hard_block | 0 | `permissionDecision: "deny"` + `permissionDecisionReason` + `systemMessage`; no pending_block | definitive block, no escape | no (v3.0) | safety-critical, non-negotiable |
 
 All levels exit 0. Enforcement is communicated via JSON stdout, not exit codes.
+
+**v4.7.0 correction**: `systemMessage` is shown to the user only (hooks reference). Pre-v4.7.0 hooks emitted nudge/warning as `systemMessage` alone, so the model never saw them, and `override_allowed` (not a Claude Code field) made soft_block and hard_block indistinguishable at runtime. The compiler now emits `additionalContext` for nudge/warning and `permissionDecisionReason` for blocks; soft vs hard differ only by the pending_block (override-on-reinvocation) record.
 Exit code 2 remains available for v2.9 compatibility hooks but is NOT used by behavior-generated hooks.
 
 ---

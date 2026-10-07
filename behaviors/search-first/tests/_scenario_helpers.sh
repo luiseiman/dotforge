@@ -104,6 +104,16 @@ stdout_has_system_message() {
     printf '%s' "$SCENARIO_LAST_STDOUT" | jq -e '.systemMessage | type == "string"' >/dev/null 2>&1
 }
 
+# The model only reads additionalContext (nudge/warning) or
+# permissionDecisionReason (blocks) — systemMessage is user-facing.
+stdout_has_model_context() {
+    printf '%s' "$SCENARIO_LAST_STDOUT" | jq -e '.hookSpecificOutput.additionalContext | type == "string"' >/dev/null 2>&1
+}
+
+stdout_has_deny_reason() {
+    printf '%s' "$SCENARIO_LAST_STDOUT" | jq -e '.hookSpecificOutput.permissionDecisionReason | type == "string"' >/dev/null 2>&1
+}
+
 stdout_is_deny() {
     printf '%s' "$SCENARIO_LAST_STDOUT" | jq -e '.hookSpecificOutput.permissionDecision == "deny"' >/dev/null 2>&1
 }
