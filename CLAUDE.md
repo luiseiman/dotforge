@@ -57,11 +57,11 @@ Each `stacks/<name>/` directory is a technology module containing:
 - `settings.json.partial` — permissions and hooks to merge into project settings
 - Optional `hooks/*.sh` — stack-specific lint/validation hooks
 
-Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available: python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer, hookify, trading, tdd.
+Stacks are additive: `/forge bootstrap` detects the project's tech and layers matching stacks on top of the base template. Available (17): python-fastapi, react-vite-ts, swift-swiftui, supabase, docker-deploy, data-analysis, gcp-cloud-run, redis, node-express, java-spring, aws-deploy, go-api, devcontainer, hookify, trading, tdd, vps-ssh. `stacks/detect.md` is the detection table.
 
 ### Skills & /forge Command
 
-Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `plugin`, `unregister`, `mcp add`, `domain extract|sync-vault|list`, `global sync`, `global status`.
+Skills in `skills/` are installed as symlinks into `~/.claude/skills/` via `global/sync.sh`. The `/forge` command (`global/commands/forge.md`) is the main entry point, dispatching to skills based on arguments: `init`, `bootstrap`, `sync`, `sync-all`, `audit`, `diff`, `reset`, `capture`, `update`, `status`, `watch`, `scout`, `inbox`, `pipeline`, `version`, `export`, `insights`, `rule-check`, `plugin`, `unregister`, `mcp add`, `learn`, `domain extract|sync-vault|list`, `behavior <subcommand>`, `global sync`, `global status`. Standalone commands outside the dispatcher: `forge-ultracode-check`, `forge-compact-task`, `forge-context-status`, `cap`.
 
 ### Agents
 
@@ -73,33 +73,29 @@ Seven subagent definitions in `agents/`: researcher (read-only exploration), arc
 
 ### Audit System
 
-Two-dimension model (v4.x). **Dimension A — Native Health** (`score`, 0-10): 5 obligatory items (0-2) + 10 recommended (0-1), normalized as `obligatory*0.7 + recommended*0.3`. Security-critical items (settings.json, block-destructive hook) cap it at 6.0 if missing. Measures good use of native Claude Code (auto-memory as index, permission cascade, attribution, sandbox, deny rules). **Dimension B — dotforge Adoption** (`forge_adoption`, 0-4): behaviors/workflows/domain-rules/sync-recency. **Informational — does NOT affect Native Health.** A native-first project scoring B=0 with A=10 is a desirable outcome (see `.claude/rules/domain/native-vs-dotforge-boundary.md`). `audit/checklist.md` + `audit/scoring.md` are the source of truth; registry in `registry/projects.yml` tracks both across managed projects. **Two scoring engines reimplement the checklist independently — `audit/score.sh` (bash, CI gate) and `scripts/audit_all.py` (Python, 12-project re-auditor). Any checklist change must update BOTH plus `audit.yml` and the docs (`README.md`, `docs/usage-guide.md`, `docs/guia-uso.md`); grep all consumers before planning the edit.**
+Two-dimension model (v4.x). **Dimension A — Native Health** (`score`, 0-10): 5 obligatory items (0-2) + 10 recommended (0-1), normalized as `obligatory*0.7 + recommended*0.3`. Security-critical items (settings.json, block-destructive hook) cap it at 6.0 if missing. Measures good use of native Claude Code (auto-memory as index, permission cascade, attribution, sandbox, deny rules). **Dimension B — dotforge Adoption** (`forge_adoption`, 0-4): behaviors/workflows/domain-rules/sync-recency. **Informational — does NOT affect Native Health.** A native-first project scoring B=0 with A=10 is a desirable outcome (see `.claude/rules/domain/native-vs-dotforge-boundary.md`). `audit/checklist.md` + `audit/scoring.md` are the source of truth; the registry tracks both across managed projects — always `registry/projects.local.yml` (gitignored, per machine); `registry/projects.yml` is the shipped template and a read-only fallback. Item 9 (sandbox) is deliberately 0 for dotforge itself: its job is cross-project (`sync-all` writes to every repo under `~/Documents`, `global/sync.sh` to `~/.claude`), so a sandbox would need those paths in `allowWrite` and protect nothing. **Two scoring engines reimplement the checklist independently — `audit/score.sh` (bash, CI gate) and `scripts/audit_all.py` (Python, 12-project re-auditor). Any checklist change must update BOTH plus `audit.yml` and the docs (`README.md`, `docs/usage-guide.md`, `docs/guia-uso.md`); grep all consumers before planning the edit.**
 
 ### Integrations
 
 `integrations/` contains cross-tool bridges. Currently: OpenClaw (`integrations/openclaw/`) with a bridge skill for operating `/forge` from messaging channels, and `/forge export openclaw` for generating project-specific OpenClaw workspace skills.
 
-### v3 Behavior Governance (alpha — Phase 1 complete)
+### v3 Behavior Governance (shipped v3.0 → maintained; status as of v4.7)
 
-`behaviors/`, `scripts/runtime/`, `scripts/compiler/`, `scripts/forge-behavior/`, and `skills/forge-behavior/` together implement the v3 behavior governance layer. Unlike the v2 configuration layer (rules, stacks, skills, agents), v3 behaviors enforce runtime policies on tool calls via compiled `PreToolUse` hooks that share a session-scoped state file.
+`behaviors/`, `scripts/runtime/`, `scripts/compiler/`, `scripts/forge-behavior/`, and `skills/forge-behavior/` implement the behavior governance layer. Unlike the configuration layer (rules, stacks, skills, agents), behaviors enforce runtime policies on tool calls via compiled `PreToolUse` hooks that share a session-scoped state file, with graduated escalation (silent → nudge → warning → soft_block → hard_block).
 
 Core pieces:
 
 - `behaviors/<id>/behavior.yaml` — declarative policy (triggers, escalation, rendering). Schema: `docs/v3/SCHEMA.md`.
-- `behaviors/index.yaml` — active behavior catalogue, evaluation order.
-- `scripts/runtime/lib.sh` — shared bash API: mkdir-based lock, counters, flags, pending_blocks, overrides. Sourced by compiled hooks. Tested via `scripts/runtime/tests/run_all.sh`.
-- `scripts/compiler/compile.sh` — YAML → bash hook per trigger, plus `settings.json` snippet. Tested via `scripts/compiler/tests/run_all.sh`.
-- `scripts/forge-behavior/cli.sh` — `/forge behavior` CLI: `status`, `on`/`off` (project or session scope), `strict`/`relaxed`. Tested via `scripts/forge-behavior/tests/run_all.sh`.
-- `.forge/runtime/state.json` — per-session counters, flags, pending_blocks. Gitignored, per-machine.
-- `.forge/audit/overrides.log` — permanent append-only soft_block override audit trail. Committed to git.
+- `behaviors/index.yaml` — catalogue + on/off. Enabled: `no-destructive-git`, `verify-before-done`. Disabled: `search-first` (false positives, v3.6.1), `respect-todo-state` (todo tools removed on current models, v4.4.0), `plan-before-code` and `objection-format` (opt-in).
+- `scripts/runtime/lib.sh` — shared bash API: mkdir-based lock, counters, flags, pending_blocks, session overrides, 24h TTL. Sourced by compiled hooks.
+- `scripts/compiler/compile.sh` — YAML → one bash hook per trigger plus a `settings.json` snippet. Needs a `python3` with PyYAML (on macOS use `/usr/local/bin/python3`, not `/usr/bin/python3`). Output contract (v4.7.0): nudge/warning → `hookSpecificOutput.additionalContext` (model-visible) + `systemMessage` (user-visible); blocks → `permissionDecision: "deny"` + `permissionDecisionReason`. `systemMessage` alone never reaches the model — that was the pre-v4.7.0 defect.
+- `scripts/forge-behavior/cli.sh` — `/forge behavior` CLI: `list`, `describe`, `status`, `on`/`off` (project or session scope), `strict`/`relaxed`.
+- `.forge/runtime/state.json` — per-session counters, flags, pending_blocks. Gitignored, per-machine. The override audit trail (`.forge/audit/overrides.log`) was retired in v4.0.x after a portfolio scan found 0 overrides.
+- Compiled hooks live in `.claude/hooks/generated/` and are committed; recompile after any `compile.sh` change (`for b in no-destructive-git verify-before-done; do bash scripts/compiler/compile.sh behaviors/$b/behavior.yaml .claude/hooks/generated; done`). Projects that adopted behaviors carry their own compiled copies — `/forge sync` must recompile them.
 
-Specs of record live under `docs/v3/`: `SPEC.md` (evaluation algorithm, level table), `SCHEMA.md` (behavior.yaml v1), `RUNTIME.md` (state shape, locking, flags §4, TTL §7, reinvocation override detection §12), `AUDIT.md` (override log format), `COMPILER.md` (generation rules), `SCOPE.md` (Phase 1–3 milestones), `DECISIONS.md` (design decisions), `COMPETITIVE.md` (differentiation).
+Specs of record under `docs/v3/`: `SPEC.md` (evaluation algorithm, level table), `SCHEMA.md`, `RUNTIME.md`, `COMPILER.md`, `DECISIONS.md`. Historical: `SCOPE.md`, `COMPETITIVE.md`, `AUDIT.md` (retired override log), `MIGRATION.md`. Verdict on scope: `.claude/rules/domain/native-vs-dotforge-boundary.md` — keep the escalation engine, no Claude Mods (`--target mod`) backend until the Mods API stabilizes (practice in `practices/inbox/`).
 
-Phase 1 (this alpha): runtime + compiler + search-first end-to-end + override detection + `/forge behavior` CLI. 18 unit/integration tests green, full live smoke test executed in a real Claude Code session.
-
-Phase 2: catalogue (verify-before-done, no-destructive-git, respect-todo-state, plan-before-code, objection-format), `/forge audit` behaviors-coverage dimension, scope: project for session-clear-resistant behaviors, reorder check_flag template to surface override detection ahead of flag consume.
-
-Phase 3: README rewrite, CHANGELOG v3, migration guide, benchmark, marketplace update, tag v3.0.0.
+Tests: `bash tests/run_all.sh` runs every suite (hooks, rules lint, skills index, config self-test, v3 runtime 8 + compiler 1 + CLI 5 + 17 behavior scenarios) — same set as CI. `--quick` skips the behavior scenarios.
 
 ## Conventions
 

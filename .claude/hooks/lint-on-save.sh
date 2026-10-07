@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # PostToolUse hook: auto-lint on file save
 # Install: .claude/hooks/lint-on-save.sh
 # Matcher: Write|Edit
@@ -8,8 +8,15 @@ if [[ -z "$FILE_PATH" ]] || [[ ! -f "$FILE_PATH" ]]; then
   exit 0
 fi
 
+# Portable hash: md5sum (Linux) || md5 (macOS) || cksum (POSIX fallback)
+_hash() {
+  printf '%s' "$1" | md5sum 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | md5 -q 2>/dev/null | cut -c1-8 || \
+  printf '%s' "$1" | cksum | cut -d' ' -f1
+}
+
 # Counter file for session metrics (read by session-report.sh)
-LINT_COUNTER="/tmp/claude-lint-blocks-$(echo "$PWD" | md5sum 2>/dev/null | cut -c1-8 || md5 -q -s "$PWD" 2>/dev/null | cut -c1-8)"
+LINT_COUNTER="/tmp/claude-lint-blocks-$(_hash "$PWD")"
 
 # Helper: log lint block and exit
 _lint_block() {

@@ -12,11 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: |
+          python3 -m pip install --quiet pyyaml
+          sudo apt-get install -y -qq jq >/dev/null
+
       - name: Validate hook syntax (bash -n)
         run: |
           echo "── Hook Syntax ──"
           ERRORS=0
-          for f in template/hooks/*.sh stacks/*/hooks/*.sh hooks/*.sh; do
+          for f in template/hooks/*.sh .claude/hooks/*.sh .claude/hooks/generated/*.sh stacks/*/hooks/*.sh hooks/*.sh; do
             [ -f "$f" ] || continue
             if bash -n "$f" 2>&1; then
               echo "✓ $f"
@@ -26,7 +35,7 @@ jobs:
             fi
           done
           echo ""
-          echo "Checked: $(find template/hooks stacks/*/hooks hooks -name '*.sh' 2>/dev/null | wc -l) files"
+          echo "Checked: $(find template/hooks .claude/hooks stacks/*/hooks hooks -name '*.sh' 2>/dev/null | wc -l) files"
           [ $ERRORS -eq 0 ] || exit 1
 
       - name: Validate hook permissions
@@ -140,3 +149,12 @@ jobs:
             fi
           done
           [ $ERRORS -eq 0 ] || exit 1
+
+      - name: Hook behaviour tests (block-destructive, lint-on-save)
+        run: bash tests/test-hooks.sh
+
+      - name: tool-latency hook test
+        run: bash tests/test-tool-latency.sh
+
+      - name: Config self-test (dotforge's own .claude/)
+        run: bash tests/test-config.sh .

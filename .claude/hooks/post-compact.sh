@@ -2,16 +2,14 @@
 # PostCompact hook — captures compact_summary to .claude/session/last-compact.md
 # Fires after Claude Code compacts the context window (auto or manual).
 #
-# Enhancements (v3.6.3):
-#  - Filter compact_summary through scripts/compact-filter.py before persisting.
-#    Conservative cleanup: collapses oversize fenced blocks, dense unprotected
-#    runs, and triplicate paragraphs. Never drops headings, paths, or
-#    decision/error/fix lines. Worst case: file unchanged.
+# Enhancements (dotforge v3.6.3):
+#  - Filter compact_summary through DOTFORGE_DIR/scripts/compact-filter.py before
+#    persisting. Conservative cleanup: collapses oversize fenced blocks, dense
+#    unprotected runs, and triplicate paragraphs. Never drops headings, paths,
+#    or decision/error/fix lines.
 #  - Keep a rotating history under .claude/session/compact-history/
-#    (last 5 checkpoints, named by ISO timestamp). Lets you diff between
-#    compactions or recover from a stale last-compact.md.
-#  - Filter is best-effort: if scripts/compact-filter.py is missing or fails,
-#    fall back to writing the raw summary so we never lose context.
+#    (last 5 checkpoints, named by ISO timestamp).
+#  - Filter is best-effort: on any failure, fall back to the raw summary.
 
 set -uo pipefail
 
@@ -22,7 +20,14 @@ RAW_SUMMARY=$(echo "$HOOK_INPUT" | python3 -c "import json,sys; d=json.load(sys.
 SESSION_DIR=".claude/session"
 HISTORY_DIR="$SESSION_DIR/compact-history"
 CHECKPOINT_FILE="$SESSION_DIR/last-compact.md"
-FILTER_SCRIPT="scripts/compact-filter.py"
+
+# DOTFORGE_DIR is exported by global/sync.sh. Fall back to local script if absent.
+FILTER_SCRIPT=""
+if [ -n "${DOTFORGE_DIR:-}" ] && [ -x "${DOTFORGE_DIR}/scripts/compact-filter.py" ]; then
+    FILTER_SCRIPT="${DOTFORGE_DIR}/scripts/compact-filter.py"
+elif [ -x "scripts/compact-filter.py" ]; then
+    FILTER_SCRIPT="scripts/compact-filter.py"
+fi
 
 mkdir -p "$SESSION_DIR" "$HISTORY_DIR"
 
@@ -31,9 +36,8 @@ ISO_FILE_TS=$(date -u +"%Y%m%dT%H%M%SZ")
 GIT_STATUS=$(git status --short 2>/dev/null | head -20 || echo "not a git repo")
 GIT_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
 
-# Run summary through compact-filter if available; fall back to raw on any error
 FILTER_METRICS=""
-if [ -n "$RAW_SUMMARY" ] && [ -x "$FILTER_SCRIPT" ]; then
+if [ -n "$RAW_SUMMARY" ] && [ -n "$FILTER_SCRIPT" ]; then
     FILTER_TMP=$(mktemp)
     FILTER_ERR=$(mktemp)
     if printf '%s' "$RAW_SUMMARY" | "$FILTER_SCRIPT" >"$FILTER_TMP" 2>"$FILTER_ERR"; then
@@ -73,7 +77,7 @@ EOF
 write_checkpoint "$CHECKPOINT_FILE"
 write_checkpoint "$HISTORY_DIR/${ISO_FILE_TS}.md"
 
-# Rotate history: keep last 5 only
+# Rotate: keep last 5
 ls -1t "$HISTORY_DIR"/*.md 2>/dev/null | tail -n +6 | xargs -I {} rm -f {} 2>/dev/null || true
 
 echo "[post-compact] Checkpoint saved to $CHECKPOINT_FILE" >&2

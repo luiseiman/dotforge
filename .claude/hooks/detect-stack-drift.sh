@@ -21,11 +21,20 @@ esac
 MANIFEST=".claude/.forge-manifest.json"
 INSTALLED_STACKS=""
 if [[ -f "$MANIFEST" ]]; then
+  # Extract stacks from manifest: check 'stacks' array first,
+  # fallback to inferring from file sources (stacks/<name>)
   INSTALLED_STACKS=$(python3 -c "
-import json, sys
+import json, re
 try:
   d = json.load(open('$MANIFEST'))
   stacks = d.get('stacks', [])
+  if not stacks:
+    # Infer from file sources: 'stacks/react-vite-ts' -> 'react-vite-ts'
+    for f in d.get('files', {}).values():
+      src = f.get('source', '') if isinstance(f, dict) else ''
+      m = re.match(r'stacks/([^/]+)', src)
+      if m and m.group(1) not in stacks:
+        stacks.append(m.group(1))
   print(' '.join(stacks))
 except Exception:
   pass
@@ -47,7 +56,7 @@ case "$(basename "$FILE_PATH")" in
 
     # react-vite-ts: react or vite present
     if echo "$CONTENT" | python3 -c "import json,sys; d=json.load(sys.stdin); deps={**d.get('dependencies',{}), **d.get('devDependencies',{})}; sys.exit(0 if 'react' in deps or 'vite' in deps or 'next' in deps else 1)" 2>/dev/null; then
-      stack_installed "react-vite-ts" || WARNINGS+=("react/vite detected → consider: /forge mcp add  (stack: react-vite-ts not installed)")
+      stack_installed "react-vite-ts" || WARNINGS+=("react/vite detected → stack react-vite-ts not installed. Run: /forge sync")
     fi
 
     # node-express: express or fastify present, no react/vite
