@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Configuration governance for Claude Code — bootstrap, audit, sync, and evolve .claude/ across projects",
-    "version": "2.9.0"
+    "version": "4.7.0"
   },
   "plugins": [
     {
       "name": "dotforge",
       "source": ".",
-      "description": "Configuration governance for Claude Code — 18 skills, 7 agents, 16 stacks, 9 hooks, audit scoring (0-10), and practices pipeline.",
-      "version": "2.9.0",
+      "description": "Configuration governance for Claude Code — 19 skills, 7 agents, 16 stacks, 13 hooks, audit scoring (0-10), domain rules, and practices pipeline.",
+      "version": "4.7.0",
       "author": {
         "name": "Luis Eiman"
       },

@@ -4,7 +4,7 @@ description: >
   Delegate for writing new tests, running test suites, analyzing failures,
   and reporting coverage. Use after implementation to validate changes or
   when investigating test failures.
-allowed-tools: Read, Grep, Glob, Bash, Write, Edit
+tools: Read, Grep, Glob, Bash, Write, Edit
 model: sonnet
 color: blue
 # No memory: transactional agent — runs tests, reports results, discards context

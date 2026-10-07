@@ -5,7 +5,7 @@ description: >
   reading multiple files, searching logs, or gathering context before
   implementation. Use when the main thread would fill with verbose output
   from grep, find, or file reads.
-allowed-tools: Read, Grep, Glob, LS, WebFetch, WebSearch
+tools: Read, Grep, Glob, WebFetch, WebSearch
 model: haiku
 omitClaudeMd: true
 maxTurns: 30

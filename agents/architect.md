@@ -4,7 +4,7 @@ description: >
   Delegate for architecture decisions, design tradeoff analysis, dependency
   evaluation, and pattern validation. Use before implementation when the
   approach isn't clear or when touching system boundaries.
-allowed-tools: Read, Grep, Glob, Bash, LS, Write
+tools: Read, Grep, Glob, Bash, Write
 model: opus
 effort: high
 color: purple

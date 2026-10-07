@@ -4,7 +4,7 @@ description: >
   Delegate to this agent for focused code implementation tasks. Use after
   research/architecture phases are complete. Handles writing code, running
   tests, fixing lint errors, and verifying changes compile/pass.
-allowed-tools: Read, Grep, Glob, Bash, Write, Edit, LS
+tools: Read, Grep, Glob, Bash, Write, Edit
 model: sonnet
 color: green
 ---

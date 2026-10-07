@@ -4,7 +4,7 @@ description: >
   Delegate for security-focused analysis: scanning for secrets, vulnerabilities,
   auth gaps, dependency risks, and compliance issues. Use before any deployment
   or when touching auth/crypto/data-handling code.
-allowed-tools: Read, Grep, Glob, Bash, LS, Write
+tools: Read, Grep, Glob, Bash, Write
 model: opus
 effort: xhigh
 color: red

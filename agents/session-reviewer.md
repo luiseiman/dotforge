@@ -4,7 +4,7 @@ description: >
   Analyze conversation patterns to detect recurring frustrations, corrections,
   and problematic tool usage. Feeds findings into practices/inbox/ or CLAUDE_ERRORS.md.
   Use after long sessions or when /forge insights triggers analysis.
-allowed-tools: Read, Grep, Glob, Bash, Write
+tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 color: magenta
 ---

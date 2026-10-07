@@ -4,7 +4,7 @@ description: >
   PROACTIVELY use after code changes to review for security, performance,
   correctness, and maintainability. Reads diffs, analyzes patterns, reports
   issues by severity. Does not modify code.
-allowed-tools: Read, Grep, Glob, Bash, Write
+tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 color: yellow
 ---

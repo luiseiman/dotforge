@@ -33,7 +33,7 @@ test_block() {
   local cmd="$1"
   local label="$2"
   local tool_input
-  tool_input=$(printf '{"command": "%s"}' "$cmd")
+  tool_input=$(jq -cn --arg c "$cmd" '{command: $c}')
   rc=0
   TOOL_INPUT="$tool_input" bash "$HOOK" >/dev/null 2>&1 || rc=$?
   if [[ $rc -eq 2 ]]; then
@@ -47,7 +47,9 @@ test_allow() {
   local cmd="$1"
   local label="$2"
   local tool_input
-  tool_input=$(printf '{"command": "%s"}' "$cmd")
+  # jq escapes embedded quotes — a hand-built printf produced invalid JSON for
+  # `git commit -m "test"` and the hook correctly failed closed (exit 2)
+  tool_input=$(jq -cn --arg c "$cmd" '{command: $c}')
   rc=0
   TOOL_INPUT="$tool_input" bash "$HOOK" >/dev/null 2>&1 || rc=$?
   if [[ $rc -eq 0 ]]; then

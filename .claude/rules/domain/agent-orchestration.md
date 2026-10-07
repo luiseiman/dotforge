@@ -104,10 +104,10 @@ Use cases per dotforge agent role:
 | Agent | Event | Purpose |
 |-------|-------|---------|
 | `code-reviewer` | PostToolUse on `Edit\|Write` | Run lint/typecheck; block on errors via `decision: "block"` (or `continueOnBlock: true` for self-healing) |
-| `security-auditor` | PreToolUse on `Bash\|Write\|Edit` | Read-only enforcement — auto-deny mutations (defense-in-depth atop `allowed-tools:`) |
+| `security-auditor` | PreToolUse on `Bash\|Write\|Edit` | Read-only enforcement — auto-deny mutations (defense-in-depth atop `tools:`) |
 | `test-runner` | PostToolUse on `Bash` | Parse test results from output; persist failures into agent-memory |
 | `implementer` | Stop | Refuse exit unless tests passed for files touched this session |
-| `researcher` | PreToolUse on `Edit\|Write` | Belt-and-suspenders deny (already restricted via `allowed-tools:`) |
+| `researcher` | PreToolUse on `Edit\|Write` | Belt-and-suspenders deny (already restricted via `tools:` — note: agents use `tools:`/`disallowedTools:`; `allowed-tools:` is a skill/command field and is silently ignored on agents, which made every dotforge agent inherit all tools until v4.7.1) |
 | `architect` | PreToolUse on `Edit\|Write` | Plan-mode enforcement — block until plan accepted |
 | `session-reviewer` | PostToolUse | Capture corrections/patterns for `/forge insights` feeding |
 
