@@ -13,7 +13,7 @@ behaviors:
   - id: verify-before-done
     enabled: true
   - id: respect-todo-state
-    enabled: true
+    enabled: false  # disabled v4.4.0 — TaskCreate/TaskUpdate tools removed on Opus 4.8+/Sonnet 5+/Fable (Claude Code v2.1.233/268); hook never fires. Re-enable only with CLAUDE_CODE_ENABLE_TODO_TOOLS=1
 
   # Opinionated — opt-in
   - id: plan-before-code

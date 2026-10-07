@@ -2,7 +2,7 @@
 globs: "**/*.sh,**/settings.json,**/settings.json.partial"
 description: "Hook system design patterns and safety requirements"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Hook Architecture
@@ -57,7 +57,7 @@ Two ways to spawn a `type: "command"` hook:
 }
 ```
 
-Prefer exec form whenever the hook consumes user-controlled values.
+Prefer exec form whenever the hook consumes user-controlled values — and for every plugin hook: shell form with an unquoted `${CLAUDE_PLUGIN_ROOT}` breaks on install paths containing spaces (`claude plugin validate` warns since v2.1.281; an async Stop hook under `~/Library/Application Support` looped forever in v2.1.290). Since v2.1.248 a hook whose stdout is an invalid `{…}` JSON object is reported as a hook error (previously treated as plain text), and since v2.1.288 PreToolUse/PermissionRequest hooks fail closed when matching fails or the input cannot be serialized — every JSON-emitting hook must print strictly valid JSON or nothing.
 
 ## Effort visibility in hooks (v2.1.133+)
 

@@ -67,7 +67,7 @@ For each checklist item, verify existence **and quality**:
 ### Dimension A — Native Health, Recommended (0-10 bonus points)
 6. **.gitignore** — Does it protect .env, *.key, *.pem, credentials?
 7. **Prompt injection scan** — Are rules/CLAUDE.md free of suspicious patterns?
-8. **Auto mode safety** — If `permissions.defaultMode: "auto"`, is the deny list complete? (auto-pass if not auto)
+8. **Auto mode safety** — Auto mode is active when `permissions.defaultMode` is `"auto"` OR absent (session default since Claude Code v2.1.284). In both cases, is the deny list complete? Pass only if deny covers secrets or `defaultMode` is explicitly non-auto. Missing settings.json → 0
 9. **OS-level sandboxing** — `sandbox.enabled: true` with at least one restriction OR project demonstrably handles no secrets (auto-pass)
 10. **Hook lint** — Does it exist? Is it executable? (verify `chmod +x`)
 11. **Auto-memory well used (NEW)** — Is `MEMORY.md` a concise index (<200 lines AND <25KB), not a content dump? If errors are tracked, `CLAUDE_ERRORS.md` exists with table format (Type column). Penalize dumping content into the index — only first 200 lines / 25KB are injected per session.

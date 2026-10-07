@@ -168,21 +168,20 @@ else
   s7=1; n7="Clean (${SCAN_COUNT} files scanned)"
 fi
 
-# 8. Auto mode safety
+# 8. Auto mode safety — since Claude Code v2.1.284 a missing defaultMode means auto mode ON
 if [[ ! -f "$SETTINGS" ]]; then
-  s8=1; n8="settings.json not found — auto mode not enabled (pass)"
-elif ! grep -q '"defaultMode"' "$SETTINGS" 2>/dev/null; then
-  s8=1; n8="defaultMode not set — auto mode not enabled (pass)"
-elif ! grep -q '"auto"' "$SETTINGS" 2>/dev/null; then
-  s8=1; n8="defaultMode present but not auto (pass)"
+  s8=0; n8="settings.json not found — session defaults to auto mode (v2.1.284+) with no deny list"
+elif grep -q '"defaultMode"' "$SETTINGS" 2>/dev/null && ! grep -Eq '"defaultMode"[[:space:]]*:[[:space:]]*"auto"' "$SETTINGS" 2>/dev/null; then
+  s8=1; n8="defaultMode explicitly non-auto (pass)"
 else
+  if grep -q '"defaultMode"' "$SETTINGS" 2>/dev/null; then MODE_SRC="explicit"; else MODE_SRC="default since v2.1.284"; fi
   HE=$(grep -c '\.env'        "$SETTINGS" 2>/dev/null)
   HK=$(grep -c '\.key'        "$SETTINGS" 2>/dev/null)
   HP=$(grep -c '\.pem'        "$SETTINGS" 2>/dev/null)
   HR=$(grep -c 'credentials'  "$SETTINGS" 2>/dev/null)
   DC=$((HE + HK + HP + HR))
-  if [[ $DC -ge 3 ]]; then s8=1; n8="Auto mode enabled WITH deny list covering secrets (${DC}/4)"
-  else                      s8=0; n8="Auto mode enabled WITHOUT complete deny list (.env:${HE} .key:${HK} .pem:${HP} credentials:${HR})"
+  if [[ $DC -ge 3 ]]; then s8=1; n8="Auto mode active (${MODE_SRC}) WITH deny list covering secrets (${DC}/4)"
+  else                      s8=0; n8="Auto mode active (${MODE_SRC}) WITHOUT complete deny list (.env:${HE} .key:${HK} .pem:${HP} credentials:${HR})"
   fi
 fi
 

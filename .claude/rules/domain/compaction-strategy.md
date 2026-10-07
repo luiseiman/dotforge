@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/rules/_common.md,**/rules/memory.md,**/agents/*.md,**/skills/loop/**,**/skills/schedule/**"
 description: "Evidence-based compaction policy: when to compact manually vs auto, cache economy, /clear vs /compact"
 domain: claude-code-engineering
-last_verified: 2026-05-05
+last_verified: 2026-10-06
 ---
 
 # Compaction Strategy (evidence-based)
@@ -15,9 +15,9 @@ Compactá manualmente al **80%** del context window, no antes ni después:
 - **70-80%**: zona OK para seguir, pero monitorear
 - **80%**: **trigger operacional** (Daniel San hook, Avthar advice, X consensus)
 - **>90%**: ya hay degradación medible (Chroma research, Liu et al.)
-- **96.7%**: default auto-compact de Claude Code — **demasiado tarde**, perdés momentum
+- **96.7%–97%**: default auto-compact de Claude Code (Sonnet 5+ compacta a ~967K, Opus/Fable justo antes de 1M — v2.1.233/260) — **demasiado tarde**, perdés momentum
 
-Para 1M context (Sonnet 4.6) → 800K tokens. Para 200K (Haiku) → 160K.
+Para 1M context (Opus 5.5 / Sonnet 5.5 / Fable 5.1) → 800K tokens. Para 200K (Haiku, o cualquier modelo con `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`) → 160K.
 
 ## /compact vs /clear vs subagent vs rewind+summarize
 

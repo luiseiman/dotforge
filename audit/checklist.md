@@ -53,10 +53,10 @@ El audit tiene **dos dimensiones independientes**:
 **Verification:** Scan `.claude/rules/`, `CLAUDE.md`, and any `*.md` in `.claude/` for patterns: `ignore previous`, `system:`, `<system>`, `</system>`, `<instructions>`, encoded payloads (base64 inline blocks), `IGNORE ALL`, `disregard`, `override instructions`. If any match → score 0 with explicit warning.
 
 ### 8. Auto mode safety (0-1)
-- 0: Auto mode enabled without deny list covering .env, *.key, *.pem, *credentials*
-- 1: Auto mode enabled WITH complete deny list OR auto mode not enabled
+- 0: Auto mode active (explicit `"auto"` OR `defaultMode` absent — auto is the session default since Claude Code v2.1.284) without deny list covering .env, *.key, *.pem, *credentials*
+- 1: Auto mode active WITH complete deny list, OR `defaultMode` explicitly set to a non-auto mode
 
-**Verification:** Check if `permissions.defaultMode` is `"auto"` in settings.json. If yes, verify deny list covers secrets. If not enabled (default), automatic pass.
+**Verification:** Read `permissions.defaultMode` in settings.json. Absent → treat as auto (v2.1.284+ default). `"auto"` or absent → verify deny list covers secrets (≥3 of the 4 patterns). Explicit non-auto value → pass. Missing settings.json → 0 (no deny list at all). Note: project/local `"auto"`/`"bypassPermissions"` are ignored by Claude Code (v2.1.257) — the effective mode comes from user/managed scope; the audit still scores the shared file as written because the deny list is what protects an auto-mode session.
 
 ### 9. OS-level sandboxing (0-1)
 - 0: Project handles secrets (env vars, credentials, API keys, cloud configs) with no `sandbox.enabled` in settings.json

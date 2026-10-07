@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/agents/*.md,**/commands/*.md,**/skills/**/SKILL.md,docs/prompting-patterns.md"
 description: "Structural prompt engineering patterns for Claude Code configuration"
 domain: claude-code-engineering
-last_verified: 2026-06-01
+last_verified: 2026-10-06
 ---
 
 # Prompting Patterns
@@ -30,7 +30,7 @@ last_verified: 2026-06-01
 These system prompt instructions require STRONG override language in rules:
 - "DO NOT ADD ANY COMMENTS" → use "ALWAYS add docstrings to public functions"
 - "fewer than 4 lines" → use "provide detailed explanations with examples"
-- "Use TodoWrite VERY frequently" → difficult to suppress
+- "Use TodoWrite VERY frequently" → only on models that still ship todo tools (≤ Opus 4.7 / Sonnet 4.6 / Haiku 4.5); absent on Opus 4.8+, Sonnet 5+, Fable unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`
 - "minimize output tokens" → use "thorough analysis required, do not abbreviate"
 
 ## Headless invocation cost profile (v2.1.154+)

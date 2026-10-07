@@ -2,7 +2,7 @@
 globs: "**/agents/*.md,**/rules/agents.md"
 description: "Agent delegation patterns and team coordination"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Agent Orchestration
@@ -14,7 +14,7 @@ last_verified: 2026-05-27
 - Fork subagents share parent prompt cache (Anthropic caching API) — saves tokens
 - Max 10 concurrent tool executions across all agents (`gW5 = 10`)
 - `shouldAvoidPermissionPrompts: true` for background agents (auto-deny, no UI)
-- **Sub-agent nesting up to 5 levels deep (v2.1.172+)**: sub-agents can now spawn their own sub-agents. Previously single-level only. Token cost compounds geometrically — a 5-level chain with fanout=3 per level = up to 243 leaf agents. Use deep nesting only when each level has a distinct concern (e.g. Lead → 3 perspective leads → 3 specialists each → adversarial verify pass). For flat fan-out prefer `/workflows` which is more visible and budget-trackable
+- **Sub-agent nesting: default depth 3 (v2.1.219+)**: `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` overrides (`=1` disables nesting). History: single-level until v2.1.172, up to 5 in v2.1.172–218, 3 since v2.1.219. Forks at the limit cannot spawn further. **20 concurrent running subagents** by default (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, v2.1.217; lifted while ultracode is on). The 200-per-session spawn cap was removed in v2.1.224 — lifetime count is unlimited. Token cost compounds geometrically — a 3-level chain with fanout=3 = up to 27 leaf agents. Use nesting only when each level has a distinct concern (e.g. Lead → 3 perspective leads → 3 specialists each). For flat fan-out prefer `/workflows` which is more visible and budget-trackable
 
 ## Task types
 
@@ -22,6 +22,44 @@ last_verified: 2026-05-27
 - `remote_agent` — remote execution
 - `in_process_teammate` — shared memory (Coordinator mode)
 - `dream` — auto-dream background memory consolidation
+
+## Background by default + restricted tool set (v2.1.198+)
+
+Subagents run in the BACKGROUND by default. Foreground only when Claude needs the result before continuing. Background subagents get a **restricted built-in tool set** regardless of frontmatter `tools:` — tools outside the allowlist are SILENTLY removed with no error unless it leaves `tools:` empty:
+
+**Background-safe built-in tools**: Read, Grep, Glob, LSP (v2.1.280+), Bash, PowerShell, Edit, Write, NotebookEdit, WebFetch, WebSearch, TodoWrite, Skill, ToolSearch, EnterWorktree, ExitWorktree, Monitor, TaskStop, SendMessage, SubagentHandoff, Artifact. MCP tools preserved. Everything else removed.
+
+**Todo/task tools are model-gated**: `TodoWrite`, `TaskCreate/Get/Update/List` exist only on Claude 3.x, Opus 4.0–4.7, Sonnet 4.0–4.6, Haiku 4.5 (v2.1.233/268). On Opus 4.8+, Sonnet 5+, Fable they are absent unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`. `TaskOutput` removed (v2.1.277). Any hook or behavior keyed on these tools is inert on current models (dotforge `respect-todo-state` disabled in v4.4.0).
+
+Foreground subagents keep the broader tool set. Forks skip both filters (fork inherits parent's exact pool).
+
+dotforge implications:
+- Audit `agents/*.md` — architect (may need EnterPlanMode/ExitPlanMode), security-auditor (may need AskUserQuestion), any agent listing tools outside the allowlist gets silent removal in background mode
+- If an agent MUST have foreground tools, set `background: false` in frontmatter to force foreground execution
+- `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` kills background entirely
+
+## Subagent output scanning (v2.1.210+, prompt-injection defense)
+
+Claude Code scans every subagent's final report BEFORE the main conversation reads it. Two automatic transformations:
+
+1. **Backslash insertion**: text imitating Claude Code output (`<system-reminder>` tags, lines starting with `Human:`/`Assistant:`) gets a backslash inserted so it reads as ordinary text.
+2. **Marker line**: prepends `[harness: subagent output matched instruction-shaped pattern(s):` when the report imitates a `<system-reminder>` tag or mentions permission settings like `bypassPermissions` or `--dangerously-skip-permissions`.
+
+Defense against hostile content the subagent read (files, URLs, tool output). NOT a substitute for restricting subagent capability (`tools:` allowlist, `permissionMode`, `disallowedTools`) — downstream tool calls the marked report might steer Claude toward still go through the session's permission checks and sandboxing.
+
+## Subagent frontmatter hooks require workspace trust (v2.1.218+)
+
+Project-level subagent `hooks:` blocks in `.claude/agents/*.md` now require workspace-trust acceptance BEFORE they fire. Non-interactive sessions (`-p`, SDK, CI) silently SKIP untrusted frontmatter hooks — subagent still runs, hooks are inert, debug log records the skip.
+
+Trust scope:
+- `.claude/agents/*.md` project-level → workspace-trust gate applies
+- `--add-dir` folders outside trusted workspace → separate trust required
+- `~/.claude/agents/` user-level → no trust needed (files you wrote)
+- `--agents` inline JSON → no trust needed (explicit caller input)
+
+Pre-v2.1.218: frontmatter hooks could run from untrusted folders including in non-interactive sessions — the injection surface a hostile PR could exploit (malicious `agents/reviewer.md` frontmatter hook fires on next Claude session in the checkout). Post-v2.1.218 that path is closed.
+
+CI implication: pipelines using `claude -p` with project-level agent frontmatter hooks silently skip them. Migrate hooks to `~/.claude/agents/` or `--agents` inline JSON for CI usage.
 
 ## Delegation rules
 
@@ -74,7 +112,7 @@ Composition with global hooks: agent hooks **merge** with `.claude/settings.json
 
 ## Agent Teams: implicit team (v2.1.178+)
 
-With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, every session now has one implicit team — no need to declare a Lead + teammates structure manually for ad-hoc fan-out. Lowers the activation cost for Agent Teams (previously required explicit team scaffolding). Composes with sub-agent 5-level nesting: a teammate can recurse into its own sub-agents up to 5 levels deep.
+With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, every session now has one implicit team — no need to declare a Lead + teammates structure manually for ad-hoc fan-out. Lowers the activation cost for Agent Teams (previously required explicit team scaffolding). Composes with sub-agent nesting: a teammate can recurse into its own sub-agents up to the spawn depth (default 3, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`).
 
 dotforge implication: `.claude/rules/agents.md` Agent Teams criteria still apply (≥3 components, ≤4 teammates, worktree isolation). The implicit team just removes ceremony — the design constraints don't relax.
 

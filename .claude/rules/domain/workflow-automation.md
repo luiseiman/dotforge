@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/skills/loop/**,**/skills/schedule/**,**/rules/_common.md"
 description: "When to reach for /goal, /loop, /schedule, /batch, /workflows — temporal and orchestration primitives"
 domain: claude-code-engineering
-last_verified: 2026-06-01
+last_verified: 2026-10-06
 ---
 
 # Workflow Automation Primitives
@@ -136,13 +136,15 @@ Workflows saved via `/workflows` → `s` shortcut become commands the same way a
 - Dismiss the highlighted keyword in-prompt: `Option+W` macOS / `Alt+W` Windows-Linux (or backspace while cursor is just after it)
 - **Anti-confusion** for dotforge ultracode-as-tier policy: when documenting "this project is ultracode tier", prefer `ultracode-tier`, `ultracode posture`, or `ultracode mode` over the bare word `ultracode` to avoid triggering accidental workflow expansion
 
-### Runtime activation: `/effort ultracode`
+### Runtime activation: `/effort ultracode on|off`
 
-`/effort ultracode` is the per-session activator that combines `xhigh` reasoning effort with automatic workflow orchestration for every substantive task. Session-only, resets on new session. Available only on models supporting `xhigh` (Opus 4.7 + 4.8).
+Ultracode is an **independent toggle since v2.1.284**: `/effort` → Tab, or `/effort ultracode on|off`. It no longer forces `xhigh` and stays on at any effort level. The CLI flag `--effort ultracode` (v2.1.203+) still requests `xhigh` + ultracode together. Session-only, resets on new session. Pre-v2.1.284 the two were coupled (ultracode = xhigh + orchestration, Opus-only).
 
-With it on, Claude plans a workflow for each substantive request — one user prompt can spawn several workflows in sequence (understand → change → verify). Launch prompts in `auto` mode are also skipped.
+With it on, Claude plans a workflow for each substantive request — one user prompt can spawn several workflows in sequence (understand → change → verify). Launch prompts in `auto` mode are also skipped. The 20-concurrent-subagent cap is lifted while ultracode is on.
 
-Pairs with dotforge `workflow-and-ultracode-policy.md` tier mapping: `production` → `/effort ultracode` mandatory · `heavy` → `/effort ultracode` for architecture/security · `standard` → `/effort high` (default) · `light` → `/effort medium` or `high`.
+Pairs with dotforge `workflow-and-ultracode-policy.md` tier mapping: `production` → `/effort xhigh` + `/effort ultracode on` mandatory · `heavy` → ultracode on for architecture/security tasks · `standard` → `/effort high` (default), ultracode off · `light` → `/effort medium|high`, off.
+
+Workflow settings: `workflowSizeGuideline` (default `"medium"`, keeps workflows under ~15 agents; v2.1.219), `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS` (1–256), `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`. The Workflow tool description was cut to ~1K tokens in v2.1.248 — the script reference now lives in the bundled `workflow-authoring` skill. A workflow `import()` sandbox escape was fixed in v2.1.223.
 
 ### dotforge integration considerations
 

@@ -2,7 +2,7 @@
 globs: "**/CLAUDE.md,**/.forge-manifest.json,**/registry/projects.yml,**/registry/projects.local.yml"
 description: "When to default Workflow (tool) and Ultracode (mode) ON per project — tier policy across the 12-project portfolio"
 domain: claude-code-engineering
-last_verified: 2026-06-02
+last_verified: 2026-10-06
 ---
 
 # Workflow & Ultracode Policy
@@ -35,16 +35,16 @@ Default when `ultracode_tier` absent from registry: **standard**.
 
 ## Activation: tier (policy) → runtime
 
-Tier is the project POSTURE (declared once in registry). `/effort ultracode` is the per-session ACTIVATOR (upstream v2.1.154+). Both must align — tier alone does not enforce anything at runtime.
+Tier is the project POSTURE (declared once in registry). Two independent per-session ACTIVATORS since v2.1.284: `/effort <level>` (reasoning depth) and `/effort ultracode on|off` (workflow-first orchestration). Before v2.1.284 `/effort ultracode` set both at once. Both must align with tier — tier alone does not enforce anything at runtime.
 
 | Tier | Recommended runtime | Workflow trigger |
 |------|--------------------|-----------------|
-| `production` | `/effort ultracode` mandatory at session start | Auto + adversarial verify on every substantive task |
-| `heavy` | `/effort ultracode` for architecture/security tasks; `/effort high` (default) for routine | Auto for multi-stage; explicit `ultracode` keyword otherwise |
-| `standard` | `/effort high` (default since v2.1.94) | Only when explicitly requested (`ultracode` keyword or natural language) |
-| `light` | `/effort medium` or `high` | Skip workflows |
+| `production` | `/effort xhigh` + `/effort ultracode on` mandatory at session start | Auto + adversarial verify on every substantive task |
+| `heavy` | `/effort high` (default); `/effort xhigh` + ultracode on for architecture/security tasks | Auto for multi-stage; explicit `ultracode` keyword otherwise |
+| `standard` | `/effort high` (default since v2.1.94), ultracode off | Only when explicitly requested (`ultracode` keyword or natural language) |
+| `light` | `/effort medium` or `high`, ultracode off | Skip workflows |
 
-`session-startup.sh` emits the tier in the startup brief. For tier `heavy` or `production`, treat the brief as a reminder to invoke `/effort ultracode` if not already on.
+`session-startup.sh` emits the tier in the startup brief. For tier `heavy` or `production`, treat the brief as a reminder to set effort + ultracode if not already on. `maxEffortLevel` (v2.1.267, user/managed scope) can cap `xhigh` — check `/status` if `/effort xhigh` is refused.
 
 ## Security boundary — workflow subagents bypass session permission mode
 

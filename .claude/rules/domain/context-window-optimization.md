@@ -2,7 +2,7 @@
 globs: "template/**/*.md,docs/memory-strategy.md,**/CLAUDE.md,**/rules/memory.md,**/MEMORY.md"
 description: "Context window runtime — compaction tiers, size budgets, tool result limits"
 domain: claude-code-engineering
-last_verified: 2026-04-20
+last_verified: 2026-10-06
 ---
 
 # Context Window Runtime
@@ -19,13 +19,16 @@ last_verified: 2026-04-20
 
 | Model | Context | Max output | Auto-compact buffer |
 |-------|---------|------------|-------------------|
-| Opus 4.6 | 1M (GA) | 128K tokens | ~33K (~96.7%) |
-| Sonnet 4.6 | 1M (GA) | 64K tokens | ~33K (~96.7%) |
+| Opus 5.5 / Opus 5 | 1M | 128K tokens | shortly before 1M (v2.1.260); legacy ~33K (~96.7%) |
+| Sonnet 5.5 / Sonnet 5 | 1M | 64K tokens | full 1M window — compacts ~967K, not 934K (v2.1.233) |
+| Fable 5.1 | 1M | TBD | shortly before 1M (v2.1.260) |
 | Haiku 4.5 | 200K | 8K tokens | ~13K (~93.5%) |
+| Legacy Opus 4.6–4.8 / Sonnet 4.6 | 1M | 128K / 64K | ~33K (~96.7%) |
 
+- 1M is default on every provider for Opus 4.7+, Sonnet 5+, Fable (v2.1.280). `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` → 200K on every native-1M model (v2.1.223)
 - Compaction output max: 20K tokens. Circuit breaker: 3 failures → disable for session
 - Post-compact restoration: 5 files (50K total, 5K each) + 5 skills (25K total, 5K each)
-- `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`: lower = earlier compaction
+- `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`: lower = earlier compaction. `--autocompact <auto|tokens>` session-only (v2.1.221); `/autocompact` value saved per model (v2.1.288)
 - `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1`: disable entirely
 - `/compact <instructions>`: manual trigger with custom preservation hints
 - dotforge `post-compact.sh` (v3.6.3+) pipes `compact_summary` through `scripts/compact-filter.py` before persisting to `.claude/session/last-compact.md`. Conservative: collapses fenced blocks > 40 lines, dense unprotected runs ≥ 30 lines, triplicate paragraphs. Never drops headings, paths, decision/error/fix lines. Keeps last 5 checkpoints under `.claude/session/compact-history/`

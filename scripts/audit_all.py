@@ -196,19 +196,21 @@ def audit(proj_path: Path, name: str, version: str, prev_version) -> dict:
         r["notes"].append(f"injection: {reason}")
     r["items"]["7_injection"] = 0 if found else 1
 
-    # Item 8: auto-mode safety
+    # Item 8: auto-mode safety — since Claude Code v2.1.284 a missing defaultMode means auto mode ON
     if s:
         mode = s.get("permissions", {}).get("defaultMode", "")
-        if mode == "auto":
+        if mode and mode != "auto":
+            r["items"]["8_auto_safe"] = 1  # explicitly non-auto
+        else:
             deny = s.get("permissions", {}).get("deny", [])
             denies_secrets = sum(
                 1 for d in deny if re.search(r"\.env|\*\.key|\*\.pem|credentials", str(d), re.I)
             ) >= 3
             r["items"]["8_auto_safe"] = 1 if denies_secrets else 0
-        else:
-            r["items"]["8_auto_safe"] = 1  # auto mode not enabled — auto-pass
+            if not mode:
+                r["notes"].append("auto-mode: defaultMode absent → auto mode is the session default (v2.1.284+)")
     else:
-        r["items"]["8_auto_safe"] = 1  # no settings — auto mode not enabled
+        r["items"]["8_auto_safe"] = 0  # no settings — auto mode default with no deny list
 
     # Item 9: sandbox / env-scrub auto-pass
     sandbox_on = False

@@ -1304,3 +1304,247 @@ practices:
     status: not-applicable
     projects_applied: 0
     last_checked: null
+
+# /forge update 2026-08-07 — inbox drain (TradingBot reliability + Supabase RLS + Docker drift)
+  - id: practice-2026-06-04-backend-rls-needs-service-role-key
+    error_targeted: "backend service authenticates to RLS-enabled tables with anon key: SELECT returns 0 rows silently + INSERT fails 42501"
+    error_type: security
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-postgres-check-before-rls
+    error_targeted: "inferring write permission from error 23514 (check_violation) when RLS was never reached — false diagnosis chain"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-docker-exec-runtime-repro
+    error_targeted: null
+    error_type: null
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-long-lived-container-masks-config-drift
+    error_targeted: "post-rebuild break attributed to code diff when actual cause was pre-existing env drift surfaced by container recreate"
+    error_type: config
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-cancel-must-persist-terminal-state
+    error_targeted: "cancel operation only sets cooperative flag — orphaned watcher leaves entity stuck in non-terminal status indefinitely"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-crash-recovery-reconstruct-from-source-of-truth
+    error_targeted: "recovery blindly abandons in-flight work as FAILED without querying source of truth — orphans real exposure across deploys"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-verify-source-of-truth-before-cleaning-drift
+    error_targeted: "reconciler auto-deletes state that looks like phantom drift, destroying legitimate pending obligations"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-dedup-dual-subsystem-tracking
+    error_targeted: "aggregate view double-counts same obligation tracked by two subsystems — inflated exposure/position numbers"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-04-metric-meaning-before-comparing
+    error_targeted: null
+    error_type: null
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-06-08-cancel-at-close-needs-resume-at-open
+    error_targeted: "close boundary cancels+persists-terminal without symmetric resume-at-open — work abandoned forever, accumulates as stale imbalances across sessions"
+    error_type: logic
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+# /forge update 2026-08-07 (second pass) — upstream domain-rule drift from /forge watch
+  - id: practice-2026-08-07-sandbox-credentials-schema-expanded
+    error_targeted: "settings.json emits deprecated boolean sandbox.credentials form — degrades to deny mode or fails validation on current Claude Code"
+    error_type: config
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-08-07-subagent-output-scanning
+    error_targeted: null
+    error_type: null
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-08-07-explore-inherits-main-model
+    error_targeted: "session on Opus 4.7/4.8 pays Opus rates for built-in Explore exploration; dotforge model-routing rule silently invalidated for built-in path"
+    error_type: config
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-08-07-subagents-background-by-default
+    error_targeted: "agent frontmatter tools: lists include tools outside background allowlist — silently removed at runtime with no error"
+    error_type: config
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-08-07-subagent-frontmatter-hooks-workspace-trust
+    error_targeted: "project-level agent frontmatter hooks silently skipped in CI/non-interactive when workspace not trusted"
+    error_type: security
+    activated: 2026-08-07
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-auto-mode-default-project-scope-ignored
+    error_targeted: "synced project without permissions.defaultMode silently runs in auto mode (v2.1.284 default); audit scored absent defaultMode as safe; project-scope auto/bypassPermissions ignored"
+    error_type: security
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-model-defaults-opus55-sonnet55-fable51
+    error_targeted: "rules/agents cite retired model IDs or 4.x compaction thresholds; cost estimates based on pre-v2.1.219 pricing"
+    error_type: config
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-todo-tools-gated-respect-todo-state-inert
+    error_targeted: "behavior or hook keyed on TaskCreate/TaskUpdate/TodoWrite never fires on Opus 4.8+/Sonnet 5+/Fable"
+    error_type: config
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-subagent-nesting-depth-3-concurrency-20
+    error_targeted: null
+    error_type: null
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-ultracode-decoupled-from-xhigh
+    error_targeted: "production/heavy tier session assumed /effort ultracode implied xhigh — ran at high effort with orchestration on"
+    error_type: config
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-plugin-root-unquoted-hook-command
+    error_targeted: "generated hooks.json shell-form command with unquoted CLAUDE_PLUGIN_ROOT fails or loops on install paths containing spaces"
+    error_type: config
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-10-06-allowedmcpservers-scope-change
+    error_targeted: "managed-mcp.json server loads despite allowedMcpServers filter after upgrade to v2.1.259+"
+    error_type: security
+    activated: 2026-10-06
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null

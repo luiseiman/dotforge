@@ -4,6 +4,80 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.4.0 (2026-10-06)
+
+### Upstream sync — Claude Code v2.1.219 → v2.1.291, breaking batch (7 of 25 practices)
+
+`/forge watch` after a 3-month gap: 73 upstream releases. 25 practices captured; this release incorporates the 7 classified BREAKING (dotforge contradicted or depended on the old behavior). The remaining 18 stay in `practices/evaluating/` for v4.5.0.
+
+#### BREAKING (upstream) — templates and audit engines
+
+- **Auto mode is the session default when `permissions.defaultMode` is unset (v2.1.284)**, and project/local scope can no longer set `auto`/`bypassPermissions` (v2.1.257). `global/settings.json.tmpl` now pins `"defaultMode": "default"` at user scope so synced projects keep prompt-for-unknowns; opt into auto per session with `--permission-mode auto`. Audit item 8 reworked in `audit/checklist.md`, `audit/score.sh`, `scripts/audit_all.py`, `skills/audit-project/SKILL.md`: a missing `defaultMode` is now scored as auto mode active (deny list must cover secrets); missing `settings.json` scores 0. `domain/auto-mode.md` header rewritten (server-side classifier default + `CLAUDE_CODE_AUTO_MODE_SERVER=0`, 10-denial stop, third-party opt-in removed); `domain/permission-model.md` gains the scope-restriction note.
+- **Default models: Opus 5.5 `claude-opus-5-5` (v2.1.280), Sonnet 5.5 `claude-sonnet-5-5` (v2.1.284), Fable 5.1 `claude-fable-5-1` (v2.1.257)**, 1M context on every provider. `domain/model-ids.md` table + pricing + fast mode (Opus 4.7 dropped, Opus 5.x $10/$50) + `ANTHROPIC_DEFAULT_MODEL` / `modelPicker` / `CLAUDE_CODE_SUBAGENT_MODEL_FORCE`; `domain/context-window-optimization.md` table (Sonnet 5+ compacts ~967K); `domain/compaction-strategy.md` thresholds.
+- **Todo/Task tools removed on Opus 4.8+, Sonnet 5+, Fable (v2.1.233/268)** — `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` restores. `behaviors/index.yaml`: `respect-todo-state` disabled (compiled hooks kept, never fire on current models). Stale "Use TodoWrite VERY frequently" override removed from `domain/rule-effectiveness.md` and `domain/prompting-patterns.md`; `TodoWrite` dropped from the global allow list.
+- **Subagent nesting default depth 3, not 5 (v2.1.219)**; 20 concurrent (v2.1.217); 200/session cap removed (v2.1.224). `domain/agent-orchestration.md` corrected (+ `LSP`, `SubagentHandoff` in the background tool set).
+- **Ultracode decoupled from `xhigh` (v2.1.284)** — independent `/effort ultracode on|off` toggle. `domain/workflow-automation.md`, `domain/model-ids.md`, `domain/workflow-and-ultracode-policy.md` tier table now prescribe `/effort xhigh` + `/effort ultracode on` as two steps; `maxEffortLevel` (v2.1.267) noted.
+- **Unquoted `${CLAUDE_PLUGIN_ROOT}` breaks on paths with spaces (v2.1.281/290)** — `skills/plugin-generator/SKILL.md` now emits exec form (`command` + `args`); `domain/hook-architecture.md` adds the quoting rule plus the v2.1.248/288 fail-closed JSON contract.
+- **`allowedMcpServers` governs only user-added servers (v2.1.259)**; managed servers load regardless — use `deniedMcpServers`. `domain/permission-managed-settings.md` rewritten for the MCP block (+ `managedMcpServers`, `alwaysLoad: false`, reserved `widgets`).
+
+#### Process
+
+- New practice: for `/forge watch` deltas >30 releases, curl the raw CHANGELOG and split classification across 2 subagents by version range — `WebFetch` summarization silently dropped 60 versions this run.
+- 12 domain rules `last_verified: 2026-10-06`.
+
+## v4.3.0 (2026-08-07)
+
+### Upstream domain sync — 5 practices from /forge watch
+
+Same-day second pass. `/forge watch` surfaced 5 breaking/behavior-changing deltas in Claude Code sub-agents + sandboxing (v2.1.198 → v2.1.222); domain rules updated accordingly.
+
+#### BREAKING (upstream)
+
+- **`domain/model-ids.md`** — Built-in `Explore` subagent inherits main conversation model (capped at Opus on Claude API) since v2.1.198. Previously always Haiku. A session on Opus 4.7/4.8 pays Opus rates for exploration. dotforge's custom `researcher` agent unaffected (pinned to haiku). Override via `~/.claude/agents/Explore.md` or `CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1`.
+- **`domain/agent-orchestration.md`** — Subagents run in background by default (v2.1.198+) with a restricted built-in tool set (allowlist enumerated). Tools outside the allowlist are SILENTLY removed. Audit `agents/*.md` frontmatter `tools:` lists.
+- **`.claude/rules/model-routing.md`** — Cost-caveat note added for built-in Explore path bypass.
+
+#### Security / governance
+
+- **`domain/sandboxing.md`** — `sandbox.credentials` schema no longer boolean. Object form with `files: [{path, mode: "mask|deny", extract}]` and `envVars: [{name, mode}]`. `mask` mode is new (sanitize inline instead of full deny). Managed-settings tolerant stripping degrades invalid config to `deny` mode. Migration required for stacks emitting old boolean form.
+- **`domain/agent-orchestration.md`** — Subagent output scanning (v2.1.210+) adds backslash/marker to instruction-shaped patterns in subagent reports (prompt-injection defense). Not a substitute for capability restriction.
+- **`domain/agent-orchestration.md` + `domain/permission-model.md`** — Project-level subagent frontmatter `hooks:` now require workspace trust (v2.1.218+). Non-interactive sessions silently skip untrusted hooks. CI implication: migrate to `~/.claude/agents/` or `--agents` inline JSON.
+
+#### Practices pipeline
+
+- Moved: 5 inbox → active (all target `.claude/rules/domain/`)
+- `metrics.yml`: 5 new entries (4 monitoring / 1 informational)
+
+---
+
+## v4.2.0 (2026-08-07)
+
+### Inbox drain — 10 practices incorporated, 3 rejected
+
+Long-standing inbox backlog (Jun 4 – Jun 29) processed. Rejected 3 auto-detected session-summary captures (Banca-panel ×2, IntMail — pattern of prior deprecations; not actionable without inspecting origin project). Incorporated 10 practices from TradingBot production experience across 3 stacks.
+
+#### `stacks/trading/rules/trading.md` (+2 sections)
+
+- **Reliability (in-flight operations)** — 5 rules covering cancel/resume symmetry at close/open boundaries, terminal-state persistence, crash-recovery source-of-truth reconstruction, drift verification before deletion. Every deploy is a restart — resume path is hot, not cold.
+- **Correctness** — metric semantics before comparing across sources; dedup when two subsystems track same obligation.
+
+#### `stacks/supabase/rules/database.md` (+2 sections)
+
+- **Backend auth** — server-side services MUST use `service_role` key on RLS tables; `anon` symptom is silent read failure + `42501` writes; never grant `anon` policies to "fix" backend failures.
+- **Error-code ordering (Postgres)** — CHECK constraints evaluated BEFORE RLS WITH CHECK; `23514` does not imply RLS passed; don't infer permissions from error firing order.
+
+#### `stacks/docker-deploy/rules/infra.md` (+2 sections)
+
+- **Runtime diagnosis** — `docker exec -i <container>` for runtime-faithful repro; reference in-container `os.environ` for secrets, never thread through shell.
+- **Config drift detection** — long-lived containers hold their startup env in memory; post-rebuild breaks suspect drift before blaming code diff.
+
+#### Practices pipeline
+
+- Moved: 10 inbox → active, 3 inbox → deprecated
+- `metrics.yml`: 10 new entries (7 monitoring / 3 informational)
+
+---
+
 ## v4.1.0 (2026-06-29)
 
 ### Upstream sync — Claude Code v2.1.162 → v2.1.195 (12 domain rule updates)

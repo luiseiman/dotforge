@@ -2,7 +2,7 @@
 globs: "**/settings.json,**/settings.local.json,**/settings.json.partial"
 description: "Permission modes, evaluation cascade, deny list requirements"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Permission Model
@@ -14,9 +14,11 @@ last_verified: 2026-05-27
 | default | Allow/deny rules + prompt for unknowns | Normal interactive use |
 | acceptEdits | Allow most edits without prompt — **exceptions: shell rc files (always) + build-tool config (v2.1.160+)** | SDK mode |
 | plan | Read-only enforcement | Architecture planning |
-| auto | LLM classifier decides per-tool (Sonnet 4.6) | Autonomous operation |
+| auto | LLM classifier decides per-tool (server-side classifier by default, v2.1.278+). **Session default when `defaultMode` is unset (v2.1.284+)** | Autonomous operation |
 | dontAsk | Auto-deny everything not explicitly allowed | CI/headless pipelines |
 | bypassPermissions | Allow everything | Fully trusted environments |
+
+**Scope restriction (v2.1.257)**: `permissions.defaultMode` values `auto` and `bypassPermissions` do not take effect from project (`.claude/settings.json`) or local (`settings.local.json`) scope — set them in user or managed settings, or pass `--permission-mode` for one session. Before v2.1.257 `bypassPermissions` took effect from any file. See `auto-mode.md` for the v2.1.284 default flip.
 
 ## Paths that always prompt regardless of mode (v2.1.160+)
 
@@ -60,6 +62,10 @@ Three classes of prefix-detection holes patched in the v2.1.145–v2.1.149 harde
 - **Stale `PWD`/`OLDPWD`/`DIRSTACK` variable tracking** (v2.1.149): the parser trusted stale values across `cd`/`pushd`/`popd`, enabling the same workspace-escape class as the cd built-ins.
 
 Defense-in-depth that catches these even when prefix detection missed them: `block-destructive.sh` (regex over full command string) + kernel-level `sandbox.filesystem.denyRead`. See `sandboxing.md`.
+
+## Workspace trust gates subagent frontmatter hooks (v2.1.218+)
+
+The same workspace-trust dialog that gates project-level settings + top-level hooks now ALSO gates project-level subagent frontmatter `hooks:` blocks. Untrusted → hooks skipped (subagent still runs), debug log records the skip. Non-interactive sessions (`claude -p`, SDK, CI) do NOT execute untrusted frontmatter hooks — the pre-v2.1.218 injection path (hostile PR ships `agents/reviewer.md` with hooks that fire on next checkout use) is closed. See `agent-orchestration.md` § Subagent frontmatter hooks require workspace trust.
 
 ## Core rules
 

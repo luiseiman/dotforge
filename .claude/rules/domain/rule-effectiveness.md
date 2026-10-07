@@ -2,7 +2,7 @@
 globs: "**/rules/*.md,**/stacks/*/rules/*"
 description: "Rule design, glob patterns, and effectiveness measurement"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Rule Effectiveness
@@ -66,4 +66,4 @@ For managed-scope (enterprise) variants, see `permission-model.md` Enterprise ma
 These are hardcoded in Claude Code's system prompt — rules must use strong language to counter:
 - "DO NOT ADD ANY COMMENTS" — override with "ALWAYS add docstrings"
 - "fewer than 4 lines" response limit — override with "provide detailed explanations"
-- "Use TodoWrite VERY frequently" — cannot be suppressed easily
+- "Use TodoWrite VERY frequently" — only present on models that still ship the todo tools (≤ Opus 4.7 / Sonnet 4.6 / Haiku 4.5); absent on Opus 4.8+, Sonnet 5+, Fable unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` (v2.1.268)

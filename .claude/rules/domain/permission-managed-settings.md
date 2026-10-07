@@ -2,7 +2,7 @@
 globs: "**/managed-settings.json,**/managed-settings.d/*.json,**/.mcp.json,**/settings.json"
 description: "Enterprise managed settings, MCP server governance, dynamic hook-mutated permissions"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Permission Model — Enterprise & MCP
@@ -29,11 +29,14 @@ Companion to `permission-model.md`. Covers managed-scope governance, MCP server 
 
 - `enableAllProjectMcpServers` — auto-approve every project MCP server. Use sparingly
 - `enabledMcpjsonServers` / `disabledMcpjsonServers` — per-server allow/deny
-- `allowedMcpServers` / `deniedMcpServers` — managed-scope versions
+- `allowedMcpServers` — **since v2.1.259 governs only servers users add**; servers declared in `managed-mcp.json` load regardless. A managed server your allowlist used to filter out loads on upgrade — use `deniedMcpServers` to keep it off
+- `deniedMcpServers` — managed denylist; the only reliable way to exclude a `managed-mcp.json` entry. v2.1.273 fix: `allowManagedMcpServersOnly`, `deniedMcpServers`, `disableClaudeAiConnectors` were ignored when server-managed settings were also present
+- `managedMcpServers` (v2.1.283) — managed MCP server definitions inside settings. Unreadable `managed-mcp.json` keeps exclusive MCP control and warns — fail-closed (v2.1.271)
 - `allowManagedMcpServersOnly` — managed-only MCP source
 - `allowAllClaudeAiMcps` (v2.1.149+) — when true, loads ALL claude.ai cloud MCP connectors alongside `managed-mcp.json` entries. Use when the security team curates internal MCP servers but wants ad-hoc claude.ai-managed connectors (Linear, Slack, Notion) without enumerating each
 - `alwaysLoad: true` (per-server, v2.1.121+) — tools skip tool-search deferral and stay always available. Costs context for fewer tool-search invocations. Use only when MCP tools are needed every turn
-- `workspace` reserved as MCP server name since v2.1.128 — projects with that name skipped with warning
+- `alwaysLoad: false` (v2.1.285) defers all of a server's tools behind tool search; per-tool `_meta['anthropic/alwaysLoad']=false` keeps one deferred. `"type":"sdk"` entries skipped (v2.1.274)
+- Reserved MCP server names: `workspace` (v2.1.128), `widgets` in cloud sessions and self-hosted runners (v2.1.287) — skipped with warning
 - MCP tools default to `passthrough` (always ask)
 - **`claude mcp list/get/add` secrets handling (v2.1.161 fix)**: pre-fix the CLI subcommands printed `${VAR}`-expanded values verbatim, leaking subprocess env into stdout (incident potential when piping `claude mcp list` to a log file or screenshare). Post-fix `${VAR}` is no longer expanded in CLI output — safer to dump configs for review. Audit any pre-v2.1.161 ops runbooks that included `claude mcp list` output.
 

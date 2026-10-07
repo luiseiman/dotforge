@@ -2,22 +2,21 @@
 globs: "**/settings.json,**/settings.local.json"
 description: "Auto mode classifier, permission stripping, tool concurrency"
 domain: claude-code-engineering
-last_verified: 2026-05-27
+last_verified: 2026-10-06
 ---
 
 # Auto Mode & Tool Safety
 
-## Auto mode (GA, v2.1.83+)
+## Auto mode (GA v2.1.83+ — SESSION DEFAULT since v2.1.284)
 
-- Classifier runs on **Sonnet 4.6** regardless of session model
-- Evaluates each tool call for safety before allowing
-- Fallback to prompt: 3 consecutive blocks OR 20 total blocks in session
-- Subagent evaluation: auto mode applies to subagent tool calls too
-- Enable: `permissions.defaultMode: "auto"` in settings.json (research-preview `--enable-auto-mode` gate removed in v2.1.111; first-use opt-in consent prompt removed in v2.1.152 — auto mode now activates directly)
-- `--permission-mode auto` to start in auto mode from CLI
-- Disable (managed): `permissions.disableAutoMode: "disable"`
-- **Max subscribers on Opus 4.7**: auto mode available as a tier gate (v2.1.111+) — no opt-in beyond the pricing plan
-- **Enterprise platforms (2026)**: auto mode available on Amazon Bedrock, Google Cloud Vertex AI, Microsoft Foundry, and Mantle for Opus 4.7 and Opus 4.8. Previously claude.ai/Console-only. Regulated workloads (banking, healthcare) that must run on their cloud provider's Anthropic deployment can now use auto mode. **Opt-in env var required on third-party providers** (v2.1.158): `CLAUDE_CODE_ENABLE_AUTO_MODE=1`. Verify against managed-settings if your enterprise wants to disable: `permissions.disableAutoMode: "disable"`
+- **Default when `permissions.defaultMode` is unset** (v2.1.283 third-party/telemetry-off, v2.1.284 every interactive + VS Code session on every plan/provider, v2.1.285 `-p` + Python SDK on third-party). A settings file without `defaultMode` = auto mode ON. dotforge pins `"defaultMode": "default"` in `global/settings.json.tmpl` (user scope) to keep prompt-for-unknowns; opt into auto per session with `--permission-mode auto`
+- **Project/local scope cannot set `auto` or `bypassPermissions`** (v2.1.257) — silently ignored. Only user settings, managed settings, or `--permission-mode` take effect. Per-project opt-in via `.claude/settings.json` / `settings.local.json` is impossible
+- Classifier is **server-side by default** on Claude API, Enterprise, Bedrock, Vertex, Foundry, gateways (v2.1.278; direct API with telemetry off v2.1.282). `CLAUDE_CODE_AUTO_MODE_SERVER=0` opts out to the local classifier. `/status` shows an "Auto mode server" row. Local classifier ignores an `ANTHROPIC_DEFAULT_SONNET_MODEL` pin to Sonnet/Opus 5.5 and runs Sonnet 5 (v2.1.288). Same defaults incl. severity-scored classification on third-party providers (v2.1.246); the v2.1.158 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` opt-in is no longer required (v2.1.207+)
+- Turn stops after **10 consecutive unanswered denials** (v2.1.280). Over-long conversations are compacted for the classifier (v2.1.288). Pre-v2.1.280 fallback was 3 consecutive / 20 total blocks
+- Subagent evaluation: applies to subagent tool calls; subagent results hand back through a classifier-reviewed call (v2.1.271). Cross-session `SendMessage` is classified before dispatch (v2.1.222)
+- `/permissions` has an Auto mode tab for classifier rules (v2.1.246). `Monitor` allow rules are set aside while auto mode is on. Classifier cannot be fooled by `status.showUntrackedFiles=no` (v2.1.237); blocks transcript tampering and asks before `rm -rf` on unresolved variables (v2.1.202+)
+- `--permission-mode auto` (or `manual` as alias of `default`, v2.1.200) from CLI. Disable (managed): `permissions.disableAutoMode: "disable"`. `claude auto-mode reset [-y]` removes the user `autoMode` section (v2.1.212); `claude auto-mode defaults --label <prefix>` filters built-in rules (v2.1.208)
+- Audit item 8 (`audit/checklist.md`) treats a missing `defaultMode` as auto mode active — deny list must cover secrets
 - `showThinkingSummaries`: defaults to false since v2.1.89 — controls VISIBILITY only. Thinking blocks render as collapsed stub when off, full summary when on. **Does NOT reduce thinking token spend** — model generates the same content either way. Headless mode (`-p`) and SDK callers always receive summaries regardless of this flag.
 - `alwaysThinkingEnabled`: enables extended thinking by default for all sessions. **This is the actual cost knob** — set `false` to stop generating thinking blocks. To trim spend without disabling, lower `effort` or the API `thinking_budget` instead. Typically set via `/config`, not edited directly.
 - `disableSkillShellExecution`: blocks inline shell in skills/commands (managed)

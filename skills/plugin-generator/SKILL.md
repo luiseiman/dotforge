@@ -114,7 +114,8 @@ Read `.claude/settings.json` hooks section. For each hook entry:
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/{script-name}.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/{script-name}.sh",
+            "args": []
           }
         ]
       }
@@ -123,7 +124,7 @@ Read `.claude/settings.json` hooks section. For each hook entry:
 }
 ```
 
-Use `${CLAUDE_PLUGIN_ROOT}` for all script paths — this is resolved by Claude Code at runtime.
+Use `${CLAUDE_PLUGIN_ROOT}` for all script paths — resolved by Claude Code at runtime. ALWAYS emit the exec form (`command` + `args`, even when `args` is empty): a shell-form command with an unquoted `${CLAUDE_PLUGIN_ROOT}` breaks on install paths containing spaces (macOS `~/Library/Application Support/…`) — `claude plugin validate` warns since v2.1.281 and an async `Stop` hook looped forever in v2.1.290. If a hook genuinely needs a shell (pipes, redirects), quote the placeholder: `"\"${CLAUDE_PLUGIN_ROOT}/hooks/x.sh\" | tee log"`. Run `claude plugin validate --json <dir>` as the final step.
 
 ### 3c. Convert rules to skills
 
@@ -254,4 +255,4 @@ Components:
 - NEVER include `.forge-manifest.json` in the output
 - If the project has a `.gitignore`, respect it when copying files
 - Hook scripts must be `chmod +x` in the output
-- All paths in hooks.json must use `${CLAUDE_PLUGIN_ROOT}` prefix
+- All paths in hooks.json must use `${CLAUDE_PLUGIN_ROOT}` prefix AND the exec form (`command` + `args`); shell-form only with the placeholder quoted
