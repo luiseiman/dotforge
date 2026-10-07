@@ -16,6 +16,8 @@ Select the appropriate Claude model for each task and subagent.
 
 Default agents: `researcher`, `test-runner`
 
+**Cost caveat (v2.1.198+)**: this rule covers dotforge's custom `researcher` agent (`model: haiku` in frontmatter). Claude Code's built-in `Explore` subagent — invoked automatically for "find X" / "explore" prompts — no longer runs on Haiku by default; it inherits the main session's model (capped at Opus on Claude API). Ship `~/.claude/agents/Explore.md` with `model: haiku` to shadow it, or set `CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1` to disable built-in Explore. See `domain/model-ids.md`.
+
 ## sonnet — standard implementation
 
 - Implementing a feature with a clear, well-scoped spec
