@@ -1069,17 +1069,6 @@ practices:
     projects_applied: 0
     last_checked: 2026-06-01
 
-  - id: practice-2026-06-01-workflows-fifth-primitive
-    error_targeted: null
-    error_type: null
-    activated: null
-    recurrence_checks: 0
-    recurrence_target: 5
-    recurred: false
-    status: evaluating
-    projects_applied: 0
-    last_checked: 2026-06-01
-
   - id: practice-2026-05-19-watchdog-triage-symmetry-and-stuck-detection
     error_targeted: "false positives in scheduled-service monitoring; signature flapping breaking throttle"
     error_type: logic
