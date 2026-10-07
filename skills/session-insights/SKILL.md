@@ -17,7 +17,7 @@ Collect data from available sources in the current project:
 2. **CLAUDE_ERRORS.md** — error frequency by Area and Type
 3. **Git log** — files most frequently modified in commits mentioning "fix", "bug", "error"
 4. **.claude/agent-memory/** — learnings accumulated by agents
-5. **Registry history** — audit score trend from `$DOTFORGE_DIR/registry/projects.yml`
+5. **Registry history** — audit score trend from `$DOTFORGE_DIR/registry/projects.local.yml`
 
 If a source doesn't exist, skip it and note as "unavailable".
 

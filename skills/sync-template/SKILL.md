@@ -134,7 +134,7 @@ Include ALL files in `.claude/` that are managed by dotforge (not only those tha
 
 ## Step 5: Update registry
 
-Update in `$DOTFORGE_DIR/registry/projects.yml`:
+Update in `$DOTFORGE_DIR/registry/projects.local.yml`:
 - `last_sync:` → current date
 - `dotforge_version:` → current dotforge version
 

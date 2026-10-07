@@ -24,7 +24,7 @@ This skill bridges OpenClaw to dotforge by running `claude` CLI in the target pr
 /forge <command> [project:<name>]
 ```
 
-If `project:<name>` is provided, look up the project path from `$DOTFORGE_DIR/registry/projects.yml` and execute in that directory.
+If `project:<name>` is provided, look up the project path from `$DOTFORGE_DIR/registry/projects.local.yml` and execute in that directory.
 If no project specified, use current context or ask the user.
 
 ## Available commands
@@ -76,7 +76,7 @@ If a project name is provided:
 # Look up path from registry
 python3 -c "
 import yaml
-reg = yaml.safe_load(open('$DOTFORGE_DIR/registry/projects.yml'))
+reg = yaml.safe_load(open('$DOTFORGE_DIR/registry/projects.local.yml'))
 for p in reg['projects']:
     if p['name'].lower() == '<project_name>'.lower():
         print(p['path'])

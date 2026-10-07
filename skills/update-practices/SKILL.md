@@ -85,7 +85,7 @@ For each accepted practice in `evaluating/`:
 
 ## Phase 3: PROPAGATE — Suggest project updates
 
-1. Read `$DOTFORGE_DIR/registry/projects.yml`
+1. Read `$DOTFORGE_DIR/registry/projects.local.yml`
 2. For each project, show what changed since its last sync:
 
 ```

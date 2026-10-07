@@ -9,7 +9,7 @@ Show what changed in dotforge since the last synchronization of the current proj
 
 ## Step 1: Identify project baseline
 
-1. Read `$DOTFORGE_DIR/registry/projects.yml`
+1. Read `$DOTFORGE_DIR/registry/projects.local.yml`
 2. Find the current project by `path` (compare with `$PWD`)
 3. Get `dotforge_version` and `last_sync`
 4. If no `dotforge_version` is registered (null), report:

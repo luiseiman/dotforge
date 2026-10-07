@@ -190,7 +190,7 @@ This closes the Audit → Learning synergy: detected gaps feed back into the pra
 
 ## Step 8: Update registry
 
-If `$DOTFORGE_DIR/registry/projects.yml` exists, update the project entry:
+Update the project entry in `$DOTFORGE_DIR/registry/projects.local.yml` (create it from the `projects.yml` header with `projects: []` if missing — never write to `projects.yml`, the shipped template):
 - `score:` with `native_health` (the primary score — preserves trend continuity with prior audits)
 - `forge_adoption:` with the dimension-B value (0-4)
 - `last_audit:` with the current date

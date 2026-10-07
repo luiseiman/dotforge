@@ -224,6 +224,12 @@ for skill_dir in "${DOTFORGE_DIR}/skills"/*/; do
     action "install_item '$src' '$link'"
   fi
 done
+# Prune links that point into dotforge but whose skill no longer exists (retired skills)
+for link in "${CLAUDE_HOME}/skills"/*; do
+  [[ -L "$link" ]] || continue
+  target=$(readlink "$link")
+  case "$target" in "${DOTFORGE_DIR}/skills/"*) [[ -e "$target" ]] || { echo "  − $(basename "$link") (dangling — skill removed)"; action "rm -f '$link'"; } ;; esac
+done
 
 # --- Agents ---
 echo ""
@@ -241,6 +247,12 @@ for agent_file in "${DOTFORGE_DIR}/agents"/*.md; do
     echo "  + ${agent_name} (new)"
     action "install_item '$agent_file' '$link'"
   fi
+done
+# Prune links that point into dotforge but whose agent file no longer exists
+for link in "${CLAUDE_HOME}/agents"/*; do
+  [[ -L "$link" ]] || continue
+  target=$(readlink "$link")
+  case "$target" in "${DOTFORGE_DIR}/agents/"*) [[ -e "$target" ]] || { echo "  − $(basename "$link") (dangling — agent removed)"; action "rm -f '$link'"; } ;; esac
 done
 
 # --- Commands (all .md files in global/commands/) ---
