@@ -18,9 +18,11 @@ else
   GREEN=''; RED=''; YELLOW=''; NC=''
 fi
 
-pass() { ((PASS++)); echo -e "  ${GREEN}✓${NC} $1"; }
-fail() { ((FAIL++)); echo -e "  ${RED}✗${NC} $1"; }
-warn() { ((WARN++)); echo -e "  ${YELLOW}⚠${NC} $1"; }
+# PASS=$((PASS+1)) rather than ((PASS++)): with set -e, ((0++)) returns status 1
+# and bash ≥4 aborts the script on the first call (bash 3.2 on macOS does not).
+pass() { PASS=$((PASS+1)); echo -e "  ${GREEN}✓${NC} $1"; }
+fail() { FAIL=$((FAIL+1)); echo -e "  ${RED}✗${NC} $1"; }
+warn() { WARN=$((WARN+1)); echo -e "  ${YELLOW}⚠${NC} $1"; }
 
 echo "═══ Config Validation: $(basename "$PROJECT_DIR") ═══"
 echo ""
@@ -45,12 +47,12 @@ if [[ -f "$CLAUDE_MD" ]]; then
     "stack|tecnolog|technology|what is|framework|lang|python|react|swift|typescript|fastapi|vite:stack/technology" \
     "build|test|command|comando|validation|dev|run:build/test commands" \
     "architect|estructura|structure|module|component|layer|capa|pipeline|services|service|flujo|flow:architecture/structure"; do
-    ((SECTIONS_CHECKED++))
+    SECTIONS_CHECKED=$((SECTIONS_CHECKED+1))
     PATTERN="${section_pair%%:*}"
     LABEL="${section_pair##*:}"
     if grep -qiE "$PATTERN" "$CLAUDE_MD" 2>/dev/null; then
       pass "CLAUDE.md contains: $LABEL"
-      ((SECTIONS_FOUND++))
+      SECTIONS_FOUND=$((SECTIONS_FOUND+1))
     else
       fail "CLAUDE.md missing: $LABEL"
     fi
