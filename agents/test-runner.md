@@ -6,6 +6,7 @@ description: >
   when investigating test failures.
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: sonnet
+effort: low
 color: blue
 # No memory: transactional agent — runs tests, reports results, discards context
 ---

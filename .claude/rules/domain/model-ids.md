@@ -12,9 +12,9 @@ last_verified: 2026-10-06
 | fable | `claude-fable-5-1` | 1M | TBD | v2.1.257 (Fable 5 `claude-fable-5` since v2.1.170) |
 | opus | `claude-opus-5-5` | 1M | 128K tokens | v2.1.280 (Opus 5 `claude-opus-5` v2.1.219; Opus 4.8 v2.1.154) |
 | sonnet | `claude-sonnet-5-5` | 1M | 64K tokens | v2.1.284 (Sonnet 5 `claude-sonnet-5` v2.1.195–201) |
-| haiku | `claude-haiku-4-5-20251001` | 200K | 8K tokens | — |
+| haiku | `claude-haiku-5-5` | 1M | TBD | v2.1.293 (Haiku 4.5 `claude-haiku-4-5-20251001`, 200K / 8K, still resolves) |
 
-Pricing per MTok in/out: Opus 5.5 $4/$20 · Sonnet 5.5 $2/$10 · Fable 5.1 $10/$50. Pro + Team Standard default model flipped Sonnet → Opus in v2.1.280. Legacy pins (`claude-opus-4-8`, `claude-opus-4-7`, `claude-sonnet-4-6`) still resolve — use only to reproduce benchmarks predating v2.1.219 (2026-07-24).
+Pricing per MTok in/out: Opus 5.5 $4/$20 · Sonnet 5.5 $2/$10 · Haiku 5.5 $0.10/$0.50 ($0.50/$2.50 for prompts over 100K) · Fable 5.1 $10/$50. The `haiku` alias (dotforge `researcher`, `test-runner`) resolves to Haiku 5.5 with a 1M window since v2.1.293 — the 200K/8K assumptions apply only to an explicit `claude-haiku-4-5-20251001` pin. Whether Haiku 5.5 ships the todo tools is unverified; treat it like the other 5.x models (absent). Pro + Team Standard default model flipped Sonnet → Opus in v2.1.280. Legacy pins (`claude-opus-4-8`, `claude-opus-4-7`, `claude-sonnet-4-6`) still resolve — use only to reproduce benchmarks predating v2.1.219 (2026-07-24).
 
 1M context is the default for Opus 4.7+, Sonnet 5+, Fable on every provider incl. Bedrock, Vertex, Foundry, gateways, custom `ANTHROPIC_BASE_URL` (v2.1.280). `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` holds every native-1M model to 200K (v2.1.223). Unknown model IDs get an auto-compact cap; `CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1` restores the old behavior. Auto-compact: Sonnet 5+ near 967K (full 1M, v2.1.233), Opus/Fable shortly before 1M (v2.1.260).
 
@@ -62,8 +62,8 @@ After picking a level via `/effort`, the picker confirms "this will be the defau
 ## Fast mode (Opus toggle)
 
 - `/fast` toggles a lower-latency variant of the active Opus model mid-session; works in remote sessions and falls back to standard speed when unavailable (v2.1.257/271/286)
-- Opus 5 / 5.5 fast mode: **$10/$50 per MTok** (v2.1.219+). Opus 4.7 removed from fast mode in v2.1.219 — `/fast` applies only to Opus 5.x and 4.8
+- Opus 5 / 5.5 fast mode: **$10/$50 per MTok** (v2.1.219+). Opus 4.7 removed from fast mode in v2.1.219. **Opus 4.8 fast mode deprecated 2026-10-30 and removed 2026-11-30 (v2.1.316)**: after removal a fast request on 4.8 errors and does NOT fall back to standard 4.8 — `/fast` applies only to Opus 5.x; migrate any 4.8 fast pin to Opus 5.5
 - History: default flipped to Opus 4.7 (v2.1.142), Opus 4.8 (v2.1.154, 2x rate for 2.5x speed), Opus 5 (v2.1.219), Opus 5.5 (v2.1.280). `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` removed 2026-06-01 — pre-flip benchmarks cannot be reproduced via env var; re-baseline against the current default
 
-> Claude 3 Haiku deprecated — retiring April 19, 2026. Use claude-haiku-4-5 only.
+> Claude 3 Haiku retired April 19, 2026. Haiku 4.5 remains available by full ID; the `haiku` alias is Haiku 5.5 since v2.1.293.
 > Update this table when Anthropic releases new model versions.

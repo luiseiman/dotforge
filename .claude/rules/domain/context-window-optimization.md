@@ -22,7 +22,8 @@ last_verified: 2026-10-07
 | Opus 5.5 / Opus 5 | 1M | 128K tokens | shortly before 1M (v2.1.260); legacy ~33K (~96.7%) |
 | Sonnet 5.5 / Sonnet 5 | 1M | 64K tokens | full 1M window — compacts ~967K, not 934K (v2.1.233) |
 | Fable 5.1 | 1M | TBD | shortly before 1M (v2.1.260) |
-| Haiku 4.5 | 200K | 8K tokens | ~13K (~93.5%) |
+| Haiku 5.5 (`haiku` alias since v2.1.293) | 1M | TBD | shortly before 1M (assumed as other 1M models) |
+| Haiku 4.5 (explicit pin) | 200K | 8K tokens | ~13K (~93.5%) |
 | Legacy Opus 4.6–4.8 / Sonnet 4.6 | 1M | 128K / 64K | ~33K (~96.7%) |
 
 - 1M is default on every provider for Opus 4.7+, Sonnet 5+, Fable (v2.1.280). `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` → 200K on every native-1M model (v2.1.223)

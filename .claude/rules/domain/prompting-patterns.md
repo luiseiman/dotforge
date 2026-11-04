@@ -31,8 +31,8 @@ These system prompt instructions require STRONG override language in rules:
 - Comments (current, v2.1.316): "Default to writing no comments. Only add one when the WHY is non-obvious…" — the old "DO NOT ADD ANY COMMENTS" absolute is gone, so a blanket "ALWAYS add docstrings" now fights a nuanced directive; override narrowly ("public API functions get a one-line docstring")
 - The "fewer than 4 lines" response cap no longer exists (removed before v2.1.316) — drop overrides written against it
 - Source of truth for the live text: Piebald-AI/claude-code-system-prompts (`system-prompts/*.md`, per-version CHANGELOG with token deltas) — re-check before writing any counter-rule
-- "Use TodoWrite VERY frequently" → only on models that still ship todo tools (≤ Opus 4.7 / Sonnet 4.6 / Haiku 4.5); absent on Opus 4.8+, Sonnet 5+, Fable unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`
-- "minimize output tokens" → use "thorough analysis required, do not abbreviate"
+- "Use TodoWrite VERY frequently" and "minimize output tokens" — gone from the v2.1.318 extraction (0 matches); the live style block is "Lead with the outcome" + "complete sentences… not arrow chains". Overrides written against the old strings are dead weight; override the live wording narrowly if at all
+- Todo tools themselves remain absent on Opus 4.8+, Sonnet 5+, Fable unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`
 
 ## Headless invocation cost profile (v2.1.154+)
 

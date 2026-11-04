@@ -2,7 +2,7 @@
 # dotforge installer — one-liner: curl -fsSL https://raw.githubusercontent.com/luiseiman/dotforge/main/install.sh | bash
 set -euo pipefail
 
-VERSION="4.9.0"
+VERSION="4.9.1"
 REPO="https://github.com/luiseiman/dotforge.git"
 DEFAULT_DIR="$HOME/.dotforge"
 

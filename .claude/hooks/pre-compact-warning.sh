@@ -14,7 +14,7 @@
 #
 # Configuration via env vars (settings.json env block):
 #   CLAUDE_CONTEXT_LIMIT       — override the model window (default: derived from
-#                                the transcript model id — 200000 for haiku or when
+#                                the transcript model id — 200000 for Haiku 4.x or when
 #                                CLAUDE_CODE_DISABLE_1M_CONTEXT=1, else 1000000)
 #   CLAUDE_COMPACT_WARN_PCT    — warning threshold percentage (default 80)
 #   CLAUDE_COMPACT_URGENT_PCT  — urgent threshold percentage (default 90)
@@ -51,7 +51,7 @@ for line in sys.stdin:
         continue
     tokens = int(u.get("input_tokens", 0) or 0) + int(u.get("cache_creation_input_tokens", 0) or 0) + int(u.get("cache_read_input_tokens", 0) or 0)
     model = (d.get("message") or {}).get("model") or model
-small = "haiku" in model.lower() or os.environ.get("CLAUDE_CODE_DISABLE_1M_CONTEXT") == "1"
+small = "haiku-4" in model.lower() or os.environ.get("CLAUDE_CODE_DISABLE_1M_CONTEXT") == "1"
 print(tokens, 200000 if small else 1000000)
 ' 2>/dev/null || echo "0 1000000")
 

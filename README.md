@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/stargazers)
 [![License: MIT](https://img.shields.io/github/license/luiseiman/dotforge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-4.9.0-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-4.9.1-blue)](VERSION)
 [![Last commit](https://img.shields.io/github/last-commit/luiseiman/dotforge)](https://github.com/luiseiman/dotforge/commits/main)
 
 **Behavior governance for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).** Declare runtime policies on tool calls — "search before writing", "no destructive git", "verify before shipping" — and enforce them via compiled `PreToolUse` hooks that share a session-scoped state file. Escalates silently → nudge → warning → soft_block → hard_block.
@@ -39,7 +39,7 @@ A scout of the 23 top-starred Claude Code configuration repos exposed that `bloc
 
 The v4.8.0 context monitor (`pre-compact-warning.sh`) measured transcript bytes, which never shrink on compaction, and reported 230% after the first compaction. It now reads `message.usage` of the last assistant turn and derives the window from the model id.
 
-### v4.9.0 — domain rules verified against official docs
+### v4.9.1 — domain rules verified against official docs
 
 Every third-party claim from the scout was checked against `code.claude.com/docs` before landing: `permission_mode`, `stop_hook_active`, `permissionDecision: ask`, `classifierContext`, PermissionRequest `message`/`interrupt`, timeout fall-through + `onFailure`, blockable `ConfigChange`, status line `prompt_cache.*` fields. One scout claim was refuted and recorded. Stale overrides against system-prompt text that no longer exists ("DO NOT ADD ANY COMMENTS", "fewer than 4 lines") were replaced with the live directive from Piebald-AI/claude-code-system-prompts, now a `/forge watch` source. Four practices captured; the expanded deny-list proposal was declined by design.
 

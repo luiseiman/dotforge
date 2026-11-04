@@ -7,6 +7,7 @@ description: >
   from grep, find, or file reads.
 tools: Read, Grep, Glob, WebFetch, WebSearch
 model: haiku
+effort: low
 omitClaudeMd: true
 maxTurns: 30
 color: cyan

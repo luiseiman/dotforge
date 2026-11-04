@@ -78,7 +78,7 @@ Reference for non-paralellism CLI surface. For session-parallelism flags see `pa
 - `claude purge [path] [--dry-run|-y|-i|--all]` (renamed from `claude project purge` in v2.1.288, old name warns): delete all local state for a project — transcripts, task lists, debug logs, edit history, prompt history, `~/.claude.json` entry
 - `claude doctor`: read-only install + settings diagnostics without starting a session (settings-file validation errors, Remote Control eligibility); `/doctor` in-session can also apply fixes
 - `claude import [codex|…] [--dry-run] [--yes]` (v2.1.213): bring another coding agent's config into Claude Code (appends instruction files to CLAUDE.md, carries MCP/commands/subagents/skills). Not on Bedrock/Vertex/Foundry
-- `claude ultrareview [target] [--json] [--timeout <min>] [--post|--no-post]` (v2.1.227 for `--post`): non-interactive cloud review; `--post` comments findings on a github.com PR
+- `claude ultrareview [target] [--json] [--timeout <min>] [--post|--no-post] [--trust-workspace]` (v2.1.227 for `--post`): non-interactive cloud review; `--post` comments findings on a github.com PR. **Requires workspace trust since v2.1.309**: asks on a terminal, else refuses; scripts pass `--trust-workspace` (takes no value — put the PR number or base branch before it) or set `CLAUDE_CODE_DISABLE_ULTRAREVIEW_TRUST_CHECK=1`; with `CI` set an untrusted folder is refused at once even on a terminal (v2.1.314). `/ultrareview` checks trust before running git too
 - `claude gateway --config gateway.yaml`, `claude self-hosted-runner setup|doctor|orchestrator` (v2.1.224): enterprise gateway / self-hosted cloud runners — outside dotforge scope
 
 ## Env vars worth knowing

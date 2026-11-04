@@ -4,6 +4,21 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.9.1 (2026-11-04)
+
+### /forge watch 2.1.292→2.1.318 — batch BREAKING
+
+`/forge watch` (baseline v2.1.291 → head 2.1.318, 23 versiones + system prompts Piebald) dejó 6 prácticas en inbox; esta release incorpora la de contratos rotos:
+
+- **Haiku 5.5 (`claude-haiku-5-5`) es el alias `haiku` desde v2.1.293, con ventana de 1M.** `model-ids.md` y `context-window-optimization.md` actualizados; `researcher`/`test-runner` ahora corren en 5.5. **Fix propio**: `pre-compact-warning.sh` (v4.8.1) asignaba 200K a cualquier modelo "haiku" — ahora solo a `haiku-4`.
+- `claude -p`/SDK sin modo explícito arrancan en `default` en third-party / telemetría off / instalación fresca (v2.1.302) — `auto-mode.md` y nota en el ítem 8 del checklist.
+- Fast mode de Opus 4.8 deprecado (30-oct) y eliminado el 30-nov sin fallback (v2.1.316) — `model-ids.md`.
+- `claude ultrareview` exige workspace trust: `--trust-workspace` / `CLAUDE_CODE_DISABLE_ULTRAREVIEW_TRUST_CHECK=1`, rechazo inmediato con `CI` (v2.1.309/314) — `cli-flags.md`.
+- Overrides contra "Use TodoWrite VERY frequently" y "minimize output tokens" eliminados: ninguna de las dos frases existe en la extracción 2.1.318.
+- `agents/researcher.md` y `agents/test-runner.md`: `effort: low` (lo que `model-ids.md` prescribía desde v4.4 y nunca se aplicó).
+
+Quedan en `practices/inbox/` los otros 5 batches del watch (auto-mode proactividad, hooks/Monitor/REPL, compactación idle, permisos/sandbox, subagentes/CLI).
+
 ## v4.9.0 (2026-11-04)
 
 ### Scout batch 2 — domain rules verificadas contra docs oficiales
