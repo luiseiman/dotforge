@@ -33,6 +33,9 @@ python3 -c "import yaml; yaml.safe_load(open('registry/projects.yml'))"
 # Check frontmatter in rules (files without globs:/paths: are ok only for _common.md)
 grep -rL "^globs:\|^paths:" .claude/rules/ stacks/*/rules/
 
+# Run every test suite (same set as CI; needs python3 with PyYAML — on macOS: PATH=/usr/local/bin:$PATH)
+bash tests/run_all.sh
+
 # Run global sync (dry run)
 ./global/sync.sh --dry-run
 
@@ -101,6 +104,7 @@ Tests: `bash tests/run_all.sh` runs every suite (hooks, rules lint, skills index
 
 ## Conventions
 
+- Hooks read their payload from **stdin** (`HOOK_INPUT=$(cat)` → `.tool_input.command` / `.tool_input.file_path`). There is no `$TOOL_INPUT` env var — hooks that read it were inert from v0.1.0 to v4.8.0 and `tests/test-hooks.sh` masked it. Hook tests must feed stdin with the real payload shape and never set the env var
 - Rules files: markdown with `globs:` (eager) or `paths:` CSV + `alwaysApply: false` (lazy) frontmatter
 - Hooks: bash scripts, exit 0 (ok) or exit 2 (block), must be `chmod +x`
 - Skills: directory with `SKILL.md` containing name/description frontmatter

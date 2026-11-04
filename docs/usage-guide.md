@@ -550,7 +550,10 @@ my-project/
 │   │   └── <stack>-*.md               # Stack-specific rules
 │   ├── hooks/
 │   │   ├── block-destructive.sh       # Blocks rm -rf, DROP, force push
-│   │   └── lint-on-save.sh            # Automatic lint post-write/edit
+│   │   ├── lint-on-save.sh            # Automatic lint post-write/edit
+│   │   ├── pre-compact-warning.sh     # Context monitor: warns the model at 80% / 90% (from message.usage)
+│   │   ├── post-compact.sh            # Persists the compact summary to .claude/session/last-compact.md
+│   │   └── session-restore.sh         # Re-injects last-compact.md after compaction
 │   ├── commands/
 │   │   ├── audit.md                   # /audit — audit project
 │   │   ├── health.md                  # /health — health check
@@ -584,6 +587,10 @@ my-project/
 - `minimal`: only catastrophic operations (rm -rf /, force push main)
 - `standard` (default): + DROP TABLE, git reset --hard, chmod 777
 - `strict`: + curl|sh, eval, dd if=/dev/
+
+**Input contract (v4.8.1).** Claude Code passes the hook payload as JSON on **stdin** (`{"tool_name","tool_input":{"command"}}`). There is no `$TOOL_INPUT` environment variable. Every dotforge hook reads `$(cat)`; a hook that reads the env var is silently inert. Before v4.8.1 all template hooks had this defect, so **projects bootstrapped before 2026-11-04 must run `/forge sync`** — until then their security hook does nothing. Verify it live after syncing: run a harmless command whose text contains a STANDARD pattern and confirm the block.
+
+**pre-compact-warning.sh** (UserPromptSubmit) — the context monitor. Reads `message.usage` of the last assistant turn in the transcript (`input + cache_creation + cache_read`), derives the window from the model (200K for haiku or `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`, else 1M; `CLAUDE_CONTEXT_LIMIT` overrides) and injects a model-visible `additionalContext` at 80% (WARNING) and 90% (URGENT) with the `/forge compact-task` hint. Thresholds: `CLAUDE_COMPACT_WARN_PCT`, `CLAUDE_COMPACT_URGENT_PCT`.
 
 ---
 

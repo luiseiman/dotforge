@@ -31,6 +31,25 @@ bootstrap → audit → sync → capture → propagate → behaviors
 
 For people and teams managing more than one Claude Code project.
 
+## v4.9 — what's new (2026-11-04)
+
+### Hotfix v4.8.1 — the security hook was inert since v0.1.0
+
+A scout of the 23 top-starred Claude Code configuration repos exposed that `block-destructive.sh`, `lint-on-save.sh`, `warn-missing-test.sh`, `detect-stack-drift.sh` and every stack lint hook read a `$TOOL_INPUT` environment variable that Claude Code never sets. Hook input arrives **only as JSON on stdin**, so the command was always empty and the hooks exited 0 in every real session from v0.1.0 to v4.8.0. The test harness injected the variable by hand and masked it. All 14 hooks now read `$(cat)` and parse `.tool_input.*`; tests feed stdin with the real payload. **Run `/forge sync` in every managed project — until then its security hook is still paper.** Live proof after the fix: the hook blocked the commit that described it, and `lint-on-save.sh` fired for the first time ever.
+
+The v4.8.0 context monitor (`pre-compact-warning.sh`) measured transcript bytes, which never shrink on compaction, and reported 230% after the first compaction. It now reads `message.usage` of the last assistant turn and derives the window from the model id.
+
+### v4.9.0 — domain rules verified against official docs
+
+Every third-party claim from the scout was checked against `code.claude.com/docs` before landing: `permission_mode`, `stop_hook_active`, `permissionDecision: ask`, `classifierContext`, PermissionRequest `message`/`interrupt`, timeout fall-through + `onFailure`, blockable `ConfigChange`, status line `prompt_cache.*` fields. One scout claim was refuted and recorded. Stale overrides against system-prompt text that no longer exists ("DO NOT ADD ANY COMMENTS", "fewer than 4 lines") were replaced with the live directive from Piebald-AI/claude-code-system-prompts, now a `/forge watch` source. Four practices captured; the expanded deny-list proposal was declined by design.
+
+### v4.4 → v4.8 — upstream sync v2.1.219 → v2.1.291 and ECC scout
+
+- **v4.4–v4.7**: 25 practices from the upstream sync. Auto mode is the session default when `defaultMode` is unset (audit item 8 adjusted); project scope cannot set `auto`/`bypassPermissions`; todo tools absent on current models (`respect-todo-state` disabled); agents use `tools:` (the `allowed-tools:` field was silently ignored); behaviors emit `additionalContext` / `permissionDecision` instead of the model-invisible `systemMessage`; AGENTS.md first-class in the audit; benchmark skill retired in favor of `claude plugin eval`.
+- **v4.8.0**: `scripts/forge-doctor.sh` (intact / drifted / missing / unmanaged by sha256, drives `/forge sync` and `/forge diff`), `protect-lint-config` behavior (opt-in), `docs/v3/EVAL-METHOD.md` (placebo-controlled evals — how a behavior earns on-by-default), `--no-verify` / `core.hooksPath` blocked.
+
+Full detail per version in [`docs/changelog.md`](docs/changelog.md).
+
 ## v4.0 — what's new (2026-06-03)
 
 ### Audit two-dimension model + override loop retired (v4.0.x)

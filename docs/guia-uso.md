@@ -498,7 +498,10 @@ mi-proyecto/
 │   │   └── <stack>-*.md               # Reglas específicas del stack
 │   ├── hooks/
 │   │   ├── block-destructive.sh       # Bloquea rm -rf, DROP, force push
-│   │   └── lint-on-save.sh            # Lint automático post-write/edit
+│   │   ├── lint-on-save.sh            # Lint automático post-write/edit
+│   │   ├── pre-compact-warning.sh     # Monitor de contexto: avisa al modelo al 80 % / 90 % (desde message.usage)
+│   │   ├── post-compact.sh            # Persiste el resumen de compactación en .claude/session/last-compact.md
+│   │   └── session-restore.sh         # Reinyecta last-compact.md tras compactar
 │   ├── commands/
 │   │   ├── audit.md                   # /audit — auditar proyecto
 │   │   ├── health.md                  # /health — health check
@@ -532,6 +535,10 @@ mi-proyecto/
 - `minimal`: solo lo catastrófico (rm -rf /, force push main)
 - `standard` (default): + DROP TABLE, git reset --hard, chmod 777
 - `strict`: + curl|sh, eval, dd if=/dev/
+
+**Contrato de entrada (v4.8.1).** Claude Code entrega el payload del hook como JSON por **stdin** (`{"tool_name","tool_input":{"command"}}`). No existe la variable de entorno `$TOOL_INPUT`. Todos los hooks de dotforge leen `$(cat)`; un hook que lea la variable queda inerte en silencio. Antes de v4.8.1 todos los hooks del template tenían ese defecto, así que **los proyectos inicializados antes del 2026-11-04 deben correr `/forge sync`** — hasta entonces su hook de seguridad no hace nada. Verificalo en vivo después del sync: ejecutá un comando inofensivo cuyo texto contenga un patrón STANDARD y confirmá el bloqueo.
+
+**pre-compact-warning.sh** (UserPromptSubmit) — el monitor de contexto. Lee `message.usage` del último turno assistant del transcript (`input + cache_creation + cache_read`), deriva la ventana según el modelo (200K para haiku o `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`, si no 1M; `CLAUDE_CONTEXT_LIMIT` la sobreescribe) e inyecta un `additionalContext` visible para el modelo al 80 % (WARNING) y 90 % (URGENT) con la sugerencia `/forge compact-task`. Umbrales: `CLAUDE_COMPACT_WARN_PCT`, `CLAUDE_COMPACT_URGENT_PCT`.
 
 ---
 

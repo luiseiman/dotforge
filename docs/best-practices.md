@@ -72,7 +72,7 @@ Instead of monolithic CLAUDE.md files, use the `@include` directive:
 Available events (27): `SessionStart`, `SessionEnd`, `Setup`, `Stop`, `StopFailure`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `PermissionRequest`, `PermissionDenied`, `Elicitation`, `ElicitationResult`, `SubagentStart`, `SubagentStop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `PreCompact`, `PostCompact`, `CwdChanged`, `FileChanged`, `InstructionsLoaded`, `ConfigChange`, `Notification`, `WorktreeCreate`, `WorktreeRemove`
 
 Essential hooks:
-1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push
+1. **block-destructive** (PreToolUse:Bash) — block rm -rf, DROP, force push. Must read the payload from stdin (`$(cat)`), never from a `$TOOL_INPUT` env var (inert — dotforge < 4.8.1 defect)
 2. **lint-on-save** (PostToolUse:Write|Edit) — auto lint per stack
 3. **post-compact** (PostCompact) — capture summary to `.claude/session/last-compact.md`
 4. **session-restore** (SessionStart, source:compact) — re-inject last-compact.md on resume
@@ -368,7 +368,7 @@ En vez de CLAUDE.md monolíticos, usar la directiva `@include`:
 Eventos disponibles (27): `SessionStart`, `SessionEnd`, `Setup`, `Stop`, `StopFailure`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `PermissionRequest`, `PermissionDenied`, `Elicitation`, `ElicitationResult`, `SubagentStart`, `SubagentStop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `PreCompact`, `PostCompact`, `CwdChanged`, `FileChanged`, `InstructionsLoaded`, `ConfigChange`, `Notification`, `WorktreeCreate`, `WorktreeRemove`
 
 Hooks esenciales:
-1. **block-destructive** (PreToolUse:Bash) — bloquear rm -rf, DROP, force push
+1. **block-destructive** (PreToolUse:Bash) — bloquear rm -rf, DROP, force push. Debe leer el payload por stdin (`$(cat)`), nunca de una variable `$TOOL_INPUT` (inerte — defecto de dotforge < 4.8.1)
 2. **lint-on-save** (PostToolUse:Write|Edit) — lint automático por stack
 3. **post-compact** (PostCompact) — captura resumen en `.claude/session/last-compact.md`
 4. **session-restore** (SessionStart, source:compact) — re-inyecta last-compact.md al retomar
