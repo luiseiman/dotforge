@@ -91,6 +91,7 @@ metadata:
   author: dotforge           # string, optional.
   version: "1.0.0"           # string, optional. Semver.
   tags: [search, quality]    # string array, optional.
+  evidence: "..."            # string, optional. Eval verdict + report path (docs/v3/EVAL-METHOD.md). Ignored by the compiler.
 ```
 
 ### Field constraints summary

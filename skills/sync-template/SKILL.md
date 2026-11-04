@@ -26,6 +26,19 @@ Before syncing the project, verify that `~/.claude/CLAUDE.md` exists and contain
 5. Detect stacks using `$DOTFORGE_DIR/stacks/detect.md`
 6. Read `~/.claude/CLAUDE.md` to know which rules are already covered globally
 
+## Step 1b: Classify managed files (forge-doctor)
+
+Run `bash "$DOTFORGE_DIR/scripts/forge-doctor.sh" . --json` and apply this policy per file for the rest of the sync:
+
+| Class | Meaning | Sync action |
+|-------|---------|-------------|
+| `intact` | hash equals the manifest | overwrite with the template version without asking (nothing local to lose) |
+| `drifted` | local edits since last sync | show the diff, propose a merge, apply only on confirmation |
+| `missing` | in manifest, deleted locally | offer to recreate; treat deletion as intentional if the user declines |
+| `unmanaged` | under `.claude/` but not in the manifest | **never touch**; list in the report |
+
+Exit 2 = no manifest (pre-v2.x project): treat every file as `drifted`. Record the classification counts in the final report.
+
 ## Step 2: Compare against template
 
 For each component, compare with the dotforge version:

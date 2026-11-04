@@ -4,11 +4,13 @@ title: /forge sync: add a per-file SHA-256 install ledger alongside forge:custom
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [sync, manifest, governance, ecc]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["scripts/forge-doctor.sh", "tests/test-forge-doctor.sh", "skills/sync-template/SKILL.md", "skills/diff-project/SKILL.md"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -25,4 +27,4 @@ ECC `scripts/lib/install-lifecycle.js:1148-1197` (classification), `scripts/lib/
 - `template/hooks/detect-stack-drift.sh` or a new `forge-doctor.sh`: cheap runtime check against the ledger
 
 ## Decision
-Pending
+Accepted 2026-11-04 — incorporated in dotforge v4.8.0 (/forge update, ECC scout batch 1).

@@ -3,7 +3,9 @@
 #
 # Implements the evidence-based 80% threshold from dotforge compaction-strategy.md.
 # Estimates token count from the transcript file size (~5 bytes per token, rough).
-# Non-blocking: prints warning to stderr, exits 0.
+# Non-blocking. Emits the warning twice: to stderr for the user and, since
+# v4.8.0, as hookSpecificOutput.additionalContext so the MODEL sees it
+# (systemMessage/stderr never reach the model — hooks reference).
 #
 # Configuration via env vars (settings.json env block):
 #   CLAUDE_CONTEXT_LIMIT       — model context size (default 1000000 = 1M Sonnet/Opus)
@@ -37,20 +39,37 @@ WARN_TOKENS=$((CONTEXT_LIMIT * WARN_PCT / 100))
 URGENT_TOKENS=$((CONTEXT_LIMIT * URGENT_PCT / 100))
 PCT=$((EST_TOKENS * 100 / CONTEXT_LIMIT))
 
+LEVEL=""
 if [ "$EST_TOKENS" -gt "$URGENT_TOKENS" ]; then
-    cat >&2 <<EOF
+    LEVEL="URGENT"
+    cat >&2 <<EOT
 
 ⚠ URGENT — context window est. at ${PCT}% (~${EST_TOKENS} tokens / ${CONTEXT_LIMIT})
    Run NOW:  /forge compact-task
-   Auto-compact will fire at 96.7% if you don't.
-EOF
+   Auto-compact will fire at ~97% if you don't.
+EOT
 elif [ "$EST_TOKENS" -gt "$WARN_TOKENS" ]; then
-    cat >&2 <<EOF
+    LEVEL="WARNING"
+    cat >&2 <<EOT
 
 ⚠ Context window est. at ${PCT}% (~${EST_TOKENS} tokens / ${CONTEXT_LIMIT})
    Recommended: /forge compact-task  (evidence-based 80% threshold)
    Or: /clear  (if switching to unrelated task)
-EOF
+EOT
+fi
+
+# Model-visible channel. Must be strictly valid JSON or nothing (fail-closed since v2.1.248).
+if [ -n "$LEVEL" ]; then
+    python3 - "$LEVEL" "$PCT" "$EST_TOKENS" "$CONTEXT_LIMIT" <<'PY' 2>/dev/null || true
+import json, sys
+level, pct, est, lim = sys.argv[1:5]
+if level == "URGENT":
+    advice = "Compact NOW with /forge compact-task (preserve: active task, modified files, decisions, pending TODOs). Auto-compact at ~97% loses momentum and invalidates the prompt cache."
+else:
+    advice = "Finish the current step, then run /forge compact-task (80% rule), or /clear if the next task is unrelated. Avoid starting a large new exploration before compacting."
+msg = f"[dotforge context monitor] {level}: context window ~{pct}% used (~{est} of {lim} tokens, transcript-size estimate). {advice}"
+print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": msg}}))
+PY
 fi
 
 exit 0

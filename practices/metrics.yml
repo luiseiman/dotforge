@@ -1735,3 +1735,47 @@ practices:
     status: monitoring
     projects_applied: 0
     last_checked: null
+
+  - id: practice-2026-11-04-sync-hash-ledger-plus-markers
+    error_targeted: "/forge sync overwrites a locally edited managed file, or skips a template update because it cannot tell intact from drifted (dotforge itself ran 6 months behind its template)"
+    error_type: config
+    activated: 2026-11-04
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-11-04-config-protection-behavior
+    error_targeted: "agent loosens a lint/format/type-check rule or bypasses git hooks (--no-verify, core.hooksPath) instead of fixing the code"
+    error_type: config
+    activated: 2026-11-04
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-11-04-context-cost-monitor-hook
+    error_targeted: "context warning printed to stderr only — model never saw it and auto-compact fired mid-task"
+    error_type: config
+    activated: 2026-11-04
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: monitoring
+    projects_applied: 0
+    last_checked: null
+
+  - id: practice-2026-11-04-placebo-controlled-behavior-evals
+    error_targeted: null
+    error_type: null
+    activated: 2026-11-04
+    recurrence_checks: 0
+    recurrence_target: 5
+    recurred: false
+    status: informational
+    projects_applied: 0
+    last_checked: null

@@ -4,7 +4,7 @@ title: CI gate on eager-loaded metadata: fail when rules + skill/agent/command d
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: evaluating
 tags: [ci, context, rules, skills, ecc]
 tested_in: []
 incorporated_in: []

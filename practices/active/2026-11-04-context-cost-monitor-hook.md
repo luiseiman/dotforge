@@ -4,11 +4,13 @@ title: Runtime context/cost/loop monitor via additionalContext (warn at 35% left
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [hooks, context, compaction, cost, ecc]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["template/hooks/pre-compact-warning.sh"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -25,4 +27,4 @@ ECC `scripts/hooks/ecc-context-monitor.js`, `suggest-compact.js`. Hooks referenc
 - Cost tier needs the SessionStart `estimated_cache_write_usd` / Stop payload fields (v2.1.251+) — verify availability before wiring
 
 ## Decision
-Pending
+Accepted 2026-11-04 — incorporated in dotforge v4.8.0 (/forge update, ECC scout batch 1).

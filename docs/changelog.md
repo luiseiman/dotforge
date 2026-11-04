@@ -4,6 +4,17 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.8.0 (2026-11-04)
+
+### Scout batch 1 — four practices adopted from affaan-m/ECC
+
+`/forge scout` of ECC (★297K, 314 skills) on 2026-11-04: catalog model and GateGuard rejected as anti-patterns; its distribution and CI engineering adopted. Three further practices (release gate, CI validators, metadata token budget) wait in `practices/evaluating/` for the open worktree merges.
+
+- **`scripts/forge-doctor.sh`** — classifies every manifest-tracked file as intact / drifted / missing / unmanaged (sha256 vs `.claude/.forge-manifest.json`), text or `--json`, exit 0/1/2. `sync-template` Step 1b now overwrites only intact files, diffs drifted ones and never touches unmanaged; `diff-project` Step 2 uses it instead of hand-hashing. Run on dotforge itself it reported the 15 hooks/commands that had silently drifted since June. Tests: `tests/test-forge-doctor.sh` (6).
+- **Behavior `protect-lint-config`** (opt-in) — soft_block on Edit/Write/MultiEdit to linter/formatter/type-check/commit-hook configs (ESLint, Prettier, Biome, ruff, mypy, tsconfig, swiftlint, golangci, rubocop, pre-commit, clang-format, rustfmt…): fix the code, not the rule; identical reinvocation passes as a recorded override. 3 scenario suites (blocked / source passes / override). `block-destructive.sh` additionally blocks `git … --no-verify` and `core.hooksPath` (ECC `block-no-verify`).
+- **Model-visible context monitor** — `pre-compact-warning.sh` now emits `hookSpecificOutput.additionalContext` (WARNING ≥80 %, URGENT ≥90 %) alongside the stderr text; before v4.8.0 the warning never reached the model.
+- **`docs/v3/EVAL-METHOD.md`** — placebo-controlled arm design (off / on / placebo / minus-escalation) with pre-registered hypotheses and `claude plugin eval` as harness; `metadata.evidence` added to the behavior schema. Current evidence table: only `no-destructive-git` is justified by invariant; `verify-before-done` is on without an arm eval.
+
 ## v4.7.0 (2026-10-07)
 
 ### Native-first boundary decisions + behaviors v3 defect fix (last 3 of 25 upstream practices)

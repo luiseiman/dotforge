@@ -4,11 +4,13 @@ title: Behavior: block edits to existing linter/formatter configs so agents fix 
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [behaviors, v3, quality, hooks, ecc]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["behaviors/protect-lint-config/", "behaviors/index.yaml", "template/hooks/block-destructive.sh", "tests/test-hooks.sh"]
 replaced_by: null
+effectiveness: monitoring
+error_type: config
 ---
 
 ## Description
@@ -25,4 +27,4 @@ ECC `scripts/hooks/config-protection.js`, `block-no-verify.js`; `hooks/hooks.jso
 - `docs/v3/` catalogue entry; `behaviors/index.yaml`
 
 ## Decision
-Pending
+Accepted 2026-11-04 — incorporated in dotforge v4.8.0 (/forge update, ECC scout batch 1).

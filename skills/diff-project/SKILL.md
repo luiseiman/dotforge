@@ -21,12 +21,7 @@ Show what changed in dotforge since the last synchronization of the current proj
 
 ## Step 2: Verify local manifest
 
-If `.claude/.forge-manifest.json` exists in the current project:
-1. Read it and get the version and file hashes
-2. For each file in the manifest, calculate `shasum -a 256 <file> | cut -d' ' -f1`
-3. Compare against the registered hash
-4. Report locally modified files (hash differs) and deleted files
-5. Use the manifest version as baseline (more precise than the registry)
+Run `bash "$DOTFORGE_DIR/scripts/forge-doctor.sh" . --json`. It compares every file in `.claude/.forge-manifest.json` against disk and returns `intact` / `drifted` (locally modified) / `missing` (deleted) / `unmanaged` (present but never installed by dotforge). Use `dotforge_version` from the manifest as the baseline — more precise than the registry — and list drifted/missing files in the report; those are the ones a sync would have to merge rather than overwrite.
 
 If manifest does NOT exist, continue to Step 3 using git log.
 

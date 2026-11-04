@@ -156,5 +156,8 @@ jobs:
       - name: tool-latency hook test
         run: bash tests/test-tool-latency.sh
 
+      - name: forge-doctor test
+        run: bash tests/test-forge-doctor.sh
+
       - name: Config self-test (dotforge's own .claude/)
         run: bash tests/test-config.sh .

@@ -50,6 +50,8 @@ Key template files: `rules/domain-learning.md` (globs:**/* rule that instructs C
 
 `global/` mirrors this pattern for `~/.claude/` — the user's global Claude Code config. `global/sync.sh` manages symlinks for skills, agents, and commands into `~/.claude/`.
 
+`scripts/forge-doctor.sh [project] [--json]` classifies every file in a project's `.claude/.forge-manifest.json` as intact / drifted / missing / unmanaged (sha256 vs manifest). `/forge sync` overwrites only `intact`, diffs `drifted`, never touches `unmanaged`; `/forge diff` reports the same classes. Exit 2 = no manifest.
+
 ### Stacks
 
 Each `stacks/<name>/` directory is a technology module containing:
@@ -86,14 +88,14 @@ Two-dimension model (v4.x). **Dimension A — Native Health** (`score`, 0-10): 5
 Core pieces:
 
 - `behaviors/<id>/behavior.yaml` — declarative policy (triggers, escalation, rendering). Schema: `docs/v3/SCHEMA.md`.
-- `behaviors/index.yaml` — catalogue + on/off. Enabled: `no-destructive-git`, `verify-before-done`. Disabled: `search-first` (false positives, v3.6.1), `respect-todo-state` (todo tools removed on current models, v4.4.0), `plan-before-code` and `objection-format` (opt-in).
+- `behaviors/index.yaml` — catalogue + on/off. Enabled: `no-destructive-git`, `verify-before-done`. Disabled: `search-first` (false positives, v3.6.1), `respect-todo-state` (todo tools removed on current models, v4.4.0), `protect-lint-config` (v4.8.0, opt-in until it has an arm eval), `plan-before-code` and `objection-format` (opt-in). Promotion to on-by-default requires the placebo-controlled method in `docs/v3/EVAL-METHOD.md`.
 - `scripts/runtime/lib.sh` — shared bash API: mkdir-based lock, counters, flags, pending_blocks, session overrides, 24h TTL. Sourced by compiled hooks.
 - `scripts/compiler/compile.sh` — YAML → one bash hook per trigger plus a `settings.json` snippet. Needs a `python3` with PyYAML (on macOS use `/usr/local/bin/python3`, not `/usr/bin/python3`). Output contract (v4.7.0): nudge/warning → `hookSpecificOutput.additionalContext` (model-visible) + `systemMessage` (user-visible); blocks → `permissionDecision: "deny"` + `permissionDecisionReason`. `systemMessage` alone never reaches the model — that was the pre-v4.7.0 defect.
 - `scripts/forge-behavior/cli.sh` — `/forge behavior` CLI: `list`, `describe`, `status`, `on`/`off` (project or session scope), `strict`/`relaxed`.
 - `.forge/runtime/state.json` — per-session counters, flags, pending_blocks. Gitignored, per-machine. The override audit trail (`.forge/audit/overrides.log`) was retired in v4.0.x after a portfolio scan found 0 overrides.
 - Compiled hooks live in `.claude/hooks/generated/` and are committed; recompile after any `compile.sh` change (`for b in no-destructive-git verify-before-done; do bash scripts/compiler/compile.sh behaviors/$b/behavior.yaml .claude/hooks/generated; done`). Projects that adopted behaviors carry their own compiled copies — `/forge sync` must recompile them.
 
-Specs of record under `docs/v3/`: `SPEC.md` (evaluation algorithm, level table), `SCHEMA.md`, `RUNTIME.md`, `COMPILER.md`, `DECISIONS.md`. Historical: `SCOPE.md`, `COMPETITIVE.md`, `AUDIT.md` (retired override log), `MIGRATION.md`. Verdict on scope: `.claude/rules/domain/native-vs-dotforge-boundary.md` — keep the escalation engine, no Claude Mods (`--target mod`) backend until the Mods API stabilizes (practice in `practices/inbox/`).
+Specs of record under `docs/v3/`: `SPEC.md` (evaluation algorithm, level table), `SCHEMA.md`, `RUNTIME.md`, `COMPILER.md`, `DECISIONS.md`, `EVAL-METHOD.md` (how a behavior earns on-by-default). Historical: `SCOPE.md`, `COMPETITIVE.md`, `AUDIT.md` (retired override log), `MIGRATION.md`. Verdict on scope: `.claude/rules/domain/native-vs-dotforge-boundary.md` — keep the escalation engine, no Claude Mods (`--target mod`) backend until the Mods API stabilizes (practice in `practices/inbox/`).
 
 Tests: `bash tests/run_all.sh` runs every suite (hooks, rules lint, skills index, config self-test, v3 runtime 8 + compiler 1 + CLI 5 + 17 behavior scenarios) — same set as CI. `--quick` skips the behavior scenarios.
 

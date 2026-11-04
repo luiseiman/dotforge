@@ -4,11 +4,13 @@ title: Validate behaviors with placebo-controlled evals before shipping them on
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [behaviors, v3, evaluation, methodology, ecc]
 tested_in: []
-incorporated_in: []
+incorporated_in: ["docs/v3/EVAL-METHOD.md", "docs/v3/SCHEMA.md"]
 replaced_by: null
+effectiveness: informational
+error_type: null
 ---
 
 ## Description
@@ -25,4 +27,4 @@ ECC `docs/gateguard/question-effectiveness.md`, `docs/gateguard/*pilot*`. dotfor
 - `behaviors/<id>/behavior.yaml` `metadata.evidence:` field linking the eval report; `/forge behavior describe` shows it
 
 ## Decision
-Pending
+Accepted 2026-11-04 — incorporated in dotforge v4.8.0 (/forge update, ECC scout batch 1).

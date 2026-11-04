@@ -31,6 +31,7 @@ run "rules lint"             bash tests/lint-rules.sh
 run "skills index"           bash tests/test-skills-index.sh
 run "hooks behaviour"        bash tests/test-hooks.sh
 run "tool-latency hook"      bash tests/test-tool-latency.sh
+run "forge-doctor"           bash tests/test-forge-doctor.sh
 run "config (self)"          bash tests/test-config.sh .
 run "audit engines syntax"   bash -c 'bash -n audit/score.sh && python3 -m py_compile scripts/audit_all.py'
 run "templates JSON"         python3 -c 'import json; [json.load(open(f)) for f in ("template/settings.json.tmpl","global/settings.json.tmpl",".claude-plugin/plugin.json",".claude-plugin/marketplace.json")]'

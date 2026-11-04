@@ -4,7 +4,7 @@ title: Port five cheap CI validators: unicode smuggling, cross-refs, agent front
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: evaluating
 tags: [ci, validation, security, ecc]
 tested_in: []
 incorporated_in: []

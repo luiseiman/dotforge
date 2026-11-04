@@ -65,6 +65,8 @@ test_block "rm -rf *"                       "rm -rf *"
 test_block "git push --force origin main"   "git push --force origin main"
 test_block "git reset --hard"               "git reset --hard"
 test_block "DROP TABLE users"               "DROP TABLE users"
+test_block "git commit --no-verify -m wip"  "git commit --no-verify"
+test_block "git config core.hooksPath /tmp/h"  "git config core.hooksPath"
 
 # Allowed commands
 test_allow "ls -la"                         "ls -la"

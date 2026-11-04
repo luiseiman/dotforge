@@ -68,6 +68,10 @@ STANDARD_PATTERNS=(
   'find .* -exec unlink'
   'xargs[^|]*rm -rf'
   'xargs[^|]*rm -f'
+  # bypassing or redirecting git hooks (adopted from ECC block-no-verify, scout 2026-11-04)
+  'git (commit|push|merge|rebase)[^|;&]*--no-verify'
+  'git -c core\.hooksPath'
+  'git config[^|;&]*core\.hooksPath'
 )
 
 # Strict: standard + risky execution patterns

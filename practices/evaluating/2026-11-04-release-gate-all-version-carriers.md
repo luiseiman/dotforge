@@ -4,7 +4,7 @@ title: Release gate: assert every version carrier + signed tag + green CI before
 source: "/forge scout — affaan-m/ECC v2.2.3 (2026-11-04)"
 source_type: scout
 discovered: 2026-11-04
-status: inbox
+status: evaluating
 tags: [release, ci, versioning, ecc]
 tested_in: []
 incorporated_in: []

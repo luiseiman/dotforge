@@ -1,0 +1,47 @@
+schema_version: "1"
+id: protect-lint-config
+name: Protect Lint And Format Config
+description: >
+  Soft-block edits to linter, formatter, type-checker and commit-hook
+  configuration files: fix the code, not the rule. Reissuing the identical
+  edit after the block is recorded as an override and passes.
+category: core
+scope: session
+enabled: false
+
+policy:
+  triggers:
+    - event: PreToolUse
+      matcher: "Edit|Write|MultiEdit"
+      conditions:
+        - field: file_path
+          operator: regex_match
+          value: '(^|/)(\.eslintrc(\.(js|cjs|mjs|json|ya?ml))?|eslint\.config\.[cm]?[jt]s|\.prettierrc(\.(js|cjs|json|ya?ml|toml))?|prettier\.config\.[cm]?js|biome\.jsonc?|\.stylelintrc(\.[a-z]+)?|ruff\.toml|\.ruff\.toml|\.flake8|mypy\.ini|\.pylintrc|pylintrc|setup\.cfg|tsconfig(\.[a-z0-9]+)?\.json|\.swiftlint\.yml|\.golangci\.ya?ml|\.rubocop\.yml|\.editorconfig|commitlint\.config\.[cm]?js|\.pre-commit-config\.yaml|\.clang-format|\.clang-tidy|rustfmt\.toml|\.rustfmt\.toml|clippy\.toml|\.markdownlint(\.json|rc)?)$'
+      logic: all
+      action: evaluate
+
+  enforcement:
+    default_level: soft_block
+
+  recovery:
+    hint: >
+      Lint/format/type-check config is protected: fix the reported code instead
+      of loosening the rule. If changing the config IS the task, reissue the
+      exact same edit — the reinvocation is recorded as an override and passes.
+    suggested_tool: Edit
+    suggested_action: "Fix the flagged source file; keep the rule."
+
+rendering:
+  block_reason: "[protect-lint-config] Edit to a linter/formatter/type-check config blocked: fix the code, not the rule. If the config change is the task, reissue the identical edit to override (recorded)."
+  override_prompt: "Reissue the same edit to override."
+
+applies_to:
+  tools: [Edit, Write, MultiEdit]
+  agents: []
+  profiles: [standard, strict]
+
+metadata:
+  author: dotforge
+  version: "1.0.0"
+  tags: [quality, lint, config, core]
+  evidence: "Pattern from ECC config-protection.js (scout 2026-11-04). No outcome eval yet — see docs/v3/EVAL-METHOD.md before enabling by default."
