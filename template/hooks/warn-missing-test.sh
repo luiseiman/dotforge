@@ -7,7 +7,8 @@
 PROFILE="${FORGE_HOOK_PROFILE:-standard}"
 [[ "$PROFILE" != "strict" ]] && exit 0
 
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat 2>/dev/null || true)  # stdin JSON; no TOOL_INPUT env var exists
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // .file_path // empty' 2>/dev/null)
 [[ -z "$FILE_PATH" ]] && exit 0
 
 # Only check source directories

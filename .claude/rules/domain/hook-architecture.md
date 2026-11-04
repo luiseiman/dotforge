@@ -62,6 +62,10 @@ Two ways to spawn a `type: "command"` hook:
 
 Prefer exec form whenever the hook consumes user-controlled values — and for every plugin hook: shell form with an unquoted `${CLAUDE_PLUGIN_ROOT}` breaks on install paths containing spaces (`claude plugin validate` warns since v2.1.281; an async Stop hook under `~/Library/Application Support` looped forever in v2.1.290). Since v2.1.248 a hook whose stdout is an invalid `{…}` JSON object is reported as a hook error (previously treated as plain text), and since v2.1.288 PreToolUse/PermissionRequest hooks fail closed when matching fails or the input cannot be serialized — every JSON-emitting hook must print strictly valid JSON or nothing.
 
+## Input contract: stdin only
+
+Command hooks receive their payload as a single JSON document on **stdin** (`session_id`, `hook_event_name`, `tool_name`, `tool_input`, `transcript_path`, `cwd`, …). The only env vars set are `CLAUDE_PROJECT_DIR`, `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_ENV_FILE`, `CLAUDE_CODE_REMOTE` (plus `CLAUDE_EFFORT` in Bash subprocesses). **There is no `$TOOL_INPUT` env var** — it exists only as a `${tool_input.*}` placeholder in `type: prompt`/`args` templates. A hook that reads `${TOOL_INPUT:-}` sees an empty string and exits 0: dotforge's `block-destructive.sh`, `lint-on-save.sh`, `warn-missing-test.sh`, `detect-stack-drift.sh` and every stack lint hook were inert from v0.1.0 to v4.8.0 because of this, and `tests/test-hooks.sh` masked it by injecting the env var. Always `HOOK_INPUT=$(cat)` then `jq -r '.tool_input.command'`; tests must feed stdin with the real payload shape.
+
 ## Effort visibility in hooks (v2.1.133+)
 
 Every hook event's stdin JSON now includes `effort.level` (`"low" | "medium" | "high" | "xhigh" | "max"`). Bash tool subprocesses also see `$CLAUDE_EFFORT` with the same value. Enables effort-aware decisions — e.g. `block-destructive.sh` can tighten matching at `low`/`medium` and relax at `max`.

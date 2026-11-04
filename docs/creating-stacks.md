@@ -70,7 +70,8 @@ Create `stacks/{stack}/hooks/lint-{name}.sh`:
 ```bash
 #!/bin/bash
 # PostToolUse hook: lint on {stack} files
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat)  # hook payload arrives as JSON on stdin — there is NO $TOOL_INPUT env var
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 
 if [[ "$FILE_PATH" =~ \.ext$ ]] && [[ -f "$FILE_PATH" ]]; then
   if command -v linter &>/dev/null; then
@@ -201,7 +202,8 @@ Crear `stacks/{stack}/hooks/lint-{nombre}.sh`:
 ```bash
 #!/bin/bash
 # PostToolUse hook: lint on {stack} files
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat)  # hook payload arrives as JSON on stdin — there is NO $TOOL_INPUT env var
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 
 if [[ "$FILE_PATH" =~ \.ext$ ]] && [[ -f "$FILE_PATH" ]]; then
   if command -v linter &>/dev/null; then

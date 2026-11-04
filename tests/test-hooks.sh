@@ -25,17 +25,18 @@ echo "═══ dotforge hook tests ═══"
 HOOK="$ROOT_DIR/template/hooks/block-destructive.sh"
 echo "Testing block-destructive.sh..."
 
-# The hook reads $TOOL_INPUT env var and parses with:
-#   echo "$TOOL_INPUT" | jq -r '.command // empty'
-# So TOOL_INPUT must be a JSON object with a "command" field.
+# The hook reads the real Claude Code payload on STDIN:
+#   {"tool_name":"Bash","tool_input":{"command":"..."}}
+# Never inject TOOL_INPUT env — that variable does not exist at runtime and
+# masked an inert hook from v0.1.0 to v4.8.0.
 
 test_block() {
   local cmd="$1"
   local label="$2"
   local tool_input
-  tool_input=$(jq -cn --arg c "$cmd" '{command: $c}')
+  tool_input=$(jq -cn --arg c "$cmd" '{tool_name:"Bash",tool_input:{command:$c}}')
   rc=0
-  TOOL_INPUT="$tool_input" bash "$HOOK" >/dev/null 2>&1 || rc=$?
+  printf '%s' "$tool_input" | env -u TOOL_INPUT bash "$HOOK" >/dev/null 2>&1 || rc=$?
   if [[ $rc -eq 2 ]]; then
     pass "blocks: $label"
   else
@@ -49,9 +50,9 @@ test_allow() {
   local tool_input
   # jq escapes embedded quotes — a hand-built printf produced invalid JSON for
   # `git commit -m "test"` and the hook correctly failed closed (exit 2)
-  tool_input=$(jq -cn --arg c "$cmd" '{command: $c}')
+  tool_input=$(jq -cn --arg c "$cmd" '{tool_name:"Bash",tool_input:{command:$c}}')
   rc=0
-  TOOL_INPUT="$tool_input" bash "$HOOK" >/dev/null 2>&1 || rc=$?
+  printf '%s' "$tool_input" | env -u TOOL_INPUT bash "$HOOK" >/dev/null 2>&1 || rc=$?
   if [[ $rc -eq 0 ]]; then
     pass "allows: $label"
   else

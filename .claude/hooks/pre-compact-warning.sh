@@ -2,19 +2,25 @@
 # UserPromptSubmit hook — warn proactively when context approaches 80% of model window.
 #
 # Implements the evidence-based 80% threshold from dotforge compaction-strategy.md.
-# Estimates token count from the transcript file size (~5 bytes per token, rough).
+# Measures the REAL context from the transcript: the last non-sidechain assistant
+# message carries message.usage, and context = input_tokens +
+# cache_creation_input_tokens + cache_read_input_tokens (same method as
+# claude-hud / cache-tax). The pre-v4.8.1 heuristic (transcript bytes / 5) was
+# wrong after the first compaction: the transcript file never shrinks, so it
+# reported 200%+ forever.
 # Non-blocking. Emits the warning twice: to stderr for the user and, since
 # v4.8.0, as hookSpecificOutput.additionalContext so the MODEL sees it
 # (systemMessage/stderr never reach the model — hooks reference).
 #
 # Configuration via env vars (settings.json env block):
-#   CLAUDE_CONTEXT_LIMIT       — model context size (default 1000000 = 1M Sonnet/Opus)
+#   CLAUDE_CONTEXT_LIMIT       — override the model window (default: derived from
+#                                the transcript model id — 200000 for haiku or when
+#                                CLAUDE_CODE_DISABLE_1M_CONTEXT=1, else 1000000)
 #   CLAUDE_COMPACT_WARN_PCT    — warning threshold percentage (default 80)
 #   CLAUDE_COMPACT_URGENT_PCT  — urgent threshold percentage (default 90)
 #
 # Limitations:
-# - Transcript byte size is a proxy. Real context = transcript + system prompt + memory.
-# - Heuristic 5 bytes/token ignores JSON overhead in transcript format.
+# - Usage reflects the previous turn; the current prompt is not yet counted.
 # - Warning fires at most once per turn (UserPromptSubmit).
 #
 # To disable: remove from settings.json hooks, or set CLAUDE_COMPACT_WARN_PCT=999
@@ -27,11 +33,31 @@ TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | python3 -c "import json,sys; d=json.load(
 [ -z "$TRANSCRIPT_PATH" ] && exit 0
 [ ! -f "$TRANSCRIPT_PATH" ] && exit 0
 
-# Approx: 1 token ≈ 5 bytes (conservative for transcript JSON overhead)
-SIZE=$(wc -c < "$TRANSCRIPT_PATH" 2>/dev/null | tr -d ' ' || echo 0)
-EST_TOKENS=$((SIZE / 5))
+# Last assistant turn's usage + model, scanning the tail of the transcript only.
+read -r EST_TOKENS MODEL_LIMIT < <(tail -c 4000000 "$TRANSCRIPT_PATH" 2>/dev/null | python3 -c '
+import json, sys, os
+tokens, model = 0, ""
+for line in sys.stdin:
+    if "\"assistant\"" not in line:
+        continue
+    try:
+        d = json.loads(line)
+    except ValueError:
+        continue
+    if d.get("type") != "assistant" or d.get("isSidechain"):
+        continue
+    u = (d.get("message") or {}).get("usage") or {}
+    if not u:
+        continue
+    tokens = int(u.get("input_tokens", 0) or 0) + int(u.get("cache_creation_input_tokens", 0) or 0) + int(u.get("cache_read_input_tokens", 0) or 0)
+    model = (d.get("message") or {}).get("model") or model
+small = "haiku" in model.lower() or os.environ.get("CLAUDE_CODE_DISABLE_1M_CONTEXT") == "1"
+print(tokens, 200000 if small else 1000000)
+' 2>/dev/null || echo "0 1000000")
 
-CONTEXT_LIMIT=${CLAUDE_CONTEXT_LIMIT:-1000000}
+[ "${EST_TOKENS:-0}" -le 0 ] && exit 0
+
+CONTEXT_LIMIT=${CLAUDE_CONTEXT_LIMIT:-$MODEL_LIMIT}
 WARN_PCT=${CLAUDE_COMPACT_WARN_PCT:-80}
 URGENT_PCT=${CLAUDE_COMPACT_URGENT_PCT:-90}
 
@@ -67,7 +93,7 @@ if level == "URGENT":
     advice = "Compact NOW with /forge compact-task (preserve: active task, modified files, decisions, pending TODOs). Auto-compact at ~97% loses momentum and invalidates the prompt cache."
 else:
     advice = "Finish the current step, then run /forge compact-task (80% rule), or /clear if the next task is unrelated. Avoid starting a large new exploration before compacting."
-msg = f"[dotforge context monitor] {level}: context window ~{pct}% used (~{est} of {lim} tokens, transcript-size estimate). {advice}"
+msg = f"[dotforge context monitor] {level}: context window ~{pct}% used (~{est} of {lim} tokens, from last turn usage). {advice}"
 print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": msg}}))
 PY
 fi

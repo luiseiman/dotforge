@@ -25,7 +25,7 @@
 1. Is the hook executable? → `chmod +x .claude/hooks/lint-python.sh`
 2. Is it referenced in `.claude/settings.json` under `hooks`?
 3. Is the linter installed? → `which ruff` (Python) / `npx eslint --version` (TS)
-4. Does the hook read `$TOOL_INPUT` correctly? → Verify `jq` is installed
+4. Does the hook read the payload from **stdin** (`$(cat)` → `.tool_input.file_path`)? There is no `$TOOL_INPUT` env var — hooks that read it are silently inert (dotforge < 4.8.1). Also verify `jq` is installed
 
 **Quick fix:**
 ```bash
@@ -87,7 +87,7 @@ chmod +x .claude/hooks/*.sh
 1. ¿El hook es ejecutable? → `chmod +x .claude/hooks/lint-python.sh`
 2. ¿Está referenciado en `.claude/settings.json` bajo `hooks`?
 3. ¿El linter está instalado? → `which ruff` (Python) / `npx eslint --version` (TS)
-4. ¿El hook lee `$TOOL_INPUT` correctamente? → Verificar que `jq` está instalado
+4. ¿El hook lee el payload por **stdin** (`$(cat)` → `.tool_input.file_path`)? No existe la variable `$TOOL_INPUT` — un hook que la lee queda inerte en silencio (dotforge < 4.8.1). Verificar además que `jq` está instalado
 
 **Fix rápido:**
 ```bash

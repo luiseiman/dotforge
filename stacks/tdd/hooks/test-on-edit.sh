@@ -5,12 +5,13 @@
 
 set -euo pipefail
 
-# ── 1. Extract the file path from TOOL_INPUT ──────────────────────────────────
+# ── 1. Extract the file path from the stdin hook payload ──────────────────────
+# Claude Code passes hook input as JSON on stdin; no TOOL_INPUT env var exists.
+HOOK_INPUT=$(cat 2>/dev/null || true)
 FILE_PATH=""
-if [ -n "${TOOL_INPUT:-}" ]; then
-  # TOOL_INPUT is JSON; extract "path" or "file_path" field
-  FILE_PATH=$(printf '%s' "$TOOL_INPUT" | python3 -c \
-    "import sys,json; d=json.load(sys.stdin); print(d.get('path') or d.get('file_path',''))" 2>/dev/null || true)
+if [ -n "$HOOK_INPUT" ]; then
+  FILE_PATH=$(printf '%s' "$HOOK_INPUT" | python3 -c \
+    "import sys,json; d=json.load(sys.stdin); d=d.get('tool_input', d); print(d.get('path') or d.get('file_path',''))" 2>/dev/null || true)
 fi
 
 # Nothing to act on

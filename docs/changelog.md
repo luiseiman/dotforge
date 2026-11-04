@@ -4,6 +4,21 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.8.1 (2026-11-04) — hotfix
+
+### Hooks inertes desde v0.1.0: `$TOOL_INPUT` no existe
+
+Un scout de los 23 repos más populares de configuración de Claude Code (karanb192/claude-code-hooks, claude-hud, Piebald-AI/claude-code-system-prompts, entre otros) destapó que `block-destructive.sh`, `lint-on-save.sh`, `warn-missing-test.sh`, `detect-stack-drift.sh` y los lint hooks de los 4 stacks leían la variable de entorno `$TOOL_INPUT`. Claude Code entrega el payload de hooks **solo por stdin**; la variable nunca existió, el comando quedaba vacío y el hook salía con 0. Verificado en vivo: un `TRUNCATE TABLE` pasó con el hook cableado; tras el fix, el mismo hook bloqueó el commit de este changelog por contener esa frase. `tests/test-hooks.sh` inyectaba la variable a mano y por eso los 12 casos pasaban. Solo funcionaban `permission-denied.sh` (cae a `cat`) y los hooks compilados de behaviors (`PAYLOAD=$(cat)`).
+
+- 14 hooks pasan a `HOOK_INPUT=$(cat)` + `.tool_input.command` / `.tool_input.file_path` (aceptan también el objeto interno). Copias en `template/hooks/`, `.claude/hooks/`, `stacks/*/hooks/`.
+- `tests/test-hooks.sh` alimenta stdin con el payload real `{"tool_name","tool_input"}` y fuerza `env -u TOOL_INPUT`.
+- `docs/creating-stacks.md`, `docs/troubleshooting.md`, `domain/hook-architecture.md` § Input contract, `CLAUDE_ERRORS.md`.
+- Pendiente: `/forge sync` en los 12 proyectos — hasta entonces su `block-destructive.sh` sigue siendo de papel.
+
+### Monitor de contexto medía bytes del transcript
+
+`pre-compact-warning.sh` (v4.8.0) estimaba tokens como `wc -c transcript / 5`. El transcript no se achica al compactar, así que desde la primera compactación reportaba 200 %+ en cada prompt. Ahora lee `message.usage` (`input + cache_creation + cache_read`) del último turno `assistant` no-sidechain y deriva la ventana del modelo (`haiku` o `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` → 200K; resto 1M; `CLAUDE_CONTEXT_LIMIT` sigue como override). Medido en vivo: 23 % real contra 235 % reportado.
+
 ## v4.8.0 (2026-11-04)
 
 ### Scout batch 1 — four practices adopted from affaan-m/ECC

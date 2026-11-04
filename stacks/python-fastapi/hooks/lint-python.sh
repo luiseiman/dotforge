@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse hook: ruff check on Python files
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat 2>/dev/null || true)  # stdin JSON; no TOOL_INPUT env var exists
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // .file_path // empty' 2>/dev/null)
 
 if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
   if command -v ruff &>/dev/null; then

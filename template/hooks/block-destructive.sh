@@ -27,7 +27,10 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 2
 fi
 
-COMMAND=$(printf '%s' "${TOOL_INPUT:-}" | jq -r '.command // empty' 2>/dev/null)
+# Hook input arrives as JSON on stdin ({"tool_name","tool_input":{"command"}}).
+# No TOOL_INPUT env var exists — hooks that read it were inert until v4.8.1.
+HOOK_INPUT=$(cat 2>/dev/null || true)
+COMMAND=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.command // .command // empty' 2>/dev/null)
 JQ_RC=$?
 if [ "$JQ_RC" -ne 0 ]; then
   printf 'block-destructive: jq failed to parse tool_input (rc=%s). Blocking defensively.\n' "$JQ_RC" >&2

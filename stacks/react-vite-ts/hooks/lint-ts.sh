@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse hook: eslint + tsc type-check on TS/JS files
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat 2>/dev/null || true)  # stdin JSON; no TOOL_INPUT env var exists
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // .file_path // empty' 2>/dev/null)
 
 if [[ "$FILE_PATH" =~ \.(ts|tsx|js|jsx)$ ]] && [[ -f "$FILE_PATH" ]]; then
   # Step 1: ESLint — runs on all TS/JS files

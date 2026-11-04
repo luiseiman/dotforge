@@ -7,7 +7,8 @@
 # this hook reads the file, extracts package names, and checks whether any imply a
 # dotforge stack that isn't installed in the project. Emits a warning to stderr.
 
-FILE_PATH=$(echo "$TOOL_INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('file_path', d.get('path', '')))" 2>/dev/null || echo "")
+HOOK_INPUT=$(cat 2>/dev/null || true)  # stdin JSON; no TOOL_INPUT env var exists
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); d=d.get('tool_input', d); print(d.get('file_path', d.get('path', '')))" 2>/dev/null || echo "")
 
 # Only process known dependency files
 case "$(basename "$FILE_PATH")" in

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse hook: swiftlint or swift build on Swift files
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+HOOK_INPUT=$(cat 2>/dev/null || true)  # stdin JSON; no TOOL_INPUT env var exists
+FILE_PATH=$(printf '%s' "$HOOK_INPUT" | jq -r '.tool_input.file_path // .file_path // empty' 2>/dev/null)
 
 if [[ "$FILE_PATH" =~ \.swift$ ]] && [[ -f "$FILE_PATH" ]]; then
   # Prefer swiftlint if available
