@@ -38,3 +38,18 @@ sources:
     url: https://github.com/shanraisshan/claude-code-best-practice
     focus: [skills, hooks, commands]
     notes: "Best practices — técnica de !command en SKILL.md para output dinámico"
+
+  - name: Piebald-AI/claude-code-system-prompts
+    url: https://github.com/Piebald-AI/claude-code-system-prompts
+    focus: [system-prompt, tools, subagents, changelog]
+    notes: "Extracción por versión del system prompt, tool descriptions y subagent prompts (1101 prompts, CHANGELOG con delta de tokens). Fuente de /forge watch para prompting-patterns.md desde v4.9.0. Scouted 2026-11-04."
+
+  - name: karanb192/claude-code-hooks
+    url: https://github.com/karanb192/claude-code-hooks
+    focus: [hooks, deny-patterns, config-guard, protect-tests, subagent-cap]
+    notes: "Marketplace de 22 plugins de hooks con salida JSON permissionDecision por niveles. Mejor catálogo de patrones deny (secretos vía Bash, gh destructivo, config-guard). Fail-open (catch → '{}') — no copiar el bootstrap. Scouted 2026-11-04."
+
+  - name: jarrodwatts/claude-hud
+    url: https://github.com/jarrodwatts/claude-hud
+    focus: [statusline, context, transcript-parsing]
+    notes: "Statusline plugin. Referencia del cálculo de contexto por message.usage (src/transcript.ts) que corrigió pre-compact-warning.sh en v4.8.1. Scouted 2026-11-04."

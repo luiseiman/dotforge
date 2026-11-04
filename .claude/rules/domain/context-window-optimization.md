@@ -54,3 +54,10 @@ last_verified: 2026-10-07
 - With 1h TTL: idle polling cadence heuristics loosen — sleeps up to 3600s stay in cache
 - Cost tradeoff: 1h TTL bills for cache storage; 5m is "free". Consider enabling for long-running `/loop` or `/schedule` work
 - Subscribers with `DISABLE_TELEMETRY` fell back to 5m before v2.1.108 fix
+
+## Status line stdin fields (statusline only — NOT in hook payloads)
+
+- `context_window.total_input_tokens` / `total_output_tokens` (from the most recent API response; input includes cache reads+writes), `context_window_size` (200000 or 1000000), `used_percentage`, `remaining_percentage` (computed from input tokens only: `input + cache_creation + cache_read`), `current_usage {input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens}` — `current_usage` is `null` before the first call and again after `/compact` until the next response
+- `prompt_cache` (v2.1.251+, main conversation only, every provider): `warm`, `caching_observed`, `ttl` (`"5m"|"1h"`), `expires_at` (epoch s), `requests`, `misses`, `expected_rebuilds` (rebuilds after compaction/tool-result clearing), `hit_ratio` (cache reads / all input tokens, 0–1). This is the native source for the "cache hit rate" health metric in `compaction-strategy.md` (>80% healthy, <60% compaction thrashing)
+- `cost.total_cost_usd`, `total_duration_ms`, `total_api_duration_ms`, `total_lines_added/removed`; `rate_limits.spend_limit.*` behind a gateway
+- Hooks get none of these. A hook that needs context usage must read the transcript's last non-sidechain `assistant` line `message.usage` (what `pre-compact-warning.sh` does since v4.8.1); `used_percentage` is the same formula precomputed

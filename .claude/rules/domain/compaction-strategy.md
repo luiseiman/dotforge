@@ -68,6 +68,8 @@ Cada compactación = nuevo cache write. Métrica de salud > size del context: **
 - `>80%` cache hits = sano
 - `<60%` cache hits = compactación thrashing (compactás demasiado seguido)
 
+Native source: status line `prompt_cache.hit_ratio` / `misses` / `expected_rebuilds` (v2.1.251+) — see `context-window-optimization.md` § Status line stdin fields.
+
 Si tenés `<60%` cache hit rate, problema NO es context size — es frecuencia de compactación. Subí el threshold a 85% o usá subagentes.
 
 ## Subagentes para aislar contexto (Boris Cherny pattern)

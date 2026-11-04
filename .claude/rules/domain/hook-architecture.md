@@ -78,7 +78,7 @@ Every hook event's stdin JSON now includes `effort.level` (`"low" | "medium" | "
 
 ## ConfigChange matcher values
 
-`ConfigChange` hook accepts a `config_source` matcher with documented values: `user_settings`, `project_settings`, `policy_settings`, `skills`. Use to detect when a managed admin pushes a settings update, when a project's `.claude/settings.json` changes mid-session, or when skills are added/removed.
+`ConfigChange` hook accepts a `config_source` matcher with documented values: `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`. **Blockable**: exit 2 prevents the change from taking effect, except for `policy_settings` (managed policy always wins). `InstructionsLoaded` is the opposite: exit code and `continue: false` are ignored — to enforce something about loaded rules, set a lock there and act from UserPromptSubmit/PreToolUse. Use to detect when a managed admin pushes a settings update, when a project's `.claude/settings.json` changes mid-session, or when skills are added/removed.
 
 ```json
 {
@@ -102,7 +102,7 @@ dotforge implication: when defining hooks for very recent events (MessageDisplay
 ## Async, timeouts, matchers
 
 - Async: `async: true` or stream `{"async":true}` as first JSON line
-- Tool hooks: 10min timeout. SessionEnd: 1.5s default. Override: `hook.timeout`
+- Tool hooks: 10min timeout. SessionEnd: 1.5s default. Override: `hook.timeout`. On timeout the hook's output is discarded and the action proceeds (PreToolUse → normal permission flow; UserPromptSubmit → prompt reaches Claude without the context). Set `onFailure: "block"` on the handler when a timeout must block instead. dotforge template hooks use 3–10s timeouts with the default fall-through — a slow `block-destructive.sh` therefore fails OPEN; keep it fast (no network, no python startup on the hot path)
 - Matchers: Bash, Read, Write, Edit, Grep, Glob. Wildcard `*` supported
 - **Hyphenated matchers exact-match (BREAKING, v2.1.195)**: pre-fix, `matcher: "code-reviewer"` substring-matched (`code-reviewers`, `my-code-reviewer` also fired). Post-fix exact-match only. Audit dotforge agent matchers using hyphens (`code-reviewer`, `security-auditor`, `session-reviewer`, `test-runner`) and any hook keyed on `mcp__<server-with-hyphen>` matchers. Wildcards still cover the substring case explicitly: `matcher: "code-*"` matches `code-reviewer` + `code-reviewers`
 

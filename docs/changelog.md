@@ -4,6 +4,19 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.9.0 (2026-11-04)
+
+### Scout batch 2 — domain rules verificadas contra docs oficiales
+
+Segunda tanda del scout de 2026-11-04 (23 repos top por estrellas). Cada afirmación de terceros se contrastó con `code.claude.com/docs/en/hooks`, `docs/en/statusline` y el clon de Piebald-AI/claude-code-system-prompts (v2.1.316) antes de entrar en una rule. Una afirmación del scout resultó falsa y quedó documentada como tal: un PreToolUse que excede su timeout **no** bloquea la llamada (cae al flujo normal salvo `onFailure: "block"`).
+
+- `domain/hook-events.md`: `permission_mode` en todo payload; `stop_hook_active`, `last_assistant_message`, `agent_transcript_path`; `additionalContext` en Stop también continúa el turno; PreToolUse `permissionDecision: ask` + `updatedInput`, precedencia `deny > defer > ask > allow`; PostToolUse `classifierContext` (v2.1.236+, tope 2.000 chars compartido, ignorado en async); PermissionRequest deny con `message` + `interrupt` y exit 2 no honrado. **Corrección**: `watchPaths` es output de CwdChanged/FileChanged, no de SessionStart (la rule lo tenía mal).
+- `domain/hook-architecture.md`: semántica de timeout + `onFailure`; `block-destructive.sh` falla abierto si tarda más de su timeout — mantenerlo rápido. ConfigChange bloqueable (exit 2, salvo `policy_settings`) y matcher `local_settings`; InstructionsLoaded ignora exit code y `continue:false`.
+- `domain/prompting-patterns.md`, `domain/rule-effectiveness.md`: "DO NOT ADD ANY COMMENTS" y "fewer than 4 lines" ya no existen en el system prompt; la directiva vigente es "Default to writing no comments. Only add one when the WHY is non-obvious". Overrides reescritos en consecuencia.
+- `domain/context-window-optimization.md` § Status line stdin fields: `context_window.*`, `prompt_cache.*` (v2.1.251+: `hit_ratio`, `misses`, `expected_rebuilds`, `warm`, `ttl`), `cost.*`; solo statusline, no hooks. `compaction-strategy.md` apunta ahí como fuente nativa del cache hit rate.
+- `skills/watch-upstream`: segunda fuente — CHANGELOG de Piebald-AI/claude-code-system-prompts para detectar directivas cambiadas. `practices/sources.yml`: +Piebald-AI, +karanb192/claude-code-hooks, +jarrodwatts/claude-hud con veredicto.
+- `practices/inbox/` (4): behavior `protect-guardrail-config`, 8 instrucciones cortas para `_common.md`/global (ask-vs-proceed, cambios quirúrgicos, "fix the cause not the test", handoff checks…), `clear_flag` para que un Edit posterior al test invalide `verification_done`, descubrimiento de repos vía catálogo API en `/forge scout`. El deny ampliado (secretos vía Bash, `gh` destructivo) fue descartado por decisión del usuario.
+
 ## v4.8.1 (2026-11-04) — hotfix
 
 ### Hooks inertes desde v0.1.0: `$TOOL_INPUT` no existe

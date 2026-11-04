@@ -49,6 +49,15 @@ sed -n "1,$((END-1))p" "$SCRATCH/CHANGELOG.md" > "$SCRATCH/changelog-slice.md"
 echo "delta: $BASE → $HEAD, $(grep -c '^## ' "$SCRATCH/changelog-slice.md") versions"
 ```
 
+Second source — extracted system prompts (Piebald-AI/claude-code-system-prompts). It tracks the live system prompt, tool descriptions and subagent prompts per version, usually ahead of our last sync. Diff its CHANGELOG from `$BASE` to detect directives that changed (comment policy, output style, deny-circumvention classifier guidance) — these are the inputs for `prompting-patterns.md` § Overriding hardcoded defaults and `rule-effectiveness.md` § System prompt conflicts:
+
+```bash
+curl -sL https://raw.githubusercontent.com/Piebald-AI/claude-code-system-prompts/main/CHANGELOG.md -o "$SCRATCH/sp-CHANGELOG.md"
+grep -n "^## \|^### " "$SCRATCH/sp-CHANGELOG.md" | head -40   # version headers + token deltas
+```
+
+Never quote a system-prompt directive in a domain rule without re-reading the current `system-prompts/*.md` file — stale quotes ("DO NOT ADD ANY COMMENTS", "fewer than 4 lines") lived in our rules for months after upstream removed them.
+
 Note: `whats-new` weekly digests and the docs pages may cite versions newer than the CHANGELOG head (docs are published ahead) — record them with the docs URL as source.
 
 ## Step 2b: Split classification when the delta exceeds ~30 versions

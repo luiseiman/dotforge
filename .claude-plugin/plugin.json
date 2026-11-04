@@ -1,6 +1,6 @@
 {
   "name": "dotforge",
-  "version": "4.8.1",
+  "version": "4.9.0",
   "description": "Configuration governance for Claude Code — bootstrap, audit (native health 0-10), sync across projects, curated domain rules on Claude Code internals, practices pipeline, and behavior governance (graduated escalation compiled to PreToolUse hooks): 19 skills, 7 agents, 16 stacks.",
   "author": {
     "name": "Luis Eiman",

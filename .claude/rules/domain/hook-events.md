@@ -23,9 +23,12 @@ last_verified: 2026-10-07
 
 ## Tool events
 
+- PreToolUse `permissionDecision`: `allow | deny | ask | defer`. `ask` prompts the user with `permissionDecisionReason` as the prompt text; `updatedInput` combines with `allow` (auto-approve modified input) or `ask` (show modified input). Precedence across hooks: `deny > defer > ask > allow`. Static deny/ask rules are still evaluated whatever the hook returns
+- **A timed-out PreToolUse command/http/mcp_tool hook does NOT block the call** — it falls through to the normal permission flow unless the handler sets `onFailure: "block"`. Same on UserPromptSubmit: timed-out output is discarded and the prompt proceeds unless `onFailure: "block"`. (A 2026-11 scout claimed the opposite; the hooks reference, verified 2026-11-04, says fall-through.) Agent SDK callback hooks are the exception: a timeout there blocks
 - PreToolUse/PostToolUse: receive ABSOLUTE file paths since v2.1.90
 - PostToolUse/PostToolUseFailure: input includes `duration_ms` (v2.1.119+) — tool execution time excluding permission prompts and PreToolUse hooks. Use for per-tool latency metrics without external timing
 - PostToolUseFailure: fires when tool execution fails — use for error tracking
+- PostToolUse `hookSpecificOutput.classifierContext` (v2.1.236+): short note for the **auto mode classifier** (not for Claude) about this call's result; 2,000-char cap shared across every hook answering the same call; ignored from async hooks (their response lands after the result is recorded)
 - PostToolUse `continueOnBlock: true` (v2.1.139+) — when set in the hook config, a `decision: "block"` feeds the `reason` back to Claude and the turn continues instead of stopping. Use for non-fatal validators (lint, type-check, drift detection)
 - PostToolUse `hookSpecificOutput.updatedToolOutput` (v2.1.121+): replaces tool output for the model. Pre-v2.1.121 was MCP-only (`updatedMCPToolOutput`); now works for Bash, Edit, Write, Read, etc. Use sparingly — rewriting can hide errors and breaks audit trail
 - PostToolBatch (v2.1.x+): fires when a batch of parallel tool calls completes, before the next model call. No matcher. Blockable via `decision: "block"` — point of choice for end-of-batch validation. **v2.1.161 behavior change**: a failed Bash call in the batch no longer cancels the other parallel calls. Post-fix, the batch always sees ALL dispatched results regardless of individual failures. Hook logic that assumed atomicity ("if I see N results, all N succeeded") must inspect per-tool success/failure explicitly
@@ -36,7 +39,7 @@ last_verified: 2026-10-07
 
 ## Permission events
 
-- PermissionRequest: intercept permission dialog, auto-allow/deny with exit 2. Output `decision: {behavior, updatedInput?, ruleApply?}`. Fires in `--print` mode since v2.1.268. `agent`-type handlers rejected here (v2.1.280). Fails closed when matching fails or input is unserializable (v2.1.288)
+- PermissionRequest: intercept permission dialog. Output `decision: {behavior: allow|deny, updatedInput?, ruleApply?, message?, interrupt?}` — `message` (deny only) tells Claude why; `interrupt: true` (deny only) stops the turn. **Exit code 2 is not honored on this event** — use the JSON decision (docs, verified 2026-11-04). Fires in `--print` mode since v2.1.268. `agent`-type handlers rejected here (v2.1.280). Fails closed when matching fails or input is unserializable (v2.1.288)
 - PermissionDenied: fires on auto mode classifier denials only (not manual deny or PreToolUse block). Input: tool_name, tool_input, tool_use_id, reason. Return `{retry: true}` to allow retry
 - Elicitation / ElicitationResult: `{"decision": "block"}` now declines the elicitation (v2.1.284)
 - PreToolUse `defer`: pause execution for async external approval (Slack, mobile notification). Combine with `asyncRewake: true` for human-in-the-loop flows (v2.1.89+)
@@ -51,6 +54,7 @@ last_verified: 2026-10-07
 
 ## Shared payload fields
 
+- `permission_mode` — present in every hook input: `default | plan | acceptEdits | auto | dontAsk | bypassPermissions` (`manual` arrives as `default`). Lets a hook relax under `plan` or tighten under `bypassPermissions`
 - `session_id` — present in every hook input; matches `$CLAUDE_CODE_SESSION_ID` exported into Bash tool subprocesses (v2.1.132+)
 - `effort.level` — present in every hook input (v2.1.133+); values `"low" | "medium" | "high" | "xhigh" | "max"`. Bash tool subprocesses see the same value as `$CLAUDE_EFFORT`. Enables effort-aware hook decisions (stricter at low, relaxed at max)
 - `cwd` — absolute working directory
@@ -96,27 +100,20 @@ fi
 
 Use cases for dotforge-managed projects: TRADINGBOT (broker creds per env), cotiza-api-cloud (WebSocket env vars), InviSight-iOS (Supabase tokens), GCP/AWS projects with cloud creds. Reduces per-call env injection workarounds.
 
-## SessionStart watchPaths registers persistent FileChanged matchers
+## `watchPaths` — dynamic FileChanged registration (CwdChanged / FileChanged output)
 
-`SessionStart` hooks can return `hookSpecificOutput.watchPaths` (array of file paths). Claude Code registers these paths with the OS-level file watcher (**FSEvents** on macOS, **inotify** on Linux). For the rest of the session, modifications to any registered path automatically fire `FileChanged` events — no polling, millisecond latency.
+`CwdChanged` and `FileChanged` hooks (not SessionStart — corrected 2026-11-04 against the hooks reference) can return a top-level `watchPaths` array of **absolute** paths. It replaces the current dynamic watch list; paths from the `FileChanged` `matcher` config are always watched; an empty array clears the dynamic list. Claude Code starts the OS watcher (FSEvents/inotify) only once something names a file, so seed a `FileChanged` group with a matcher and extend from the hook. `CwdChanged` output honors only `watchPaths` + `systemMessage` (`continue` is discarded).
 
 ```json
-{
-  "hookSpecificOutput": {
-    "additionalContext": "...",
-    "watchPaths": [
-      ".claude/settings.json",
-      ".claude/rules/_common.md",
-      "behaviors/index.yaml"
-    ]
-  }
-}
+{"watchPaths": ["/abs/path/.claude/settings.json", "/abs/path/behaviors/index.yaml"]}
 ```
 
-dotforge governance use case: today `pre-session-check.sh` (Setup hook) validates governance-critical files (`settings.json`, `behaviors/index.yaml`, `.claude/rules/*.md`) at session boundaries only. With `watchPaths`, mid-session drift can be detected inline — a user-side edit or subagent mutation triggers `FileChanged` immediately. Pair with a `FileChanged` hook to re-validate or warn.
+dotforge governance use case: today `pre-session-check.sh` (Setup hook) validates governance-critical files (`settings.json`, `behaviors/index.yaml`, `.claude/rules/*.md`) at session boundaries only. A `FileChanged` matcher on `settings.json` + a hook returning `watchPaths` for the rules dir would catch mid-session drift (user edit or subagent mutation) inline. Not wired yet.
 
 ## Stop hook contract (v2.1.143+)
 
+- Stop input carries `stop_hook_active` (`true` when Claude is already continuing because of a Stop hook), `last_assistant_message`, `background_tasks`, `session_crons`. SubagentStop adds `agent_id`, `agent_type`, `agent_transcript_path` (the subagent's own jsonl under `subagents/`). Gate on `stop_hook_active` to avoid re-triggering your own continuation
+- `additionalContext` from a Stop hook also continues the turn ("run the test suite before finishing") and goes through the same loop protection as `decision: "block"`
 - Stop hooks that return `decision: "block"` repeatedly were able to loop forever (block → retry → block). A cap was added: **8 consecutive blocks** terminate the turn with a warning
 - Override the cap via `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP=<n>` env var
 - Implication: blocks **must converge**. A Stop hook that gates on a flaky test should count attempts and let the turn pass after N retries instead of looping. Treat `decision: "block"` as a signal for "more work needed", not "force always"

@@ -66,6 +66,6 @@ For managed-scope (enterprise) variants, see `permission-model.md` Enterprise ma
 ## System prompt conflicts to override
 
 These are hardcoded in Claude Code's system prompt — rules must use strong language to counter:
-- "DO NOT ADD ANY COMMENTS" — override with "ALWAYS add docstrings"
-- "fewer than 4 lines" response limit — override with "provide detailed explanations"
+- Comments: current text (v2.1.316) is "Default to writing no comments. Only add one when the WHY is non-obvious" — override narrowly (e.g. one-line docstrings on public API), not with a blanket "ALWAYS add docstrings"
+- "fewer than 4 lines" — removed from the system prompt; stale overrides are dead weight (verify against Piebald-AI/claude-code-system-prompts before countering any directive)
 - "Use TodoWrite VERY frequently" — only present on models that still ship the todo tools (≤ Opus 4.7 / Sonnet 4.6 / Haiku 4.5); absent on Opus 4.8+, Sonnet 5+, Fable unless `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` (v2.1.268)
