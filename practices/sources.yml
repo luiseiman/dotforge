@@ -24,10 +24,10 @@ sources:
     focus: [hooks, settings, agents, skills, rules]
     notes: "Ejemplo completo de configuración — hooks, skills, agents, commands, GH Actions"
 
-  - name: affaan-m/everything-claude-code
-    url: https://github.com/affaan-m/everything-claude-code
-    focus: [security, skills, memory]
-    notes: "AgentShield + harness optimization — hackathon Anthropic Feb 2026"
+  - name: affaan-m/ECC
+    url: https://github.com/affaan-m/ECC
+    focus: [hooks, ci-validators, install-ledger, release-gate, context-budget]
+    notes: "Renamed from everything-claude-code. Scouted 2026-11-04 (v2.2.3): catalog model (314 skills ≈26K tokens/session) and GateGuard are anti-patterns for dotforge; steal distribution/CI engineering only — SHA ledger, release gate, scripts/ci validators, config-protection hook, placebo evals. 7 practices captured 2026-11-04."
 
   - name: hesreallyhim/awesome-claude-code
     url: https://github.com/hesreallyhim/awesome-claude-code
