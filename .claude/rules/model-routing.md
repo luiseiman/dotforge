@@ -41,6 +41,8 @@ Default agents: `architect`, `security-auditor`
 ## Escalation
 
 Start sonnet. Escalate to opus if: 2+ valid approaches with real consequences, security/data integrity, or 2 failed sonnet attempts. Downgrade to haiku for pure retrieval.
+- Pass `effort` per spawn (Agent tool, v2.1.292+) when a one-off lookup or sweep should run below the agent's pinned level; `CLAUDE_CODE_SUBAGENT_EFFORT` sets the session-wide subagent default
+
 
 ## MCP operations
 

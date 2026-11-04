@@ -22,7 +22,7 @@ User-side interventions to keep the context window healthy. For runtime limits a
 - Re-attachment budget: 25K tokens shared across ALL re-attached skills
 - Per-skill cap: first 5K tokens of the most recent invocation
 - Order: most recent first — older skills drop when budget is exhausted
-- Re-invoke an older skill after compaction to restore its full content
+- Since v2.1.304 compaction re-sends the full skill list afterwards and `/reload-skills` sends only new or changed skills — re-invoking to "get skills back" (the v2.1.299 advice) is no longer needed
 - Skill descriptions have a separate char budget: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (default 1% of context window, fallback 8K). Each entry capped at 250 chars — front-load key use case
 
 ## Manual pruning

@@ -41,6 +41,11 @@ El cap de 10K chars en `additionalContext` / `systemMessage` / stdout de hooks (
 
 **Re-tune del filter**: target ≤10K chars en compact summary inject, no 50K. Verificar también que startup brief + drift section combinados se mantengan <10K.
 
+## Idle compaction (v2.1.299 → v2.1.318) — compactaciones que no pediste
+
+Una conversación de 200K+ tokens que queda idle (~54 min) se resume antes de que venza el prompt cache de 1h; el resumen se usa en el próximo mensaje si el cache ya expiró. Desktop/VS Code desde v2.1.299; terminal, telemetría off y Bedrock/Vertex/Foundry/gateways desde v2.1.311 (requiere cache de 1h activo); v2.1.311 reintenta una vez si la respuesta no es un resumen; v2.1.318 corrige que un reply no-resumen reemplace la conversación. Controles: `"idleCompaction": false` (settings), `CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS`, fila **Idle compaction** en `/config` (v2.1.302); `DISABLE_COMPACT` solo apaga (y desactiva "Summarize up to here" y la compactación de teammates). Implicación: el trigger del 80 % manual deja de ser el único; `post-compact.sh` recibe estas compactaciones — verificar qué `trigger` reporta (`auto` por defecto en el hook). Desde v2.1.314 los tool results omitidos o limpiados se resumen como "llamada hecha, output no disponible": lo que deba sobrevivir una compactación va a archivos, no a output de herramientas.
+
+
 ## Anti-patterns confirmados por practitioners
 
 - **Esperar al auto-compact** (96.7%): Avthar — "can hurt performance" mid-task

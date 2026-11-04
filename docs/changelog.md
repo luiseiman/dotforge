@@ -4,6 +4,20 @@
 >
 > Historial de versiones. Las entradas usan español/inglés mixto según la evolución del proyecto. Los términos técnicos son universales.
 
+## v4.10.0 (2026-11-04)
+
+### /forge watch 2.1.292→2.1.318 — batches 2–6 incorporados
+
+Las 5 prácticas restantes del watch del día entran a las domain rules (todas verificadas contra CHANGELOG crudo, docs oficiales o la extracción de system prompts de Piebald 2.1.318):
+
+- **Auto mode y scope** (`auto-mode.md`, `_common.md`, `workflow-and-ultracode-policy.md`, `permission-model.md`): los prompts "finish exposed work" (2.1.307) y "proactivity high" (2.1.305) amplían alcance y autorizan commit/push sin preguntar; las reglas de Scope del proyecto ganan, y para tier production `Bash(git push *)` va en `permissions.ask` — agregado a `stacks/trading` y `stacks/vps-ssh`. `CLAUDE_CODE_AUTO_MODE_MODEL`, `/auto-mode-setup`, prompt de egress del email.
+- **Hooks** (`hook-architecture.md`, `hook-events.md`): matcher `Bash` cubre comandos del Monitor tool (2.1.314); límites 1.024 hooks / 16.384 chars por fuente, 24 concurrentes; evaluadores `prompt`/`agent` con `{ok, reason}` (2.1.294 fail-open previo); `<system-reminder>` escapado; PreCompact capado a 10K; UserPromptSubmit antes de la expansión de skills; `updatedInput` validado; managed `continue:false` termina el turno; sección "Code Mode / REPL — unverified".
+- **Compactación y contexto** (`compaction-strategy.md`, `context-window-optimization.md`, `context-control-patterns.md`, `rule-effectiveness.md`, `agent-orchestration.md`, `memory.md`): idle compaction y sus controles; `CLAUDE_CODE_AUTO_COMPACT_WINDOW` con sufijos; `autoCompactWindow` en subagentes; compactación re-envía skills (invierte 2.1.299); límite duro 150K/40K chars de CLAUDE.md; rules `paths:` cargan con `cat`/`sed`/`grep`; Read 25K tokens/llamada; dos líneas de higiene de memoria.
+- **Permisos y sandbox** (`permission-model.md`, `sandboxing.md`, `permission-managed-settings.md`, `auto-mode.md`): `blockWritesOutsideWorkingDirectories` (2.1.314) con la advertencia sobre `sync-all`; 5.ª ola de bypasses 2.1.292–2.1.309 con pisos de versión; `allowNestedUserNamespaces`, rechazo por hard links, `excludedCommands` pregunta; reglas MCP por server `mcp__<server>__*`; `allowedMcpServers` excepción `${VAR}`; `deniedMcpServers` por URL; deny sin veredicto del clasificador; `$defaults` endurecido; `forceRemoteSettingsRefresh` fail-closed real desde 2.1.314; `sed -i` sin preview; paths de red siempre preguntan.
+- **Subagentes y CLI** (`model-ids.md`, `model-routing.md`, `agent-orchestration.md`, `agents.md`, `prompting-patterns.md`, `auth.md`, `cli-flags.md`, `workflow-economics.md`, `parallel-sessions.md`): orden de resolución del effort (`CLAUDE_CODE_SUBAGENT_EFFORT`, effort por spawn); fork por defecto en todas las superficies; background a los 3 min; consent boundary; clasificador de delegación; `-p` sale con 1; `credential_expires_at`/`loginExpiresAt`; variables de retry; `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`; `MODEL_CATALOG` egress; pisos de versión de worktrees y teams; OTel ampliado.
+
+Pendiente de verificación empírica: si `block-destructive.sh` dispara dentro de Code Mode/REPL (2.1.318) — no disponible en esta sesión.
+
 ## v4.9.1 (2026-11-04)
 
 ### /forge watch 2.1.292→2.1.318 — batch BREAKING

@@ -4,12 +4,12 @@ title: Subagents & CLI 2.1.292→2.1.318: CLAUDE_CODE_SUBAGENT_EFFORT + per-spaw
 source: "/forge watch — Claude Code CHANGELOG 2.1.292→2.1.318 + code.claude.com docs + Piebald-AI system prompts (2026-11-04)"
 source_type: watch
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [agents, model-routing, cli, headless, auth, workflows]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/model-ids.md", ".claude/rules/model-routing.md", ".claude/rules/domain/agent-orchestration.md", ".claude/rules/agents.md", ".claude/rules/domain/prompting-patterns.md", ".claude/rules/domain/auth.md", ".claude/rules/domain/cli-flags.md", ".claude/rules/domain/workflow-economics.md", ".claude/rules/domain/parallel-sessions.md"]
 replaced_by: null
-effectiveness: null
+effectiveness: monitoring
 error_type: null
 ---
 
@@ -34,4 +34,4 @@ CHANGELOG `## 2.1.292` (effort param, name cap), `## 2.1.302` (fork default), `#
 - `domain/parallel-sessions.md`: worktree/teammate floors, `--add-dir` collisions, activity-is-not-approval
 
 ## Decision
-Pending — /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.
+Accepted 2026-11-04 — incorporated in dotforge v4.10.0 (/forge update, watch batches 2–6). Origin: /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.

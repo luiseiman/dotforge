@@ -47,6 +47,9 @@ Apply this matrix BEFORE proposing any workflow refactor of a skill:
 9. **One workflow = one concern** — compose via `workflow()` 1-level when needed
 10. **Log per-phase token spend** — end with `log(`Spent: ${budget.spent()} of ${budget.total}`)`
 
+11. **`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`** (v2.1.296) runs every workflow agent on one model — the global switch for principle 5 when a script omits `opts.model`; per-stage `model:` still wins for mixed mechanical/judgment work
+
+
 ## Per-stage model routing
 
 For workflows that do mix mechanical + judgment work:

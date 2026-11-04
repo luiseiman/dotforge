@@ -38,6 +38,9 @@ dotforge implications:
 - If an agent MUST have foreground tools, set `background: false` in frontmatter to force foreground execution
 - `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` kills background entirely
 - Monitor watches always carry a deadline (max 30 min, 10 min in `-p`); the `persistent` option was removed (v2.1.271). Background Bash/PowerShell in unattended `-p`/SDK/CI/cloud sessions stop after 30 min by default, 2 h max (v2.1.285/288); interactive sessions are exempt
+- Fork subagents on by default in `-p`, SDK, Desktop and VS Code too (v2.1.302; `CLAUDE_CODE_FORK_SUBAGENT=0` disables). Desktop/VS Code always run the main conversation's subagents in the background and cannot wait for one; a subagent's own Agent calls in `-p`/SDK/Desktop/VS Code run foreground by default. Background subagents move a shell command to the background after 3 minutes on all providers (v2.1.318); `SendMessage` to a running background agent backgrounds its command without stopping it (v2.1.317); `/btw` answers from an open subagent transcript (v2.1.314); a subagent's name works again after one message by ID (v2.1.299)
+- Delegation-configuration classifier (v2.1.317): the harness classifies CLAUDE.md/skills/agents as encouraging delegation or not ("any sweep over a handful of files goes to a scout") — dotforge's `PROACTIVELY delegate` descriptions likely classify as encouraging; effect on session behavior unverified
+
 
 ## Frontmatter and spawn additions (v2.1.232–v2.1.281)
 
@@ -49,6 +52,8 @@ dotforge implications:
 - Model resolution: per-invocation `model` → definition `model` → `CLAUDE_CODE_SUBAGENT_MODEL` → main. Family alias (`opus`) resolves to main's model when same family (v2.1.251). **`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` (v2.1.257) overrides every pin** — check it is unset before trusting `model: haiku` cost assumptions
 - Results reach the main agent under a marker header; in auto mode through a classifier-reviewed hand-back call (v2.1.271/277). Sibling roster is injected when `SendMessage` is in `tools` (v2.1.206). Teammates use the leader's model — the "Default teammate model" setting was removed (v2.1.234). In-process teammate results carry `agent_id` (agent ID) and `teammate_id` (`name@team`, v2.1.290)
 - Combined subagent `description` text should stay under ~15K tokens (docs, v2.1.296) — it is injected into every turn's delegation prompt
+- `autoCompactWindow: 100000..1000000` (v2.1.296) — lowers the subagent's auto-compact window; never raises the session's `CLAUDE_CODE_AUTO_COMPACT_WINDOW` (v2.1.312). Subagents preload at most 32 skills from `skills:` (v2.1.295); names ≤ 256 chars (v2.1.292); `permissionMode: auto` no longer enters auto when unavailable (v2.1.292); MCP tools in `tools:` are per server as `mcp__<server>__*` (v2.1.299)
+
 
 ## Subagent output scanning (v2.1.210+, prompt-injection defense)
 
@@ -124,12 +129,16 @@ Composition with global hooks: agent hooks **merge** with `.claude/settings.json
 - **v2.1.161 metric label expansion**: `OTEL_RESOURCE_ATTRIBUTES` values are now included as labels on metric datapoints. Slice usage metrics by team, repo, or any custom dimension. Pre-fix only span attributes carried these — metrics were unsliceable.
 - **v2.1.161 tool parameter capture**: `tool_decision` events include `tool_parameters` when `OTEL_LOG_TOOL_DETAILS=1`. Opt-in: parameter values may contain secrets, so disabled by default. Use for forensic replay of denied tool calls.
 - **v2.1.193 `claude_code.assistant_response` log event**: new OTel log event containing the assistant's response text. Enables auditing what was emitted to the user (compliance, redaction QA, forensic review). **PII risk**: response text may include user data, code with secrets, or internal IDs that leaked from tool output — opt-in only via OTel logger config, never default-on for sessions handling regulated data unless the OTel sink is itself compliant.
+- v2.1.300–v2.1.317: `tool_decision` events gain `classifier_verdict`, `permission_mode`, `classifier_category` (with `OTEL_LOG_TOOL_DETAILS=1`); `api_request` gains `cache_creation_5m_tokens` / `cache_creation_1h_tokens`; GenAI semantic-convention span attributes; resource attributes `anthropic.plan`, `anthropic.seat_type`, `anthropic.provider`, `anthropic.custom_base_url`; `OTEL_EXPORTER_OTLP_TIMEOUT` honored up to 30s (10s default). Use `classifier_verdict` to audit auto-mode decisions on production-tier projects
+
 
 ## Agent Teams: implicit team (v2.1.178+)
 
 With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, every session now has one implicit team — no need to declare a Lead + teammates structure manually for ad-hoc fan-out. Lowers the activation cost for Agent Teams (previously required explicit team scaffolding). Composes with sub-agent nesting: a teammate can recurse into its own sub-agents up to the spawn depth (default 3, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`).
 
 dotforge implication: `.claude/rules/agents.md` Agent Teams criteria still apply (≥3 components, ≤4 teammates, worktree isolation). The implicit team just removes ceremony — the design constraints don't relax.
+- Version floors: split-pane teammates did not inherit the leader's CLI tool deny and `--tools` rules before v2.1.309 (security gap for production teams); tmux/iTerm2 teammates started in auto mode when the lead was manual before v2.1.317; a subagent's isolated worktree could be removed while its background subagent still used it before v2.1.311
+
 
 ## `claude agents --json waitingFor` (v2.1.162+)
 

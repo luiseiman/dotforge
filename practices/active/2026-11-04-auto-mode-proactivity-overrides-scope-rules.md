@@ -4,12 +4,12 @@ title: Auto mode "finish exposed work" (2.1.307) and "proactivity level high" (2
 source: "/forge watch — Claude Code CHANGELOG 2.1.292→2.1.318 + code.claude.com docs + Piebald-AI system prompts (2026-11-04)"
 source_type: watch
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [auto-mode, scope, git, production-tier, prompting]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/auto-mode.md", "template/rules/_common.md", ".claude/rules/domain/workflow-and-ultracode-policy.md", ".claude/rules/domain/permission-model.md", "stacks/trading/settings.json.partial", "stacks/vps-ssh/settings.json.partial"]
 replaced_by: null
-effectiveness: null
+effectiveness: monitoring
 error_type: null
 ---
 
@@ -26,4 +26,4 @@ Piebald `system-prompts/` 2.1.307 auto-mode finish-exposed-work prompt (flag-gat
 - `workflow-and-ultracode-policy.md` § production tier: add the proactivity caveat
 
 ## Decision
-Pending — /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.
+Accepted 2026-11-04 — incorporated in dotforge v4.10.0 (/forge update, watch batches 2–6). Origin: /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.

@@ -30,7 +30,9 @@ last_verified: 2026-10-07
 - Compaction output max: 20K tokens. Circuit breaker: 3 failures → disable for session
 - Post-compact restoration: 5 files (50K total, 5K each) + 5 skills (25K total, 5K each)
 - `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`: lower = earlier compaction. `--autocompact <auto|tokens>` session-only (v2.1.221); `/autocompact` value saved per model (v2.1.288)
-- `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1`: disable entirely
+- `CLAUDE_CODE_DISABLE_AUTOCOMPACT=1`: disable entirely. `DISABLE_COMPACT` (settings `env` or a mod's `$.env.set`) can only turn compaction off, never back on (v2.1.311)
+- `CLAUDE_CODE_AUTO_COMPACT_WINDOW=100000..1000000` sets how full the context gets before compaction; `200k`/`1M` suffixes accepted and out-of-range values warn since v2.1.304 (`200k` silently meant 100K before). Subagent frontmatter `autoCompactWindow` can only lower it (v2.1.296/312)
+- Idle compaction (v2.1.299+): `idleCompaction: false`, `CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS` — see `compaction-strategy.md`
 - `/compact <instructions>`: manual trigger with custom preservation hints
 - dotforge `post-compact.sh` (v3.6.3+) pipes `compact_summary` through `scripts/compact-filter.py` before persisting to `.claude/session/last-compact.md`. Conservative: collapses fenced blocks > 40 lines, dense unprotected runs ≥ 30 lines, triplicate paragraphs. Never drops headings, paths, decision/error/fix lines. Keeps last 5 checkpoints under `.claude/session/compact-history/`
 
@@ -40,6 +42,8 @@ last_verified: 2026-10-07
 - CLAUDE.md: <100 lines; modularize into .claude/rules/ if larger
 - `claudeMdExcludes` setting: disable specific CLAUDE.md files
 - `@include` directive: `@path`, `@./relative`, `@~/home` — max depth 5
+- Hard size limit (v2.1.309, applies to on-demand rules too): 40,000 chars per file on a 200K window; 150,000 chars on a 1M window for post-4.6 models (200,000 on Opus/Sonnet 4.6). A nested CLAUDE.md over the limit loads only its start; `wc -m` to check. Write asks Claude to read a very large CLAUDE.md/rules/@-included file fully or edit in place (v2.1.312)
+
 
 ## Tool result limits
 
@@ -47,6 +51,8 @@ last_verified: 2026-10-07
 - Per-turn aggregate: 200K chars. Bash inline cap: 30K chars by default, raise up to 128K with the `bashOutputMaxChars` setting (v2.1.261); `taskOutputMaxChars` / `TASK_MAX_OUTPUT_LENGTH` no longer have any effect (v2.1.277)
 - Oversized results: persisted to disk (1 GB cap, v2.1.265), preview sent to Claude
 - See `context-control-patterns.md` for user-facing context management (/btw, skill budget, Esc+Esc)
+- Read returns at most 25,000 tokens (~60 KB) per call for oversized mentioned files (v2.1.318); the "file unchanged since last Read" stub was removed in v2.1.317, so re-reads return full content — expect more eager context
+
 
 ## Prompt cache TTL (v2.1.108+)
 

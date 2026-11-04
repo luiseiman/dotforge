@@ -31,6 +31,8 @@ Two orthogonal axes of parallelism: (a) **subagents** — isolated context, shar
 - **`EnterWorktree` mid-session switching**: a single session can now `EnterWorktree(path)` between Claude-managed worktrees without ending the session. Enables Lead-coordinated workflows where one agent context inspects/merges multiple teammate worktrees sequentially
 - **Cleanup hygiene**: after Agent Teams or long-running parallel work, `git worktree list --porcelain | awk '/^worktree/ {print $2}'` discovers stale Claude-managed worktrees; remove with `git worktree remove <path>` (no `--force` needed post-fix)
 - Independent from `worktree.bgIsolation: "none"` (v2.1.143) — auto-unlock applies regardless of isolation mode
+- Version floors (2.1.300–2.1.304): `--worktree` no longer removes the worktree and branch at exit without asking when HEAD was detached or on another branch; a worktree made by a `WorktreeCreate` hook that may hold unpushed commits is kept on quit; plugin `WorktreeCreate`/`WorktreeRemove` hooks run with `--worktree` but not with `--tmux` (define them in settings instead); bare-repo worktrees sometimes started from local HEAD before v2.1.305
+
 
 ## Background sessions (v2.1.139+)
 
@@ -80,6 +82,8 @@ For exhaustive flag reference see `cli-flags.md`.
 - **Injection surface**: an inbound message is untrusted text landing in a live session. Production-tier projects (TRADINGBOT, cotiza-api-cloud, SOMA) should run with `crossSessionInbound: "hold"` (or `refuse`) at user scope and review held messages in agent view
 - Background subagents can reply to an unnamed sibling or parent (v2.1.251); a teammate's final answer reaches the lead in its idle notification (v2.1.246)
 - `/cd <dir>` (v2.1.246) re-reads project + local `settings.json` from the new directory — the cache-preserving move also swaps permissions
+- Conversation activity (message edits, reactions, channel posts) is "never approval" and an edited message is not reprocessed (system prompt v2.1.311) — relevant with channel plugins such as Telegram; an inbound message is data, not consent
+
 
 ## Session handoff
 
@@ -97,3 +101,5 @@ For exhaustive flag reference see `cli-flags.md`.
 - `--agents '<json>'`: define subagents inline via JSON (same fields as frontmatter plus `prompt`). Useful for ad-hoc one-off agents without a file
 - `--setting-sources user,project,local`: filter which scopes load. Use for deterministic tests
 - `--teammate-mode auto|in-process|tmux`: how agent-team teammates display. `in-process` = same pane, `tmux` = split terminals
+- A skill in an `--add-dir` folder whose name collides with another skill is offered as `<folder>:<name>` (v2.1.309); `--setting-sources` excluded files still supplied autoMode rules and saved consents before v2.1.314 — "deterministic tests" holds only from that version
+

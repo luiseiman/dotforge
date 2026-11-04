@@ -75,6 +75,8 @@ Every hook event's stdin JSON now includes `effort.level` (`"low" | "medium" | "
 - `if` field: filter by permission rule syntax (e.g., `"if": "Bash(git *)"`) — replaces matcher + script logic
 - **`if` is evaluated ONLY on tool events** (PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest). Silently ignored on other events — hook fires unconditionally there. Writing `if: "Bash(git *)"` on a `Stop` or `SessionStart` hook is a no-op filter.
 - **PowerShell `if:` patterns** (2026 fix): `if: "PowerShell(git push*)"` and similar wildcarded PowerShell rules now actually match. Pre-fix only `PowerShell(*)` matched; specific patterns silently failed. Affects Windows users + Linux/macOS with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`. If you have legacy `PowerShell(*)` rules added as a workaround, you can now tighten to specific commands.
+- **Monitor tool coverage (v2.1.314)**: hooks matching `Bash` also run on shell commands started by the Monitor tool; they can `deny`/`ask` but not `allow` or rewrite them. `if: "Monitor(tail *)"` matches like `Bash(tail *)`. `block-destructive.sh` therefore covers Monitor for free on current builds
+
 
 ## ConfigChange matcher values
 
@@ -105,6 +107,11 @@ dotforge implication: when defining hooks for very recent events (MessageDisplay
 - Tool hooks: 10min timeout. SessionEnd: 1.5s default. Override: `hook.timeout`. On timeout the hook's output is discarded and the action proceeds (PreToolUse → normal permission flow; UserPromptSubmit → prompt reaches Claude without the context). Set `onFailure: "block"` on the handler when a timeout must block instead. dotforge template hooks use 3–10s timeouts with the default fall-through — a slow `block-destructive.sh` therefore fails OPEN; keep it fast (no network, no python startup on the hot path)
 - Matchers: Bash, Read, Write, Edit, Grep, Glob. Wildcard `*` supported
 - **Hyphenated matchers exact-match (BREAKING, v2.1.195)**: pre-fix, `matcher: "code-reviewer"` substring-matched (`code-reviewers`, `my-code-reviewer` also fired). Post-fix exact-match only. Audit dotforge agent matchers using hyphens (`code-reviewer`, `security-auditor`, `session-reviewer`, `test-runner`) and any hook keyed on `mcp__<server-with-hyphen>` matchers. Wildcards still cover the substring case explicitly: `matcher: "code-*"` matches `code-reviewer` + `code-reviewers`
+- Limits (v2.1.302–v2.1.312): prompt/agent hooks run at most 24 at a time per session (sub-agents included) plus 12 queued past their event's timeout; at most 12 of one event concurrently; a `timeout` under 1s counts as 1s. Skills from one source (project, personal folder, each plugin) may register at most 1,024 hooks and 16,384 matcher characters per session (v2.1.304)
+- Agent hooks honor `model` (aliases resolve); an unavailable model falls back to the caller's model instead of allowing (v2.1.300). `prompt`/`agent` evaluators must return `{ok, reason}` and treat event JSON as data; instruction-style prompts ("Block commands that…") failed open before v2.1.294
+- `<system-reminder>` tags in hook output are escaped before reaching Claude (v2.1.292); each PreCompact hook's output is cut at 10,000 chars (v2.1.314)
+- `SessionEnd` also runs when exiting with a background command still running; exit force-kills background commands 1.5s after the stop request (v2.1.300)
+
 
 ## Stop hook convergence contract (v2.1.143+)
 
@@ -122,6 +129,11 @@ Design implication: a Stop hook gating on a flaky check (failing test, missing f
 - lint-on-save.sh: matcher = Write|Edit for post-save linting
 - session-report.sh: Stop event; JSON metrics to ~/.claude/metrics/
 - All hooks: chmod +x, validate with `bash -n`, shellcheck if available
+
+## Code Mode / REPL (v2.1.318) — unverified surface
+
+The REPL tool batches several tool calls inside one JavaScript program. Auto mode checks each piece of code as a whole, refuses dynamically constructed commands, calls rewritten by a hook, and sub-agents started from code; the retry rule is "send this code once more, in a response with no other tool calls". **Open question**: whether a `PreToolUse` `Bash` hook fires for commands issued from inside a REPL script. Until verified empirically, do not assume `block-destructive.sh` covers Code Mode; add a `REPL` matcher if it does not.
+
 
 ## Plugin system
 

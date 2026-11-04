@@ -36,6 +36,10 @@ last_verified: 2026-10-07
 - UserPromptSubmit: hook can return `hookSpecificOutput.sessionTitle: "..."` (v2.1.94+) to set the session display title (shown in `/resume` and terminal title)
 - TaskCreated/TaskCompleted: agent lifecycle — use for orchestration metrics
 - Hook output >50K chars: saved to disk, file path + preview sent (v2.1.89)
+- UserPromptSubmit runs **before** a skill or slash command expands (v2.1.299): a blocking hook also stops the command's embedded shell; a skill's own frontmatter UserPromptSubmit hook first runs on the prompt after the invoking one
+- `updatedInput` from PreToolUse/PermissionRequest is validated like Claude's own input (v2.1.300): unknown keys dropped, input the tool rejects denies the call
+- Managed-scope PreToolUse hooks that deny with `continue: false`, and managed `prompt` hooks that block, refuse the call AND end the turn (v2.1.296); managed PostToolUse still applies the legacy `updatedMCPToolOutput` field
+
 
 ## Permission events
 
@@ -51,6 +55,8 @@ last_verified: 2026-10-07
 - TeammateIdle: fires when a team member has no pending work; no longer fired from subagents or forks (v2.1.290). `idle_prompt` notifications are silenced while background agents run (v2.1.288)
 - InstructionsLoaded carries `agent_id`, `agent_type`, `effort` (v2.1.288) — attribute which subagent loaded which rule
 - Subagent API requests carry `x-claude-code-agent-id` / `x-claude-code-parent-agent-id` headers (v2.1.139+); OTEL `claude_code.llm_request` spans include `agent_id` / `parent_agent_id` attributes — use for distributed tracing of agent trees
+- SubagentStop fired about twice a minute per running subagent instead of once at finish before v2.1.311 — metrics collected on older builds overcount
+
 
 ## Shared payload fields
 
@@ -99,6 +105,9 @@ fi
 ```
 
 Use cases for dotforge-managed projects: TRADINGBOT (broker creds per env), cotiza-api-cloud (WebSocket env vars), InviSight-iOS (Supabase tokens), GCP/AWS projects with cloud creds. Reduces per-call env injection workarounds.
+
+Fixes: `CLAUDE_ENV_FILE` exports survive in-app `/resume` and `/branch` and reach PowerShell commands (v2.1.296 — PowerShell never runs the file; assignments are copied in). Async hook JSON spanning several lines is honored (v2.1.295); async SessionStart context is not re-added on every resume when unchanged (v2.1.295).
+
 
 ## `watchPaths` — dynamic FileChanged registration (CwdChanged / FileChanged output)
 

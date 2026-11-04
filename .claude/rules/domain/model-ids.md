@@ -47,6 +47,10 @@ Five core tiers: `low` < `medium` < `high` < `xhigh` < `max`. `xhigh` is Opus/Fa
 - Consider `xhigh` (not `max`) for `security-auditor`/`architect` on complex tasks — deeper reasoning without the cost jump of max
 - Benchmark baselines computed before 2026-04-07 are no longer comparable
 - For deterministic transformations (rename, reformat) explicit `effort: low` is recommended
+- Subagent effort resolution (v2.1.292–v2.1.317): per-spawn `effort` parameter on the Agent tool (overrides frontmatter, survives resume) < `CLAUDE_CODE_EFFORT_LEVEL` (accepts `auto`/`unset` since v2.1.304); when nothing names one, `CLAUDE_CODE_SUBAGENT_EFFORT` (v2.1.316), else a subagent on a different model than the main conversation uses that model's saved effort or its default, not the session's (v2.1.317). The Agent tool prompt suggests `effort: "lower"` for fan-out lookups — dotforge pins `effort: low` on `researcher`/`test-runner` since v4.9.1
+- `ultrathink` keyword runs its turn at `xhigh` on Opus 5.5 / Sonnet 5.5 / Haiku 5.5 / Fable 5.1 via the Anthropic API (v2.1.311/316); `CLAUDE_CODE_DISABLE_ULTRATHINK` turns it off — avoid the bare word in rules the way `ultracode` is avoided
+- `fable`/`best` aliases retry once on the previous Fable model when the newest is unavailable to the org (v2.1.301). 200K sessions that run over 200K now compact and continue instead of stopping (v2.1.311); `/model <id>` warns when the ID is unrecognized and auto-compact will assume 200K (v2.1.316)
+
 
 ## `/effort` persistence (v2.1.162+)
 

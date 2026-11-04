@@ -52,6 +52,9 @@ Tier is the project POSTURE (declared once in registry). Two independent per-ses
 
 Implication: production-tier projects MUST rely on `permissions.deny` (kernel-enforced + permission-cascade) as the real backstop for irreversible touches. Plan mode alone is not sufficient if any workflow is active. Audit `permissions.deny` to cover: `.env*`, `**/*.key`, `**/*.pem`, `**/credentials*`, plus project-specific paths (`migrations/`, `infrastructure/terraform/`, schema files).
 
+Same logic for the **proactivity level high** system prompt (v2.1.305): it authorizes commit/push/PR "without asking" and overrides prose restraint, but not `permissions.ask`/`deny`. Production tier: `Bash(git push *)` in `permissions.ask` so a push always prompts regardless of mode or prompt.
+
+
 ## Portfolio guidance (12 projects, authoritative 2026-06-02)
 
 | Project | Tier | Justification |

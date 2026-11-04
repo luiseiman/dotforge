@@ -47,6 +47,9 @@ claude -p "review my diff"      # uses the OAuth token, no API key needed
 
 Requires a Claude subscription. Tokens are long-lived but rotate periodically — store the rotation procedure in your CI runbook.
 
+Expiry signals (v2.1.318): `claude auth status` reports `loginExpiresAt`; `claude -p` JSON results carry `credential_expires_at` (estimated, no server check — revocation can come earlier); a one-line stderr warning appears 10 days before a stored claude.ai login ends. Schedule `setup-token` rotation from these. `setup-token` tokens belonging to a permitted org are accepted under `forceLoginOrgUUID` since v2.1.318.
+
+
 ## Anti-patterns
 
 - Setting `ANTHROPIC_API_KEY` in `~/.bashrc` "in case Claude needs it" — silently disables Remote Control for every interactive session

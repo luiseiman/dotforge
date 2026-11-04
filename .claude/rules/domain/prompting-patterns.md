@@ -58,6 +58,9 @@ Interaction with prompt cache TTL: identical `--system-prompt` between calls wit
 
 **Snapshot caveat (v2.1.257+)**: the system prompt is recorded on a conversation's first request and reused until compaction, including across `--continue`/`--resume`. Iterating on `--append-system-prompt` text against the same conversation silently keeps the first version — pass `--system-prompt-snapshot off` while tuning, or start a fresh conversation per variant. Bare mode (`--bare` / `CLAUDE_CODE_SIMPLE=1`) records only with `--system-prompt-snapshot on`.
 
+Exit-code contract (v2.1.314–v2.1.318): `claude -p` exits 1 on startup failure and when a full disk or quota loses transcript or `~/.claude.json` writes (previously 0, silently); a non-interactive launch no longer overwrites an invalid `~/.claude.json` — it fails to start. CI wrappers must check the exit code. `-p` JSON results carry `credential_expires_at` (v2.1.318). Unattended retry knobs: `CLAUDE_CODE_RETRY_WATCHDOG` (+ `_MAX_WAIT_MS`, `_MAX_USAGE_LIMIT_WAIT_MS`, `_USAGE_LIMIT_RECHECK_MS`), `CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS` / `_MAX_DELAY_MS` (v2.1.295–v2.1.305). Local transcripts record each request's system prompt, tools and parameters since v2.1.300 — CLAUDE.md-derived content lands in any transcript you share.
+
+
 ## Language rules
 
 - All Claude-consumed content (rules, prompts, skills, agents) MUST be in English

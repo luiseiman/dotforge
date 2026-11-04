@@ -4,12 +4,12 @@ title: Hooks 2.1.292→2.1.318: Bash matchers now cover Monitor-tool commands, C
 source: "/forge watch — Claude Code CHANGELOG 2.1.292→2.1.318 + code.claude.com docs + Piebald-AI system prompts (2026-11-04)"
 source_type: watch
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [hooks, security, hook-events, compiler]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/hook-architecture.md", ".claude/rules/domain/hook-events.md"]
 replaced_by: null
-effectiveness: null
+effectiveness: monitoring
 error_type: null
 ---
 
@@ -37,4 +37,4 @@ CHANGELOG lines in `## 2.1.314` (Monitor, PreCompact cap, blockWrites), `## 2.1.
 - `scripts/compiler/compile.sh`: consider emitting `Monitor` in the generated matcher for Bash-targeted behaviors
 
 ## Decision
-Pending — /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.
+Accepted 2026-11-04 — incorporated in dotforge v4.10.0 (/forge update, watch batches 2–6). Origin: /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.

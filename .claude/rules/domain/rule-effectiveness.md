@@ -30,6 +30,8 @@ last_verified: 2026-10-07
 - `paths:` — ONLY unquoted CSV. NEVER quoted strings or YAML arrays (fail silently). Requires `alwaysApply: false`
 - Only _common.md is allowed without frontmatter (always loaded)
 - System prompt has static (cached) and dynamic (per-turn) boundary — rules land in dynamic section
+- `paths:` rules and nested CLAUDE.md files also load when Claude views a file through single-file `cat`/`head`/`tail`/`sed -n`/`grep` in Bash, not only via Read (v2.1.293) — relevant on native builds where Grep is ugrep via Bash
+
 
 ## Design constraints
 

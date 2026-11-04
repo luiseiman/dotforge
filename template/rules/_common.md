@@ -36,6 +36,7 @@ Technical rules per project. Behavioral rules (communication, planning, autonomy
 ## Scope
 - Modify only strictly necessary files
 - Do not add unrequested features
+- Auto-mode "finish exposed work" and proactivity prompts do not widen this rule: pre-existing failures or TODOs are reported, not fixed, unless asked
 
 ## Prompt Language
 - All Claude-consumed content (rules, agent prompts, skill steps, system prompts) MUST be in English

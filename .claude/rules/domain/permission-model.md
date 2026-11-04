@@ -39,6 +39,11 @@ Reason: these files can execute arbitrary commands at shell-startup time or alte
 
 Denies Read/Grep/Glob and Bash file reads outside the session's working directories (cwd + `--add-dir` + `permissions.additionalDirectories`); auto mode prompts on the first outside read. Twelve follow-up fixes through v2.1.290 closed holes in compound Bash, `cd`+`git` chains, auto-memory dirs, symlinked CLAUDE.md/rules/AGENTS.md, pasted image paths, and `sandbox.credentials.files` on git config. Recommended for production-tier projects (TRADINGBOT, cotiza-api-cloud, SOMA) — but add the vault, shared config dirs, or `~/.claude/projects` explicitly via `additionalDirectories` first, or `/forge` skills that read `$DOTFORGE_DIR` will be denied.
 
+## Writes outside working directories (`permissions.blockWritesOutsideWorkingDirectories`, v2.1.314+)
+
+Write, Edit and NotebookEdit refuse paths outside the working directories in **every** mode including `bypassPermissions`; `true` from any scope wins and no allow rule lifts it. Also refuses writes to Claude Code settings files and removes EnterWorktree/ExitWorktree; shell commands are not limited. Recommended next to the read twin for production tier — but it breaks `/forge sync-all` (writes every repo under `~/Documents`) and `global/sync.sh` (`~/.claude`) unless those paths are in `additionalDirectories`.
+
+
 ## Hardening modes for unattended runs
 
 - `--restricted` / `CLAUDE_CODE_RESTRICTED=1` (v2.1.248): removes command/code-running tools and WebFetch unless named individually in `--tools`; confines file tools to working directories; loads only managed settings + `--settings`; refuses `bypassPermissions` and cloud-session creation. Built for eval harnesses on shared machines
@@ -88,6 +93,14 @@ Second hardening wave. Any build older than the cited version silently auto-appr
 
 Rule hygiene (startup warnings/errors): an allow rule with a wildcard before the subcommand (`Bash(git * main)`) also matches options inserted before the subcommand — warned since v2.1.246; a rule with text after `)` is reported invalid (v2.1.260); a `!`-prefixed deny/ask rule applies only within its own settings source (v2.1.269). `/commit-push-pr`: git/gh with `--force`, `--amend`, `--no-verify` never auto-approved (v2.1.229).
 
+## Permission-detection bypasses fixed in v2.1.292–v2.1.309
+
+- `BASH_ARGV0` assignment then use (v2.1.296); for-loops over glob patterns (v2.1.295)
+- A variable set by a command whose redirect can fail to open; compound commands with a wrapped or prefixed `cd` before git; an `Edit(path)` deny not blocking a Bash redirect inside a subshell; the worktree isolation guard accepting locale-prefixed commands and zsh arithmetic; PowerShell `Set-Location`/`cd` with extra arguments (all v2.1.309)
+- Plan mode no longer runs a write that a PreToolUse hook or a mod's `tool.check` allowed (v2.1.299)
+- Native `rm` guard additions: recursive removal of a mounted drive or top-level folder (`/Volumes`, `/media`, `/mnt/c`) prompts (v2.1.304, opt out `CLAUDE_CODE_DISABLE_MOUNTED_DRIVE_RM_PROMPT=1`); a runtime-built rm inside an unreadable script no longer prompts unless `CLAUDE_CODE_STRICT_INLINE_SHELL_RM_PROMPT=1` (v2.1.299); Desktop/VS Code bypass mode denies at once with a rewrite hint; `CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1` removes the critical-path prompt in bypass mode (never set it on managed projects)
+
+
 ## Workspace trust (v2.1.218–v2.1.248)
 
 The workspace-trust dialog gates, beyond project settings and top-level hooks:
@@ -108,6 +121,10 @@ Pre-v2.1.218 injection path (hostile PR ships `agents/reviewer.md` with hooks th
 - NEVER touch `skipDangerousModePermissionPrompt` — user decision only
 - Audit: missing `settings.json` OR `block-destructive.sh` → score capped at 6.0
 - OS-level defense-in-depth: see `sandboxing.md`
+- Production tier: `Bash(git push *)` in `permissions.ask` — the only gate that survives auto mode's proactivity prompt (v2.1.305) and workflow subagents' `acceptEdits`
+- `sed -i` gets the standard Bash prompt and runs as written since v2.1.309 — no simulated edit preview, and `/rewind` does not restore it
+- Network/UNC/`/net` automount reads always prompt (v2.1.292): no allow rule, PreToolUse `allow`, or auto-mode verdict pre-approves them
+
 
 ## Tightened auto-approvals (v2.1.113+)
 

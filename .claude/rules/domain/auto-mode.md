@@ -22,6 +22,14 @@ last_verified: 2026-10-06
 - `disableSkillShellExecution`: blocks inline shell in skills/commands (managed)
 - `forceRemoteSettingsRefresh`: fail-closed — blocks startup until remote settings fetched (v2.1.92)
 
+## Scope-widening system prompts (v2.1.305 / v2.1.307)
+
+- **"Finish exposed work" (v2.1.307, auto mode, flag-gated)**: Claude fixes failures that predate the change and FIXME/TODOs in code it touched, and does not end by offering more work. The prompt itself says it is "not license for refactors" and requires every extra to be listed in the summary
+- **Proactivity level high (v2.1.305, user-set)**: "Commit, push, and create or update pull requests without asking whenever that is the natural next step" — explicitly overrides the general commit/push restraint. It does NOT override plan mode, the permission mode, or destructive-action rules
+- dotforge stance: project Scope rules (`_common.md` § Scope, CLAUDE.md "no unrequested features") win over both — extras are listed in the summary or left out. Behaviors (`no-destructive-git`, `verify-before-done`) still fire on the push itself, but only `permissions.ask`/`deny` gate it unconditionally: production-tier projects put `Bash(git push *)` in `permissions.ask`
+- `CLAUDE_CODE_AUTO_MODE_MODEL` (v2.1.302) picks the model of the **client-side** classifier only; `/auto-mode-setup` (v2.1.302/304) reads the project and recent sessions to teach auto mode the environment, available on Bedrock/Vertex/Foundry/gateway/telemetry-off too. Claude asks before a web or shell call sends the account email to the network (v2.1.317)
+
+
 ## Extending the classifier with `"$defaults"` (v2.1.118+)
 
 `autoMode.allow`, `autoMode.soft_deny`, and `autoMode.environment` accept the literal string `"$defaults"` as a placeholder for the built-in classifier rules. Without it, the array REPLACES the defaults (all-or-nothing). With it, custom rules are appended to the built-ins.
@@ -36,6 +44,8 @@ last_verified: 2026-10-06
 ```
 
 Always prepend `"$defaults"` unless you intend a full classifier replacement.
+- Tightened in v2.1.316: a managed `autoMode.allow` without `"$defaults"` no longer regains the built-in exceptions from a host app's `--settings`, a first rule added in `/permissions`, or `/auto-mode-setup`; such a list also no longer removes the built-in scheduled-task prompt rule
+
 
 ## Three tiers: allow / soft_deny / hard_deny (v2.1.136+)
 
@@ -58,6 +68,8 @@ Use `hard_deny` for patterns that must never auto-approve regardless of how the 
   }
 }
 ```
+- No classifier verdict (v2.1.314/317): when the server-side check returns nothing and the settings hold auto-mode deny rules, the call is refused with no prompt — nobody is asked in its place. `hard_deny` and `classifyAllShell` therefore turn a classifier outage into a block; retrying does not help. Such calls are no longer listed under "Recently blocked" (renamed from "Recently denied", v2.1.314); a gateway answering 403/422 no longer fails every turn (v2.1.317)
+
 
 ## Classify every shell command (`classifyAllShell`, v2.1.193+)
 

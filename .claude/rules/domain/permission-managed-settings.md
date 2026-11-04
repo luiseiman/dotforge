@@ -38,6 +38,8 @@ Keys silently ignored when set in `.claude/settings.json` or `settings.local.jso
 - `ANTHROPIC_CUSTOM_HEADERS` setting credential/tenant/routing headers needs approval from managed or project scope (v2.1.252)
 
 `/forge sync` must never write these into project scope — they are inert there and mislead audits.
+- `axScreenReader` / `CLAUDE_AX_SCREEN_READER` in an `env` block apply only from user, managed or `--settings` scope (v2.1.307)
+
 
 ## Fail-closed semantics (v2.1.259–v2.1.285)
 
@@ -48,12 +50,15 @@ Keys silently ignored when set in `.claude/settings.json` or `settings.local.jso
 - OS denies reading the managed file → warn and start without it (v2.1.285)
 - `managedSourcesBehavior: "merge"` takes `sandbox.credentials.awsPairs` and `sandbox.ripgrep` whole, never element-wise (v2.1.257); server-delivered settings merge the `env` block per key with a local `managed-settings.json` (v2.1.229)
 - Managed `claudeMd` no longer triggers the approval dialog (v2.1.260); approval does not re-appear on re-login when settings are unchanged (v2.1.234); `/status` shows a "Skipped sources" line (v2.1.243)
+- `forceRemoteSettingsRefresh` set only in remote managed settings stopped applying once the stored copy expired, so sessions could start without policy when the server was unreachable — truly fail-closed since v2.1.314. Server-managed settings fetched from Anthropic apply without an approval prompt and an unverifiable stored copy is refused (v2.1.316); file tools ask before editing the local copy (v2.1.314)
+
 
 ## MCP server config
 
 - `enableAllProjectMcpServers` — auto-approve every project MCP server. Use sparingly
 - `enabledMcpjsonServers` / `disabledMcpjsonServers` — per-server allow/deny
-- `allowedMcpServers` — **since v2.1.259 governs only servers users add**; servers declared in `managed-mcp.json` load regardless. A managed server your allowlist used to filter out loads on upgrade — use `deniedMcpServers` to keep it off
+- MCP rule syntax (v2.1.299): an allow rule reaches only the server it names — `mcp__a` no longer allows `a__b`; write `mcp__<server>__*`. Deny/ask rules for servers with `__` in the normalized name now apply. Agent `tools:` lists take only the named server's tools
+- `allowedMcpServers` — **since v2.1.259 governs only servers users add**; exception: `managed-mcp.json` stdio entries that use `${VAR}` only in `env` must match the list (v2.1.305); `deniedMcpServers` URL entries also block Anthropic-provided servers whose upstream URL matches and cloud-session connectors (v2.1.318); servers declared in `managed-mcp.json` load regardless. A managed server your allowlist used to filter out loads on upgrade — use `deniedMcpServers` to keep it off
 - `deniedMcpServers` — managed denylist; the only reliable way to exclude a `managed-mcp.json` entry. v2.1.273 fix: `allowManagedMcpServersOnly`, `deniedMcpServers`, `disableClaudeAiConnectors` were ignored when server-managed settings were also present
 - `managedMcpServers` (v2.1.283) — managed MCP server definitions inside settings. Unreadable `managed-mcp.json` keeps exclusive MCP control and warns — fail-closed (v2.1.271)
 - `allowManagedMcpServersOnly` — managed-only MCP source

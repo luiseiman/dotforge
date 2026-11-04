@@ -20,6 +20,10 @@ OS-level isolation of bash subprocesses (macOS, Linux, WSL2 only — no Windows 
 - Scope-restricted keys (user/managed/`--settings` only): `credentials`, `ripgrep`, `bwrapPath`, `socatPath`; `excludedCommands` from project/local is ignored when managed sets `allowUnsandboxedCommands:false` or `allowManagedDomainsOnly:true` (v2.1.282–290). Project settings cannot widen or disable an admin-required sandbox. See `permission-managed-settings.md` § Project/local scope cannot widen policy
 - `!` bash-mode commands typed by the user run **outside** the sandbox even in strict mode (v2.1.260); `allowUnsandboxedCommands:false` still disables the model's `dangerouslyDisableSandbox`. Sandboxed heredocs and `python3 -c` no longer prompt every run under auto-allow (v2.1.283)
 - `allowAppleEvents` (v2.1.181+, macOS only): opt-in to let sandboxed commands send Apple Events. Required for scripts that drive Finder/Safari/Mail/Automator. Default deny — leave off unless a project genuinely needs OS automation.
+- `allowNestedUserNamespaces` (v2.1.305, Linux/WSL2): lets sandboxed commands create user namespaces (Chromium/Electron sandbox, rootless podman, `unshare`) — turns off a security boundary; keep it out of templates and stack partials
+- Hard-linked guarded files (v2.1.317): the sandbox refuses to initialize when a guarded file has extra hard links, and `dangerouslyDisableSandbox` retries are refused too — if you did not create the link, treat the file as untrusted
+- `excludedCommands` now ask before writing to write-list paths when the sandbox is enabled but cannot run; the unsandboxed fallback is refused there (v2.1.309). In strict sandbox mode (user/managed/`--settings`) an interpreter with an env prefix (`FOO=bar python3 app.py`) runs unprompted (v2.1.292) — interacts with auto mode's interpreter allow-rule stripping
+
 
 ## Filesystem (kernel-enforced)
 
@@ -27,6 +31,8 @@ OS-level isolation of bash subprocesses (macOS, Linux, WSL2 only — no Windows 
 - Arrays MERGE across managed + project + user scopes. Also merge with `Edit(...)` and `Read(...)` permission rules. `--setting-sources` is honored by the sandbox filesystem config since v2.1.246
 - Prefixes: `//abs`, `~/home`, `./project-rel`. **Do not write deny entries with a trailing slash** (`"~/.aws/"`) — they were silently bypassable before v2.1.224; macOS wildcard read-deny (`**/.env`) now takes precedence and survives renames (v2.1.236)
 - Applies to ALL subprocesses (kubectl, terraform, npm), not only Claude's file tools. Sandbox violation details now appear in Bash results (v2.1.224/243). Sandboxed commands may write to project dirs named `hooks/` or `config/` again (v2.1.275 — were caught by the shared-`.git` exception)
+- Version floors: shell startup files ran outside the sandbox before each command until v2.1.309; macOS `denyWrite` globs did not apply at the real path through a symlink and Linux write denies lifted when a background command outlived the session (fixed v2.1.309); globs with braces/parentheses/backslashes and `allowRead`/`allowWrite` after a symlink swap re-checked since v2.1.299; a worktree entered via `claude -p --resume`/`--continue` had no sandbox until v2.1.314; bracket globs such as `[user-id]` broke Linux startup before v2.1.304
+
 
 ## Network (kernel-enforced)
 

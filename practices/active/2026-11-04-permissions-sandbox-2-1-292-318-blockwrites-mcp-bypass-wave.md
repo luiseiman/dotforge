@@ -4,12 +4,12 @@ title: Permissions & sandbox 2.1.292→2.1.318: blockWritesOutsideWorkingDirecto
 source: "/forge watch — Claude Code CHANGELOG 2.1.292→2.1.318 + code.claude.com docs + Piebald-AI system prompts (2026-11-04)"
 source_type: watch
 discovered: 2026-11-04
-status: inbox
+status: active
 tags: [permissions, sandbox, auto-mode, security, mcp]
 tested_in: []
-incorporated_in: []
+incorporated_in: [".claude/rules/domain/permission-model.md", ".claude/rules/domain/sandboxing.md", ".claude/rules/domain/permission-managed-settings.md", ".claude/rules/domain/auto-mode.md"]
 replaced_by: null
-effectiveness: null
+effectiveness: monitoring
 error_type: security
 ---
 
@@ -33,4 +33,4 @@ CHANGELOG `## 2.1.314` (blockWrites, classifier no-verdict, forceRemoteSettingsR
 - Production-tier stacks (`trading`, `vps-ssh`): evaluate `blockWritesOutsideWorkingDirectories` + `additionalDirectories` in `settings.json.partial`
 
 ## Decision
-Pending — /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.
+Accepted 2026-11-04 — incorporated in dotforge v4.10.0 (/forge update, watch batches 2–6). Origin: /forge watch 2026-11-04 (baseline v2.1.291 → head 2.1.318). Full per-item report with version and target file: session scratchpad `watch/REPORT-2026-11-04.md`.
